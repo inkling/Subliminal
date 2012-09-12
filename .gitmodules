@@ -1,0 +1,3 @@
+[submodule "Documentation/Examples/SubliminalTest/SubliminalTest/Integration Tests/OCMock"]
+	path = Documentation/Examples/SubliminalTest/SubliminalTest/Integration Tests/OCMock
+	url = git@github.com:inkling/ocmock.git
