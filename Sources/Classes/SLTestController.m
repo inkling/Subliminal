@@ -1,0 +1,87 @@
+//
+//  SLTestController.m
+//  SubliminalTest
+//
+//  Created by Jeffrey Wear on 9/3/12.
+//  Copyright (c) 2012 Inkling. All rights reserved.
+//
+
+#import "SLTestController.h"
+
+#import "SLLogger.h"
+#import "SLTest.h"
+
+#import <objc/runtime.h>
+
+
+static const NSTimeInterval kDefaultTimeout = 5.0;
+
+
+@implementation SLTestController
+
+static SLTestController *__sharedController = nil;
++ (id)sharedTestController {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        __sharedController = [[SLTestController alloc] init];
+    });
+    return __sharedController;
+}
+
++ (dispatch_queue_t)runQueue {
+    static dispatch_queue_t __runQueue = NULL;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        __runQueue = dispatch_queue_create("com.inkling.subliminal.SLTest.runQueue", DISPATCH_QUEUE_SERIAL);
+    });
+    return __runQueue;
+}
+
+- (id)init {
+    NSAssert(!__sharedController, @"SLTestController should not be initialized manually. Use +sharedTestController instead.");
+    
+    self = [super init];
+    if (self) {
+        _defaultTimeout = kDefaultTimeout;
+    }
+    return self;
+}
+
+- (void)_beginTesting {
+    // register defaults with UIAutomation
+    [_logger logMessage:@"SLTestController is registering defaults with UIAutomation... "];
+    [_logger.terminal send:@"UIATarget.localTarget().setTimeout(%g);", _defaultTimeout];
+    
+    [_logger logTestingStart];
+}
+
+- (void)runTests:(NSArray *)tests {
+    dispatch_async([[self class] runQueue], ^{
+        NSAssert(_logger, @"SLTestController cannot run tests without a logger.");
+        
+        [self _beginTesting];
+        
+        for (Class testClass in tests) {
+            SLTest *test = (SLTest *)[[testClass alloc] initWithLogger:_logger];
+            
+            NSString *testName = NSStringFromClass(testClass);
+            [_logger logTestStart:testName];
+            
+            NSUInteger numCasesExecuted = 0;
+            NSUInteger numCasesFailed = [test run:&numCasesExecuted];
+            
+            [_logger logTestFinish:testName
+              withNumCasesExecuted:numCasesExecuted
+                    numCasesFailed:numCasesFailed];
+        }
+        
+       [self _finishTesting];
+    });
+}
+
+- (void)_finishTesting {
+    [_logger logTestingFinish];
+    [_logger.terminal send:@"_testingHasFinished = true;"];
+}
+
+@end

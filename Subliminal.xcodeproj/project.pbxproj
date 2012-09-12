@@ -7,25 +7,43 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F1874BB1607BE51000360CA /* SLUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F1874B91607A8A3000360CA /* SLUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F0695D8F16011515000B05D0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8E16011515000B05D0 /* Foundation.framework */; };
+		F0695DE4160138DF000B05D0 /* SLElement.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DD8160138DF000B05D0 /* SLElement.m */; };
+		F0695DE5160138DF000B05D0 /* SLLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DDB160138DF000B05D0 /* SLLogger.m */; };
+		F0695DE6160138DF000B05D0 /* SLUIALogger.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DDD160138DF000B05D0 /* SLUIALogger.m */; };
+		F0695DE7160138DF000B05D0 /* SLTerminal.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DDF160138DF000B05D0 /* SLTerminal.m */; };
+		F0695DE8160138DF000B05D0 /* SLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DE1160138DF000B05D0 /* SLTest.m */; };
+		F0695DE9160138DF000B05D0 /* SLTestController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DE3160138DF000B05D0 /* SLTestController.m */; };
+		F0695E0D16013D77000B05D0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695E0C16013D77000B05D0 /* UIKit.framework */; };
+		F0695E1C16014491000B05D0 /* Subliminal.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DEB1601391C000B05D0 /* Subliminal.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0695E1D16014491000B05D0 /* SLTestController.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DE2160138DF000B05D0 /* SLTestController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0695E1E16014491000B05D0 /* SLTest.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DE0160138DF000B05D0 /* SLTest.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0695E1F16014491000B05D0 /* SLTerminal.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDE160138DF000B05D0 /* SLTerminal.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0695E2016014491000B05D0 /* SLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DD7160138DF000B05D0 /* SLElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0695E2116014491000B05D0 /* SLLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDA160138DF000B05D0 /* SLLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0695E2216014491000B05D0 /* SLUIALogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDC160138DF000B05D0 /* SLUIALogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		F0695D8916011515000B05D0 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/${PRODUCT_NAME}";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
+		1F1874B91607A8A3000360CA /* SLUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLUtilities.h; sourceTree = "<group>"; };
 		F0695D8B16011515000B05D0 /* libSubliminal.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSubliminal.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0695D8E16011515000B05D0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		F0695D9216011515000B05D0 /* Subliminal-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Subliminal-Prefix.pch"; sourceTree = "<group>"; };
+		F0695DD7160138DF000B05D0 /* SLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLElement.h; sourceTree = "<group>"; };
+		F0695DD8160138DF000B05D0 /* SLElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElement.m; sourceTree = "<group>"; };
+		F0695DDA160138DF000B05D0 /* SLLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLLogger.h; sourceTree = "<group>"; };
+		F0695DDB160138DF000B05D0 /* SLLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLLogger.m; sourceTree = "<group>"; };
+		F0695DDC160138DF000B05D0 /* SLUIALogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLUIALogger.h; sourceTree = "<group>"; };
+		F0695DDD160138DF000B05D0 /* SLUIALogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLUIALogger.m; sourceTree = "<group>"; };
+		F0695DDE160138DF000B05D0 /* SLTerminal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTerminal.h; sourceTree = "<group>"; };
+		F0695DDF160138DF000B05D0 /* SLTerminal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTerminal.m; sourceTree = "<group>"; };
+		F0695DE0160138DF000B05D0 /* SLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTest.h; sourceTree = "<group>"; };
+		F0695DE1160138DF000B05D0 /* SLTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTest.m; sourceTree = "<group>"; };
+		F0695DE2160138DF000B05D0 /* SLTestController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTestController.h; sourceTree = "<group>"; };
+		F0695DE3160138DF000B05D0 /* SLTestController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestController.m; sourceTree = "<group>"; };
+		F0695DEA16013908000B05D0 /* Subliminal-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Subliminal-Prefix.pch"; sourceTree = "<group>"; };
+		F0695DEB1601391C000B05D0 /* Subliminal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Subliminal.h; sourceTree = "<group>"; };
+		F0695E0C16013D77000B05D0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -34,6 +52,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F0695D8F16011515000B05D0 /* Foundation.framework in Frameworks */,
+				F0695E0D16013D77000B05D0 /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -43,7 +62,7 @@
 		F0695D8016011515000B05D0 = {
 			isa = PBXGroup;
 			children = (
-				F0695D9016011515000B05D0 /* Subliminal */,
+				F0695DD016013891000B05D0 /* Sources */,
 				F0695D8D16011515000B05D0 /* Frameworks */,
 				F0695D8C16011515000B05D0 /* Products */,
 			);
@@ -61,27 +80,76 @@
 			isa = PBXGroup;
 			children = (
 				F0695D8E16011515000B05D0 /* Foundation.framework */,
+				F0695E0C16013D77000B05D0 /* UIKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		F0695D9016011515000B05D0 /* Subliminal */ = {
+		F0695DD016013891000B05D0 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				F0695D9116011515000B05D0 /* Supporting Files */,
+				F0695DEB1601391C000B05D0 /* Subliminal.h */,
+				F0695DEA16013908000B05D0 /* Subliminal-Prefix.pch */,
+				F0695DD5160138DF000B05D0 /* Classes */,
 			);
-			path = Subliminal;
+			path = Sources;
 			sourceTree = "<group>";
 		};
-		F0695D9116011515000B05D0 /* Supporting Files */ = {
+		F0695DD5160138DF000B05D0 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				F0695D9216011515000B05D0 /* Subliminal-Prefix.pch */,
+				1F1874B91607A8A3000360CA /* SLUtilities.h */,
+				F0695DE2160138DF000B05D0 /* SLTestController.h */,
+				F0695DE3160138DF000B05D0 /* SLTestController.m */,
+				F0695DE0160138DF000B05D0 /* SLTest.h */,
+				F0695DE1160138DF000B05D0 /* SLTest.m */,
+				F0695DDE160138DF000B05D0 /* SLTerminal.h */,
+				F0695DDF160138DF000B05D0 /* SLTerminal.m */,
+				F0695DD6160138DF000B05D0 /* Interface Elements */,
+				F0695DD9160138DF000B05D0 /* Logging */,
 			);
-			name = "Supporting Files";
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		F0695DD6160138DF000B05D0 /* Interface Elements */ = {
+			isa = PBXGroup;
+			children = (
+				F0695DD7160138DF000B05D0 /* SLElement.h */,
+				F0695DD8160138DF000B05D0 /* SLElement.m */,
+			);
+			path = "Interface Elements";
+			sourceTree = "<group>";
+		};
+		F0695DD9160138DF000B05D0 /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				F0695DDA160138DF000B05D0 /* SLLogger.h */,
+				F0695DDB160138DF000B05D0 /* SLLogger.m */,
+				F0695DDC160138DF000B05D0 /* SLUIALogger.h */,
+				F0695DDD160138DF000B05D0 /* SLUIALogger.m */,
+			);
+			path = Logging;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		F0695E1A16014463000B05D0 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0695E1C16014491000B05D0 /* Subliminal.h in Headers */,
+				F0695E1D16014491000B05D0 /* SLTestController.h in Headers */,
+				F0695E1E16014491000B05D0 /* SLTest.h in Headers */,
+				F0695E1F16014491000B05D0 /* SLTerminal.h in Headers */,
+				F0695E2016014491000B05D0 /* SLElement.h in Headers */,
+				F0695E2116014491000B05D0 /* SLLogger.h in Headers */,
+				F0695E2216014491000B05D0 /* SLUIALogger.h in Headers */,
+				1F1874BB1607BE51000360CA /* SLUtilities.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		F0695D8A16011515000B05D0 /* Subliminal */ = {
@@ -90,7 +158,7 @@
 			buildPhases = (
 				F0695D8716011515000B05D0 /* Sources */,
 				F0695D8816011515000B05D0 /* Frameworks */,
-				F0695D8916011515000B05D0 /* CopyFiles */,
+				F0695E1A16014463000B05D0 /* Headers */,
 			);
 			buildRules = (
 			);
@@ -132,6 +200,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0695DE4160138DF000B05D0 /* SLElement.m in Sources */,
+				F0695DE5160138DF000B05D0 /* SLLogger.m in Sources */,
+				F0695DE6160138DF000B05D0 /* SLUIALogger.m in Sources */,
+				F0695DE7160138DF000B05D0 /* SLTerminal.m in Sources */,
+				F0695DE8160138DF000B05D0 /* SLTest.m in Sources */,
+				F0695DE9160138DF000B05D0 /* SLTestController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -189,9 +263,10 @@
 			buildSettings = {
 				DSTROOT = /tmp/Subliminal.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Subliminal/Subliminal-Prefix.pch";
+				GCC_PREFIX_HEADER = "Sources/Subliminal-Prefix.pch";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = usr/local/include/Subliminal;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -201,9 +276,10 @@
 			buildSettings = {
 				DSTROOT = /tmp/Subliminal.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Subliminal/Subliminal-Prefix.pch";
+				GCC_PREFIX_HEADER = "Sources/Subliminal-Prefix.pch";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = usr/local/include/Subliminal;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
@@ -227,6 +303,7 @@
 				F0695D9B16011515000B05D0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
