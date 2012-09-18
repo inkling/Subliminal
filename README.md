@@ -78,7 +78,7 @@ FAQ (aka stuff which should eventually go somewhere above)
 	
 	Really, it's a way to log the filename/line number of a `UIAutomation` call, for debugging purposes.
 	
-5. There's no method on `SLElement` to do <something that `UIElement` does>. How might I implement it?
+5. There's no method on `SLElement` to do < something that `UIElement` does >. How might I implement it?
 	
 	Consider making a subclass of `SLElement` which defines the necessary functionality. See `SLAlert` and `SLTextField` for examples.
 	
@@ -95,3 +95,4 @@ FAQ (aka stuff which should eventually go somewhere above)
 8. Can I see this all working somewhere?
 
 	Sure. Check out the `SubliminalTest` project in "Documentation/Examples". That example links in [`OCMock`](https://github.com/inkling/ocmock) to show off some _really_ slick stuff we can do around test setup.
+Subliminal
