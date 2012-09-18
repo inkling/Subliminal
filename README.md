@@ -95,4 +95,4 @@ FAQ (aka stuff which should eventually go somewhere above)
 8. Can I see this all working somewhere?
 
 	Sure. Check out the `SubliminalTest` project in "Documentation/Examples". That example links in [`OCMock`](https://github.com/inkling/ocmock) to show off some _really_ slick stuff we can do around test setup.
-Subliminal
+	
