@@ -11,7 +11,7 @@
 
 
 static NSString *const SLTerminalOutputButtonAccessibilityIdentifier = @"SLTerminal_outputButton";
-static NSString *const SLTerminalInputDefaultsKey = @"SLTerminal_input";
+static NSString *const SLTerminalInputPreferencesKey = @"SLTerminal_input";
 
 static NSString *const SLExceptionOccurredResponsePrefix = @"SLTerminalExceptionOccurred: ";
 
@@ -22,7 +22,7 @@ static NSString *const SLExceptionOccurredResponsePrefix = @"SLTerminalException
 
 + (id)sharedTerminal;
 
-- (void)startWithCompletionBlock:(void (^)(void))completionBlock;
+- (void)start;
 
 - (NSString *)send:(NSString *)message, ... NS_FORMAT_FUNCTION(1,2);
 - (NSString *)send:(NSString *)message args:(va_list)args;

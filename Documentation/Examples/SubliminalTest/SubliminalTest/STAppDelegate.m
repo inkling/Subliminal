@@ -25,13 +25,13 @@
 
 #if RUN_SUBLIMINAL_TESTS
     SLTerminal *terminal = [SLTerminal sharedTerminal];
-    [terminal startWithCompletionBlock:^{
-        [SLElement setTerminal:terminal];
-        
-        SLTestController *testController = [SLTestController sharedTestController];
-        testController.logger = [[SLUIALogger alloc] initWithTerminal:terminal];
-        [testController runTests:[SLTest allTests]];
-    }];
+    [terminal start];
+
+    [SLElement setTerminal:terminal];
+
+    SLTestController *testController = [SLTestController sharedTestController];
+    testController.logger = [[SLUIALogger alloc] initWithTerminal:terminal];
+    [testController runTests:[SLTest allTests]];
 #endif
     
     return YES;

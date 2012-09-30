@@ -10,8 +10,6 @@
 #import "SLTest.h"
 
 
-static NSString *const SLTerminalDefaultsExistsKey = @"SLTerminalDefaultsExistsKey";
-
 static NSString *const SLTerminalInvalidMessageException = @"SLTerminalInvalidMessageException";
 
 
@@ -20,6 +18,7 @@ static NSString *const SLTerminalInvalidMessageException = @"SLTerminalInvalidMe
         
     dispatch_semaphore_t _dispatchSemaphore;
     dispatch_semaphore_t _responseSemaphore;
+    NSString *_responsePlistPath;
     NSString *_response;
 }
 
@@ -30,6 +29,41 @@ static SLTerminal *__sharedTerminal = nil;
         __sharedTerminal = [[SLTerminal alloc] init];
     });
     return __sharedTerminal;
+}
+
+// returns the preferences plist UIAutomation uses to respond
++ (NSString *)UIAutomationResponsePlistPath {
+    NSString *responsePlistPath = nil;
+    NSString *plistRootPath = nil, *relativePlistPath = nil;
+    NSString *plistName = [NSString stringWithFormat:@"%@.plist", [[NSBundle mainBundle] bundleIdentifier]];
+    
+#if TARGET_IPHONE_SIMULATOR
+    // in the simulator, UIAutomation uses a target-specific plist in ~/Library/Application Support/iPhone Simulator/[system version]/Library/Preferences/[bundle ID].plist
+    // _not_ the NSUserDefaults plist, in the sandboxed Library
+    // see http://stackoverflow.com/questions/4977673/reading-preferences-set-by-uiautomations-uiaapplication-setpreferencesvaluefork
+
+    // 1. get into the simulator's app support directory by fetching the sandboxed Library's path
+    NSString *userDirectoryPath = [[[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject] absoluteString];
+    // 2. get out of our application directory, back to the root support directory for this system version
+    plistRootPath = [userDirectoryPath substringToIndex:([userDirectoryPath rangeOfString:@"Applications"].location)];
+
+    // 3. locate, relative to here, /Library/Preferences/[bundle ID].plist
+    relativePlistPath = [NSString stringWithFormat:@"Library/Preferences/%@", plistName];
+#else
+    // on the device, UIAutomation uses the NSUserDefaults plist, in the sandboxed Library
+    plistRootPath = [[[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject] absoluteString];
+    relativePlistPath = [NSString stringWithFormat:@"Preferences/%@", plistName];
+#endif
+    
+    // strip "file://localhost" at beginning of path, which will screw up file reads later
+    static NSString *const localhostPrefix = @"file://localhost";
+    if ([plistRootPath hasPrefix:localhostPrefix]) {
+        plistRootPath = [plistRootPath substringFromIndex:NSMaxRange([plistRootPath rangeOfString:localhostPrefix])];
+    }
+    // and unescape spaces, if necessary (i.e. in the simulator)
+    NSString *unsanitizedPlistPath = [plistRootPath stringByAppendingPathComponent:relativePlistPath];
+    responsePlistPath = [unsanitizedPlistPath stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    return responsePlistPath;
 }
 
 + (NSException *)parseExceptionFromResponse:(NSString *)response toMessage:(NSString *)message {
@@ -55,6 +89,9 @@ static SLTerminal *__sharedTerminal = nil;
         _dispatchSemaphore = dispatch_semaphore_create(1);
         // the terminal waits for a message to be received before returning from send:
         _responseSemaphore = dispatch_semaphore_create(0);
+
+        // cache the responsePlistPath to avoid looking it up afresh each time it's to be used
+        _responsePlistPath = [[self class] UIAutomationResponsePlistPath];
     }
     return self;
 }
@@ -70,7 +107,7 @@ static SLTerminal *__sharedTerminal = nil;
     [newKeyWindow addSubview:_outputButton];
 }
 
-- (void)startWithCompletionBlock:(void (^)(void))completionBlock {
+- (void)start {
     NSAssert(!_hasStarted, @"Terminal has already started.");
     
     // add output button to window
@@ -95,27 +132,14 @@ static SLTerminal *__sharedTerminal = nil;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyWindowDidChange:) name:UIWindowDidBecomeKeyNotification object:nil];
     
     
-    // register the defaults plist (used for input) with UIAutomation
-    
-    // ensure that the plist exists (it won't if there are no preferences stored)
-    BOOL defaultsExists = [[NSUserDefaults standardUserDefaults] boolForKey:SLTerminalDefaultsExistsKey];
-    if (!defaultsExists) {
-        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:SLTerminalDefaultsExistsKey];
-        [[NSUserDefaults standardUserDefaults] synchronize];
+    // clear an old response from UIAutomation if one exists
+    NSMutableDictionary *responseDictionary = [NSMutableDictionary dictionaryWithContentsOfFile:_responsePlistPath];
+    if ([responseDictionary objectForKey:SLTerminalInputPreferencesKey]) {
+        [responseDictionary removeObjectForKey:SLTerminalInputPreferencesKey];
+        [responseDictionary writeToFile:_responsePlistPath atomically:YES];
     }
-    // in the background ('cause it'll block) tell UIAutomation to retrieve the path to the preferences
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        [self send:@"registerOutputDefaultsPath();"];
-        
-        // clear response key in defaults, in case it's there
-        if ([[NSUserDefaults standardUserDefaults] objectForKey:SLTerminalInputDefaultsKey]) {
-            [[NSUserDefaults standardUserDefaults] removeObjectForKey:SLTerminalInputDefaultsKey];
-            [[NSUserDefaults standardUserDefaults] synchronize];
-        }
-        
-        _hasStarted = YES;
-        if (completionBlock) completionBlock();
-    });
+    
+    _hasStarted = YES;
 }
 
 - (NSString *)send:(NSString *)message, ... {
@@ -158,25 +182,18 @@ static SLTerminal *__sharedTerminal = nil;
 - (void)messageReceived:(id)sender {
     _outputButton.hidden = YES;
     [_outputButton setTitle:nil forState:UIControlStateNormal];
-    
-    // synchronize to have NSUserDefaults read the response from the file system
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    NSString *response = [[NSUserDefaults standardUserDefaults] stringForKey:SLTerminalInputDefaultsKey];
-    
-    // "defaults write", used by UIAutomation, sometimes encapsulates values in single quotes; here we extract the contents
-    if ([response hasPrefix:@"'"]) {
-        response = [response substringFromIndex:NSMaxRange([response rangeOfString:@"'"])];
-    }
-    if ([response hasSuffix:@"'"]) {
-        response = [response substringWithRange:NSMakeRange(0, [response length] - 1)];
-    }
-    
+
+    NSMutableDictionary *responseDictionary = [NSMutableDictionary dictionaryWithContentsOfFile:_responsePlistPath];
+    NSString *response = [responseDictionary objectForKey:SLTerminalInputPreferencesKey];
+        
     _response = response;
     
-    // clear the response now that we've read it
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:SLTerminalInputDefaultsKey];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    
+    // clear the response (if it existed), now that we've read it
+    if ([response length]) {
+        [responseDictionary removeObjectForKey:SLTerminalInputPreferencesKey];
+        [responseDictionary writeToFile:_responsePlistPath atomically:YES];
+    }
+
     // signal thread waiting on UIAutomation's response (in send:) to continue
     dispatch_semaphore_signal(_responseSemaphore);
 }
