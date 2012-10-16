@@ -7,6 +7,7 @@
 //
 
 #import "SLTestController.h"
+#import "SLTestController+AppContext.h"
 #import "SLTest.h"
 
 #import "SLTerminal.h"

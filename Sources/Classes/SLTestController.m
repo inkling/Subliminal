@@ -62,7 +62,7 @@ static SLTestController *__sharedController = nil;
         [self _beginTesting];
         
         for (Class testClass in tests) {
-            SLTest *test = (SLTest *)[[testClass alloc] initWithLogger:_logger];
+            SLTest *test = (SLTest *)[[testClass alloc] initWithLogger:_logger testController:self];
             
             NSString *testName = NSStringFromClass(testClass);
             [_logger logTestStart:testName];

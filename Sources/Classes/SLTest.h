@@ -8,17 +8,20 @@
 
 #import <Foundation/Foundation.h>
 
+#import "SLTestController+AppContext.h"
+
 
 @class SLLogger;
 
 @interface SLTest : NSObject
 
-@property (nonatomic, readonly) SLLogger *logger;
+@property (nonatomic, weak, readonly) SLTestController *testController;
+@property (nonatomic, strong, readonly) SLLogger *logger;
 
 + (NSArray *)allTests;
 + (Class)testNamed:(NSString *)test;
 
-- (id)initWithLogger:(SLLogger *)logger;
+- (id)initWithLogger:(SLLogger *)logger testController:(SLTestController *)testController;
 
 - (NSUInteger)run:(NSUInteger *)casesExecuted;
 

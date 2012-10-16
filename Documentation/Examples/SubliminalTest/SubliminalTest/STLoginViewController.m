@@ -11,6 +11,10 @@
 
 #import "STLoginManager.h"
 
+#if RUN_SUBLIMINAL_TESTS
+#import <Subliminal/Subliminal.h>
+#endif
+
 
 @interface STLoginViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *messageLabel;
@@ -34,6 +38,16 @@
     self.loginSpinner.accessibilityLabel = @"Logging in...";
     
     [self.submitButton setTitle:@"" forState:UIControlStateDisabled];
+
+#if RUN_SUBLIMINAL_TESTS
+    [[SLTestController sharedTestController] registerTarget:self forAction:@selector(resetLogin)];
+#endif
+}
+
+- (void)dealloc {
+#if RUN_SUBLIMINAL_TESTS
+    [[SLTestController sharedTestController] deregisterTarget:self];
+#endif
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -82,6 +96,20 @@
                                                    }
                                                }
     }];
+}
+
+- (void)resetLogin {
+    self.usernameField.text = @"";
+    self.usernameField.enabled = YES;
+    self.usernameField.backgroundColor = [UIColor clearColor];
+
+    self.passwordField.text = @"";
+    self.passwordField.enabled = YES;
+    self.passwordField.backgroundColor = [UIColor clearColor];
+
+    self.submitButton.hidden = NO;
+    self.submitButton.enabled = YES;
+    self.messageLabel.text = @"";
 }
 
 @end

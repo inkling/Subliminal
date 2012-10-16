@@ -58,10 +58,11 @@ static NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey
     return (classIsTestClass ? klass : nil);
 }
 
-- (id)initWithLogger:(SLLogger *)logger {
+- (id)initWithLogger:(SLLogger *)logger testController:(SLTestController *)testController {
     self = [super init];
     if (self) {
         _logger = logger;
+        _testController = testController;
     }
     return self;
 }

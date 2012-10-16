@@ -59,8 +59,7 @@
     [_loginManagerMock stopMocking];
     _loginManagerMock = nil;
 
-    [_usernameField setText:@""];
-    [_passwordField setText:@""];
+    [self.testController sendAction:@selector(resetLogin)];
 }
 
 #pragma mark - Tests
