@@ -66,10 +66,6 @@ static NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey
     return self;
 }
 
-- (void)setUp {
-    // nothing to do here
-}
-
 - (void)setUpTestWithSelector:(SEL)testSelector {
     // nothing to do here
 }
@@ -99,7 +95,6 @@ static NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey
 
         BOOL caseFailed = NO;
         @try {            
-            [self setUp];
             [self setUpTestWithSelector:testSelector];
             
             // We use objc_msgSend so that Clang won't complain about performSelector leaks
@@ -145,7 +140,6 @@ static NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey
             }
             
             [self tearDownTestWithSelector:testSelector];
-            [self tearDown];
             
             numberOfCasesExecuted++;
         }
@@ -156,10 +150,6 @@ static NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey
 }
 
 - (void)tearDownTestWithSelector:(SEL)testSelector {
-    // nothing to do here
-}
-
-- (void)tearDown {
     // nothing to do here
 }
 

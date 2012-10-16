@@ -27,9 +27,6 @@
 
 @interface SLTest (SLTestCase)
 
-- (void)setUp;
-- (void)tearDown;
-
 - (void)setUpTestWithSelector:(SEL)testSelector;
 - (void)tearDownTestWithSelector:(SEL)testSelector;
 

@@ -23,16 +23,16 @@
 
 #pragma mark - Setup and Teardown
 
-- (void)setUp {
+- (void)setUpTestWithSelector:(SEL)testSelector {
+    // set up elements
     _usernameField = [SLTextField elementWithAccessibilityLabel:@"username field"];
     _passwordField = [SLTextField elementWithAccessibilityLabel:@"password field" isSecure:YES];
     _submitButton = [SLElement elementWithAccessibilityLabel:@"Submit"];
     _loginSpinner = [SLElement elementWithAccessibilityLabel:@"Logging in..."];
-        
-    _loginManagerMock = [OCMockObject partialMockForObject:[STLoginManager sharedLoginManager]];
-}
 
-- (void)setUpTestWithSelector:(SEL)testSelector {
+    // mock desired response to login
+    _loginManagerMock = [OCMockObject partialMockForObject:[STLoginManager sharedLoginManager]];
+
     BOOL loginShouldSucceed = YES;
     NSError *loginError = nil;
     
@@ -55,12 +55,10 @@
         SLAlert *failureAlert = [SLAlert elementWithAccessibilityLabel:@"Network Error"];
         [UIAElement(failureAlert) dismiss];
     }
-}
 
-- (void)tearDown {
     [_loginManagerMock stopMocking];
     _loginManagerMock = nil;
-    
+
     [_usernameField setText:@""];
     [_passwordField setText:@""];
 }
