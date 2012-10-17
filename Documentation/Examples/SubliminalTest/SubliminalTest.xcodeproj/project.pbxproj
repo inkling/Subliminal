@@ -21,6 +21,7 @@
 		F0695DFE16013C98000B05D0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0FBC00815F1F3200081C635 /* CoreGraphics.framework */; };
 		F0695E0016013C98000B05D0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F0FBC00D15F1F3200081C635 /* InfoPlist.strings */; };
 		F0695E19160143A3000B05D0 /* libSubliminal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695E1616014101000B05D0 /* libSubliminal.a */; };
+		F0E5509F162F45FC00F54F57 /* STSimpleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E5509D162F45FC00F54F57 /* STSimpleTest.m */; };
 		F0FBC00515F1F3200081C635 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0FBC00415F1F3200081C635 /* UIKit.framework */; };
 		F0FBC00715F1F3200081C635 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0FBC00615F1F3200081C635 /* Foundation.framework */; };
 		F0FBC00915F1F3200081C635 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0FBC00815F1F3200081C635 /* CoreGraphics.framework */; };
@@ -92,6 +93,8 @@
 		F0024D9215F5DF6B00476EF7 /* STLoginTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STLoginTest.m; sourceTree = "<group>"; };
 		F0695E0516013C98000B05D0 /* SubliminalTest (Integration Tests).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SubliminalTest (Integration Tests).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0695E0E16014101000B05D0 /* Subliminal.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Subliminal.xcodeproj; path = ../../../../../Subliminal.xcodeproj; sourceTree = "<group>"; };
+		F0E5509C162F45FC00F54F57 /* STSimpleTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STSimpleTest.h; sourceTree = "<group>"; };
+		F0E5509D162F45FC00F54F57 /* STSimpleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STSimpleTest.m; sourceTree = "<group>"; };
 		F0FBC00015F1F3200081C635 /* SubliminalTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SubliminalTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0FBC00415F1F3200081C635 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F0FBC00615F1F3200081C635 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -150,6 +153,8 @@
 				1F18745E1606AEE7000360CA /* OCMock.xcodeproj */,
 				F0024D9115F5DF6B00476EF7 /* STLoginTest.h */,
 				F0024D9215F5DF6B00476EF7 /* STLoginTest.m */,
+				F0E5509C162F45FC00F54F57 /* STSimpleTest.h */,
+				F0E5509D162F45FC00F54F57 /* STSimpleTest.m */,
 			);
 			name = "Integration Tests";
 			path = "SubliminalTest/Integration Tests";
@@ -365,6 +370,7 @@
 				F0695DF916013C98000B05D0 /* STLoginViewController.m in Sources */,
 				F0695DFA16013C98000B05D0 /* STLoginTest.m in Sources */,
 				1F18744216065875000360CA /* STLoginManager.m in Sources */,
+				F0E5509F162F45FC00F54F57 /* STSimpleTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
