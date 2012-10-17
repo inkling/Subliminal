@@ -11,7 +11,7 @@
 
 #import "STLoginManager.h"
 
-#if RUN_SUBLIMINAL_TESTS
+#if INTEGRATION_TESTING
 #import <Subliminal/Subliminal.h>
 #endif
 
@@ -39,13 +39,13 @@
     
     [self.submitButton setTitle:@"" forState:UIControlStateDisabled];
 
-#if RUN_SUBLIMINAL_TESTS
+#if INTEGRATION_TESTING
     [[SLTestController sharedTestController] registerTarget:self forAction:@selector(resetLogin)];
 #endif
 }
 
 - (void)dealloc {
-#if RUN_SUBLIMINAL_TESTS
+#if INTEGRATION_TESTING
     [[SLTestController sharedTestController] deregisterTarget:self];
 #endif
 }

@@ -419,7 +419,7 @@
 				GCC_PREFIX_HEADER = "SubliminalTest/SubliminalTest-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"RUN_SUBLIMINAL_TESTS=1",
+					"INTEGRATION_TESTING=1",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -445,7 +445,7 @@
 				GCC_PREFIX_HEADER = "SubliminalTest/SubliminalTest-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"RUN_SUBLIMINAL_TESTS=1",
+					"INTEGRATION_TESTING=1",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",

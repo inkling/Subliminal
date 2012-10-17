@@ -10,7 +10,7 @@
 
 #import "STLoginViewController.h"
 
-#if RUN_SUBLIMINAL_TESTS
+#if INTEGRATION_TESTING
 #import <Subliminal/Subliminal.h>
 #endif
 
@@ -23,7 +23,7 @@
     [self.window makeKeyAndVisible];
     
 
-#if RUN_SUBLIMINAL_TESTS
+#if INTEGRATION_TESTING
     SLTerminal *terminal = [SLTerminal sharedTerminal];
     [terminal start];
 
