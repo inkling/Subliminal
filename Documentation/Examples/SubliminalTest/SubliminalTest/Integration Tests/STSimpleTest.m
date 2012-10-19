@@ -12,7 +12,7 @@
     SLTextField *_usernameField;
 }
 
-- (void)setUpTestWithSelector:(SEL)testSelector {
+- (void)setUpTestCaseWithSelector:(SEL)testSelector {
     _usernameField = [SLTextField elementWithAccessibilityLabel:@"username field"];
 }
 
@@ -24,7 +24,7 @@
     SLAssertTrue([[UIAElement(_usernameField) text] isEqualToString:username], @"Username was not set to %@", username);
 }
 
-- (void)tearDownTestWithSelector:(SEL)testSelector {
+- (void)tearDownTestCaseWithSelector:(SEL)testSelector {
     if (testSelector == @selector(testThatWeCanEnterSomeText)) {
         [self.testController sendAction:@selector(resetLogin)];
     }

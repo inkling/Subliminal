@@ -33,6 +33,8 @@
  withNumCasesExecuted:(NSUInteger)numCasesExecuted
        numCasesFailed:(NSUInteger)numCasesFailed;
 
+- (void)logTestAbort:(NSString *)test;
+
 - (void)logTestingFinish;
 
 @end

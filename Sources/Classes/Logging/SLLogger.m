@@ -45,6 +45,10 @@
     [self logMessage:@"Test \"%@\" finished: executed %u tests, with %u failures.", test, numCasesExecuted, numCasesFailed];
 }
 
+- (void)logTestAbort:(NSString *)test {
+    [self logMessage:@"Test \"%@\" terminated abnormally.", test];
+}
+
 - (void)logTestingFinish {
     [self logMessage:@"Testing finished."];
 }

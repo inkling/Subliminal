@@ -11,6 +11,11 @@
 #import "SLTestController+AppContext.h"
 
 
+extern NSString *const SLTestAssertionFailedException;
+extern NSString *const SLTestExceptionFilenameKey;
+extern NSString *const SLTestExceptionLineNumberKey;
+
+
 @class SLLogger;
 
 @interface SLTest : NSObject
@@ -30,8 +35,70 @@
 
 @interface SLTest (SLTestCase)
 
-- (void)setUpTestWithSelector:(SEL)testSelector;
-- (void)tearDownTestWithSelector:(SEL)testSelector;
+/**
+ Called before any test cases are run.
+ 
+ In this method, tests should establish any state shared by all test cases, 
+ including navigating to the part of the app being exercised by the test cases.
+ 
+ In this method, tests can (and should) use SLTest assertions and SLElement "wait until..."
+ methods to ensure that set-up was successful.
+ 
+ @warning If set-up fails, this test will be aborted and its cases skipped.
+ 
+ @sa tearDown
+ */
+- (void)setUp;
+
+/**
+ Called after all test cases are run.
+
+ In this method, tests should clean up any state shared by all test cases, 
+ such as that which was established in setUp.
+
+ In this method, tests can (and should) use SLTest assertions and SLElement "wait until..."
+ methods to ensure that tear-down was successful.
+ 
+ @warning If tear-down fails, the test will be logged as having aborted rather than finished, 
+ but its test cases will have already executed, so their logs will be preserved.
+
+ @sa setUp
+ */
+- (void)tearDown;
+
+/**
+ Called before each test case is run.
+ 
+ In this method, tests should establish any state particular to the specified test case.
+ 
+ In this method, tests can (and should) use SLTest assertions and SLElement "wait until..."
+ methods to ensure that set-up was successful.
+ 
+ @warning If set-up fails, this test case will be logged as having failed.
+
+ @param testSelector The selector identifying the test case about to be run.
+
+ @sa tearDownTestCaseWithSelector:
+ */
+- (void)setUpTestCaseWithSelector:(SEL)testSelector;
+
+/**
+ Called after each test case is run.
+ 
+ In this method, tests should clean up state particular to the specified test case,
+ such as that which was established in setUpTestCaseWithSelector:.
+
+ In this method, tests can (and should) use SLTest assertions and SLElement "wait until..."
+ methods to ensure that tear-down was successful.
+
+ @warning If tear-down fails, this test case will be logged as having failed even 
+ if the test case itself succeeded.
+ 
+ @param testSelector The selector identifying the test case that was run.
+
+ @sa setUpTestCaseWithSelector:
+ */
+- (void)tearDownTestCaseWithSelector:(SEL)testSelector;
 
 
 #pragma mark - SLElement Use

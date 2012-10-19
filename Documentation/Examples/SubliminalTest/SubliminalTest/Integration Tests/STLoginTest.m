@@ -23,7 +23,7 @@
 
 #pragma mark - Setup and Teardown
 
-- (void)setUpTestWithSelector:(SEL)testSelector {
+- (void)setUpTestCaseWithSelector:(SEL)testSelector {
     // set up elements
     _usernameField = [SLTextField elementWithAccessibilityLabel:@"username field"];
     _passwordField = [SLTextField elementWithAccessibilityLabel:@"password field" isSecure:YES];
@@ -50,7 +50,7 @@
     }] loginWithUsername:OCMOCK_ANY password:OCMOCK_ANY completionBlock:OCMOCK_ANY];
 }
 
-- (void)tearDownTestWithSelector:(SEL)testSelector {
+- (void)tearDownTestCaseWithSelector:(SEL)testSelector {
     if (testSelector == @selector(testLogInUnsuccessfullyWithNetworkError)) {
         SLAlert *failureAlert = [SLAlert elementWithAccessibilityLabel:@"Network Error"];
         [UIAElement(failureAlert) dismiss];

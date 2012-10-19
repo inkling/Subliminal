@@ -17,6 +17,15 @@
 @end
 
 
+@implementation SLUIALogger (SLTestController)
+
+- (void)logTestAbort:(NSString *)test {
+    [self.terminal send:@"UIALogger.logIssue('Test \"%@\" terminated abnormally.');", test];
+}
+
+@end
+
+
 @implementation SLUIALogger (SLTest)
 
 - (void)logTest:(NSString *)test caseStart:(NSString *)testCase {

@@ -67,12 +67,30 @@ static SLTestController *__sharedController = nil;
             NSString *testName = NSStringFromClass(testClass);
             [_logger logTestStart:testName];
             
-            NSUInteger numCasesExecuted = 0;
-            NSUInteger numCasesFailed = [test run:&numCasesExecuted];
-            
-            [_logger logTestFinish:testName
-              withNumCasesExecuted:numCasesExecuted
-                    numCasesFailed:numCasesFailed];
+            @try {
+                NSUInteger numCasesExecuted = 0;
+                NSUInteger numCasesFailed = [test run:&numCasesExecuted];
+
+                [_logger logTestFinish:testName
+                  withNumCasesExecuted:numCasesExecuted
+                        numCasesFailed:numCasesFailed];
+            }
+            @catch (NSException *e) {
+                // attempt to recover information about the site of the exception
+                NSString *fileName = [[e userInfo] objectForKey:SLTestExceptionFilenameKey];
+                int lineNumber = [[[e userInfo] objectForKey:SLTestExceptionLineNumberKey] intValue];
+
+                // all exceptions caught at this level should be considered unexpected,
+                // and logged as such (contrast SLTest exception logging)
+                if (fileName) {
+                    [self.logger logException:@"%@:%d: Exception occurred: **%@** for reason: %@",
+                                             fileName, lineNumber, [e name], [e reason]];
+                } else {
+                    [self.logger logException:@"Exception occurred: **%@** for reason: %@",
+                                             [e name], [e reason]];
+                }
+                [_logger logTestAbort:testName];
+            }
         }
         
        [self _finishTesting];

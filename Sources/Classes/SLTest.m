@@ -15,10 +15,10 @@
 #import <objc/message.h>
 
 
-static NSString *const SLTestCaseAssertionFailedException = @"SLTestCaseAssertionFailedException";
+NSString *const SLTestAssertionFailedException = @"SLTestCaseAssertionFailedException";
 
-static NSString *const SLTestExceptionFilenameKey = @"SLExceptionFilenameKey";
-static NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
+NSString *const SLTestExceptionFilenameKey = @"SLExceptionFilenameKey";
+NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
 
 
 @implementation SLTest {
@@ -67,7 +67,19 @@ static NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey
     return self;
 }
 
-- (void)setUpTestWithSelector:(SEL)testSelector {
+- (void)setUp {
+    // nothing to do here
+}
+
+- (void)tearDown {
+    // nothing to do here
+}
+
+- (void)setUpTestCaseWithSelector:(SEL)testSelector {
+    // nothing to do here
+}
+
+- (void)tearDownTestCaseWithSelector:(SEL)testSelector {
     // nothing to do here
 }
 
@@ -87,7 +99,22 @@ static NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey
             [selectorStrings addObject:selectorString];
         }
     }
-    
+
+    @try {
+        [self setUp];
+    }
+    @catch (NSException *e) {
+        // if the exception is due to UIAElement access,
+        // attach our cached location information to the exception
+        if ([[e name] hasPrefix:SLElementExceptionPrefix]) {
+            e = [e exceptionAnnotatedWithLineNumber:_lastUIAMessageSendLineNumber
+                                             inFile:(char *)[_lastUIAMessageSendFilename UTF8String]];
+            // not necessary to clear the cache because we're aborting
+        }
+        // rethrow, for logging by test controller
+        @throw e;
+    }
+
     NSString *test = NSStringFromClass([self class]);
     NSUInteger numberOfCasesExecuted = 0, numberOfCasesFailed = 0;
     for (NSString *testSelectorString in selectorStrings) {
@@ -96,10 +123,12 @@ static NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey
 
         BOOL caseFailed = NO;
         @try {            
-            [self setUpTestWithSelector:testSelector];
+            [self setUpTestCaseWithSelector:testSelector];
             
             // We use objc_msgSend so that Clang won't complain about performSelector leaks
-            objc_msgSend(self, testSelector);            
+            objc_msgSend(self, testSelector);
+
+            [self tearDownTestCaseWithSelector:testSelector];
         }
         @catch (NSException *e) {
             // attempt to recover information about the site of the exception
@@ -117,7 +146,7 @@ static NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey
             }
             
             // log the exceptions differently according to whether they were "expected" (i.e. assertions) or not
-            if ([[e name] isEqualToString:SLTestCaseAssertionFailedException]) {
+            if ([[e name] isEqualToString:SLTestAssertionFailedException]) {
                 [self.logger logException:@"%@:%d: %@",
                                             fileName, lineNumber, [e reason]];
                 [self.logger logTest:test caseFail:testSelectorString];
@@ -139,19 +168,28 @@ static NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey
             if (!caseFailed) {
                 [self.logger logTest:test casePass:testSelectorString];
             }
-            
-            [self tearDownTestWithSelector:testSelector];
-            
+                        
             numberOfCasesExecuted++;
         }
     }
-    
+
+    @try {
+        [self tearDown];
+    }
+    @catch (NSException *e) {
+        // if the exception is due to UIAElement access,
+        // attach our cached location information to the exception
+        if ([[e name] hasPrefix:SLElementExceptionPrefix]) {
+            e = [e exceptionAnnotatedWithLineNumber:_lastUIAMessageSendLineNumber
+                                             inFile:(char *)[_lastUIAMessageSendFilename UTF8String]];
+            // not necessary to clear the cache because we're aborting
+        }
+        // rethrow, for logging by test controller
+        @throw e;
+    }
+
     if (numCasesExecuted) *numCasesExecuted = numberOfCasesExecuted;
     return numberOfCasesFailed;
-}
-
-- (void)tearDownTestWithSelector:(SEL)testSelector {
-    // nothing to do here
 }
 
 - (void)failWithException:(NSException *)exception {
@@ -169,7 +207,7 @@ static NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey
 @implementation NSException (SLTestException)
 
 + (NSException *)testFailureInFile:(char *)fileName atLine:(int)lineNumber reason:(NSString *)failureReason, ... {
-    NSException *exception = [NSException exceptionWithName:SLTestCaseAssertionFailedException
+    NSException *exception = [NSException exceptionWithName:SLTestAssertionFailedException
                                                      reason:SLStringWithFormatAfter(failureReason)
                                                    userInfo:nil];
     return [exception exceptionAnnotatedWithLineNumber:lineNumber inFile:fileName];
