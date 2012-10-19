@@ -60,8 +60,24 @@ static SLTestController *__sharedController = nil;
         NSAssert(_logger, @"SLTestController cannot run tests without a logger.");
         
         [self _beginTesting];
+
+        // search for startup test
+        __block NSUInteger startupTestIndex = NSNotFound;
+        [tests enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            if ([obj isStartUpTest]) {
+                startupTestIndex = idx;
+                *stop = YES;
+            }
+        }];
+        // ensure we'll execute startup test first if present
+        NSMutableArray *sortedTests = [NSMutableArray arrayWithArray:tests];
+        if (startupTestIndex != NSNotFound) {
+            id startupTestClass = [sortedTests objectAtIndex:startupTestIndex];
+            [sortedTests removeObjectAtIndex:startupTestIndex];
+            [sortedTests insertObject:startupTestClass atIndex:0];
+        }
         
-        for (Class testClass in tests) {
+        for (Class testClass in sortedTests) {
             SLTest *test = (SLTest *)[[testClass alloc] initWithLogger:_logger testController:self];
             
             NSString *testName = NSStringFromClass(testClass);
@@ -90,6 +106,11 @@ static SLTestController *__sharedController = nil;
                                              [e name], [e reason]];
                 }
                 [_logger logTestAbort:testName];
+
+                if ([[test class] isStartUpTest]) {
+                    // we abort testing, on the assumption that the app failed to start up
+                    break;
+                }
             }
         }
         
