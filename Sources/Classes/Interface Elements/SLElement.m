@@ -184,6 +184,18 @@ static const void *const kTerminalKey = &kTerminalKey;
 
 @end
 
+
+#pragma mark - SLButton
+
+@implementation SLButton
+
++ (NSString *)uiaClass {
+    return @"buttons()";
+}
+
+@end
+
+
 #pragma mark - SLTextField
 
 @interface SLSecureTextField : SLTextField
