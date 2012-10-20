@@ -44,9 +44,14 @@
     [[[_loginManagerMock stub] andDo:^(NSInvocation *invocation) {
         void(^completionBlock)(BOOL, NSError*) = nil;
         [invocation getArgument:&completionBlock atIndex:4];
-        
         NSAssert(completionBlock, @"The login view controller didn't register a callback for login.");
-        completionBlock(loginShouldSucceed, loginError);
+
+        // simulate network delay
+        double delayInSeconds = 2.0;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            completionBlock(loginShouldSucceed, loginError);
+        });
     }] loginWithUsername:OCMOCK_ANY password:OCMOCK_ANY completionBlock:OCMOCK_ANY];
 }
 
