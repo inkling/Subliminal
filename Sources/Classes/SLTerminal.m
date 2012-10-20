@@ -15,6 +15,7 @@ static NSString *const SLTerminalInvalidMessageException = @"SLTerminalInvalidMe
 
 @implementation SLTerminal {
     UIButton *_outputButton;
+    NSUInteger _commandIndex;
         
     dispatch_semaphore_t _dispatchSemaphore;
     dispatch_semaphore_t _responseSemaphore;
@@ -160,6 +161,7 @@ static SLTerminal *__sharedTerminal = nil;
     NSString *formattedMessage = [[NSString alloc] initWithFormat:message arguments:args];
     dispatch_sync(dispatch_get_main_queue(), ^{
         [_outputButton setTitle:formattedMessage forState:UIControlStateNormal];
+        _outputButton.accessibilityValue = [NSString stringWithFormat:@"%u", _commandIndex];
         _outputButton.hidden = NO;
     });
     
@@ -182,6 +184,7 @@ static SLTerminal *__sharedTerminal = nil;
 - (void)messageReceived:(id)sender {
     _outputButton.hidden = YES;
     [_outputButton setTitle:nil forState:UIControlStateNormal];
+    _commandIndex++;
 
     NSMutableDictionary *responseDictionary = [NSMutableDictionary dictionaryWithContentsOfFile:_responsePlistPath];
     NSString *response = [responseDictionary objectForKey:SLTerminalInputPreferencesKey];

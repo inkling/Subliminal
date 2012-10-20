@@ -28,9 +28,11 @@ UIATarget.onAlert = function(alert) {
 	return true;
 }
 
-
+var commandIndex = 0;
 while(!_testingHasFinished) {
-	if(!wait(function(){ return _inputButton().isVisible(); }, 5.0)) {
+	if(!wait(function(){ 
+			 return (_inputButton().isVisible() && (parseInt(_inputButton().value()) == commandIndex)); 
+	   }, 5.0)) {
 		UIALogger.logMessage("Target application appears to have died. Aborting testing.");
 		_testingHasFinished = true; continue;
 	};
@@ -54,4 +56,5 @@ while(!_testingHasFinished) {
 		}
 	}
 	_inputButton().tap();
+	commandIndex++;	
 }
