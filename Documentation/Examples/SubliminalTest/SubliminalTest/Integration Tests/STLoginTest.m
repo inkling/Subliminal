@@ -26,7 +26,7 @@
 - (void)setUpTestCaseWithSelector:(SEL)testSelector {
     // set up elements
     _usernameField = [SLTextField elementWithAccessibilityLabel:@"username field"];
-    _passwordField = [SLTextField elementWithAccessibilityLabel:@"password field" isSecure:YES];
+    _passwordField = [SLTextField elementWithAccessibilityLabel:@"password field"];
     _submitButton = [SLElement elementWithAccessibilityLabel:@"Submit"];
     _loginSpinner = [SLElement elementWithAccessibilityLabel:@"Logging in..."];
 

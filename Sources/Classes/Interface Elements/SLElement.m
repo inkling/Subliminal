@@ -36,8 +36,6 @@ static const NSTimeInterval kDefaultRetryDelay = 0.25;
 
 @interface SLElement (Subclassing)
 
-// ???: Is this really necessary? Could use elements() for everything
-+ (NSString *)uiaClass;
 - (NSString *)uiaSelf;
 
 @end
@@ -76,10 +74,6 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 + (id)elementWithAccessibilityLabel:(NSString *)label {
     return [[self alloc] initWithAccessibilityLabel:label];
-}
-
-+ (NSString *)uiaClass {
-    return @"elements()";
 }
 
 - (id)initWithAccessibilityLabel:(NSString *)label {
@@ -134,8 +128,8 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (NSString *)uiaSelf {
-    return [NSString stringWithFormat:@"%@.%@[\"%@\"]",
-            [self uiaPrefix], [[self class] uiaClass], _label];
+    return [NSString stringWithFormat:@"%@.elements()[\"%@\"]",
+            [self uiaPrefix], _label];
 }
 
 - (BOOL)sendMessageReturningBool:(NSString *)action, ... {
@@ -243,29 +237,12 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 #pragma mark - SLButton
 
 @implementation SLButton
-
-+ (NSString *)uiaClass {
-    return @"buttons()";
-}
-
 @end
 
 
 #pragma mark - SLTextField
 
-@interface SLSecureTextField : SLTextField
-@end
-
 @implementation SLTextField
-
-+ (id)elementWithAccessibilityLabel:(NSString *)label isSecure:(BOOL)isSecureTextField {
-    Class elementClass = (isSecureTextField ? [SLSecureTextField class] : self);
-    return [elementClass elementWithAccessibilityLabel:label];
-}
-
-+ (NSString *)uiaClass {
-    return @"textFields()";
-}
 
 - (NSString *)text {
     return [self value];
@@ -273,14 +250,6 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 - (void)setText:(NSString *)text {
     (void)[self sendMessage:@"setValue(\"%@\")", text];
-}
-
-@end
-
-@implementation SLSecureTextField
-
-+ (NSString *)uiaClass {
-    return @"secureTextFields()";
 }
 
 @end

@@ -53,5 +53,4 @@ extern NSString *const SLElementUIAMessageSendException;
 
 @interface SLTextField : SLElement
 @property (nonatomic, strong) NSString *text;
-+ (id)elementWithAccessibilityLabel:(NSString *)label isSecure:(BOOL)isSecureTextField;
 @end
