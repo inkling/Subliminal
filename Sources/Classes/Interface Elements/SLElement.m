@@ -7,6 +7,7 @@
 //
 
 #import "SLElement.h"
+#import "UIAccessibilityElement+SLElement.h"
 
 #import "SLTerminal.h"
 #import "SLUtilities.h"
@@ -23,8 +24,6 @@ NSString *const SLElementUIAMessageSendException = @"SLElementUIAMessageSendExce
 
 @interface SLElement ()
 
-@property (nonatomic, strong, readonly) NSString *label; 
-
 + (void)setTerminal:(SLTerminal *)terminal;
 
 - (id)initWithAccessibilityLabel:(NSString *)label;
@@ -35,6 +34,7 @@ NSString *const SLElementUIAMessageSendException = @"SLElementUIAMessageSendExce
 
 @interface SLElement (Subclassing)
 
+// ???: Is this really necessary? Could use elements() for everything
 + (NSString *)uiaClass;
 - (NSString *)uiaSelf;
 
@@ -61,10 +61,6 @@ static const void *const kTerminalKey = &kTerminalKey;
     return [[self alloc] initWithAccessibilityLabel:label];
 }
 
-+ (NSString *)uiaPrefix {
-    return @"UIATarget.localTarget().frontMostApp().mainWindow()";
-}
-
 + (NSString *)uiaClass {
     return @"elements()";
 }
@@ -83,9 +79,33 @@ static const void *const kTerminalKey = &kTerminalKey;
 
 #pragma mark Sending Actions
 
+- (NSString *)uiaPrefix {
+    __block NSString *uiaPrefix = @"";
+    @autoreleasepool {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            // TODO: If the application's going to search all the windows,
+            // we should not here assume the element's going to be found in the keyWindow.
+            UIWindow *mainWindow = [[UIApplication sharedApplication] keyWindow];
+
+            // TODO: What if there is no matching element?
+            UIAccessibilityElement *matchingElement = [[UIApplication sharedApplication] accessibilityElementMatchingSLElement:self];
+
+            // now that we've found the accessibility element, follow its containers up to the window
+            UIAccessibilityElement *containerElement = matchingElement.accessibilityContainer;
+            while (containerElement && (containerElement != (UIAccessibilityElement *)mainWindow)) {
+                NSString *previousAccessor = [NSString stringWithFormat:@".elements()[\"%@\"]", [containerElement slAccessibilityName]];
+                uiaPrefix = [previousAccessor stringByAppendingString:uiaPrefix];
+                containerElement = containerElement.accessibilityContainer;
+            }
+        });
+    }
+    uiaPrefix = [@"UIATarget.localTarget().frontMostApp().mainWindow()" stringByAppendingString:uiaPrefix];
+    return uiaPrefix;
+}
+
 - (NSString *)uiaSelf {
     return [NSString stringWithFormat:@"%@.%@[\"%@\"]",
-            [[self class] uiaPrefix], [[self class] uiaClass], _label];
+            [self uiaPrefix], [[self class] uiaClass], _label];
 }
 
 - (BOOL)sendMessageReturningBool:(NSString *)action, ... {

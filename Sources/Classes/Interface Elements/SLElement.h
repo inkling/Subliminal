@@ -20,6 +20,8 @@ extern NSString *const SLElementUIAMessageSendException;
 
 @interface SLElement : NSObject
 
+@property (nonatomic, strong, readonly) NSString *label;
+
 + (void)setTerminal:(SLTerminal *)terminal;
 
 + (id)elementWithAccessibilityLabel:(NSString *)label;
