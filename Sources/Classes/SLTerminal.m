@@ -150,7 +150,11 @@ static SLTerminal *__sharedTerminal = nil;
 
         // and finish
         _hasStarted = YES;
-        if (completionBlock) completionBlock(self);
+        if (completionBlock) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionBlock(self);
+            });
+        }
     });
 }
 
