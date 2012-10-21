@@ -174,6 +174,9 @@ extern NSString *const SLTestExceptionLineNumberKey;
     } \
 })
 
+// This macro should be used to wait on conditions that can be evaluated
+// entirely within the application. To wait on conditions that involve
+// user interface elements, use the SLElement "wait until..." methods.
 #define SLWait(expr, timeout, ...) ({\
     /*  increment the heartbeat timeout while we wait
         so that UIAutomation doesn't think we've died */ \
