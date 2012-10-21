@@ -24,6 +24,7 @@ extern NSString *const SLElementUIAMessageSendException;
 
 // Defaults - to be set by the test controller
 + (void)setTerminal:(SLTerminal *)terminal;
++ (void)setDefaultTimeout:(NSTimeInterval)defaultTimeout;
 //
 
 + (id)elementWithAccessibilityLabel:(NSString *)label;

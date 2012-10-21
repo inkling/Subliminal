@@ -19,6 +19,8 @@ NSString *const SLElementExceptionPrefix = @"SLElement";
 NSString *const SLElementAccessException = @"SLElementAccessException";
 NSString *const SLElementUIAMessageSendException = @"SLElementUIAMessageSendException";
 
+static const NSTimeInterval kDefaultRetryDelay = 0.25;
+
 
 #pragma mark SLElement
 
@@ -57,6 +59,19 @@ static const void *const kTerminalKey = &kTerminalKey;
     return objc_getAssociatedObject([SLElement class], kTerminalKey);
 }
 
+static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
++ (void)setDefaultTimeout:(NSTimeInterval)defaultTimeout {
+    if (defaultTimeout != [self defaultTimeout]) {
+        // note that we explicitly associate with SLElement
+        // so that subclasses can reference the timeout too
+        objc_setAssociatedObject([SLElement class], kDefaultTimeoutKey, @(defaultTimeout), OBJC_ASSOCIATION_RETAIN);
+    }
+}
+
++ (NSTimeInterval)defaultTimeout {
+    return (NSTimeInterval)[objc_getAssociatedObject([SLElement class], kDefaultTimeoutKey) doubleValue];
+}
+
 + (id)elementWithAccessibilityLabel:(NSString *)label {
     return [[self alloc] initWithAccessibilityLabel:label];
 }
@@ -82,22 +97,33 @@ static const void *const kTerminalKey = &kTerminalKey;
 - (NSString *)uiaPrefix {
     __block NSString *uiaPrefix = @"";
     @autoreleasepool {
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            // TODO: If the application's going to search all the windows,
-            // we should not here assume the element's going to be found in the keyWindow.
-            UIWindow *mainWindow = [[UIApplication sharedApplication] keyWindow];
+        __block BOOL didLocateElement = NO;
+        NSDate *startDate = [NSDate date];
+        while (!didLocateElement && [[NSDate date] timeIntervalSinceDate:startDate] < [[self class] defaultTimeout]) {
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                // TODO: If the application's going to search all the windows,
+                // we should not here assume the element's going to be found in the keyWindow.
+                UIWindow *mainWindow = [[UIApplication sharedApplication] keyWindow];
 
-            // TODO: What if there is no matching element?
-            UIAccessibilityElement *matchingElement = [[UIApplication sharedApplication] accessibilityElementMatchingSLElement:self];
-
-            // now that we've found the accessibility element, follow its containers up to the window
-            UIAccessibilityElement *containerElement = matchingElement.accessibilityContainer;
-            while (containerElement && (containerElement != (UIAccessibilityElement *)mainWindow)) {
-                NSString *previousAccessor = [NSString stringWithFormat:@".elements()[\"%@\"]", [containerElement slAccessibilityName]];
-                uiaPrefix = [previousAccessor stringByAppendingString:uiaPrefix];
-                containerElement = containerElement.accessibilityContainer;
+                UIAccessibilityElement *matchingElement = [[UIApplication sharedApplication] accessibilityElementMatchingSLElement:self];
+                if (matchingElement) {
+                    didLocateElement = YES;
+                    // now that we've found the accessibility element, follow its containers up to the window
+                    UIAccessibilityElement *containerElement = matchingElement.accessibilityContainer;
+                    while (containerElement && (containerElement != (UIAccessibilityElement *)mainWindow)) {
+                        NSString *previousAccessor = [NSString stringWithFormat:@".elements()[\"%@\"]", [containerElement slAccessibilityName]];
+                        uiaPrefix = [previousAccessor stringByAppendingString:uiaPrefix];
+                        containerElement = containerElement.accessibilityContainer;
+                    }
+                }
+            });
+            if (!didLocateElement) {
+                [NSThread sleepForTimeInterval:kDefaultRetryDelay];
             }
-        });
+        }
+        if (!didLocateElement) {
+            [NSException raise:SLElementAccessException format:@"Element %@ is not valid.", self];
+        }
     }
     uiaPrefix = [@"UIATarget.localTarget().frontMostApp().mainWindow()" stringByAppendingString:uiaPrefix];
     return uiaPrefix;
@@ -148,7 +174,6 @@ static const void *const kTerminalKey = &kTerminalKey;
 }
 
 - (BOOL)waitFor:(NSTimeInterval)timeout untilCondition:(NSString *)condition, ... NS_FORMAT_FUNCTION(2, 3) {
-    static const NSTimeInterval kDefaultRetryDelay = 0.25;
     BOOL conditionDidBecomeTrue =
     [[[[self class] terminal] send:
           @"(wait(function() { return (%@); }, %g, %g) ? \"YES\" : \"NO\");",

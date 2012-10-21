@@ -56,6 +56,7 @@ static SLTestController *__sharedController = nil;
 
     // and with SLElement
     [SLElement setTerminal:_logger.terminal];
+    [SLElement setDefaultTimeout:_defaultTimeout];
     
     [_logger logTestingStart];
 }
