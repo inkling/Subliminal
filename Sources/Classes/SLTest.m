@@ -93,7 +93,6 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
     
     unsigned int methodCount;
     Method *methods = class_copyMethodList([self class], &methodCount);
-    
     NSMutableArray *selectorStrings = [NSMutableArray array];
     for (unsigned int i = 0; i < methodCount; i++) {
         SEL selector = method_getName(methods[i]);
@@ -103,6 +102,7 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
             [selectorStrings addObject:selectorString];
         }
     }
+    if (methods) free(methods);
 
     @try {
         [self setUp];
