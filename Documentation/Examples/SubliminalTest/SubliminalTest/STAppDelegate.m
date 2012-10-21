@@ -24,12 +24,11 @@
     
 
 #if INTEGRATION_TESTING
-    SLTerminal *terminal = [SLTerminal sharedTerminal];
-    [terminal start];
-
-    SLTestController *testController = [SLTestController sharedTestController];
-    testController.logger = [[SLUIALogger alloc] initWithTerminal:terminal];
-    [testController runTests:[SLTest allTests]];
+    [[SLTerminal sharedTerminal] startWithCompletionBlock:^(SLTerminal *terminal){
+        SLTestController *testController = [SLTestController sharedTestController];
+        testController.logger = [[SLUIALogger alloc] initWithTerminal:terminal];
+        [testController runTests:[SLTest allTests]];
+    }];
 #endif
     
     return YES;

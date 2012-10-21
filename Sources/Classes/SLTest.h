@@ -157,6 +157,9 @@ extern NSString *const SLTestExceptionLineNumberKey;
 })
 
 #define SLWait(expr, timeout, ...) ({\
+    /*  increment the heartbeat timeout while we wait
+        so that UIAutomation doesn't think we've died */ \
+    self.logger.terminal.heartbeatTimeout += timeout; \
     NSTimeInterval _retryDelay = 0.25; \
     \
     NSDate *_startDate = [NSDate date]; \
@@ -165,6 +168,7 @@ extern NSString *const SLTestExceptionLineNumberKey;
             ([[NSDate date] timeIntervalSinceDate:_startDate] < timeout)) { \
         [NSThread sleepForTimeInterval:_retryDelay]; \
     } \
+    self.logger.terminal.heartbeatTimeout -= timeout; \
     if (!_exprTrue) { \
         [self failWithException:[NSException testFailureInFile:__FILE__ atLine:__LINE__ \
                                                          reason:@"\"%@\" did not become true within %g seconds. %@", \

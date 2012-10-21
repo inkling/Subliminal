@@ -13,6 +13,9 @@
 static NSString *const SLTerminalInvalidMessageException = @"SLTerminalInvalidMessageException";
 
 
+static const NSTimeInterval kDefaultHeartbeatTimeout = 5.0;
+
+
 @implementation SLTerminal {
     UIButton *_outputButton;
     NSUInteger _commandIndex;
@@ -108,11 +111,11 @@ static SLTerminal *__sharedTerminal = nil;
     [newKeyWindow addSubview:_outputButton];
 }
 
-- (void)start {
+- (void)startWithCompletionBlock:(void (^)(SLTerminal *))completionBlock {
     NSAssert(!_hasStarted, @"Terminal has already started.");
     
     // add output button to window
-    
+
     UIWindow *window = [[UIApplication sharedApplication] keyWindow];
     NSAssert(window, @"A window must be made key and visible before starting the terminal.");
     
@@ -139,8 +142,38 @@ static SLTerminal *__sharedTerminal = nil;
         [responseDictionary removeObjectForKey:SLTerminalInputPreferencesKey];
         [responseDictionary writeToFile:_responsePlistPath atomically:YES];
     }
+
     
-    _hasStarted = YES;
+    // register defaults with UIAutomation
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        [self setJSHeartbeatTimeout:self.heartbeatTimeout];
+
+        // and finish
+        _hasStarted = YES;
+        if (completionBlock) completionBlock(self);
+    });
+}
+
+- (void)setJSHeartbeatTimeout:(NSTimeInterval)heartbeatTimeout {
+    if ([NSThread isMainThread]) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            [self send:@"_heartbeatMonitorTimeout += %g;", heartbeatTimeout];
+        });
+    } else {
+        [self send:@"_heartbeatMonitorTimeout += %g;", heartbeatTimeout];
+    }
+}
+
+- (void)setHeartbeatTimeout:(NSTimeInterval)heartbeatTimeout {
+    if (heartbeatTimeout != _heartbeatTimeout) {
+        _heartbeatTimeout = heartbeatTimeout;
+
+        // if we've already started, update the timeout;
+        // otherwise we'll do it when we start
+        if ([self hasStarted]) {
+            [self setJSHeartbeatTimeout:heartbeatTimeout];
+        }
+    }
 }
 
 - (NSString *)send:(NSString *)message, ... {

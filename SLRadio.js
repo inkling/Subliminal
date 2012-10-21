@@ -1,4 +1,5 @@
 _testingHasFinished = false;
+_heartbeatMonitorTimeout = 5.0;
 
 
 var _target = UIATarget.localTarget();
@@ -32,7 +33,7 @@ var commandIndex = 0;
 while(!_testingHasFinished) {
 	if(!wait(function(){ 
 			 return (_inputButton().isVisible() && (parseInt(_inputButton().value()) == commandIndex)); 
-	   }, 5.0)) {
+	   }, _heartbeatMonitorTimeout)) {
 		UIALogger.logMessage("Target application appears to have died. Aborting testing.");
 		_testingHasFinished = true; continue;
 	};

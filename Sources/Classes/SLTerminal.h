@@ -20,9 +20,11 @@ static NSString *const SLExceptionOccurredResponsePrefix = @"SLTerminalException
 
 @property (nonatomic, readonly) BOOL hasStarted;
 
+@property (nonatomic) NSTimeInterval heartbeatTimeout;
+
 + (id)sharedTerminal;
 
-- (void)start;
+- (void)startWithCompletionBlock:(void (^)(SLTerminal *))completionBlock;
 
 - (NSString *)send:(NSString *)message, ... NS_FORMAT_FUNCTION(1,2);
 - (NSString *)send:(NSString *)message args:(va_list)args;
