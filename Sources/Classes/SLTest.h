@@ -159,11 +159,11 @@ extern NSString *const SLTestExceptionLineNumberKey;
 #define SLWait(expr, timeout, ...) ({\
     NSTimeInterval _retryDelay = 0.25; \
     \
-    NSDate *_startDate = [NSDate currentDate]; \
+    NSDate *_startDate = [NSDate date]; \
     BOOL _exprTrue = NO; \
     while (!(_exprTrue = (expr)) && \
-            ([[NSDate currentDate] timeIntervalSinceDate:_startDate] < timeout)) { \
-        [[NSThread currentThread] sleepForTimeInterval:_retryDelay]; \
+            ([[NSDate date] timeIntervalSinceDate:_startDate] < timeout)) { \
+        [NSThread sleepForTimeInterval:_retryDelay]; \
     } \
     if (!_exprTrue) { \
         [self failWithException:[NSException testFailureInFile:__FILE__ atLine:__LINE__ \
