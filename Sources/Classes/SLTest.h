@@ -124,6 +124,24 @@ extern NSString *const SLTestExceptionLineNumberKey;
 - (void)tearDownTestCaseWithSelector:(SEL)testSelector;
 
 
+#pragma mark - Utilities
+
+/**
+ Delays test execution for the specified time interval.
+ 
+ You can use this method to provide enough time for lengthy operations to complete.
+ 
+ If you have a specific condition on which you're waiting, it is more appropriate 
+ to use either the SLWait macro or the SLElement "waitUntil..." methods.
+
+ @warning You should use this method instead of +[NSThread sleepForTimeInterval:] 
+ because this method ensures that UIAutomation does not time out while testing pauses.
+ 
+ @param interval The time interval for which to wait.
+ */
+- (void)wait:(NSTimeInterval)interval;
+
+
 #pragma mark - SLElement Use
 
 - (void)recordLastUIAMessageSendInFile:(char *)fileName atLine:(int)lineNumber;

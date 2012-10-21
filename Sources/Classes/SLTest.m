@@ -196,6 +196,14 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
     return numberOfCasesFailed;
 }
 
+- (void)wait:(NSTimeInterval)interval {
+    // increment the heartbeat timeout while we wait
+    // so that SLRadio.js doesn't think we've died
+    self.logger.terminal.heartbeatTimeout += interval;
+    [NSThread sleepForTimeInterval:interval];
+    self.logger.terminal.heartbeatTimeout -= interval;
+}
+
 - (void)failWithException:(NSException *)exception {
     [exception raise];
 }
