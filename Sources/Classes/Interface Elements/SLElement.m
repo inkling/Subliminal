@@ -65,6 +65,8 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         // note that we explicitly associate with SLElement
         // so that subclasses can reference the timeout too
         objc_setAssociatedObject([SLElement class], kDefaultTimeoutKey, @(defaultTimeout), OBJC_ASSOCIATION_RETAIN);
+
+        [[self terminal] send:@"UIATarget.localTarget().setTimeout(%g);", defaultTimeout];
     }
 }
 
@@ -99,6 +101,8 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     @autoreleasepool {
         __block BOOL didLocateElement = NO;
         NSDate *startDate = [NSDate date];
+        // note that we do _not_ increment the heartbeat timeout here
+        // these searches should conclude within the default timeout
         while (!didLocateElement && [[NSDate date] timeIntervalSinceDate:startDate] < [[self class] defaultTimeout]) {
             dispatch_sync(dispatch_get_main_queue(), ^{
                 // TODO: If the application's going to search all the windows,

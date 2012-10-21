@@ -50,11 +50,9 @@ static SLTestController *__sharedController = nil;
 }
 
 - (void)_beginTesting {
-    // register defaults with UIAutomation
-    [_logger logMessage:@"SLTestController is registering defaults with UIAutomation... "];
-    [_logger.terminal send:@"UIATarget.localTarget().setTimeout(%g);", _defaultTimeout];
+    // register defaults
+    [_logger logMessage:@"Tests are starting up... "];
 
-    // and with SLElement
     [SLElement setTerminal:_logger.terminal];
     [SLElement setDefaultTimeout:_defaultTimeout];
     
