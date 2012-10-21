@@ -22,7 +22,9 @@ extern NSString *const SLElementUIAMessageSendException;
 
 @property (nonatomic, strong, readonly) NSString *label;
 
+// Defaults - to be set by the test controller
 + (void)setTerminal:(SLTerminal *)terminal;
+//
 
 + (id)elementWithAccessibilityLabel:(NSString *)label;
 

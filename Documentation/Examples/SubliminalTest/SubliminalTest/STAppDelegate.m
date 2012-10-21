@@ -27,8 +27,6 @@
     SLTerminal *terminal = [SLTerminal sharedTerminal];
     [terminal start];
 
-    [SLElement setTerminal:terminal];
-
     SLTestController *testController = [SLTestController sharedTestController];
     testController.logger = [[SLUIALogger alloc] initWithTerminal:terminal];
     [testController runTests:[SLTest allTests]];

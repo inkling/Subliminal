@@ -10,6 +10,8 @@
 
 #import "SLLogger.h"
 #import "SLTest.h"
+#import "SLTerminal.h"
+#import "SLElement.h"
 
 #import <objc/runtime.h>
 
@@ -51,6 +53,9 @@ static SLTestController *__sharedController = nil;
     // register defaults with UIAutomation
     [_logger logMessage:@"SLTestController is registering defaults with UIAutomation... "];
     [_logger.terminal send:@"UIATarget.localTarget().setTimeout(%g);", _defaultTimeout];
+
+    // and with SLElement
+    [SLElement setTerminal:_logger.terminal];
     
     [_logger logTestingStart];
 }
