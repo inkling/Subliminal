@@ -35,8 +35,8 @@
     self.passwordField.accessibilityLabel = @"password field";
     
     // ???: Make this dynamic? Post accessibility announcement? Check for explicit failure/success?
-    self.loginSpinner.accessibilityLabel = @"Logging in...";
-    
+    self.loginSpinner.accessibilityIdentifier = @"Logging in...";
+
     [self.submitButton setTitle:@"" forState:UIControlStateDisabled];
 
 #if INTEGRATION_TESTING
