@@ -26,7 +26,12 @@ static NSString *const SLExceptionOccurredResponsePrefix = @"SLTerminalException
 
 - (void)startWithCompletionBlock:(void (^)(SLTerminal *))completionBlock;
 
+// these messages should be valid JS statements
 - (NSString *)send:(NSString *)message, ... NS_FORMAT_FUNCTION(1,2);
 - (NSString *)send:(NSString *)message args:(va_list)args;
+
+// this message should be a valid JS expression, but _not_ a statement
+// (i.e. not semicolon-terminated)
+- (BOOL)sendAndReturnBool:(NSString *)message, ... NS_FORMAT_FUNCTION(1, 2);
 
 @end

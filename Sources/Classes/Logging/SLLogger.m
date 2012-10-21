@@ -16,6 +16,7 @@
 - (id)initWithTerminal:(SLTerminal *)terminal {
     self = [super init];
     if (self) {
+        NSAssert([terminal hasStarted], @"The terminal has not yet started.");
         _terminal = terminal;
     }
     return self;

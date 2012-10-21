@@ -176,6 +176,9 @@ static SLTerminal *__sharedTerminal = nil;
     }
 }
 
+
+#pragma mark - Communication
+
 - (NSString *)send:(NSString *)message, ... {
     va_list args;
     va_start(args, message);
@@ -211,6 +214,11 @@ static SLTerminal *__sharedTerminal = nil;
     if (evaluationException) [evaluationException raise];
         
     return response;
+}
+
+- (BOOL)sendAndReturnBool:(NSString *)message, ... {
+    NSString *formattedMessage = SLStringWithFormatAfter(message);
+    return [[self send:@"((%@) ? \"YES\" : \"NO\");", formattedMessage] boolValue];
 }
 
 // note that this callback comes in on the main thread

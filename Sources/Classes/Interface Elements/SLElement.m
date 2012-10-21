@@ -145,7 +145,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     NSString *formattedAction = SLStringWithFormatAfter(action);
     BOOL response = NO;
     @try {
-        response = [[terminal send:@"(%@.%@ ? \"YES\" : \"NO\")", [self uiaSelf], formattedAction] boolValue];
+        response = [terminal sendAndReturnBool:@"%@.%@", [self uiaSelf], formattedAction];
     }
     @catch (NSException *exception) {
         @throw [NSException exceptionWithName:SLElementUIAMessageSendException reason:[exception reason] userInfo:nil];
