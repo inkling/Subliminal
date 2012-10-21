@@ -103,6 +103,8 @@ static SLTerminal *__sharedTerminal = nil;
 // for completeness' sake
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    dispatch_release(_dispatchSemaphore);
+    dispatch_release(_responseSemaphore);
 }
 
 - (void)keyWindowDidChange:(NSNotification *)notification {
