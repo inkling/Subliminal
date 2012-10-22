@@ -7,9 +7,18 @@
 //
 
 #import "SLTestController+AppContext.h"
-#import "SLAppProxy.h"
 
 #import <objc/runtime.h>
+#import <objc/message.h>
+
+
+@interface SLWeakRef : NSObject
+@property (nonatomic, weak) id value;
+@end
+
+@implementation SLWeakRef
+@end
+
 
 NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoesNotExistException";
 
@@ -72,13 +81,13 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
     NSAssert([target respondsToSelector:action], @"Target %@ does not respond to action: %@", target, NSStringFromSelector(action));
 
     id mapKey = [[self class] actionTargetMapKeyForAction:action];
-
-    // storing the targets as SLAppProxy's allows us to ensure:
-    // 1. that we can safely send the action across threads, below
-    // 2. that the action's return value (and values therefrom derived) can be safely used across threads
-    id targetProxy = [SLAppProxy proxyForObject:target];
     dispatch_async([self actionTargetMapQueue], ^{
-        [self actionTargetMap][mapKey] = targetProxy;
+        SLWeakRef *existingRef = [self actionTargetMap][mapKey];
+        if (existingRef.value != target) {
+            SLWeakRef *weakRef = [[SLWeakRef alloc] init];
+            weakRef.value = target;
+            [self actionTargetMap][mapKey] = weakRef;
+        }
     });
 }
 
@@ -94,8 +103,7 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
         // first pass to find the objects
         NSMutableArray *actionsForTarget = [NSMutableArray array];
         [[self actionTargetMap] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-            // must use isEqual: because the dictionary objects are proxies, not the targets themselves
-            if ([obj isEqual:target]) {
+            if (((SLWeakRef *)obj).value == target) {
                 [actionsForTarget addObject:key];
             }
         }];
@@ -104,24 +112,36 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
 }
 
 - (id)targetForAction:(SEL)action {
-    __block id targetProxy;
+    __block id target;
     id mapKey = [[self class] actionTargetMapKeyForAction:action];
     dispatch_sync([self actionTargetMapQueue], ^{
-        targetProxy = [self actionTargetMap][mapKey];
+        target = ((SLWeakRef *)[self actionTargetMap][mapKey]).value;
     });
-    return targetProxy;
+    return target;
 }
 
-- (id)sendAction:(SEL)action {
-    id targetProxy = [self targetForAction:action];
-    if (!targetProxy) {
-        [NSException raise:SLAppActionTargetDoesNotExistException format:@"No target has been registered for action %@.", NSStringFromSelector(action)];
+- (id<NSCopying>)sendAction:(SEL)action {
+    NSAssert(![NSThread isMainThread], @"-sendAction: must not be called from the main thread.");
+
+    id target = [self targetForAction:action];
+    if (!target) {
+        [NSException raise:SLAppActionTargetDoesNotExistException
+                    format:@"No target is currently registered for action %@. \
+                            (Either no target was ever registered, or a registered target has fallen out of scope.)",
+                            NSStringFromSelector(action)];
     }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-    return [targetProxy performSelector:action];
-#pragma clang diagnostic pop
+    // perform the action on the main thread, for thread safety
+    __block id<NSCopying> returnValue;
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        // use objc_msgSend so that Clang won't complain about performSelector leaks
+        returnValue = ((id<NSCopying>(*)(id, SEL))objc_msgSend)(target, action);
+
+        // return a copy, for thread safety
+        returnValue = [returnValue copyWithZone:NULL];
+    });
+
+    return returnValue;
 }
 
 @end
