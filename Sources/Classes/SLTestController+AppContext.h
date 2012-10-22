@@ -17,14 +17,15 @@ extern NSString *const SLAppActionTargetDoesNotExistException;
  This allows SLTests to access and manipulate application state 
  while executing asynchronously.
 
- Actions must take no arguments. 
- Actions can return either nothing, or id-type values conforming to NSCopying.
- (Copying return values ensures thread safety, and encourages actions to return 
- simple values like strings, numbers, etc. into the testing context, rather than
- application objects).
+ Action messages must take either no arguments, or one id-type value conforming to NSCopying.
+ Messages can return either nothing, or id-type values conforming to NSCopying.
+ (Copying arguments and return values ensures thread safety, 
+ and encourages communication between the tests and the application 
+ using simple values like strings, numbers, etc., rather than application objects).
 
- Actions will be performed on the main thread.
- Return values (if any) will be copied and the copy passed to the calling SLTest.
+ Each action is performed on the main thread.
+ The argument (if any) is copied, and the copy passed to the target.
+ The return value (if any) is copied, and the copy passed to the calling SLTest.
  
  Only one target may be registered for any given action:
  if a second target is registered for a given action,
@@ -36,8 +37,8 @@ extern NSString *const SLAppActionTargetDoesNotExistException;
 
  @param target The object to which the action message will be sent by an SLTest.
  @param action The message which will be sent to the target by an SLTest.
-               It must take no arguments. It must return either nothing, or an id-type value
-               conforming to NSCopying.
+               It must take either no arguments, or one id-type value conforming to NSCopying.
+               It must return either nothing, or an id-type value conforming to NSCopying.
  
  @sa deregisterTarget:
  */
@@ -63,20 +64,40 @@ extern NSString *const SLAppActionTargetDoesNotExistException;
 - (void)deregisterTarget:(id)target;
 
 /**
- Causes an action message to be performed by a registered target.
+ Sends a specified action message to its registered target and returns the result of the message.
 
  This method must not be called from the main thread (it is intended to be called 
  by SLTests). 
  
- The action will be performed on the main thread.
- The returned value will be copied and the copy passed to the calling SLTest.
+ The message will be performed on the main thread.
+ The returned value (if any) will be copied, and the copy passed to the calling SLTest.
 
  @param action The message to be performed.
- @return The result of action, if any; otherwise nil.
+ @return The result of the action, if any; otherwise nil.
  
  @throw SLAppActionTargetDoesNotExistException If no target is registered for action, 
  or if the target has fallen out of scope.
  */
 - (id<NSCopying>)sendAction:(SEL)action;
+
+/**
+ Sends a specified action message to its registered target with an object as the argument,
+ and returns the result of the message.
+
+ This method must not be called from the main thread (it is intended to be called
+ by SLTests).
+
+ The message will be performed on the main thread.
+ The argument will be copied, and the copy passed to the target.
+ The returned value (if any) will be copied, and the copy passed to the calling SLTest.
+
+ @param action The message to be performed.
+ @param object An object which is the sole argument of the action message.
+ @return The result of the action, if any; otherwise nil.
+
+ @throw SLAppActionTargetDoesNotExistException If no target is registered for action,
+ or if the target has fallen out of scope.
+ */
+- (id<NSCopying>)sendAction:(SEL)action withObject:(id<NSCopying>)object;
 
 @end

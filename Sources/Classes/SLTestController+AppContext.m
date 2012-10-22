@@ -73,13 +73,26 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
 }
 
 - (void)registerTarget:(id)target forAction:(SEL)action {
-    // assert that action is of the proper format
-    NSString *actionString = NSStringFromSelector(action);
-    NSAssert(![actionString hasSuffix:@":"], @"The action must identify a method which takes no arguments.");
-
     // sanity check
     NSAssert([target respondsToSelector:action], @"Target %@ does not respond to action: %@", target, NSStringFromSelector(action));
 
+    // assert that action is of the proper format
+    // we can't actually enforce that id-type arguments/return values conform to NSCopying, but oh well
+    NSMethodSignature *actionSignature = [target methodSignatureForSelector:action];
+
+    const char *actionReturnType = [actionSignature methodReturnType];
+    NSAssert(strcmp(actionReturnType, @encode(void)) == 0 ||
+             strcmp(actionReturnType, @encode(id<NSCopying>)) == 0, @"The action must return a value of either type void or id<NSCopying>.");
+
+    NSUInteger numberOfArguments = [actionSignature numberOfArguments];
+    // note that there are always at least two arguments, for self and _cmd
+    NSAssert(numberOfArguments < 4, @"The action must identify a method which takes zero or one argument.");
+    if (numberOfArguments == 3) {
+        NSAssert(strcmp([actionSignature getArgumentTypeAtIndex:2], @encode(id<NSCopying>)) == 0,
+                 @"If the action takes an argument, that argument must be of type id<NSCopying>.");
+    }
+
+    // register target
     id mapKey = [[self class] actionTargetMapKeyForAction:action];
     dispatch_async([self actionTargetMapQueue], ^{
         SLWeakRef *existingRef = [self actionTargetMap][mapKey];
@@ -136,6 +149,33 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
     dispatch_sync(dispatch_get_main_queue(), ^{
         // use objc_msgSend so that Clang won't complain about performSelector leaks
         returnValue = ((id<NSCopying>(*)(id, SEL))objc_msgSend)(target, action);
+
+        // return a copy, for thread safety
+        returnValue = [returnValue copyWithZone:NULL];
+    });
+
+    return returnValue;
+}
+
+- (id<NSCopying>)sendAction:(SEL)action withObject:(id<NSCopying>)object {
+    NSAssert(![NSThread isMainThread], @"-sendAction:withObject: must not be called from the main thread.");
+
+    id target = [self targetForAction:action];
+    if (!target) {
+        [NSException raise:SLAppActionTargetDoesNotExistException
+                    format:@"No target is currently registered for action %@. \
+                             (Either no target was ever registered, or a registered target has fallen out of scope.)",
+                             NSStringFromSelector(action)];
+    }
+
+    // pass a copy of the argument, for thread safety
+    id arg = [object copyWithZone:NULL];
+
+    // perform the action on the main thread, for thread safety
+    __block id<NSCopying> returnValue;
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        // use objc_msgSend so that Clang won't complain about performSelector leaks
+        returnValue = ((id<NSCopying>(*)(id, SEL, id))objc_msgSend)(target, action, arg);
 
         // return a copy, for thread safety
         returnValue = [returnValue copyWithZone:NULL];
