@@ -130,7 +130,7 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
             [self setUpTestCaseWithSelector:testSelector];
             
             // We use objc_msgSend so that Clang won't complain about performSelector leaks
-            objc_msgSend(self, testSelector);
+            ((void(*)(id, SEL))objc_msgSend)(self, testSelector);
 
             [self tearDownTestCaseWithSelector:testSelector];
         }
