@@ -12,6 +12,7 @@
 #pragma mark - SLElement
 
 extern NSString *const SLElementExceptionPrefix;
+// ???: Are both the below necessary?
 extern NSString *const SLElementAccessException;
 extern NSString *const SLElementUIAMessageSendException;
 
@@ -30,6 +31,9 @@ extern NSString *const SLElementUIAMessageSendException;
 
 + (id)elementWithAccessibilityLabel:(NSString *)label;
 
+// If the UIAccessibilityElement corresponding to the receiver does not exist,
+// isValid and isVisible will return NO.
+// All other methods below will throw an SLElementAccessException.
 - (BOOL)isValid;
 - (BOOL)isVisible;
 - (void)waitUntilVisible:(NSTimeInterval)timeout;

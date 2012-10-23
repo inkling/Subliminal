@@ -120,7 +120,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
             }
         }
         if (!didLocateElement) {
-            [NSException raise:SLElementAccessException format:@"Element %@ is not valid.", self];
+            return nil;
         }
     }
     uiaPrefix = [@"UIATarget.localTarget().frontMostApp().mainWindow()" stringByAppendingString:uiaPrefix];
@@ -128,8 +128,9 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (NSString *)uiaSelf {
-    return [NSString stringWithFormat:@"%@.elements()[\"%@\"]",
-            [self uiaPrefix], _label];
+	NSString *uiaPrefix = [self uiaPrefix];
+	return ([uiaPrefix length] ? [NSString stringWithFormat:@"%@.elements()[\"%@\"]",
+								  [self uiaPrefix], _label] : nil);
 }
 
 - (BOOL)sendMessageReturningBool:(NSString *)action, ... {
@@ -139,7 +140,13 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     NSString *formattedAction = SLStringWithFormatAfter(action);
     BOOL response = NO;
     @try {
-        response = [terminal sendAndReturnBool:@"%@.%@", [self uiaSelf], formattedAction];
+        NSString *uiaSelf = [self uiaSelf];
+        if (![uiaSelf length]) {
+            // no UIAccessibilityElement could be located. No need to talk to UIAutomation -- abort
+            [NSException raise:SLElementAccessException format:@"Element %@ is not valid.", self];
+        } else {
+            response = [terminal sendAndReturnBool:@"%@.%@", [self uiaSelf], formattedAction];
+        }
     }
     @catch (NSException *exception) {
         @throw [NSException exceptionWithName:SLElementUIAMessageSendException reason:[exception reason] userInfo:nil];
@@ -154,7 +161,13 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     NSString *formattedAction = SLStringWithFormatAfter(action);
     NSString *response = nil;
     @try {
-        response = [terminal send:@"%@.%@;", [self uiaSelf], formattedAction];
+        NSString *uiaSelf = [self uiaSelf];
+        if (![uiaSelf length]) {
+            // no UIAccessibilityElement could be located. No need to talk to UIAutomation -- abort
+            [NSException raise:SLElementAccessException format:@"Element %@ is not valid.", self];
+        } else {
+            response = [terminal send:@"%@.%@;", [self uiaSelf], formattedAction];
+        }
     }
     @catch (NSException *exception) {
         @throw [NSException exceptionWithName:SLElementUIAMessageSendException reason:[exception reason] userInfo:nil];
@@ -163,12 +176,37 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (BOOL)isValid {
-    return [self sendMessageReturningBool:@"isValid()"];
-
+    BOOL isValid;
+    @try {
+        isValid = [self sendMessageReturningBool:@"isValid()"];
+    }
+    @catch (NSException *exception) {
+        if ([[exception name] isEqualToString:SLElementAccessException]) {
+            // our UIAccessibilityElement could not be located,
+            // which obviously means we're not valid -- ignore the exception
+            isValid = NO;
+        } else {
+            @throw exception;
+        }
+    }
+    return isValid;
 }
 
 - (BOOL)isVisible {
-    return [self sendMessageReturningBool:@"isVisible()"];
+    BOOL isVisible;
+    @try {
+        isVisible = [self sendMessageReturningBool:@"isVisible()"];
+    }
+    @catch (NSException *exception) {
+        if ([[exception name] isEqualToString:SLElementAccessException]) {
+            // our UIAccessibilityElement could not be located,
+            // which obviously means we're not visible -- ignore the exception
+            isVisible = NO;
+        } else {
+            @throw exception;
+        }
+    }
+    return isVisible;
 }
 
 - (BOOL)waitFor:(NSTimeInterval)timeout untilCondition:(NSString *)condition, ... NS_FORMAT_FUNCTION(2, 3) {
