@@ -34,7 +34,7 @@ while(!_testingHasFinished) {
 	if(!wait(function(){ 
 			 return (_inputButton().isVisible() && (parseInt(_inputButton().value()) == commandIndex)); 
 	   }, _heartbeatMonitorTimeout)) {
-		UIALogger.logMessage("Target application appears to have died. Aborting testing.");
+		UIALogger.logMessage("Target application is not responding. Aborting testing.");
 		_testingHasFinished = true; continue;
 	};
 	
