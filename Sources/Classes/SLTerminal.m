@@ -96,6 +96,8 @@ static SLTerminal *__sharedTerminal = nil;
 
         // cache the responsePlistPath to avoid looking it up afresh each time it's to be used
         _responsePlistPath = [[self class] UIAutomationResponsePlistPath];
+
+		_heartbeatTimeout = kDefaultHeartbeatTimeout;
     }
     return self;
 }
@@ -163,10 +165,10 @@ static SLTerminal *__sharedTerminal = nil;
 - (void)setJSHeartbeatTimeout:(NSTimeInterval)heartbeatTimeout {
     if ([NSThread isMainThread]) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            [self send:@"_heartbeatMonitorTimeout += %g;", heartbeatTimeout];
+            [self send:@"_heartbeatMonitorTimeout = %g;", heartbeatTimeout];
         });
     } else {
-        [self send:@"_heartbeatMonitorTimeout += %g;", heartbeatTimeout];
+        [self send:@"_heartbeatMonitorTimeout = %g;", heartbeatTimeout];
     }
 }
 
