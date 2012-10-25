@@ -177,6 +177,7 @@
 				F0FBC00115F1F3200081C635 /* Products */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		F0FBC00115F1F3200081C635 /* Products */ = {
 			isa = PBXGroup;

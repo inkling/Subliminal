@@ -75,6 +75,7 @@
 				F0695D8C16011515000B05D0 /* Products */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		F0695D8C16011515000B05D0 /* Products */ = {
 			isa = PBXGroup;
