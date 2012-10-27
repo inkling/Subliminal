@@ -49,7 +49,7 @@ void SLLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
 - (void)logTest:(NSString *)test caseStart:(NSString *)testCase;
 - (void)logTest:(NSString *)test caseFail:(NSString *)testCase;
 - (void)logTest:(NSString *)test casePass:(NSString *)testCase;
-- (void)logTest:(NSString *)test caseAbort:(NSString *)testCase;
+- (void)logTest:(NSString *)test caseIssue:(NSString *)testCase;
 
 - (void)logException:(NSString *)exception, ... NS_FORMAT_FUNCTION(1, 2);
 

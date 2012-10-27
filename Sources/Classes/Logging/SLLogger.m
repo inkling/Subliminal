@@ -85,7 +85,7 @@ static SLLogger *__sharedLogger = nil;
     [self logMessage:@"Test case \"-[%@ %@]\" passed.", test, testCase];
 }
 
-- (void)logTest:(NSString *)test caseAbort:(NSString *)testCase {
+- (void)logTest:(NSString *)test caseIssue:(NSString *)testCase {
     [self logMessage:@"Test case \"-[%@ %@]\" terminated abnormally.", test, testCase];
 }
 

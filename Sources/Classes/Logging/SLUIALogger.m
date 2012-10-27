@@ -59,7 +59,7 @@
     [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logPass('Test case \"-[%@ %@]\" passed.');", test, testCase];
 }
 
-- (void)logTest:(NSString *)test caseAbort:(NSString *)testCase {
+- (void)logTest:(NSString *)test caseIssue:(NSString *)testCase {
     [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logIssue('Test case \"-[%@ %@]\" terminated abnormally.');", test, testCase];
 }
 
