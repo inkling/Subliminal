@@ -96,3 +96,35 @@ FAQ (aka stuff which should eventually go somewhere above)
 
 	Sure. Check out the `SubliminalTest` project in "Documentation/Examples". That example links in [`OCMock`](https://github.com/inkling/ocmock) to show off some _really_ slick stuff we can do around test setup.
 	
+9. How can I disable UIAutomation logs?
+
+	UIAutomation debug logs are the ones that show up in Instrument's trace log. These can sometimes be useful but are mostly noise. Disable them using this command:
+	
+	`defaults write com.apple.dt.Instruments UIAVerboseLogging -int 4096`
+	
+10. How can I debug the test while it's running?
+
+	If the test is stuck or you want to step throught some code, you can attach `Xcode.app` or `lldb`
+	
+	1. `Xcode.app`: The unreliable GUI
+
+		It's possible to use `Xcode.app` to debug the tests. You can do it at anytime with Project -> Attach to Process -> By Process Identifier (PID) or Name..., then attach to "Integration Test". This method is buggy and may stop working after a couple of times because either `launchd` or `Instruments` or `Xcode.app` is confused. You may have to reboot just to get it to work again.
+
+	2. `lldb`: The reliable CLI
+
+		Using `lldb` on the command line is more reliable although not as easy to use. You'll have to set breakpoints yourself, etc. Here's how to interact with the tests:
+
+		```sh
+		# Attach to an existing test
+		process attach -n "Integration Test"
+		# OR
+		# Attach to the next test
+		process attach --waitfor --continue -n "Integration Test"
+		
+		
+		# Find the stuck thread
+		process interrupt
+		thread list
+		thread backtrace <thread number>
+		```
+		
