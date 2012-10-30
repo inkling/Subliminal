@@ -154,37 +154,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (BOOL)isValid {
-    BOOL isValid;
-    @try {
-        isValid = [self sendMessageReturningBool:@"isValid()"];
-    }
-    @catch (NSException *exception) {
-        if ([[exception name] isEqualToString:SLElementAccessException]) {
-            // our UIAccessibilityElement could not be located,
-            // which obviously means we're not valid -- ignore the exception
-            isValid = NO;
-        } else {
-            @throw exception;
-        }
-    }
-    return isValid;
-}
-
-- (BOOL)isVisible {
-    BOOL isVisible;
-    @try {
-        isVisible = [self sendMessageReturningBool:@"isVisible()"];
-    }
-    @catch (NSException *exception) {
-        if ([[exception name] isEqualToString:SLElementAccessException]) {
-            // our UIAccessibilityElement could not be located,
-            // which obviously means we're not visible -- ignore the exception
-            isVisible = NO;
-        } else {
-            @throw exception;
-        }
-    }
-    return isVisible;
+    return [self uiaSelf] != nil;
 }
 
 - (BOOL)waitFor:(NSTimeInterval)timeout untilCondition:(NSString *)condition, ... NS_FORMAT_FUNCTION(2, 3) {

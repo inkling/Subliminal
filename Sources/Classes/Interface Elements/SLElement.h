@@ -32,7 +32,6 @@ extern NSString *const SLElementUIAMessageSendException;
 // isValid and isVisible will return NO.
 // All other methods below will throw an SLElementAccessException.
 - (BOOL)isValid;
-- (BOOL)isVisible;
 - (void)waitUntilVisible:(NSTimeInterval)timeout;
 - (void)waitUntilInvisible:(NSTimeInterval)timeout;
 
