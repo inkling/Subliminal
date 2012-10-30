@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1F1874BB1607BE51000360CA /* SLUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F1874B91607A8A3000360CA /* SLUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F0271AFF162E0B950098F5F2 /* SLTestController+AppContext.h in Headers */ = {isa = PBXBuildFile; fileRef = F0271AFD162E0B950098F5F2 /* SLTestController+AppContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0271B00162E0B950098F5F2 /* SLTestController+AppContext.m in Sources */ = {isa = PBXBuildFile; fileRef = F0271AFE162E0B950098F5F2 /* SLTestController+AppContext.m */; };
 		F0695D8F16011515000B05D0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8E16011515000B05D0 /* Foundation.framework */; };
@@ -30,7 +29,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		1F1874B91607A8A3000360CA /* SLUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLUtilities.h; sourceTree = "<group>"; };
 		F0271AFD162E0B950098F5F2 /* SLTestController+AppContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLTestController+AppContext.h"; sourceTree = "<group>"; };
 		F0271AFE162E0B950098F5F2 /* SLTestController+AppContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SLTestController+AppContext.m"; sourceTree = "<group>"; };
 		F0695D8B16011515000B05D0 /* libSubliminal.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSubliminal.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -107,7 +105,6 @@
 		F0695DD5160138DF000B05D0 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				F0E55046162E0C9100F54F57 /* Utilities */,
 				F0695DE2160138DF000B05D0 /* SLTestController.h */,
 				F0695DE3160138DF000B05D0 /* SLTestController.m */,
 				F0271AFD162E0B950098F5F2 /* SLTestController+AppContext.h */,
@@ -144,14 +141,6 @@
 			path = Logging;
 			sourceTree = "<group>";
 		};
-		F0E55046162E0C9100F54F57 /* Utilities */ = {
-			isa = PBXGroup;
-			children = (
-				1F1874B91607A8A3000360CA /* SLUtilities.h */,
-			);
-			path = Utilities;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -166,7 +155,6 @@
 				F0695E2016014491000B05D0 /* SLElement.h in Headers */,
 				F0695E2116014491000B05D0 /* SLLogger.h in Headers */,
 				F0695E2216014491000B05D0 /* SLUIALogger.h in Headers */,
-				1F1874BB1607BE51000360CA /* SLUtilities.h in Headers */,
 				F0271AFF162E0B950098F5F2 /* SLTestController+AppContext.h in Headers */,
 				F0E55089162E393F00F54F57 /* UIAccessibilityElement+SLElement.h in Headers */,
 			);

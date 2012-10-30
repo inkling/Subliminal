@@ -10,7 +10,6 @@
 #import "UIAccessibilityElement+SLElement.h"
 
 #import "SLTerminal.h"
-#import "SLUtilities.h"
 
 #import <objc/runtime.h>
 
@@ -118,7 +117,11 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (BOOL)sendMessageReturningBool:(NSString *)action, ... {
-    NSString *formattedAction = SLStringWithFormatAfter(action);
+    va_list(args);
+    va_start(args, action);
+    NSString *formattedAction = [[NSString alloc] initWithFormat:action arguments:args];
+    va_end(args);
+    
     BOOL response = NO;
     @try {
         NSString *uiaSelf = [self uiaSelf];
@@ -136,7 +139,11 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (NSString *)sendMessage:(NSString *)action, ... {
-    NSString *formattedAction = SLStringWithFormatAfter(action);
+    va_list(args);
+    va_start(args, action);
+    NSString *formattedAction = [[NSString alloc] initWithFormat:action arguments:args];
+    va_end(args);
+    
     NSString *response = nil;
     @try {
         NSString *uiaSelf = [self uiaSelf];
@@ -158,9 +165,13 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (BOOL)waitFor:(NSTimeInterval)timeout untilCondition:(NSString *)condition, ... NS_FORMAT_FUNCTION(2, 3) {
+    va_list(args);
+    va_start(args, condition);
+    NSString *expr = [[NSString alloc] initWithFormat:condition arguments:args];
+    va_end(args);
     
     BOOL conditionDidBecomeTrue =
-    [[[SLTerminal sharedTerminal] evalWithFormat:@"(wait(function() { return (%@); }, %g, %g) ? \"YES\" : \"NO\");", SLStringWithFormatAfter(condition), timeout, kDefaultRetryDelay] boolValue];
+    [[[SLTerminal sharedTerminal] evalWithFormat:@"(wait(function() { return (%@); }, %g, %g) ? \"YES\" : \"NO\");", expr, timeout, kDefaultRetryDelay] boolValue];
     
     return conditionDidBecomeTrue;
 }

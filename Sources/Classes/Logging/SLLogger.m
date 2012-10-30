@@ -8,7 +8,6 @@
 
 #import "SLLogger.h"
 
-#import "SLUtilities.h"
 #import "SLUIALogger.h"
 
 
@@ -90,7 +89,10 @@ static SLLogger *__sharedLogger = nil;
 }
 
 - (void)logException:(NSString *)exception, ... {
-    [self logMessage:@"Error: \"%@\"", SLStringWithFormatAfter(exception)];
+    va_list args;
+    va_start(args, exception);
+    [self logMessage:@"Error: \"%@\"", [[NSString alloc] initWithFormat:exception arguments:args]];
+    va_end(args);
 }
 
 @end

@@ -10,7 +10,6 @@
 
 #import "SLLogger.h"
 #import "SLElement.h"
-#import "SLUtilities.h"
 
 #import <objc/runtime.h>
 #import <objc/message.h>
@@ -212,8 +211,13 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
 @implementation NSException (SLTestException)
 
 + (NSException *)testFailureInFile:(char *)fileName atLine:(int)lineNumber reason:(NSString *)failureReason, ... {
+    va_list(args);
+    va_start(args, failureReason);
+    NSString *reason = [[NSString alloc] initWithFormat:failureReason arguments:args];
+    va_end(args);
+    
     NSException *exception = [NSException exceptionWithName:SLTestAssertionFailedException
-                                                     reason:SLStringWithFormatAfter(failureReason)
+                                                     reason:reason
                                                    userInfo:nil];
     return [exception exceptionAnnotatedWithLineNumber:lineNumber inFile:fileName];
 }
