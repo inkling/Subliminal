@@ -26,8 +26,4 @@ extern NSString *const SLTerminalJavaScriptException;
 - (NSString *)eval:(NSString *)javascript;
 - (NSString *)evalWithFormat:(NSString *)javascript, ... NS_FORMAT_FUNCTION(1, 2);
 
-// this message should be a valid JS expression, but _not_ a statement
-// (i.e. not semicolon-terminated)
-- (BOOL)sendAndReturnBool:(NSString *)message, ... NS_FORMAT_FUNCTION(1, 2);
-
 @end

@@ -116,28 +116,6 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 								  [self uiaPrefix], _label] : nil);
 }
 
-- (BOOL)sendMessageReturningBool:(NSString *)action, ... {
-    va_list(args);
-    va_start(args, action);
-    NSString *formattedAction = [[NSString alloc] initWithFormat:action arguments:args];
-    va_end(args);
-    
-    BOOL response = NO;
-    @try {
-        NSString *uiaSelf = [self uiaSelf];
-        if (![uiaSelf length]) {
-            // no UIAccessibilityElement could be located. No need to talk to UIAutomation -- abort
-            [NSException raise:SLElementAccessException format:@"Element %@ is not valid.", self];
-        } else {
-            response = [[SLTerminal sharedTerminal] sendAndReturnBool:@"%@.%@", [self uiaSelf], formattedAction];
-        }
-    }
-    @catch (NSException *exception) {
-        @throw [NSException exceptionWithName:SLElementUIAMessageSendException reason:[exception reason] userInfo:nil];
-    }
-    return response;
-}
-
 - (NSString *)sendMessage:(NSString *)action, ... {
     va_list(args);
     va_start(args, action);
@@ -171,7 +149,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     va_end(args);
     
     BOOL conditionDidBecomeTrue =
-    [[[SLTerminal sharedTerminal] evalWithFormat:@"(wait(function() { return (%@); }, %g, %g) ? \"YES\" : \"NO\");", expr, timeout, kDefaultRetryDelay] boolValue];
+    [[[SLTerminal sharedTerminal] evalWithFormat:@"(wait(function() { return (%@); }, %g, %g) ? 'YES' : 'NO');", expr, timeout, kDefaultRetryDelay] boolValue];
     
     return conditionDidBecomeTrue;
 }

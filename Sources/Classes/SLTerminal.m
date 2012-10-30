@@ -157,13 +157,4 @@ static SLTerminal *__sharedTerminal = nil;
     return [self eval:statement];
 }
 
-- (BOOL)sendAndReturnBool:(NSString *)message, ... {
-    va_list(args);
-    va_start(args, message);
-    NSString *formattedMessage = [[NSString alloc] initWithFormat:message arguments:args];
-    va_end(args);
-    
-    return [[self evalWithFormat:@"((%@) ? \"YES\" : \"NO\");", formattedMessage] boolValue];
-}
-
 @end
