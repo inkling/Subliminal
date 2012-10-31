@@ -58,3 +58,8 @@ extern NSString *const SLElementUIAMessageSendException;
 @interface SLTextField : SLElement
 @property (nonatomic, strong) NSString *text;
 @end
+
+// Instances always refer to mainWindow()
+@interface SLWindow : SLElement
++ (SLWindow *)mainWindow;
+@end

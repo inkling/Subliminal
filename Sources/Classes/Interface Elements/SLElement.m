@@ -291,3 +291,17 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 @end
+
+#pragma mark - SLWindow
+
+@implementation SLWindow
+
++ (SLWindow *)mainWindow {
+    return [[SLWindow alloc] initWithAccessibilityLabel:nil];
+}
+
+- (NSString *)uiaSelf {
+	return @"UIATarget.localTarget().frontMostApp().mainWindow()";
+}
+
+@end

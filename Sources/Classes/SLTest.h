@@ -151,7 +151,6 @@ extern NSString *const SLTestExceptionLineNumberKey;
     slElement; \
 })
 
-
 #pragma mark - Test Assertions
 
 - (void)failWithException:(NSException *)exception;
