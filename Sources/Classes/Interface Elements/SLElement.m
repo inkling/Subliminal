@@ -14,9 +14,7 @@
 #import <objc/runtime.h>
 
 
-NSString *const SLElementExceptionPrefix = @"SLElement";
-NSString *const SLElementAccessException = @"SLElementAccessException";
-NSString *const SLElementUIAMessageSendException = @"SLElementUIAMessageSendException";
+NSString *const SLInvalidElementException = @"SLInvalidElementException";
 
 static const NSTimeInterval kDefaultRetryDelay = 0.25;
 
@@ -28,11 +26,6 @@ static const NSTimeInterval kDefaultRetryDelay = 0.25;
 - (id)initWithAccessibilityLabel:(NSString *)label;
 
 - (NSString *)sendMessage:(NSString *)action, ... NS_FORMAT_FUNCTION(1, 2);
-
-@end
-
-@interface SLElement (Subclassing)
-
 - (NSString *)uiaSelf;
 
 @end
@@ -112,8 +105,12 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 - (NSString *)uiaSelf {
 	NSString *uiaPrefix = [self uiaPrefix];
-	return ([uiaPrefix length] ? [NSString stringWithFormat:@"%@.elements()[\"%@\"]",
-								  [self uiaPrefix], _label] : nil);
+    
+    if (!uiaPrefix) {
+        @throw [NSException exceptionWithName:SLInvalidElementException reason:[NSString stringWithFormat:@"Element '%@' does not exist.", _label] userInfo:nil];
+    } else {
+        return [NSString stringWithFormat:@"%@.elements()['%@']", uiaPrefix, [_label stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"]];
+    }
 }
 
 - (NSString *)sendMessage:(NSString *)action, ... {
@@ -122,24 +119,11 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     NSString *formattedAction = [[NSString alloc] initWithFormat:action arguments:args];
     va_end(args);
     
-    NSString *response = nil;
-    @try {
-        NSString *uiaSelf = [self uiaSelf];
-        if (![uiaSelf length]) {
-            // no UIAccessibilityElement could be located. No need to talk to UIAutomation -- abort
-            [NSException raise:SLElementAccessException format:@"Element %@ is not valid.", self];
-        } else {
-            response = [[SLTerminal sharedTerminal] evalWithFormat:@"%@.%@;", [self uiaSelf], formattedAction];
-        }
-    }
-    @catch (NSException *exception) {
-        @throw [NSException exceptionWithName:SLElementUIAMessageSendException reason:[exception reason] userInfo:nil];
-    }
-    return response;
+    return [[SLTerminal sharedTerminal] evalWithFormat:@"%@.%@", [self uiaSelf], formattedAction];
 }
 
 - (BOOL)isValid {
-    return [self uiaSelf] != nil;
+    return [self uiaPrefix] != nil;
 }
 
 - (BOOL)waitFor:(NSTimeInterval)timeout untilCondition:(NSString *)condition, ... NS_FORMAT_FUNCTION(2, 3) {
@@ -156,36 +140,30 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 - (void)waitUntilVisible:(NSTimeInterval)timeout {    
     if (![self waitFor:timeout untilCondition:@"%@.isVisible()", [self uiaSelf]]) {
-        [NSException raise:SLElementAccessException format:@"Element %@ did not become visible within %g seconds.", self, timeout];
+        [NSException raise:@"SLWaitUntilVisibleException" format:@"Element %@ did not become visible within %g seconds.", self, timeout];
     }
 }
 
 - (void)waitUntilInvisible:(NSTimeInterval)timeout {
     if (![self waitFor:timeout untilCondition:@"!%@.isVisible()", [self uiaSelf]]) {
-        [NSException raise:SLElementAccessException format:@"Element %@ was still visible after %g seconds.", self, timeout];
+        [NSException raise:@"SLWaitUntilInvisibleException" format:@"Element %@ was still visible after %g seconds.", self, timeout];
     }
 }
 
 - (void)tap {
-    (void)[self sendMessage:@"tap()"];
+    [self sendMessage:@"tap()"];
 }
 
 - (NSString *)value {
-    // must check validity before checking value:
-    // UIAutomation will not warn if this element does not exist
-    if (![self isValid]) {
-        [NSException raise:SLElementAccessException format:@"Element %@ is not valid.", self];
-    }
-    
     return [self sendMessage:@"value()"];
 }
 
 - (void)logElement {
-    [[SLTerminal sharedTerminal] evalWithFormat:@"%@.logElement()", [self uiaSelf]];
+    [self sendMessage:@"logElement()"];
 }
 
 - (void)logElementTree {
-	[[SLTerminal sharedTerminal] evalWithFormat:@"%@.logElementTree()", [self uiaSelf]];
+    [self sendMessage:@"logElementTree()"];
 }
 
 @end
@@ -204,7 +182,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (void)dismiss {
-    (void)[self sendMessage:@"defaultButton().tap()"];
+    [self sendMessage:@"defaultButton().tap()"];
 }
 
 @end
@@ -225,7 +203,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (void)setText:(NSString *)text {
-    (void)[self sendMessage:@"setValue(\"%@\")", text];
+    [self sendMessage:@"setValue('%@')", text];
 }
 
 @end

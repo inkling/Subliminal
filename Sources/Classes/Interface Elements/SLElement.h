@@ -11,11 +11,8 @@
 
 #pragma mark - SLElement
 
-extern NSString *const SLElementExceptionPrefix;
-// ???: Are both the below necessary?
-extern NSString *const SLElementAccessException;
-extern NSString *const SLElementUIAMessageSendException;
 
+extern NSString *const SLInvalidElementException;
 
 
 @interface SLElement : NSObject

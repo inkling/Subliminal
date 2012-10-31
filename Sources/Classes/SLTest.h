@@ -142,10 +142,10 @@ extern NSString *const SLTestExceptionLineNumberKey;
 
 #pragma mark - SLElement Use
 
-- (void)recordLastUIAMessageSendInFile:(char *)fileName atLine:(int)lineNumber;
+- (void)recordLastKnownFile:(char *)filename line:(int)lineNumber;
 
 #define UIAElement(slElement) ({ \
-    [self recordLastUIAMessageSendInFile:__FILE__ atLine:__LINE__]; \
+    [self recordLastKnownFile:__FILE__ line:__LINE__]; \
     slElement; \
 })
 
@@ -198,6 +198,5 @@ extern NSString *const SLTestExceptionLineNumberKey;
 
 
 @interface NSException (SLTestException)
-+ (NSException *)testFailureInFile:(char *)fileName atLine:(int)lineNumber reason:(NSString *)failureReason, ... NS_FORMAT_FUNCTION(3, 4);
-- (NSException *)exceptionAnnotatedWithLineNumber:(int)lineNumber inFile:(char *)fileName;
++ (NSException *)testFailureInFile:(char *)filename atLine:(int)lineNumber reason:(NSString *)failureReason, ... NS_FORMAT_FUNCTION(3, 4);
 @end
