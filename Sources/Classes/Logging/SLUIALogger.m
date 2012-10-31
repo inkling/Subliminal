@@ -8,10 +8,25 @@
 
 #import "SLUIALogger.h"
 
+#import "SLTerminal.h"
+
+
 @implementation SLUIALogger
 
+- (id)init {
+    if ((self = [super init])) {
+        NSAssert([[SLTerminal sharedTerminal] hasStarted], @"The terminal has not yet started.");
+    }
+    return self;
+}
+
 - (void)logMessage:(NSString *)message, ... {
-    [self.terminal send:@"UIALogger.logMessage('%@');", SLStringWithFormatAfter(message)];
+    va_list args;
+    va_start(args, message);
+    NSString *text = [[NSString alloc] initWithFormat:message arguments:args];
+    va_end(args);
+
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logMessage('%@');", [text stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"]];
 }
 
 @end
@@ -20,7 +35,7 @@
 @implementation SLUIALogger (SLTestController)
 
 - (void)logTestAbort:(NSString *)test {
-    [self.terminal send:@"UIALogger.logIssue('Test \"%@\" terminated abnormally.');", test];
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logIssue('Test \"%@\" terminated abnormally.');", test];
 }
 
 @end
@@ -29,23 +44,28 @@
 @implementation SLUIALogger (SLTest)
 
 - (void)logTest:(NSString *)test caseStart:(NSString *)testCase {
-    [self.terminal send:@"UIALogger.logStart('Test case \"-[%@ %@]\" started.');", test, testCase];
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logStart('Test case \"-[%@ %@]\" started.');", test, testCase];
 }
 
 - (void)logTest:(NSString *)test caseFail:(NSString *)testCase {
-    [self.terminal send:@"UIALogger.logFail('Test case \"-[%@ %@]\" failed.');", test, testCase];
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logFail('Test case \"-[%@ %@]\" failed.');", test, testCase];
 }
 
 - (void)logTest:(NSString *)test casePass:(NSString *)testCase {
-    [self.terminal send:@"UIALogger.logPass('Test case \"-[%@ %@]\" passed.');", test, testCase];
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logPass('Test case \"-[%@ %@]\" passed.');", test, testCase];
 }
 
 - (void)logTest:(NSString *)test caseAbort:(NSString *)testCase {
-    [self.terminal send:@"UIALogger.logIssue('Test case \"-[%@ %@]\" terminated abnormally.');", test, testCase];
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logIssue('Test case \"-[%@ %@]\" terminated abnormally.');", test, testCase];
 }
 
 - (void)logException:(NSString *)exception, ... {
-    [self.terminal send:@"UIALogger.logError('%@');", SLStringWithFormatAfter(exception)];
+    va_list args;
+    va_start(args, exception);
+    NSString *text = [[NSString alloc] initWithFormat:exception arguments:args];
+    va_end(args);
+
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logError('%@');", [text stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"]];
 }
 
 @end

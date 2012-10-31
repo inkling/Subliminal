@@ -9,6 +9,8 @@
 #import "SLTerminal.h"
 #import "SLTest.h"
 
+#import "SLUtilities.h"
+
 
 static NSString *const SLTerminalInvalidMessageException = @"SLTerminalInvalidMessageException";
 
@@ -27,7 +29,7 @@ static const NSTimeInterval kDefaultHeartbeatTimeout = 5.0;
 }
 
 static SLTerminal *__sharedTerminal = nil;
-+ (id)sharedTerminal {
++ (SLTerminal *)sharedTerminal {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         __sharedTerminal = [[SLTerminal alloc] init];
@@ -165,10 +167,10 @@ static SLTerminal *__sharedTerminal = nil;
 - (void)setJSHeartbeatTimeout:(NSTimeInterval)heartbeatTimeout {
     if ([NSThread isMainThread]) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            [self send:@"_heartbeatMonitorTimeout = %g;", heartbeatTimeout];
+            [self evalWithFormat:@"_heartbeatMonitorTimeout = %g;", heartbeatTimeout];
         });
     } else {
-        [self send:@"_heartbeatMonitorTimeout = %g;", heartbeatTimeout];
+        [self evalWithFormat:@"_heartbeatMonitorTimeout = %g;", heartbeatTimeout];
     }
 }
 
@@ -187,46 +189,45 @@ static SLTerminal *__sharedTerminal = nil;
 
 #pragma mark - Communication
 
-- (NSString *)send:(NSString *)message, ... {
-    va_list args;
-    va_start(args, message);
-    NSString *response = [self send:message args:args];
-    va_end(args);
-    
-    return response;
-}
+- (NSString *)eval:(NSString *)javascript {
+    NSAssert(![NSThread isMainThread], @"-eval: must not be called from the main thread.");
 
-- (NSString *)send:(NSString *)message args:(va_list)args {
-    NSAssert(![NSThread isMainThread], @"-send: must not be called from the main thread.");
-        
     // wait for terminal to become available: only one message can be sent at a time
     dispatch_semaphore_wait(_dispatchSemaphore, DISPATCH_TIME_FOREVER);
-    
-    NSString *formattedMessage = [[NSString alloc] initWithFormat:message arguments:args];
+
     dispatch_sync(dispatch_get_main_queue(), ^{
-        [_outputButton setTitle:formattedMessage forState:UIControlStateNormal];
+        [_outputButton setTitle:javascript forState:UIControlStateNormal];
         _outputButton.accessibilityValue = [NSString stringWithFormat:@"%u", _commandIndex];
         _outputButton.hidden = NO;
     });
-    
+
     // block calling thread (not the main thread) on UIAutomation's response
     // in messageReceived:, below
     dispatch_semaphore_wait(_responseSemaphore, DISPATCH_TIME_FOREVER);
-    
+
     NSString *response = _response;
     // now that we've saved and will return the response, the terminal is now available
     dispatch_semaphore_signal(_dispatchSemaphore);
-    
+
     // before returning, we "re-throw" exceptions that occurred during evaluation
-    NSException *evaluationException = [[self class] parseExceptionFromResponse:response toMessage:formattedMessage];
+    NSException *evaluationException = [[self class] parseExceptionFromResponse:response toMessage:javascript];
     if (evaluationException) [evaluationException raise];
-        
+
     return response;
+}
+
+- (NSString *)evalWithFormat:(NSString *)javascript, ... {
+    va_list args;
+    va_start(args, javascript);
+    NSString *statement = [[NSString alloc] initWithFormat:javascript arguments:args];
+    va_end(args);
+
+    return [self eval:statement];
 }
 
 - (BOOL)sendAndReturnBool:(NSString *)message, ... {
     NSString *formattedMessage = SLStringWithFormatAfter(message);
-    return [[self send:@"((%@) ? \"YES\" : \"NO\");", formattedMessage] boolValue];
+    return [[self evalWithFormat:@"((%@) ? \"YES\" : \"NO\");", formattedMessage] boolValue];
 }
 
 // note that this callback comes in on the main thread

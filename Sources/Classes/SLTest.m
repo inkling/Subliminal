@@ -10,6 +10,7 @@
 
 #import "SLLogger.h"
 #import "SLElement.h"
+#import "SLUtilities.h"
 
 #import <objc/runtime.h>
 #import <objc/message.h>
@@ -199,9 +200,9 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
 - (void)wait:(NSTimeInterval)interval {
     // increment the heartbeat timeout while we wait
     // so that SLRadio.js doesn't think we've died
-    self.logger.terminal.heartbeatTimeout += interval;
+    [SLTerminal sharedTerminal].heartbeatTimeout += interval;
     [NSThread sleepForTimeInterval:interval];
-    self.logger.terminal.heartbeatTimeout -= interval;
+    [SLTerminal sharedTerminal].heartbeatTimeout -= interval;
 }
 
 - (void)failWithException:(NSException *)exception {

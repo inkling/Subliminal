@@ -22,13 +22,13 @@ static NSString *const SLExceptionOccurredResponsePrefix = @"SLTerminalException
 
 @property (nonatomic) NSTimeInterval heartbeatTimeout;
 
-+ (id)sharedTerminal;
++ (SLTerminal *)sharedTerminal;
 
 - (void)startWithCompletionBlock:(void (^)(SLTerminal *))completionBlock;
 
 // these messages should be valid JS statements
-- (NSString *)send:(NSString *)message, ... NS_FORMAT_FUNCTION(1,2);
-- (NSString *)send:(NSString *)message args:(va_list)args;
+- (NSString *)eval:(NSString *)javascript;
+- (NSString *)evalWithFormat:(NSString *)javascript, ... NS_FORMAT_FUNCTION(1, 2);
 
 // this message should be a valid JS expression, but _not_ a statement
 // (i.e. not semicolon-terminated)

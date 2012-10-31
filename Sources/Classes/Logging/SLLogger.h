@@ -8,15 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-#import "SLTerminal.h"
-#import "SLUtilities.h"
+
 
 
 @interface SLLogger : NSObject
 
-@property (nonatomic, strong, readonly) SLTerminal *terminal;
-
-- (id)initWithTerminal:(SLTerminal *)terminal;
 
 - (void)logMessage:(NSString *)message, ... NS_FORMAT_FUNCTION(1, 2);
 

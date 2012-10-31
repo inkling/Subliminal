@@ -53,7 +53,6 @@ static SLTestController *__sharedController = nil;
     // register defaults
     [_logger logMessage:@"Tests are starting up... "];
 
-    [SLElement setTerminal:_logger.terminal];
     [SLElement setDefaultTimeout:_defaultTimeout];
     
     [_logger logTestingStart];
@@ -124,7 +123,7 @@ static SLTestController *__sharedController = nil;
 
 - (void)_finishTesting {
     [_logger logTestingFinish];
-    [_logger.terminal send:@"_testingHasFinished = true;"];
+    [[SLTerminal sharedTerminal] eval:@"_testingHasFinished = true;"];
 }
 
 @end

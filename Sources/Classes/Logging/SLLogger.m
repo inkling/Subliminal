@@ -8,19 +8,10 @@
 
 #import "SLLogger.h"
 
-#import "SLTerminal.h"
+#import "SLUtilities.h"
 
 
 @implementation SLLogger
-
-- (id)initWithTerminal:(SLTerminal *)terminal {
-    self = [super init];
-    if (self) {
-        NSAssert([terminal hasStarted], @"The terminal has not yet started.");
-        _terminal = terminal;
-    }
-    return self;
-}
 
 - (void)logMessage:(NSString *)message, ... {
     NSLog(@"Concrete SLLogger subclass (%@) must provide an interface to a Javascript logging functions", NSStringFromClass([self class]));

@@ -26,8 +26,6 @@ static const NSTimeInterval kDefaultRetryDelay = 0.25;
 
 @interface SLElement ()
 
-+ (void)setTerminal:(SLTerminal *)terminal;
-
 - (id)initWithAccessibilityLabel:(NSString *)label;
 
 - (NSString *)sendMessage:(NSString *)action, ... NS_FORMAT_FUNCTION(1, 2);
@@ -43,20 +41,6 @@ static const NSTimeInterval kDefaultRetryDelay = 0.25;
 
 @implementation SLElement
 
-static const void *const kTerminalKey = &kTerminalKey;
-+ (void)setTerminal:(SLTerminal *)terminal {
-    NSAssert([terminal hasStarted], @"SLElement's terminal has not yet started.");
-    if (terminal != [self terminal]) {
-        // note that we explicitly associate with SLElement 
-        // so that subclasses can use the terminal too
-        objc_setAssociatedObject([SLElement class], kTerminalKey, terminal, OBJC_ASSOCIATION_RETAIN);
-    }
-}
-
-+ (SLTerminal *)terminal {
-    return objc_getAssociatedObject([SLElement class], kTerminalKey);
-}
-
 static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 + (void)setDefaultTimeout:(NSTimeInterval)defaultTimeout {
     if (defaultTimeout != [self defaultTimeout]) {
@@ -64,7 +48,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         // so that subclasses can reference the timeout too
         objc_setAssociatedObject([SLElement class], kDefaultTimeoutKey, @(defaultTimeout), OBJC_ASSOCIATION_RETAIN);
 
-        [[self terminal] send:@"UIATarget.localTarget().setTimeout(%g);", defaultTimeout];
+        [[SLTerminal sharedTerminal] evalWithFormat:@"UIATarget.localTarget().setTimeout(%g);", defaultTimeout];
     }
 }
 
@@ -134,9 +118,6 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (BOOL)sendMessageReturningBool:(NSString *)action, ... {
-    SLTerminal *terminal = [[self class] terminal];
-    NSAssert(terminal, @"SLElement does not have a terminal.");
-
     NSString *formattedAction = SLStringWithFormatAfter(action);
     BOOL response = NO;
     @try {
@@ -145,7 +126,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
             // no UIAccessibilityElement could be located. No need to talk to UIAutomation -- abort
             [NSException raise:SLElementAccessException format:@"Element %@ is not valid.", self];
         } else {
-            response = [terminal sendAndReturnBool:@"%@.%@", [self uiaSelf], formattedAction];
+            response = [[SLTerminal sharedTerminal] sendAndReturnBool:@"%@.%@", [self uiaSelf], formattedAction];
         }
     }
     @catch (NSException *exception) {
@@ -155,9 +136,6 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (NSString *)sendMessage:(NSString *)action, ... {
-    SLTerminal *terminal = [[self class] terminal];
-    NSAssert(terminal, @"SLElement does not have a terminal.");
-    
     NSString *formattedAction = SLStringWithFormatAfter(action);
     NSString *response = nil;
     @try {
@@ -166,7 +144,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
             // no UIAccessibilityElement could be located. No need to talk to UIAutomation -- abort
             [NSException raise:SLElementAccessException format:@"Element %@ is not valid.", self];
         } else {
-            response = [terminal send:@"%@.%@;", [self uiaSelf], formattedAction];
+            response = [[SLTerminal sharedTerminal] evalWithFormat:@"%@.%@;", [self uiaSelf], formattedAction];
         }
     }
     @catch (NSException *exception) {
@@ -212,14 +190,12 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 - (BOOL)waitFor:(NSTimeInterval)timeout untilCondition:(NSString *)condition, ... NS_FORMAT_FUNCTION(2, 3) {
     // increment the timeout while we wait
     // so that SLRadio.js doesn't think we've died
-    [[self class] terminal].heartbeatTimeout += timeout;
+    [SLTerminal sharedTerminal].heartbeatTimeout += timeout;
 
     BOOL conditionDidBecomeTrue =
-    [[[[self class] terminal] send:
-          @"(wait(function() { return (%@); }, %g, %g) ? \"YES\" : \"NO\");",
-          SLStringWithFormatAfter(condition), timeout, kDefaultRetryDelay] boolValue];
+    [[[SLTerminal sharedTerminal] evalWithFormat:@"(wait(function() { return (%@); }, %g, %g) ? \"YES\" : \"NO\");", SLStringWithFormatAfter(condition), timeout, kDefaultRetryDelay] boolValue];
     
-    [[self class] terminal].heartbeatTimeout -= timeout;
+    [SLTerminal sharedTerminal].heartbeatTimeout -= timeout;
 
     return conditionDidBecomeTrue;
 }

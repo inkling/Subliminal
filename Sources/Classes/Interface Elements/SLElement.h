@@ -17,17 +17,14 @@ extern NSString *const SLElementAccessException;
 extern NSString *const SLElementUIAMessageSendException;
 
 
-@class SLTerminal;
 
 @interface SLElement : NSObject
 
 @property (nonatomic, strong, readonly) NSString *label;
 
 // Defaults - to be set by the test controller, from the testing thread.
-// The terminal must be set first.
-+ (void)setTerminal:(SLTerminal *)terminal;
 + (void)setDefaultTimeout:(NSTimeInterval)defaultTimeout;
-//
+
 
 + (id)elementWithAccessibilityLabel:(NSString *)label;
 
