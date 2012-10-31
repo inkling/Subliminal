@@ -226,6 +226,14 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return [self sendMessage:@"value()"];
 }
 
+- (void)logElement {
+    [[SLTerminal sharedTerminal] evalWithFormat:@"%@.logElement()", [self uiaSelf]];
+}
+
+- (void)logElementTree {
+	[[SLTerminal sharedTerminal] evalWithFormat:@"%@.logElementTree()", [self uiaSelf]];
+}
+
 @end
 
 

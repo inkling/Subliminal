@@ -40,6 +40,9 @@ extern NSString *const SLElementUIAMessageSendException;
 
 - (NSString *)value;
 
+- (void)logElement;
+- (void)logElementTree;
+
 @end
 
 
