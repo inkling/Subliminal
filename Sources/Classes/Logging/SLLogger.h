@@ -8,12 +8,20 @@
 
 #import <Foundation/Foundation.h>
 
-
+/** Prints some information to the testing environment.
+ 
+ Equivalent to NSLog() except for the output medium. Implemented using [SLLogger logMessage:].
+ */
+void SLLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
 
 
 @interface SLLogger : NSObject
 
++ (SLLogger *)sharedLogger;
++ (void)setSharedLogger:(SLLogger *)logger;
 
+// TODO: Rename these
+- (void)log:(NSString *)message;
 - (void)logMessage:(NSString *)message, ... NS_FORMAT_FUNCTION(1, 2);
 
 @end

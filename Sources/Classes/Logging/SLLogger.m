@@ -9,9 +9,32 @@
 #import "SLLogger.h"
 
 #import "SLUtilities.h"
+#import "SLUIALogger.h"
+
+
+void SLLog(NSString *format, ...) {
+    va_list args;
+    va_start(args, format);
+    [[SLLogger sharedLogger] log:[[NSString alloc] initWithFormat:format arguments:args]];
+    va_end(args);
+}
 
 
 @implementation SLLogger
+
+static SLLogger *__sharedLogger = nil;
++ (SLLogger *)sharedLogger {
+    return __sharedLogger;
+}
+
++ (void)setSharedLogger:(SLLogger *)logger {
+    __sharedLogger = logger;
+}
+
+- (void)log:(NSString *)message {
+    NSLog(@"Concrete SLLogger subclass (%@) must provide an interface to a Javascript logging functions", NSStringFromClass([self class]));
+    [self doesNotRecognizeSelector:_cmd];
+}
 
 - (void)logMessage:(NSString *)message, ... {
     NSLog(@"Concrete SLLogger subclass (%@) must provide an interface to a Javascript logging functions", NSStringFromClass([self class]));

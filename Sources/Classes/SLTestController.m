@@ -51,16 +51,16 @@ static SLTestController *__sharedController = nil;
 
 - (void)_beginTesting {
     // register defaults
-    [_logger logMessage:@"Tests are starting up... "];
+    SLLog(@"Tests are starting up... ");
 
     [SLElement setDefaultTimeout:_defaultTimeout];
     
-    [_logger logTestingStart];
+    [[SLLogger sharedLogger] logTestingStart];
 }
 
 - (void)runTests:(NSArray *)tests {
     dispatch_async([[self class] runQueue], ^{
-        NSAssert(_logger, @"SLTestController cannot run tests without a logger.");
+        NSAssert([SLLogger sharedLogger], @"SLTestController cannot run tests without a logger.");
         
         [self _beginTesting];
 
@@ -81,18 +81,18 @@ static SLTestController *__sharedController = nil;
         }
         
         for (Class testClass in sortedTests) {
-            SLTest *test = (SLTest *)[[testClass alloc] initWithLogger:_logger testController:self];
+            SLTest *test = (SLTest *)[[testClass alloc] initWithTestController:self];
             
             NSString *testName = NSStringFromClass(testClass);
-            [_logger logTestStart:testName];
+            [[SLLogger sharedLogger] logTestStart:testName];
             
             @try {
                 NSUInteger numCasesExecuted = 0;
                 NSUInteger numCasesFailed = [test run:&numCasesExecuted];
 
-                [_logger logTestFinish:testName
-                  withNumCasesExecuted:numCasesExecuted
-                        numCasesFailed:numCasesFailed];
+                [[SLLogger sharedLogger] logTestFinish:testName
+                                  withNumCasesExecuted:numCasesExecuted
+                                        numCasesFailed:numCasesFailed];
             }
             @catch (NSException *e) {
                 // attempt to recover information about the site of the exception
@@ -102,13 +102,11 @@ static SLTestController *__sharedController = nil;
                 // all exceptions caught at this level should be considered unexpected,
                 // and logged as such (contrast SLTest exception logging)
                 if (fileName) {
-                    [self.logger logException:@"%@:%d: Exception occurred: **%@** for reason: %@",
-                                             fileName, lineNumber, [e name], [e reason]];
+                    [[SLLogger sharedLogger] logException:@"%@:%d: Exception occurred: **%@** for reason: %@", fileName, lineNumber, [e name], [e reason]];
                 } else {
-                    [self.logger logException:@"Exception occurred: **%@** for reason: %@",
-                                             [e name], [e reason]];
+                    [[SLLogger sharedLogger] logException:@"Exception occurred: **%@** for reason: %@", [e name], [e reason]];
                 }
-                [_logger logTestAbort:testName];
+                [[SLLogger sharedLogger] logTestAbort:testName];
 
                 if ([[test class] isStartUpTest]) {
                     // we abort testing, on the assumption that the app failed to start up
@@ -122,7 +120,7 @@ static SLTestController *__sharedController = nil;
 }
 
 - (void)_finishTesting {
-    [_logger logTestingFinish];
+    [[SLLogger sharedLogger] logTestingFinish];
     [[SLTerminal sharedTerminal] eval:@"_testingHasFinished = true;"];
 }
 

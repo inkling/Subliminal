@@ -63,10 +63,9 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
     return NO;
 }
 
-- (id)initWithLogger:(SLLogger *)logger testController:(SLTestController *)testController {
+- (id)initWithTestController:(SLTestController *)testController {
     self = [super init];
     if (self) {
-        _logger = logger;
         _testController = testController;
     }
     return self;
@@ -123,7 +122,7 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
     NSString *test = NSStringFromClass([self class]);
     NSUInteger numberOfCasesExecuted = 0, numberOfCasesFailed = 0;
     for (NSString *testSelectorString in selectorStrings) {
-        [self.logger logTest:test caseStart:testSelectorString];
+        [[SLLogger sharedLogger] logTest:test caseStart:testSelectorString];
         SEL testSelector = NSSelectorFromString(testSelectorString);
 
         BOOL caseFailed = NO;
@@ -152,18 +151,15 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
             
             // log the exceptions differently according to whether they were "expected" (i.e. assertions) or not
             if ([[e name] isEqualToString:SLTestAssertionFailedException]) {
-                [self.logger logException:@"%@:%d: %@",
-                                            fileName, lineNumber, [e reason]];
-                [self.logger logTest:test caseFail:testSelectorString];
+                [[SLLogger sharedLogger] logException:@"%@:%d: %@", fileName, lineNumber, [e reason]];
+                [[SLLogger sharedLogger] logTest:test caseFail:testSelectorString];
             } else {
                 if (fileName) {
-                    [self.logger logException:@"%@:%d: Exception occurred: **%@** for reason: %@",
-                                                fileName, lineNumber, [e name], [e reason]];
+                    SLLog(@"%@:%d: Exception occurred: ***%@*** for reason: %@", fileName, lineNumber, [e name], [e reason]);
                 } else {
-                    [self.logger logException:@"Exception occurred: **%@** for reason: %@",
-                                                [e name], [e reason]];
+                    SLLog(@"Exception occurred: ***%@*** for reason: %@", [e name], [e reason]);
                 }
-                [self.logger logTest:test caseAbort:testSelectorString];
+                [[SLLogger sharedLogger] logTest:test caseAbort:testSelectorString];
             }
             
             caseFailed = YES;
@@ -171,7 +167,7 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
         }
         @finally {
             if (!caseFailed) {
-                [self.logger logTest:test casePass:testSelectorString];
+                [[SLLogger sharedLogger] logTest:test casePass:testSelectorString];
             }
                         
             numberOfCasesExecuted++;

@@ -20,6 +20,10 @@
     return self;
 }
 
+- (void)log:(NSString *)message {
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logMessage('%@');", [message stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"]];
+}
+
 - (void)logMessage:(NSString *)message, ... {
     va_list args;
     va_start(args, message);

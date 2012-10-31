@@ -16,12 +16,10 @@ extern NSString *const SLTestExceptionFilenameKey;
 extern NSString *const SLTestExceptionLineNumberKey;
 
 
-@class SLLogger;
 
 @interface SLTest : NSObject
 
 @property (nonatomic, weak, readonly) SLTestController *testController;
-@property (nonatomic, strong, readonly) SLLogger *logger;
 
 + (NSArray *)allTests;
 + (Class)testNamed:(NSString *)test;
@@ -49,7 +47,7 @@ extern NSString *const SLTestExceptionLineNumberKey;
  */
 + (BOOL)isStartUpTest;
 
-- (id)initWithLogger:(SLLogger *)logger testController:(SLTestController *)testController;
+- (id)initWithTestController:(SLTestController *)testController;
 
 - (NSUInteger)run:(NSUInteger *)casesExecuted;
 
