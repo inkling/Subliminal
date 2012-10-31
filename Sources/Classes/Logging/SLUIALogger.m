@@ -9,12 +9,13 @@
 #import "SLUIALogger.h"
 
 #import "SLTerminal.h"
+#import "NSString+SLJavaScript.h"
 
 
 @implementation SLUIALogger
 
 - (void)log:(NSString *)message {
-    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logMessage('%@');", [message stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"]];
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logMessage('%@');", [message slStringByEscapingForJavaScriptLiteral]];
 }
 
 - (void)logMessage:(NSString *)message, ... {
@@ -23,7 +24,7 @@
     NSString *text = [[NSString alloc] initWithFormat:message arguments:args];
     va_end(args);
 
-    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logMessage('%@');", [text stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"]];
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logMessage('%@');", [text slStringByEscapingForJavaScriptLiteral]];
 }
 
 @end
@@ -62,7 +63,7 @@
     NSString *text = [[NSString alloc] initWithFormat:exception arguments:args];
     va_end(args);
 
-    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logError('%@');", [text stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"]];
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logError('%@');", [text slStringByEscapingForJavaScriptLiteral]];
 }
 
 @end

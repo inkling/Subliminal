@@ -10,6 +10,7 @@
 #import "UIAccessibilityElement+SLElement.h"
 
 #import "SLTerminal.h"
+#import "NSString+SLJavaScript.h"
 
 #import <objc/runtime.h>
 
@@ -85,7 +86,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
                     // now that we've found the accessibility element, follow its containers up to the window
                     UIAccessibilityElement *containerElement = matchingElement.accessibilityContainer;
                     while (containerElement && (containerElement != (UIAccessibilityElement *)mainWindow)) {
-                        NSString *previousAccessor = [NSString stringWithFormat:@".elements()[\"%@\"]", [containerElement slAccessibilityName]];
+                        NSString *previousAccessor = [NSString stringWithFormat:@".elements()['%@']", [[containerElement slAccessibilityName] slStringByEscapingForJavaScriptLiteral]];
                         uiaPrefix = [previousAccessor stringByAppendingString:uiaPrefix];
                         containerElement = containerElement.accessibilityContainer;
                     }
@@ -107,9 +108,9 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 	NSString *uiaPrefix = [self uiaPrefix];
     
     if (!uiaPrefix) {
-        @throw [NSException exceptionWithName:SLInvalidElementException reason:[NSString stringWithFormat:@"Element '%@' does not exist.", _label] userInfo:nil];
+        @throw [NSException exceptionWithName:SLInvalidElementException reason:[NSString stringWithFormat:@"Element '%@' does not exist.", [_label slStringByEscapingForJavaScriptLiteral]] userInfo:nil];
     } else {
-        return [NSString stringWithFormat:@"%@.elements()['%@']", uiaPrefix, [_label stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"]];
+        return [NSString stringWithFormat:@"%@.elements()['%@']", uiaPrefix, [_label slStringByEscapingForJavaScriptLiteral]];
     }
 }
 
@@ -178,7 +179,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 - (NSString *)uiaSelf {
     return [NSString stringWithFormat:
             @"((UIATarget.localTarget().frontMostApp().alert().staticTexts()[0].label() == \"%@\") \
-                            ? UIATarget.localTarget().frontMostApp().alert() : null)", self.label];
+                            ? UIATarget.localTarget().frontMostApp().alert() : null)", [self.label slStringByEscapingForJavaScriptLiteral]];
 }
 
 - (void)dismiss {
@@ -203,7 +204,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (void)setText:(NSString *)text {
-    [self sendMessage:@"setValue('%@')", text];
+    [self sendMessage:@"setValue('%@')", [text slStringByEscapingForJavaScriptLiteral]];
 }
 
 @end
