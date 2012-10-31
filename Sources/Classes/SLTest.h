@@ -166,7 +166,7 @@ extern NSString *const SLTestExceptionLineNumberKey;
     BOOL _evaluatedExpression = (expr); \
     if (_evaluatedExpression) { \
         [self failWithException:[NSException testFailureInFile:__FILE__ atLine:__LINE__ \
-                                                         reason:@"\"%@\" should be true. %@", \
+                                                         reason:@"\"%@\" should be false. %@", \
                                                                 @(#expr), [NSString stringWithFormat:__VA_ARGS__]]]; \
     } \
 })
