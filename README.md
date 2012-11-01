@@ -98,9 +98,15 @@ FAQ (aka stuff which should eventually go somewhere above)
 	
 9. How can I disable UIAutomation logs?
 
-	UIAutomation debug logs are the ones that show up in Instrument's trace log. These can sometimes be useful but are mostly noise. Disable them using this command:
-	
+	UIAutomation debug logs record every action taken (button.tap(), etc.) and show up in Instruments' trace log. These can sometimes be useful but are mostly noise. Disable them using this command:
+	 
 	`defaults write com.apple.dt.Instruments UIAVerboseLogging -int 4096`
+	
+	to reset:
+	
+	`defaults delete com.apple.Instruments3 UIAVerboseLogging`
+
+	You will need to restart Instruments after either change to see an effect. (Reproduced from [this Stack Overflow answer](http://stackoverflow.com/a/8760768)).
 	
 10. How can I debug the test while it's running?
 
