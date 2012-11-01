@@ -40,3 +40,12 @@
 - (UIAccessibilityElement *)accessibilityElementMatchingSLElement:(SLElement *)slElement;
 
 @end
+
+
+#pragma mark - NSObject (SLElement)
+
+@interface NSObject (SLElement)
+
+- (BOOL)matchesSLElement:(SLElement *)element;
+
+@end

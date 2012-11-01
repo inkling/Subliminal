@@ -96,8 +96,6 @@
         UIAccessibilityElement *element = [elementStack objectAtIndex:0];
         [elementStack removeObjectAtIndex:0];
 
-        NSAssert([element respondsToSelector:@selector(matchesSLElement:)],
-                 @"Element was neither a UIView * nor a UIAccessibilityElement * as expected.");
         if ([element matchesSLElement:slElement]) return element;
 
         NSInteger accessibilityElementCount = element.accessibilityElementCount;
@@ -110,6 +108,17 @@
     }
 
     return nil;
+}
+
+@end
+
+
+#pragma mark - NSObject (SLElement)
+
+@implementation NSObject (SLElement)
+
+- (BOOL)matchesSLElement:(SLElement *)element {
+    return NO;
 }
 
 @end
