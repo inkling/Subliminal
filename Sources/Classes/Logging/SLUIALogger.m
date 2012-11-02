@@ -14,26 +14,20 @@
 
 @implementation SLUIALogger
 
-- (void)log:(NSString *)message {
+- (void)logDebug:(NSString *)debug {
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logDebug('%@');", [debug slStringByEscapingForJavaScriptLiteral]];
+}
+
+- (void)logMessage:(NSString *)message {
     [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logMessage('%@');", [message slStringByEscapingForJavaScriptLiteral]];
 }
 
-- (void)logMessage:(NSString *)message, ... {
-    va_list args;
-    va_start(args, message);
-    NSString *text = [[NSString alloc] initWithFormat:message arguments:args];
-    va_end(args);
-
-    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logMessage('%@');", [text slStringByEscapingForJavaScriptLiteral]];
+- (void)logWarning:(NSString *)warning {
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logWarning('%@');", [warning slStringByEscapingForJavaScriptLiteral]];
 }
 
-@end
-
-
-@implementation SLUIALogger (SLTestController)
-
-- (void)logTestAbort:(NSString *)test {
-    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logIssue('Test \"%@\" terminated abnormally.');", test];
+- (void)logError:(NSString *)error {
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logError('%@');", [error slStringByEscapingForJavaScriptLiteral]];
 }
 
 @end
@@ -54,16 +48,7 @@
 }
 
 - (void)logTest:(NSString *)test caseIssue:(NSString *)testCase {
-    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logIssue('Test case \"-[%@ %@]\" terminated abnormally.');", test, testCase];
-}
-
-- (void)logException:(NSString *)exception, ... {
-    va_list args;
-    va_start(args, exception);
-    NSString *text = [[NSString alloc] initWithFormat:exception arguments:args];
-    va_end(args);
-
-    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logError('%@');", [text slStringByEscapingForJavaScriptLiteral]];
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logIssue('Test case \"-[%@ %@]\" terminated abnorally.');", test, testCase];
 }
 
 @end

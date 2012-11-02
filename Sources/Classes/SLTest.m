@@ -128,11 +128,13 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
         }
         @catch (NSException *e) {
             // Catch all exceptions in test cases. If the app is in an inconsistent state then -tearDown: should abort completely.
+            NSString *message = nil;
             if ([[e name] isEqualToString:SLTestAssertionFailedException]) {
-                [[SLLogger sharedLogger] logException:@"%@:%d: %@", _lastKnownFilename, _lastKnownLineNumber, [e reason]];
+                message = [NSString stringWithFormat:@"%@:%d: %@", _lastKnownFilename, _lastKnownLineNumber, [e reason]];
             } else {
-                [[SLLogger sharedLogger] logException:@"%@:%d: Exception occurred ***%@*** for reason: %@", _lastKnownFilename, _lastKnownLineNumber, [e name], [e reason]];
+                message = [NSString stringWithFormat:@"%@:%d: Exception occurred ***%@*** for reason: %@", _lastKnownFilename, _lastKnownLineNumber, [e name], [e reason]];
             }
+            [[SLLogger sharedLogger] logError:message];
             [[SLLogger sharedLogger] logTest:test caseFail:testSelectorString];
             
             _lastKnownFilename = nil;
