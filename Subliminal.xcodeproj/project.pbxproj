@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		CAC388051641CD7500F995F9 /* NSString+SLJavaScript.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC388031641CD7500F995F9 /* NSString+SLJavaScript.h */; };
 		CAC388061641CD7500F995F9 /* NSString+SLJavaScript.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC388041641CD7500F995F9 /* NSString+SLJavaScript.m */; };
+		CAC3883F1643503C00F995F9 /* SLAccessibility.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC3883D1643503C00F995F9 /* SLAccessibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CAC388401643503C00F995F9 /* SLAccessibility.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC3883E1643503C00F995F9 /* SLAccessibility.m */; };
 		F0271AFF162E0B950098F5F2 /* SLTestController+AppContext.h in Headers */ = {isa = PBXBuildFile; fileRef = F0271AFD162E0B950098F5F2 /* SLTestController+AppContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0271B00162E0B950098F5F2 /* SLTestController+AppContext.m in Sources */ = {isa = PBXBuildFile; fileRef = F0271AFE162E0B950098F5F2 /* SLTestController+AppContext.m */; };
 		F0695D8F16011515000B05D0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8E16011515000B05D0 /* Foundation.framework */; };
@@ -26,13 +28,13 @@
 		F0695E2016014491000B05D0 /* SLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DD7160138DF000B05D0 /* SLElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0695E2116014491000B05D0 /* SLLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDA160138DF000B05D0 /* SLLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0695E2216014491000B05D0 /* SLUIALogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDC160138DF000B05D0 /* SLUIALogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F0E55089162E393F00F54F57 /* UIAccessibilityElement+SLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F0E55087162E393F00F54F57 /* UIAccessibilityElement+SLElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		F0E5508A162E393F00F54F57 /* UIAccessibilityElement+SLElement.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E55088162E393F00F54F57 /* UIAccessibilityElement+SLElement.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		CAC388031641CD7500F995F9 /* NSString+SLJavaScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+SLJavaScript.h"; path = "Categories/NSString+SLJavaScript.h"; sourceTree = "<group>"; };
 		CAC388041641CD7500F995F9 /* NSString+SLJavaScript.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+SLJavaScript.m"; path = "Categories/NSString+SLJavaScript.m"; sourceTree = "<group>"; };
+		CAC3883D1643503C00F995F9 /* SLAccessibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLAccessibility.h; sourceTree = "<group>"; };
+		CAC3883E1643503C00F995F9 /* SLAccessibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAccessibility.m; sourceTree = "<group>"; };
 		F0271AFD162E0B950098F5F2 /* SLTestController+AppContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLTestController+AppContext.h"; sourceTree = "<group>"; };
 		F0271AFE162E0B950098F5F2 /* SLTestController+AppContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SLTestController+AppContext.m"; sourceTree = "<group>"; };
 		F0695D8B16011515000B05D0 /* libSubliminal.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSubliminal.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -52,8 +54,6 @@
 		F0695DEA16013908000B05D0 /* Subliminal-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Subliminal-Prefix.pch"; sourceTree = "<group>"; };
 		F0695DEB1601391C000B05D0 /* Subliminal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Subliminal.h; sourceTree = "<group>"; };
 		F0695E0C16013D77000B05D0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		F0E55087162E393F00F54F57 /* UIAccessibilityElement+SLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAccessibilityElement+SLElement.h"; sourceTree = "<group>"; };
-		F0E55088162E393F00F54F57 /* UIAccessibilityElement+SLElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAccessibilityElement+SLElement.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +118,8 @@
 		F0695DD5160138DF000B05D0 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				CAC3883D1643503C00F995F9 /* SLAccessibility.h */,
+				CAC3883E1643503C00F995F9 /* SLAccessibility.m */,
 				F0695DE2160138DF000B05D0 /* SLTestController.h */,
 				F0695DE3160138DF000B05D0 /* SLTestController.m */,
 				F0271AFD162E0B950098F5F2 /* SLTestController+AppContext.h */,
@@ -138,8 +140,6 @@
 			children = (
 				F0695DD7160138DF000B05D0 /* SLElement.h */,
 				F0695DD8160138DF000B05D0 /* SLElement.m */,
-				F0E55087162E393F00F54F57 /* UIAccessibilityElement+SLElement.h */,
-				F0E55088162E393F00F54F57 /* UIAccessibilityElement+SLElement.m */,
 			);
 			path = "Interface Elements";
 			sourceTree = "<group>";
@@ -170,8 +170,8 @@
 				F0695E2116014491000B05D0 /* SLLogger.h in Headers */,
 				F0695E2216014491000B05D0 /* SLUIALogger.h in Headers */,
 				F0271AFF162E0B950098F5F2 /* SLTestController+AppContext.h in Headers */,
-				F0E55089162E393F00F54F57 /* UIAccessibilityElement+SLElement.h in Headers */,
 				CAC388051641CD7500F995F9 /* NSString+SLJavaScript.h in Headers */,
+				CAC3883F1643503C00F995F9 /* SLAccessibility.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -233,8 +233,8 @@
 				F0695DE8160138DF000B05D0 /* SLTest.m in Sources */,
 				F0695DE9160138DF000B05D0 /* SLTestController.m in Sources */,
 				F0271B00162E0B950098F5F2 /* SLTestController+AppContext.m in Sources */,
-				F0E5508A162E393F00F54F57 /* UIAccessibilityElement+SLElement.m in Sources */,
 				CAC388061641CD7500F995F9 /* NSString+SLJavaScript.m in Sources */,
+				CAC388401643503C00F995F9 /* SLAccessibility.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

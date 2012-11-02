@@ -7,8 +7,8 @@
 //
 
 #import "SLElement.h"
-#import "UIAccessibilityElement+SLElement.h"
 
+#import "SLAccessibility.h"
 #import "SLTerminal.h"
 #import "NSString+SLJavaScript.h"
 
@@ -68,39 +68,34 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 #pragma mark Sending Actions
 
 - (NSString *)uiaPrefix {
-    __block NSString *uiaPrefix = @"";
-    @autoreleasepool {
-        __block BOOL didLocateElement = NO;
-        NSDate *startDate = [NSDate date];
-        // note that we do _not_ increment the heartbeat timeout here
-        // these searches should conclude within the default timeout
-        while (!didLocateElement && [[NSDate date] timeIntervalSinceDate:startDate] < [[self class] defaultTimeout]) {
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                // TODO: If the application's going to search all the windows,
-                // we should not here assume the element's going to be found in the keyWindow.
-                UIWindow *mainWindow = [[UIApplication sharedApplication] keyWindow];
+    __block NSArray *accessorChain = nil;
+    
+    // Attempt the find the element the same way UIAutomation does (including the 5 second timeout)
+    NSDate *startDate = [NSDate date];
+    while ([[NSDate date] timeIntervalSinceDate:startDate] < [[self class] defaultTimeout]) {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            // TODO: If the application's going to search all the windows,
+            // we should not here assume the element's going to be found in the keyWindow.
+            UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
 
-                UIAccessibilityElement *matchingElement = [[UIApplication sharedApplication] accessibilityElementMatchingSLElement:self];
-                if (matchingElement) {
-                    didLocateElement = YES;
-                    // now that we've found the accessibility element, follow its containers up to the window
-                    UIAccessibilityElement *containerElement = matchingElement.accessibilityContainer;
-                    while (containerElement && (containerElement != (UIAccessibilityElement *)mainWindow)) {
-                        NSString *previousAccessor = [NSString stringWithFormat:@".elements()['%@']", [[containerElement slAccessibilityName] slStringByEscapingForJavaScriptLiteral]];
-                        uiaPrefix = [previousAccessor stringByAppendingString:uiaPrefix];
-                        containerElement = containerElement.accessibilityContainer;
-                    }
-                }
-            });
-            if (!didLocateElement) {
-                [NSThread sleepForTimeInterval:kDefaultRetryDelay];
-            }
+            accessorChain = [keyWindow slAccessibilityChainToElement:self];
+        });
+        if (accessorChain) {
+            break;
         }
-        if (!didLocateElement) {
-            return nil;
+        [NSThread sleepForTimeInterval:kDefaultRetryDelay];
+    }
+    
+    NSMutableString *uiaPrefix = nil;
+    if (accessorChain) {
+        uiaPrefix = [@"UIATarget.localTarget().frontMostApp().mainWindow()" mutableCopy];
+        
+        // Skip the window element
+        for (int i = 1; i < [accessorChain count]; i++) {
+            [uiaPrefix appendFormat:@".elements()['%@']", [[accessorChain[i] slAccessibilityName] slStringByEscapingForJavaScriptLiteral]];
         }
     }
-    uiaPrefix = [@"UIATarget.localTarget().frontMostApp().mainWindow()" stringByAppendingString:uiaPrefix];
+    
     return uiaPrefix;
 }
 
@@ -110,7 +105,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     if (!uiaPrefix) {
         @throw [NSException exceptionWithName:SLInvalidElementException reason:[NSString stringWithFormat:@"Element '%@' does not exist.", [_label slStringByEscapingForJavaScriptLiteral]] userInfo:nil];
     } else {
-        return [NSString stringWithFormat:@"%@.elements()['%@']", uiaPrefix, [_label slStringByEscapingForJavaScriptLiteral]];
+        return uiaPrefix;
     }
 }
 
