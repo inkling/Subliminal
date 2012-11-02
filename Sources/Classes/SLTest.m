@@ -173,12 +173,6 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
     _lastKnownLineNumber = lineNumber;
 }
 
-- (void)failAssertion:(NSString *)reason {
-    NSException *exception = [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil];
-    exception = [self exceptionByAddingFileInfo:exception];
-    @throw exception;
-}
-
 - (NSException *)exceptionByAddingFileInfo:(NSException *)exception {
     NSMutableDictionary *userInfo = [[exception userInfo] mutableCopy];
     if (!userInfo) {
