@@ -166,17 +166,22 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
     [NSThread sleepForTimeInterval:interval];
 }
 
-- (void)failWithException:(NSException *)exception {
-    [exception raise];
-}
-
 - (void)recordLastKnownFile:(char *)filename line:(int)lineNumber {
     _lastKnownFilename = [@(filename) lastPathComponent];
     _lastKnownLineNumber = lineNumber;
 }
 
+- (void)failAssertion:(NSString *)reason {
+    NSException *exception = [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil];
+    exception = [self exceptionByAddingFileInfo:exception];
+    @throw exception;
+}
+
 - (NSException *)exceptionByAddingFileInfo:(NSException *)exception {
     NSMutableDictionary *userInfo = [[exception userInfo] mutableCopy];
+    if (!userInfo) {
+        userInfo = [NSMutableDictionary dictionary];
+    }
     userInfo[SLTestExceptionFilenameKey] = _lastKnownFilename;
     userInfo[SLTestExceptionLineNumberKey] = @(_lastKnownLineNumber);
     
@@ -185,18 +190,3 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
 
 @end
 
-
-@implementation NSException (SLTestException)
-
-+ (NSException *)testFailureInFile:(char *)filename atLine:(int)lineNumber reason:(NSString *)failureReason, ... {
-    va_list(args);
-    va_start(args, failureReason);
-    NSString *reason = [[NSString alloc] initWithFormat:failureReason arguments:args];
-    va_end(args);
-    
-    NSDictionary *userInfo = @{ SLTestExceptionFilenameKey : @(filename), SLTestExceptionLineNumberKey : @(lineNumber) };
-    
-    return [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:userInfo];
-}
-
-@end

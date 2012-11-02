@@ -130,10 +130,7 @@ extern NSString *const SLTestExceptionLineNumberKey;
  You can use this method to provide enough time for lengthy operations to complete.
  
  If you have a specific condition on which you're waiting, it is more appropriate 
- to use either the SLWait macro or the SLElement "waitUntil..." methods.
-
- @warning You should use this method instead of +[NSThread sleepForTimeInterval:] 
- because this method ensures that UIAutomation does not time out while testing pauses.
+ to use the SLElement "waitUntil..." methods.
  
  @param interval The time interval for which to wait.
  */
@@ -151,52 +148,23 @@ extern NSString *const SLTestExceptionLineNumberKey;
 
 #pragma mark - Test Assertions
 
-- (void)failWithException:(NSException *)exception;
+- (void)failAssertion:(NSString *)reason;
 
-#define SLAssertTrue(expr, ...) ({\
-    BOOL _evaluatedExpression = (expr); \
-    if (!_evaluatedExpression) { \
-        [self failWithException:[NSException testFailureInFile:__FILE__ atLine:__LINE__ \
-                                                         reason:@"\"%@\" should be true. %@", \
-                                                                @(#expr), [NSString stringWithFormat:__VA_ARGS__]]]; \
+#define SLAssertTrue(expr, ...) ({ \
+    BOOL result = (expr); \
+    [self recordLastKnownFile:__FILE__ line:__LINE__]; \
+    if (!result) { \
+        [self failAssertion:[NSString stringWithFormat:@"\"%@\" shoud be true. %@", @(#expr), [NSString stringWithFormat:__VA_ARGS__]]]; \
     } \
 })
 
-#define SLAssertFalse(expr, ...) ({\
-    BOOL _evaluatedExpression = (expr); \
-    if (_evaluatedExpression) { \
-        [self failWithException:[NSException testFailureInFile:__FILE__ atLine:__LINE__ \
-                                                         reason:@"\"%@\" should be false. %@", \
-                                                                @(#expr), [NSString stringWithFormat:__VA_ARGS__]]]; \
-    } \
-})
-
-// This macro should be used to wait on conditions that can be evaluated
-// entirely within the application. To wait on conditions that involve
-// user interface elements, use the SLElement "wait until..." methods.
-#define SLWait(expr, timeout, ...) ({\
-    /*  increment the heartbeat timeout while we wait
-        so that UIAutomation doesn't think we've died */ \
-    self.logger.terminal.heartbeatTimeout += timeout; \
-    NSTimeInterval _retryDelay = 0.25; \
-    \
-    NSDate *_startDate = [NSDate date]; \
-    BOOL _exprTrue = NO; \
-    while (!(_exprTrue = (expr)) && \
-            ([[NSDate date] timeIntervalSinceDate:_startDate] < timeout)) { \
-        [NSThread sleepForTimeInterval:_retryDelay]; \
-    } \
-    self.logger.terminal.heartbeatTimeout -= timeout; \
-    if (!_exprTrue) { \
-        [self failWithException:[NSException testFailureInFile:__FILE__ atLine:__LINE__ \
-                                                         reason:@"\"%@\" did not become true within %g seconds. %@", \
-                                                                @(#expr), timeout, [NSString stringWithFormat:__VA_ARGS__]]; \
+#define SLAssertFalse(expr, ...) ({ \
+    BOOL result = (expr); \
+    [self recordLastKnownFile:__FILE__ line:__LINE__]; \
+    if (result) { \
+        [self failAssertion:[NSString stringWithFormat:@"\"%@\" should be false. %@", @(#expr), [NSString stringWithFormat:__VA_ARGS__]]]; \
     } \
 })
 
 @end
 
-
-@interface NSException (SLTestException)
-+ (NSException *)testFailureInFile:(char *)filename atLine:(int)lineNumber reason:(NSString *)failureReason, ... NS_FORMAT_FUNCTION(3, 4);
-@end
