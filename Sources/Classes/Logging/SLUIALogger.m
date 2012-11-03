@@ -13,13 +13,6 @@
 
 @implementation SLUIALogger
 
-- (id)init {
-    if ((self = [super init])) {
-        NSAssert([[SLTerminal sharedTerminal] hasStarted], @"The terminal has not yet started.");
-    }
-    return self;
-}
-
 - (void)log:(NSString *)message {
     [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logMessage('%@');", [message stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"]];
 }

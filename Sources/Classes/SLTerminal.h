@@ -10,23 +10,19 @@
 #import <UIKit/UIKit.h>
 
 
-static NSString *const SLTerminalOutputButtonAccessibilityIdentifier = @"SLTerminal_outputButton";
-static NSString *const SLTerminalInputPreferencesKey = @"SLTerminal_input";
-
-static NSString *const SLExceptionOccurredResponsePrefix = @"SLTerminalExceptionOccurred: ";
+extern NSString *const SLTerminalJavaScriptException;
 
 
 @interface SLTerminal : NSObject
 
-@property (nonatomic, readonly) BOOL hasStarted;
-
-@property (nonatomic) NSTimeInterval heartbeatTimeout;
-
 + (SLTerminal *)sharedTerminal;
 
-- (void)startWithCompletionBlock:(void (^)(SLTerminal *))completionBlock;
-
-// these messages should be valid JS statements
+/** Evaluates JavaScript code within UIAutomation.
+ 
+ @param javascript The input to eval(). May be an expression preceeded by zero or more statements.
+ @return Returns the result of eval() as a string.
+ @exception SLTerminalJavaScriptException Thrown if a JavaScript exception occurred in eval().
+ */
 - (NSString *)eval:(NSString *)javascript;
 - (NSString *)evalWithFormat:(NSString *)javascript, ... NS_FORMAT_FUNCTION(1, 2);
 

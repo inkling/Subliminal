@@ -158,15 +158,10 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (BOOL)waitFor:(NSTimeInterval)timeout untilCondition:(NSString *)condition, ... NS_FORMAT_FUNCTION(2, 3) {
-    // increment the timeout while we wait
-    // so that SLRadio.js doesn't think we've died
-    [SLTerminal sharedTerminal].heartbeatTimeout += timeout;
-
+    
     BOOL conditionDidBecomeTrue =
     [[[SLTerminal sharedTerminal] evalWithFormat:@"(wait(function() { return (%@); }, %g, %g) ? \"YES\" : \"NO\");", SLStringWithFormatAfter(condition), timeout, kDefaultRetryDelay] boolValue];
     
-    [SLTerminal sharedTerminal].heartbeatTimeout -= timeout;
-
     return conditionDidBecomeTrue;
 }
 

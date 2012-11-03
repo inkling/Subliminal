@@ -24,11 +24,9 @@
     
 
 #if INTEGRATION_TESTING
-    [[SLTerminal sharedTerminal] startWithCompletionBlock:^(SLTerminal *terminal){
-        SLTestController *testController = [SLTestController sharedTestController];
-		[SLLogger setSharedLogger:[[SLUIALogger alloc] init]];
-        [testController runTests:[SLTest allTests]];
-    }];
+    SLTestController *testController = [SLTestController sharedTestController];
+    [SLLogger setSharedLogger:[[SLUIALogger alloc] init]];
+    [testController runTests:[SLTest allTests]];
 #endif
     
     return YES;
