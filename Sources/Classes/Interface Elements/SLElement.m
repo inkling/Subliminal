@@ -122,26 +122,30 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return [self uiaPrefix] != nil;
 }
 
-- (BOOL)waitFor:(NSTimeInterval)timeout untilCondition:(NSString *)condition, ... NS_FORMAT_FUNCTION(2, 3) {
-    va_list(args);
-    va_start(args, condition);
-    NSString *expr = [[NSString alloc] initWithFormat:condition arguments:args];
-    va_end(args);
+- (BOOL)waitFor:(NSTimeInterval)timeout untilCondition:(NSString *)condition {
+    NSString *javascript = [NSString stringWithFormat:
+      @"var cond = function() { return (%@); };"
+      @"var timeout = %g;"
+      @"var retryDelay = %g;"
+      @""
+      @"var startTime = Math.round(Date.now() / 1000);"
+      @"var condTrue = false;"
+      @"while (!(condTrue = cond()) && ((Math.round(Date.now() / 1000) - startTime) < timeout)) {"
+      @"    UIATarget.localTarget().delay(retryDelay);"
+      @"};"
+      @"(condTrue ? 'YES' : 'NO')", condition, timeout, kDefaultRetryDelay];
     
-    BOOL conditionDidBecomeTrue =
-    [[[SLTerminal sharedTerminal] evalWithFormat:@"(wait(function() { return (%@); }, %g, %g) ? 'YES' : 'NO');", expr, timeout, kDefaultRetryDelay] boolValue];
-    
-    return conditionDidBecomeTrue;
+    return [[[SLTerminal sharedTerminal] eval:javascript] boolValue];
 }
 
-- (void)waitUntilVisible:(NSTimeInterval)timeout {    
-    if (![self waitFor:timeout untilCondition:@"%@.isVisible()", [self uiaSelf]]) {
+- (void)waitUntilVisible:(NSTimeInterval)timeout {
+    if (![self waitFor:timeout untilCondition:[NSString stringWithFormat:@"%@.isVisible()", [self uiaSelf]]]) {
         [NSException raise:@"SLWaitUntilVisibleException" format:@"Element %@ did not become visible within %g seconds.", self, timeout];
     }
 }
 
 - (void)waitUntilInvisible:(NSTimeInterval)timeout {
-    if (![self waitFor:timeout untilCondition:@"!%@.isVisible()", [self uiaSelf]]) {
+    if (![self waitFor:timeout untilCondition:[NSString stringWithFormat:@"!%@.isVisible()", [self uiaSelf]]]) {
         [NSException raise:@"SLWaitUntilInvisibleException" format:@"Element %@ was still visible after %g seconds.", self, timeout];
     }
 }

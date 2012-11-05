@@ -1,20 +1,6 @@
 
 var _target = UIATarget.localTarget();
 
-function wait(f, timeout, retryDelay) {
-	if (!timeout) var timeout = 5.0;
-	if (!retryDelay) var retryDelay = 0.25;
-
-	var startTime = Math.round(Date.now() / 1000);
-	var fTrue = false;
-	while (!(fTrue = f()) &&
-			((Math.round(Date.now() / 1000) - startTime) < timeout)) {
-		_target.delay(retryDelay);
-	}
-	
-	return fTrue;
-}
-
 UIATarget.onAlert = function(alert) {
 	// tests will handle alerts
 	return true;
