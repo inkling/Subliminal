@@ -60,3 +60,7 @@ extern NSString *const SLInvalidElementException;
 @interface SLWindow : SLElement
 + (SLWindow *)mainWindow;
 @end
+
+// Instances refer to the first instance of (a kind of) UIWebView that appears in the view hierarchy.
+@interface SLCurrentWebView : SLElement
+@end

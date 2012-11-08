@@ -223,3 +223,14 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 @end
+
+#pragma mark - SLCurrentWebView
+
+@implementation SLCurrentWebView
+
+- (BOOL)matchesObject:(NSObject *)object
+{
+    return [object isKindOfClass:[UIWebView class]];
+}
+
+@end
