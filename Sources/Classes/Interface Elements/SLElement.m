@@ -68,7 +68,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 #pragma mark Sending Actions
 
 - (NSString *)uiaPrefix {
-    __block NSArray *accessorChain = nil;
+    __block NSMutableString *uiaPrefix = nil;
     
     // Attempt the find the element the same way UIAutomation does (including the 5 second timeout)
     NSDate *startDate = [NSDate date];
@@ -78,24 +78,22 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
             // we should not here assume the element's going to be found in the keyWindow.
             UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
 
-            accessorChain = [keyWindow slAccessibilityChainToElement:self];
+            NSArray *accessorChain = [keyWindow slAccessibilityChainToElement:self];
+            if (accessorChain) {
+                uiaPrefix = [@"UIATarget.localTarget().frontMostApp().mainWindow()" mutableCopy];
+
+                // Skip the window element
+                for (int i = 1; i < [accessorChain count]; i++) {
+                    [uiaPrefix appendFormat:@".elements()['%@']", [[accessorChain[i] slAccessibilityName] slStringByEscapingForJavaScriptLiteral]];
+                }
+            }
         });
-        if (accessorChain) {
+        if (uiaPrefix) {
             break;
         }
         [NSThread sleepForTimeInterval:kDefaultRetryDelay];
     }
-    
-    NSMutableString *uiaPrefix = nil;
-    if (accessorChain) {
-        uiaPrefix = [@"UIATarget.localTarget().frontMostApp().mainWindow()" mutableCopy];
-        
-        // Skip the window element
-        for (int i = 1; i < [accessorChain count]; i++) {
-            [uiaPrefix appendFormat:@".elements()['%@']", [[accessorChain[i] slAccessibilityName] slStringByEscapingForJavaScriptLiteral]];
-        }
-    }
-    
+
     return uiaPrefix;
 }
 
