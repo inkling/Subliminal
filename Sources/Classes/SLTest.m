@@ -159,7 +159,7 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
                 } else {
                     SLLog(@"Exception occurred: ***%@*** for reason: %@", [e name], [e reason]);
                 }
-                [[SLLogger sharedLogger] logTest:test caseAbort:testSelectorString];
+                [[SLLogger sharedLogger] logTest:test caseFail:testSelectorString];
             }
             
             caseFailed = YES;
