@@ -122,6 +122,10 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return [self uiaPrefix] != nil;
 }
 
+- (BOOL)isVisible {
+    return [[[SLTerminal sharedTerminal] evalWithFormat:@"(%@.isVisible() ? 'YES' : 'NO')", [self uiaSelf]] boolValue];
+}
+
 - (BOOL)waitFor:(NSTimeInterval)timeout untilCondition:(NSString *)condition {
     NSString *javascript = [NSString stringWithFormat:
       @"var cond = function() { return (%@); };"
