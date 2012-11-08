@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 Inkling. All rights reserved.
 //
 
+#import "SLAccessibility.h"
+
 #import "SLTestController.h"
 #import "SLTestController+AppContext.h"
 #import "SLTest.h"

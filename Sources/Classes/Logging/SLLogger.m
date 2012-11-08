@@ -8,23 +8,43 @@
 
 #import "SLLogger.h"
 
-#import "SLTerminal.h"
+#import "SLUIALogger.h"
+
+
+void SLLog(NSString *format, ...) {
+    va_list args;
+    va_start(args, format);
+    [[SLLogger sharedLogger] logMessage:[[NSString alloc] initWithFormat:format arguments:args]];
+    va_end(args);
+}
 
 
 @implementation SLLogger
 
-- (id)initWithTerminal:(SLTerminal *)terminal {
-    self = [super init];
-    if (self) {
-        NSAssert([terminal hasStarted], @"The terminal has not yet started.");
-        _terminal = terminal;
-    }
-    return self;
+static SLLogger *__sharedLogger = nil;
++ (SLLogger *)sharedLogger {
+    return __sharedLogger;
 }
 
-- (void)logMessage:(NSString *)message, ... {
++ (void)setSharedLogger:(SLLogger *)logger {
+    __sharedLogger = logger;
+}
+
+- (void)logDebug:(NSString *)debug {
+    [self logMessage:[NSString stringWithFormat:@"Debug: %@", debug]];
+}
+
+- (void)logMessage:(NSString *)message {
     NSLog(@"Concrete SLLogger subclass (%@) must provide an interface to a Javascript logging functions", NSStringFromClass([self class]));
     [self doesNotRecognizeSelector:_cmd];
+}
+
+- (void)logWarning:(NSString *)warning {
+    [self logMessage:[NSString stringWithFormat:@"Warning: %@", warning]];
+}
+
+- (void)logError:(NSString *)error {
+    [self logMessage:[NSString stringWithFormat:@"Error: %@", error]];
 }
 
 @end
@@ -37,17 +57,17 @@
 }
 
 - (void)logTestStart:(NSString *)test {
-    [self logMessage:@"Test \"%@\" started.", test];
+    [self logMessage:[NSString stringWithFormat:@"Test \"%@\" started.", test]];
 }
 
 - (void)logTestFinish:(NSString *)test
  withNumCasesExecuted:(NSUInteger)numCasesExecuted
        numCasesFailed:(NSUInteger)numCasesFailed {
-    [self logMessage:@"Test \"%@\" finished: executed %u tests, with %u failures.", test, numCasesExecuted, numCasesFailed];
+    [self logMessage:[NSString stringWithFormat:@"Test \"%@\" finished: executed %u tests, with %u failures.", test, numCasesExecuted, numCasesFailed]];
 }
 
 - (void)logTestAbort:(NSString *)test {
-    [self logMessage:@"Test \"%@\" terminated abnormally.", test];
+    [self logError:[NSString stringWithFormat:@"Test \"%@\" terminated abnormally.", test]];
 }
 
 - (void)logTestingFinish {
@@ -60,23 +80,19 @@
 @implementation SLLogger (SLTest)
 
 - (void)logTest:(NSString *)test caseStart:(NSString *)testCase {
-    [self logMessage:@"Test case \"-[%@ %@]\" started.", test, testCase];
+    [self logMessage:[NSString stringWithFormat:@"Test case \"-[%@ %@]\" started.", test, testCase]];
 }
 
 - (void)logTest:(NSString *)test caseFail:(NSString *)testCase {
-    [self logMessage:@"Test case \"-[%@ %@]\" failed.", test, testCase];
+    [self logError:[NSString stringWithFormat:@"Test case \"-[%@ %@]\" failed.", test, testCase]];
 }
 
 - (void)logTest:(NSString *)test casePass:(NSString *)testCase {
-    [self logMessage:@"Test case \"-[%@ %@]\" passed.", test, testCase];
+    [self logMessage:[NSString stringWithFormat:@"Test case \"-[%@ %@]\" passed.", test, testCase]];
 }
 
-- (void)logTest:(NSString *)test caseAbort:(NSString *)testCase {
-    [self logMessage:@"Test case \"-[%@ %@]\" terminated abnormally.", test, testCase];
-}
-
-- (void)logException:(NSString *)exception, ... {
-    [self logMessage:@"Error: \"%@\"", SLStringWithFormatAfter(exception)];
+- (void)logTest:(NSString *)test caseIssue:(NSString *)testCase {
+    [self logMessage:[NSString stringWithFormat:@"Test case \"-[%@ %@]\" terminated abnorally.", test, testCase]];
 }
 
 @end

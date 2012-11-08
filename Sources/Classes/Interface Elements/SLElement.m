@@ -7,17 +7,15 @@
 //
 
 #import "SLElement.h"
-#import "UIAccessibilityElement+SLElement.h"
 
+#import "SLAccessibility.h"
 #import "SLTerminal.h"
-#import "SLUtilities.h"
+#import "NSString+SLJavaScript.h"
 
 #import <objc/runtime.h>
 
 
-NSString *const SLElementExceptionPrefix = @"SLElement";
-NSString *const SLElementAccessException = @"SLElementAccessException";
-NSString *const SLElementUIAMessageSendException = @"SLElementUIAMessageSendException";
+NSString *const SLInvalidElementException = @"SLInvalidElementException";
 
 static const NSTimeInterval kDefaultRetryDelay = 0.25;
 
@@ -26,36 +24,15 @@ static const NSTimeInterval kDefaultRetryDelay = 0.25;
 
 @interface SLElement ()
 
-+ (void)setTerminal:(SLTerminal *)terminal;
-
 - (id)initWithAccessibilityLabel:(NSString *)label;
 
 - (NSString *)sendMessage:(NSString *)action, ... NS_FORMAT_FUNCTION(1, 2);
-
-@end
-
-@interface SLElement (Subclassing)
-
 - (NSString *)uiaSelf;
 
 @end
 
 
 @implementation SLElement
-
-static const void *const kTerminalKey = &kTerminalKey;
-+ (void)setTerminal:(SLTerminal *)terminal {
-    NSAssert([terminal hasStarted], @"SLElement's terminal has not yet started.");
-    if (terminal != [self terminal]) {
-        // note that we explicitly associate with SLElement 
-        // so that subclasses can use the terminal too
-        objc_setAssociatedObject([SLElement class], kTerminalKey, terminal, OBJC_ASSOCIATION_RETAIN);
-    }
-}
-
-+ (SLTerminal *)terminal {
-    return objc_getAssociatedObject([SLElement class], kTerminalKey);
-}
 
 static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 + (void)setDefaultTimeout:(NSTimeInterval)defaultTimeout {
@@ -64,7 +41,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         // so that subclasses can reference the timeout too
         objc_setAssociatedObject([SLElement class], kDefaultTimeoutKey, @(defaultTimeout), OBJC_ASSOCIATION_RETAIN);
 
-        [[self terminal] send:@"UIATarget.localTarget().setTimeout(%g);", defaultTimeout];
+        [[SLTerminal sharedTerminal] evalWithFormat:@"UIATarget.localTarget().setTimeout(%g);", defaultTimeout];
     }
 }
 
@@ -91,163 +68,102 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 #pragma mark Sending Actions
 
 - (NSString *)uiaPrefix {
-    __block NSString *uiaPrefix = @"";
-    @autoreleasepool {
-        __block BOOL didLocateElement = NO;
-        NSDate *startDate = [NSDate date];
-        // note that we do _not_ increment the heartbeat timeout here
-        // these searches should conclude within the default timeout
-        while (!didLocateElement && [[NSDate date] timeIntervalSinceDate:startDate] < [[self class] defaultTimeout]) {
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                // TODO: If the application's going to search all the windows,
-                // we should not here assume the element's going to be found in the keyWindow.
-                UIWindow *mainWindow = [[UIApplication sharedApplication] keyWindow];
+    __block NSArray *accessorChain = nil;
+    
+    // Attempt the find the element the same way UIAutomation does (including the 5 second timeout)
+    NSDate *startDate = [NSDate date];
+    while ([[NSDate date] timeIntervalSinceDate:startDate] < [[self class] defaultTimeout]) {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            // TODO: If the application's going to search all the windows,
+            // we should not here assume the element's going to be found in the keyWindow.
+            UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
 
-                UIAccessibilityElement *matchingElement = [[UIApplication sharedApplication] accessibilityElementMatchingSLElement:self];
-                if (matchingElement) {
-                    didLocateElement = YES;
-                    // now that we've found the accessibility element, follow its containers up to the window
-                    UIAccessibilityElement *containerElement = matchingElement.accessibilityContainer;
-                    while (containerElement && (containerElement != (UIAccessibilityElement *)mainWindow)) {
-                        NSString *previousAccessor = [NSString stringWithFormat:@".elements()[\"%@\"]", [containerElement slAccessibilityName]];
-                        uiaPrefix = [previousAccessor stringByAppendingString:uiaPrefix];
-                        containerElement = containerElement.accessibilityContainer;
-                    }
-                }
-            });
-            if (!didLocateElement) {
-                [NSThread sleepForTimeInterval:kDefaultRetryDelay];
-            }
+            accessorChain = [keyWindow slAccessibilityChainToElement:self];
+        });
+        if (accessorChain) {
+            break;
         }
-        if (!didLocateElement) {
-            return nil;
+        [NSThread sleepForTimeInterval:kDefaultRetryDelay];
+    }
+    
+    NSMutableString *uiaPrefix = nil;
+    if (accessorChain) {
+        uiaPrefix = [@"UIATarget.localTarget().frontMostApp().mainWindow()" mutableCopy];
+        
+        // Skip the window element
+        for (int i = 1; i < [accessorChain count]; i++) {
+            [uiaPrefix appendFormat:@".elements()['%@']", [[accessorChain[i] slAccessibilityName] slStringByEscapingForJavaScriptLiteral]];
         }
     }
-    uiaPrefix = [@"UIATarget.localTarget().frontMostApp().mainWindow()" stringByAppendingString:uiaPrefix];
+    
     return uiaPrefix;
 }
 
 - (NSString *)uiaSelf {
 	NSString *uiaPrefix = [self uiaPrefix];
-	return ([uiaPrefix length] ? [NSString stringWithFormat:@"%@.elements()[\"%@\"]",
-								  [self uiaPrefix], _label] : nil);
-}
-
-- (BOOL)sendMessageReturningBool:(NSString *)action, ... {
-    SLTerminal *terminal = [[self class] terminal];
-    NSAssert(terminal, @"SLElement does not have a terminal.");
-
-    NSString *formattedAction = SLStringWithFormatAfter(action);
-    BOOL response = NO;
-    @try {
-        NSString *uiaSelf = [self uiaSelf];
-        if (![uiaSelf length]) {
-            // no UIAccessibilityElement could be located. No need to talk to UIAutomation -- abort
-            [NSException raise:SLElementAccessException format:@"Element %@ is not valid.", self];
-        } else {
-            response = [terminal sendAndReturnBool:@"%@.%@", [self uiaSelf], formattedAction];
-        }
+    
+    if (!uiaPrefix) {
+        @throw [NSException exceptionWithName:SLInvalidElementException reason:[NSString stringWithFormat:@"Element '%@' does not exist.", [_label slStringByEscapingForJavaScriptLiteral]] userInfo:nil];
+    } else {
+        return uiaPrefix;
     }
-    @catch (NSException *exception) {
-        @throw [NSException exceptionWithName:SLElementUIAMessageSendException reason:[exception reason] userInfo:nil];
-    }
-    return response;
 }
 
 - (NSString *)sendMessage:(NSString *)action, ... {
-    SLTerminal *terminal = [[self class] terminal];
-    NSAssert(terminal, @"SLElement does not have a terminal.");
+    va_list(args);
+    va_start(args, action);
+    NSString *formattedAction = [[NSString alloc] initWithFormat:action arguments:args];
+    va_end(args);
     
-    NSString *formattedAction = SLStringWithFormatAfter(action);
-    NSString *response = nil;
-    @try {
-        NSString *uiaSelf = [self uiaSelf];
-        if (![uiaSelf length]) {
-            // no UIAccessibilityElement could be located. No need to talk to UIAutomation -- abort
-            [NSException raise:SLElementAccessException format:@"Element %@ is not valid.", self];
-        } else {
-            response = [terminal send:@"%@.%@;", [self uiaSelf], formattedAction];
-        }
-    }
-    @catch (NSException *exception) {
-        @throw [NSException exceptionWithName:SLElementUIAMessageSendException reason:[exception reason] userInfo:nil];
-    }
-    return response;
+    return [[SLTerminal sharedTerminal] evalWithFormat:@"%@.%@", [self uiaSelf], formattedAction];
 }
 
 - (BOOL)isValid {
-    BOOL isValid;
-    @try {
-        isValid = [self sendMessageReturningBool:@"isValid()"];
-    }
-    @catch (NSException *exception) {
-        if ([[exception name] isEqualToString:SLElementAccessException]) {
-            // our UIAccessibilityElement could not be located,
-            // which obviously means we're not valid -- ignore the exception
-            isValid = NO;
-        } else {
-            @throw exception;
-        }
-    }
-    return isValid;
+    return [self uiaPrefix] != nil;
 }
 
-- (BOOL)isVisible {
-    BOOL isVisible;
-    @try {
-        isVisible = [self sendMessageReturningBool:@"isVisible()"];
-    }
-    @catch (NSException *exception) {
-        if ([[exception name] isEqualToString:SLElementAccessException]) {
-            // our UIAccessibilityElement could not be located,
-            // which obviously means we're not visible -- ignore the exception
-            isVisible = NO;
-        } else {
-            @throw exception;
-        }
-    }
-    return isVisible;
-}
-
-- (BOOL)waitFor:(NSTimeInterval)timeout untilCondition:(NSString *)condition, ... NS_FORMAT_FUNCTION(2, 3) {
-    // increment the timeout while we wait
-    // so that SLRadio.js doesn't think we've died
-    [[self class] terminal].heartbeatTimeout += timeout;
-
-    BOOL conditionDidBecomeTrue =
-    [[[[self class] terminal] send:
-          @"(wait(function() { return (%@); }, %g, %g) ? \"YES\" : \"NO\");",
-          SLStringWithFormatAfter(condition), timeout, kDefaultRetryDelay] boolValue];
+- (BOOL)waitFor:(NSTimeInterval)timeout untilCondition:(NSString *)condition {
+    NSString *javascript = [NSString stringWithFormat:
+      @"var cond = function() { return (%@); };"
+      @"var timeout = %g;"
+      @"var retryDelay = %g;"
+      @""
+      @"var startTime = Math.round(Date.now() / 1000);"
+      @"var condTrue = false;"
+      @"while (!(condTrue = cond()) && ((Math.round(Date.now() / 1000) - startTime) < timeout)) {"
+      @"    UIATarget.localTarget().delay(retryDelay);"
+      @"};"
+      @"(condTrue ? 'YES' : 'NO')", condition, timeout, kDefaultRetryDelay];
     
-    [[self class] terminal].heartbeatTimeout -= timeout;
-
-    return conditionDidBecomeTrue;
+    return [[[SLTerminal sharedTerminal] eval:javascript] boolValue];
 }
 
-- (void)waitUntilVisible:(NSTimeInterval)timeout {    
-    if (![self waitFor:timeout untilCondition:@"%@.isVisible()", [self uiaSelf]]) {
-        [NSException raise:SLElementAccessException format:@"Element %@ did not become visible within %g seconds.", self, timeout];
+- (void)waitUntilVisible:(NSTimeInterval)timeout {
+    if (![self waitFor:timeout untilCondition:[NSString stringWithFormat:@"%@.isVisible()", [self uiaSelf]]]) {
+        [NSException raise:@"SLWaitUntilVisibleException" format:@"Element %@ did not become visible within %g seconds.", self, timeout];
     }
 }
 
 - (void)waitUntilInvisible:(NSTimeInterval)timeout {
-    if (![self waitFor:timeout untilCondition:@"!%@.isVisible()", [self uiaSelf]]) {
-        [NSException raise:SLElementAccessException format:@"Element %@ was still visible after %g seconds.", self, timeout];
+    if (![self waitFor:timeout untilCondition:[NSString stringWithFormat:@"!%@.isVisible()", [self uiaSelf]]]) {
+        [NSException raise:@"SLWaitUntilInvisibleException" format:@"Element %@ was still visible after %g seconds.", self, timeout];
     }
 }
 
 - (void)tap {
-    (void)[self sendMessage:@"tap()"];
+    [self sendMessage:@"tap()"];
 }
 
 - (NSString *)value {
-    // must check validity before checking value:
-    // UIAutomation will not warn if this element does not exist
-    if (![self isValid]) {
-        [NSException raise:SLElementAccessException format:@"Element %@ is not valid.", self];
-    }
-    
     return [self sendMessage:@"value()"];
+}
+
+- (void)logElement {
+    [self sendMessage:@"logElement()"];
+}
+
+- (void)logElementTree {
+    [self sendMessage:@"logElementTree()"];
 }
 
 @end
@@ -262,11 +178,11 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 - (NSString *)uiaSelf {
     return [NSString stringWithFormat:
             @"((UIATarget.localTarget().frontMostApp().alert().staticTexts()[0].label() == \"%@\") \
-                            ? UIATarget.localTarget().frontMostApp().alert() : null)", self.label];
+                            ? UIATarget.localTarget().frontMostApp().alert() : null)", [self.label slStringByEscapingForJavaScriptLiteral]];
 }
 
 - (void)dismiss {
-    (void)[self sendMessage:@"defaultButton().tap()"];
+    [self sendMessage:@"defaultButton().tap()"];
 }
 
 @end
@@ -287,7 +203,21 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (void)setText:(NSString *)text {
-    (void)[self sendMessage:@"setValue(\"%@\")", text];
+    [self sendMessage:@"setValue('%@')", [text slStringByEscapingForJavaScriptLiteral]];
+}
+
+@end
+
+#pragma mark - SLWindow
+
+@implementation SLWindow
+
++ (SLWindow *)mainWindow {
+    return [[SLWindow alloc] initWithAccessibilityLabel:nil];
+}
+
+- (NSString *)uiaSelf {
+	return @"UIATarget.localTarget().frontMostApp().mainWindow()";
 }
 
 @end

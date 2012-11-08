@@ -8,17 +8,22 @@
 
 #import <Foundation/Foundation.h>
 
-#import "SLTerminal.h"
-#import "SLUtilities.h"
+/** Prints some information to the testing environment.
+ 
+ Equivalent to NSLog() except for the output medium. Implemented using [SLLogger logMessage:].
+ */
+void SLLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
 
 
 @interface SLLogger : NSObject
 
-@property (nonatomic, strong, readonly) SLTerminal *terminal;
++ (SLLogger *)sharedLogger;
++ (void)setSharedLogger:(SLLogger *)logger;
 
-- (id)initWithTerminal:(SLTerminal *)terminal;
-
-- (void)logMessage:(NSString *)message, ... NS_FORMAT_FUNCTION(1, 2);
+- (void)logDebug:(NSString *)debug;
+- (void)logMessage:(NSString *)message;
+- (void)logWarning:(NSString *)warning;
+- (void)logError:(NSString *)error;
 
 @end
 
@@ -45,8 +50,6 @@
 - (void)logTest:(NSString *)test caseStart:(NSString *)testCase;
 - (void)logTest:(NSString *)test caseFail:(NSString *)testCase;
 - (void)logTest:(NSString *)test casePass:(NSString *)testCase;
-- (void)logTest:(NSString *)test caseAbort:(NSString *)testCase;
-
-- (void)logException:(NSString *)exception, ... NS_FORMAT_FUNCTION(1, 2);
+- (void)logTest:(NSString *)test caseIssue:(NSString *)testCase;
 
 @end

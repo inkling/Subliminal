@@ -11,23 +11,17 @@
 
 #pragma mark - SLElement
 
-extern NSString *const SLElementExceptionPrefix;
-// ???: Are both the below necessary?
-extern NSString *const SLElementAccessException;
-extern NSString *const SLElementUIAMessageSendException;
 
+extern NSString *const SLInvalidElementException;
 
-@class SLTerminal;
 
 @interface SLElement : NSObject
 
 @property (nonatomic, strong, readonly) NSString *label;
 
 // Defaults - to be set by the test controller, from the testing thread.
-// The terminal must be set first.
-+ (void)setTerminal:(SLTerminal *)terminal;
 + (void)setDefaultTimeout:(NSTimeInterval)defaultTimeout;
-//
+
 
 + (id)elementWithAccessibilityLabel:(NSString *)label;
 
@@ -35,13 +29,15 @@ extern NSString *const SLElementUIAMessageSendException;
 // isValid and isVisible will return NO.
 // All other methods below will throw an SLElementAccessException.
 - (BOOL)isValid;
-- (BOOL)isVisible;
 - (void)waitUntilVisible:(NSTimeInterval)timeout;
 - (void)waitUntilInvisible:(NSTimeInterval)timeout;
 
 - (void)tap;
 
 - (NSString *)value;
+
+- (void)logElement;
+- (void)logElementTree;
 
 @end
 
@@ -57,4 +53,9 @@ extern NSString *const SLElementUIAMessageSendException;
 
 @interface SLTextField : SLElement
 @property (nonatomic, strong) NSString *text;
+@end
+
+// Instances always refer to mainWindow()
+@interface SLWindow : SLElement
++ (SLWindow *)mainWindow;
 @end

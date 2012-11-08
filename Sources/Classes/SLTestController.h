@@ -9,12 +9,10 @@
 #import <Foundation/Foundation.h>
 
 
-@class SLLogger;
 
 @interface SLTestController : NSObject
 
 @property (nonatomic) NSTimeInterval defaultTimeout;
-@property (nonatomic, strong) SLLogger *logger;
 
 + (id)sharedTestController;
 
