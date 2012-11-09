@@ -29,6 +29,7 @@ extern NSString *const SLInvalidElementException;
 // isValid and isVisible will return NO.
 // All other methods below will throw an SLElementAccessException.
 - (BOOL)isValid;
+- (BOOL)isVisible;
 - (void)waitUntilVisible:(NSTimeInterval)timeout;
 - (void)waitUntilInvisible:(NSTimeInterval)timeout;
 
@@ -58,4 +59,8 @@ extern NSString *const SLInvalidElementException;
 // Instances always refer to mainWindow()
 @interface SLWindow : SLElement
 + (SLWindow *)mainWindow;
+@end
+
+// Instances refer to the first instance of (a kind of) UIWebView that appears in the view hierarchy.
+@interface SLCurrentWebView : SLElement
 @end

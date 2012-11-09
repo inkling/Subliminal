@@ -31,7 +31,7 @@
 }
 
 - (NSArray *)slAccessibilityChainToElement:(SLElement *)element {
-    if ([self.slAccessibilityName isEqualToString:element.label]) {
+    if ([element matchesObject:self]) {
         return [NSArray arrayWithObject:self];
     }
     
@@ -101,6 +101,17 @@
     }
     
     return recursiveDescription;
+}
+
+@end
+
+#pragma mark -
+
+@implementation SLElement (SLAccessibility)
+
+- (BOOL)matchesObject:(NSObject *)object
+{
+    return [object.slAccessibilityName isEqualToString:self.label];
 }
 
 @end
