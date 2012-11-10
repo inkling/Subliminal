@@ -147,8 +147,15 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
     // perform the action on the main thread, for thread safety
     __block id<NSCopying> returnValue;
     dispatch_sync(dispatch_get_main_queue(), ^{
-        // use objc_msgSend so that Clang won't complain about performSelector leaks
-        returnValue = ((id<NSCopying>(*)(id, SEL))objc_msgSend)(target, action);
+        NSMethodSignature *actionSignature = [target methodSignatureForSelector:action];
+        const char *actionReturnType = [actionSignature methodReturnType];
+        if (strcmp(actionReturnType, @encode(void)) != 0) {
+            // use objc_msgSend so that Clang won't complain about performSelector leaks
+            returnValue = ((id<NSCopying>(*)(id, SEL))objc_msgSend)(target, action);
+        } else {
+            ((void(*)(id, SEL))objc_msgSend)(target, action);
+            returnValue = nil;
+        }
 
         // return a copy, for thread safety
         returnValue = [returnValue copyWithZone:NULL];
