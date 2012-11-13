@@ -49,7 +49,11 @@ extern NSString *const SLInvalidElementException;
 - (void)dismiss;
 @end
 
-@interface SLButton : SLElement
+@interface SLControl : SLElement
+- (BOOL)isEnabled;
+@end
+
+@interface SLButton : SLControl
 @end
 
 @interface SLTextField : SLElement
