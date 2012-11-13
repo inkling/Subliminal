@@ -193,6 +193,11 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 #pragma mark - SLButton
 
 @implementation SLButton
+
+- (BOOL)matchesObject:(NSObject *)object {
+    return ([super matchesObject:object] && ([object accessibilityTraits] & UIAccessibilityTraitButton));
+}
+
 @end
 
 
