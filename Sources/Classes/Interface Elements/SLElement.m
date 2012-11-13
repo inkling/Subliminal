@@ -189,6 +189,15 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 @end
 
+#pragma mark - SLControl
+
+@implementation SLControl
+
+- (BOOL)isEnabled {
+    return [[[SLTerminal sharedTerminal] evalWithFormat:@"(%@.isEnabled() ? 'YES' : 'NO')", [self uiaSelf]] boolValue];
+}
+
+@end
 
 #pragma mark - SLButton
 
