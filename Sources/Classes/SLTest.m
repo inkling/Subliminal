@@ -62,6 +62,10 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
     return NO;
 }
 
++ (BOOL)supportsCurrentPlatform {
+    return YES;
+}
+
 - (id)initWithTestController:(SLTestController *)testController {
     self = [super init];
     if (self) {
@@ -98,7 +102,14 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
         NSString *selectorString = NSStringFromSelector(selector);
         if ([selectorString hasPrefix:kSelectorPrefix] &&
             ![selectorString hasSuffix:@":"]) {
-            [selectorStrings addObject:selectorString];
+            UIUserInterfaceIdiom userInterfaceIdiom = [[UIDevice currentDevice] userInterfaceIdiom];
+            BOOL hasIPadSuffix = [selectorString hasSuffix:@"_iPad"];
+            BOOL hasIPhoneSuffix = [selectorString hasSuffix:@"_iPhone"];
+            if ((userInterfaceIdiom == UIUserInterfaceIdiomPad && hasIPadSuffix) ||
+                (userInterfaceIdiom == UIUserInterfaceIdiomPhone && hasIPhoneSuffix) ||
+                (!hasIPadSuffix && !hasIPhoneSuffix)) {
+                [selectorStrings addObject:selectorString];
+            }
         }
     }
     if (methods) free(methods);

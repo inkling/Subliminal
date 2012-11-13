@@ -81,6 +81,10 @@ static SLTestController *__sharedController = nil;
         }
         
         for (Class testClass in sortedTests) {
+            if (![testClass supportsCurrentPlatform]) {
+                continue;
+            }
+
             SLTest *test = (SLTest *)[[testClass alloc] initWithTestController:self];
             
             NSString *testName = NSStringFromClass(testClass);

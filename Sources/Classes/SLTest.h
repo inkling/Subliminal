@@ -47,6 +47,19 @@ extern NSString *const SLTestExceptionLineNumberKey;
  */
 + (BOOL)isStartUpTest;
 
+/**
+ Returns YES if this test can be run on the current device, main screen, etc.
+ Subclasses of SLTest should override if they need to do any run time checks
+ to determine whether or not their test cases can run.  Typical checks might include
+ checking the user interface idiom (phone or pad) of the current device, or
+ checking the scale of the main screen.
+
+ SLTest's implementation returns YES.
+
+ @return YES if this class has test cases that can currently run, NO otherwise.
+ */
++ (BOOL)supportsCurrentPlatform;
+
 - (id)initWithTestController:(SLTestController *)testController;
 
 - (NSUInteger)run:(NSUInteger *)casesExecuted;
@@ -54,6 +67,17 @@ extern NSString *const SLTestExceptionLineNumberKey;
 @end
 
 
+/**
+ The following methods are used to set up before and clean up after individual test case methods.
+ Only methods whose names have the prefix "test," implemented on a subclass of SLTest, will be run
+ as part of the test suite for the SLTest subclass.
+
+ A test case method whose name has the suffix "_iPhone," like testFoo_iPhone, will be executed only
+ when [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone.  A test case method
+ whose name has the suffix "_iPad" will be executed only when the current device user interface idiom
+ is UIUserInterfaceIdiomPad.  A test case method whose name has neither the "_iPhone" nor the "_iPad"
+ suffix will be executed on all devices regardless of the user interface idiom.
+ */
 @interface SLTest (SLTestCase)
 
 /**
