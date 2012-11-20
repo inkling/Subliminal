@@ -145,7 +145,7 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
             } else {
                 message = [NSString stringWithFormat:@"%@:%d: Exception occurred ***%@*** for reason: %@", _lastKnownFilename, _lastKnownLineNumber, [e name], [e reason]];
             }
-            [[SLLogger sharedLogger] logError:message];
+            [[SLLogger sharedLogger] logError:message test:test testCase:testSelectorString];
             [[SLLogger sharedLogger] logTest:test caseFail:testSelectorString];
             
             _lastKnownFilename = nil;
