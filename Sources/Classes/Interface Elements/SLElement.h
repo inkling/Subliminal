@@ -42,6 +42,10 @@ extern NSString *const SLInvalidElementException;
 
 @end
 
+@interface SLElement (Debugging)
+// Returns the UIA prefix for the element in the view hierarchy of the current main window.
+- (NSString *)currentUIAPrefix;
+@end
 
 #pragma mark - SLElement Subclasses
 

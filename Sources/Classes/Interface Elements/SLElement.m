@@ -68,25 +68,13 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 #pragma mark Sending Actions
 
 - (NSString *)uiaPrefix {
-    __block NSMutableString *uiaPrefix = nil;
+    __block NSString *uiaPrefix = nil;
     
     // Attempt the find the element the same way UIAutomation does (including the 5 second timeout)
     NSDate *startDate = [NSDate date];
     while ([[NSDate date] timeIntervalSinceDate:startDate] < [[self class] defaultTimeout]) {
         dispatch_sync(dispatch_get_main_queue(), ^{
-            // TODO: If the application's going to search all the windows,
-            // we should not here assume the element's going to be found in the keyWindow.
-            UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
-
-            NSArray *accessorChain = [keyWindow slAccessibilityChainToElement:self];
-            if (accessorChain) {
-                uiaPrefix = [@"UIATarget.localTarget().frontMostApp().mainWindow()" mutableCopy];
-
-                // Skip the window element
-                for (int i = 1; i < [accessorChain count]; i++) {
-                    [uiaPrefix appendFormat:@".elements()['%@']", [[accessorChain[i] slAccessibilityName] slStringByEscapingForJavaScriptLiteral]];
-                }
-            }
+            uiaPrefix = [self currentUIAPrefix];
         });
         if (uiaPrefix) {
             break;
@@ -166,6 +154,29 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 - (void)logElementTree {
     [self sendMessage:@"logElementTree()"];
+}
+
+@end
+
+@implementation SLElement (Debugging)
+
+- (NSString *)currentUIAPrefix {
+    // TODO: If the application's going to search all the windows,
+    // we should not here assume the element's going to be found in the keyWindow.
+    UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+
+    NSMutableString *uiaPrefix;
+    NSArray *accessorChain = [keyWindow slAccessibilityChainToElement:self];
+    if (accessorChain) {
+        uiaPrefix = [@"UIATarget.localTarget().frontMostApp().mainWindow()" mutableCopy];
+
+        // Skip the window element
+        for (int i = 1; i < [accessorChain count]; i++) {
+            [uiaPrefix appendFormat:@".elements()['%@']", [[accessorChain[i] slAccessibilityName] slStringByEscapingForJavaScriptLiteral]];
+        }
+    }
+
+    return uiaPrefix;
 }
 
 @end
