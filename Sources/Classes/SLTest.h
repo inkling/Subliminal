@@ -176,7 +176,7 @@ extern NSString *const SLTestExceptionLineNumberKey;
     BOOL result = (expr); \
     [self recordLastKnownFile:__FILE__ line:__LINE__]; \
     if (!result) { \
-        NSString *reason = [NSString stringWithFormat:@"\"%@\" shoud be true. %@", @(#expr), [NSString stringWithFormat:__VA_ARGS__]]; \
+        NSString *reason = [NSString stringWithFormat:@"\"%@\" should be true. %@", @(#expr), [NSString stringWithFormat:__VA_ARGS__]]; \
         @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
     } \
 })
