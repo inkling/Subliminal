@@ -30,21 +30,37 @@ static SLLogger *__sharedLogger = nil;
     __sharedLogger = logger;
 }
 
-- (void)logDebug:(NSString *)debug {
+- (void)logDebug:(NSString *)debug test:(NSString *)test testCase:(NSString *)testCase {
     [self logMessage:[NSString stringWithFormat:@"Debug: %@", debug]];
 }
 
-- (void)logMessage:(NSString *)message {
+- (void)logMessage:(NSString *)message test:(NSString *)test testCase:(NSString *)testCase {
     NSLog(@"Concrete SLLogger subclass (%@) must provide an interface to a Javascript logging functions", NSStringFromClass([self class]));
     [self doesNotRecognizeSelector:_cmd];
 }
 
-- (void)logWarning:(NSString *)warning {
+- (void)logWarning:(NSString *)warning test:(NSString *)test testCase:(NSString *)testCase {
     [self logMessage:[NSString stringWithFormat:@"Warning: %@", warning]];
 }
 
-- (void)logError:(NSString *)error {
+- (void)logError:(NSString *)error test:(NSString *)test testCase:(NSString *)testCase {
     [self logMessage:[NSString stringWithFormat:@"Error: %@", error]];
+}
+
+- (void)logDebug:(NSString *)debug {
+    [self logDebug:debug test:nil testCase:nil];
+}
+
+- (void)logMessage:(NSString *)message {
+    [self logMessage:message test:nil testCase:nil];
+}
+
+- (void)logWarning:(NSString *)warning {
+    [self logWarning:warning test:nil testCase:nil];
+}
+
+- (void)logError:(NSString *)error {
+    [self logError:error test:nil testCase:nil];
 }
 
 @end

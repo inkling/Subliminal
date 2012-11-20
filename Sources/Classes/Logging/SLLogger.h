@@ -25,6 +25,11 @@ void SLLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
 - (void)logWarning:(NSString *)warning;
 - (void)logError:(NSString *)error;
 
+- (void)logDebug:(NSString *)debug test:(NSString *)test testCase:(NSString *)testCase;
+- (void)logMessage:(NSString *)message test:(NSString *)test testCase:(NSString *)testCase;
+- (void)logWarning:(NSString *)warning test:(NSString *)test testCase:(NSString *)testCase;
+- (void)logError:(NSString *)error test:(NSString *)test testCase:(NSString *)testCase;
+
 @end
 
 
