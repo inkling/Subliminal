@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import <UIKit/UIAccessibilityConstants.h>
+
 
 #pragma mark - SLElement
 
@@ -17,13 +19,19 @@ extern NSString *const SLInvalidElementException;
 
 @interface SLElement : NSObject
 
-@property (nonatomic, strong, readonly) NSString *label;
-
 // Defaults - to be set by the test controller, from the testing thread.
 + (void)setDefaultTimeout:(NSTimeInterval)defaultTimeout;
 
+// Returns an element for an NSObject in the accessibility hierarchy that matches predicate.
++ (id)elementMatching:(BOOL (^)(NSObject *obj))predicate;
 
+// Returns an element for an NSObject in the accessibility hierarchy with the given slAccessibilityName.
 + (id)elementWithAccessibilityLabel:(NSString *)label;
+
+// Returns an element for an NSObject in the accessibility hierarchy with the given slAccessibilityName, accessibilityValue, and matching the traits accessibilityTraits mask.
+// If label is nil the condition on slAccessibilityName is ignored.
+// If value is nil the condition on accessibilityValue is ignored.
++ (id)elementWithAccessibilityLabel:(NSString *)label value:(NSString *)value traits:(UIAccessibilityTraits)traits;
 
 // If the UIAccessibilityElement corresponding to the receiver does not exist,
 // isValid and isVisible will return NO.
@@ -39,6 +47,16 @@ extern NSString *const SLInvalidElementException;
 
 - (void)logElement;
 - (void)logElementTree;
+
+/** Returns YES if the instance of SLElement should 'match' object, no otherwise.
+
+  Subclasses of SLElement can override this method to provide custom matching behavior.
+  Default implementation returns [object.slAccessibilityName isEqualToString:self.label].
+
+  @param object The object to which the instance of SLElement should be compared.
+  @return a BOOL indicating whether or not the instance of SLElement matches object.
+  */
+- (BOOL)matchesObject:(NSObject *)object;
 
 @end
 

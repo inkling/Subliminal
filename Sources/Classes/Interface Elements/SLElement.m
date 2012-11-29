@@ -24,7 +24,7 @@ static const NSTimeInterval kDefaultRetryDelay = 0.25;
 
 @interface SLElement ()
 
-- (id)initWithAccessibilityLabel:(NSString *)label;
+- (id)initWithPredicate:(BOOL (^)(NSObject *obj))predicate description:(NSString *)description;
 
 - (NSString *)sendMessage:(NSString *)action, ... NS_FORMAT_FUNCTION(1, 2);
 - (NSString *)uiaSelf;
@@ -32,7 +32,11 @@ static const NSTimeInterval kDefaultRetryDelay = 0.25;
 @end
 
 
-@implementation SLElement
+@implementation SLElement {
+    BOOL (^_matchesObject)(NSObject*);
+@protected
+    NSString *_description;
+}
 
 static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 + (void)setDefaultTimeout:(NSTimeInterval)defaultTimeout {
@@ -49,20 +53,37 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return (NSTimeInterval)[objc_getAssociatedObject([SLElement class], kDefaultTimeoutKey) doubleValue];
 }
 
-+ (id)elementWithAccessibilityLabel:(NSString *)label {
-    return [[self alloc] initWithAccessibilityLabel:label];
++ (id)elementMatching:(BOOL (^)(NSObject *obj))predicate
+{
+    return [[self alloc] initWithPredicate:predicate description:[predicate description]];
 }
 
-- (id)initWithAccessibilityLabel:(NSString *)label {
++ (id)elementWithAccessibilityLabel:(NSString *)label {
+    return [[self alloc] initWithPredicate:^BOOL(NSObject *obj) {
+        return [obj.slAccessibilityName isEqualToString:label];
+    } description:label];
+}
+
++ (id)elementWithAccessibilityLabel:(NSString *)label value:(NSString *)value traits:(UIAccessibilityTraits)traits {
+    return [[self alloc] initWithPredicate:^BOOL(NSObject *obj) {
+        BOOL matchesLabel = (label == nil || [obj.slAccessibilityName isEqualToString:label]);
+        BOOL matchesValue = (value == nil || [obj.accessibilityValue isEqualToString:value]);
+        BOOL matchesTraits = (obj.accessibilityTraits & traits) == traits;
+        return (matchesLabel && matchesValue && matchesTraits);
+    } description:[NSString stringWithFormat:@"label: %@; value: %@; traits: %llu", label, value, traits]];
+}
+
+- (id)initWithPredicate:(BOOL (^)(NSObject *))predicate description:(NSString *)description {
     self = [super init];
     if (self) {
-        _label = label;
+        _matchesObject = predicate;
+        _description = description;
     }
     return self;
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@ label:\"%@\">", NSStringFromClass([self class]), _label];
+    return [NSString stringWithFormat:@"<%@ description:\"%@\">", NSStringFromClass([self class]), _description];
 }
 
 #pragma mark Sending Actions
@@ -89,7 +110,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 	NSString *uiaPrefix = [self uiaPrefix];
     
     if (!uiaPrefix) {
-        @throw [NSException exceptionWithName:SLInvalidElementException reason:[NSString stringWithFormat:@"Element '%@' does not exist.", [_label slStringByEscapingForJavaScriptLiteral]] userInfo:nil];
+        @throw [NSException exceptionWithName:SLInvalidElementException reason:[NSString stringWithFormat:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]] userInfo:nil];
     } else {
         return uiaPrefix;
     }
@@ -156,6 +177,11 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     [self sendMessage:@"logElementTree()"];
 }
 
+- (BOOL)matchesObject:(NSObject *)object
+{
+    return _matchesObject(object);
+}
+
 @end
 
 @implementation SLElement (Debugging)
@@ -191,7 +217,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 - (NSString *)uiaSelf {
     return [NSString stringWithFormat:
             @"((UIATarget.localTarget().frontMostApp().alert().staticTexts()[0].label() == \"%@\") \
-                            ? UIATarget.localTarget().frontMostApp().alert() : null)", [self.label slStringByEscapingForJavaScriptLiteral]];
+                            ? UIATarget.localTarget().frontMostApp().alert() : null)", [_description slStringByEscapingForJavaScriptLiteral]];
 }
 
 - (void)dismiss {
@@ -240,7 +266,9 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 @implementation SLWindow
 
 + (SLWindow *)mainWindow {
-    return [[SLWindow alloc] initWithAccessibilityLabel:nil];
+    return [[SLWindow alloc] initWithPredicate:^BOOL(NSObject *obj) {
+        return YES;
+    } description:@"Main Window"];
 }
 
 - (NSString *)uiaSelf {
@@ -253,9 +281,10 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 @implementation SLCurrentWebView
 
-- (BOOL)matchesObject:(NSObject *)object
-{
-    return [object isKindOfClass:[UIWebView class]];
++ (SLCurrentWebView *)currentWebView {
+    return [[SLCurrentWebView alloc] initWithPredicate:^BOOL(NSObject *obj) {
+        return [obj isKindOfClass:[UIWebView class]];
+    } description:@"Current WebView"];
 }
 
 @end

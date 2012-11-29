@@ -105,17 +105,6 @@
 
 @end
 
-#pragma mark -
-
-@implementation SLElement (SLAccessibility)
-
-- (BOOL)matchesObject:(NSObject *)object
-{
-    return [object.slAccessibilityName isEqualToString:self.label];
-}
-
-@end
-
 
 #pragma mark -
 
