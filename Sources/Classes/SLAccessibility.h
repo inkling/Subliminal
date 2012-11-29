@@ -44,18 +44,6 @@
 
 @end
 
-@interface SLElement (SLAccessibility)
-/** Returns YES if the instance of SLElement should 'match' object, no otherwise.
-
-  Subclasses of SLElement can override this method to provide custom matching behavior.
-  Default implementation returns [object.slAccessibilityName isEqualToString:self.label].
-
-  @param object The object to which the instance of SLElement should be compared.
-  @return a BOOL indicating whether or not the instance of SLElement matches object.
-  */
-- (BOOL)matchesObject:(NSObject *)object;
-@end
-
 
 @interface UIAccessibilityElement (SLAccessibility)
 @end
