@@ -198,7 +198,14 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
         // Skip the window element
         for (int i = 1; i < [accessorChain count]; i++) {
-            [uiaPrefix appendFormat:@".elements()['%@']", [[accessorChain[i] slAccessibilityName] slStringByEscapingForJavaScriptLiteral]];
+            // Some objects (in particular instances of several internal UIKit classes) refuse to respect the setting of accessibilityLabel, accessibilityIdentifier, etc.
+            // In these cases we can't get a non-nil slAccessibilityName despite our best efforts.  If we get back a nil accessibility name then we should just skip this
+            // element in the chain.  We have found by experiment that skipping these troublesome elements usually results in a chain that the automation instrument
+            // can interpret successfully.
+            NSString *accessibilityName = [[accessorChain[i] slAccessibilityName] slStringByEscapingForJavaScriptLiteral];
+            if (accessibilityName) {
+                [uiaPrefix appendFormat:@".elements()['%@']", accessibilityName];
+            }
         }
     }
 
