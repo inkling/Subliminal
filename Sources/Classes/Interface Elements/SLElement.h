@@ -69,6 +69,7 @@ extern NSString *const SLInvalidElementException;
 
 @interface SLAlert : SLElement
 - (void)dismiss;
+- (void)dismissWithButtonTitled:(NSString *)buttonTitle;
 @end
 
 @interface SLControl : SLElement
