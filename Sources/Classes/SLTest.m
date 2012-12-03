@@ -185,14 +185,19 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
 }
 
 - (NSException *)exceptionByAddingFileInfo:(NSException *)exception {
-    NSMutableDictionary *userInfo = [[exception userInfo] mutableCopy];
-    if (!userInfo) {
-        userInfo = [NSMutableDictionary dictionary];
+    if (_lastKnownFilename) {
+        // If there is file information, insert it into the userInfo dictionary
+        NSMutableDictionary *userInfo = [[exception userInfo] mutableCopy];
+        if (!userInfo) {
+            userInfo = [NSMutableDictionary dictionary];
+        }
+        userInfo[SLTestExceptionFilenameKey] = _lastKnownFilename;
+        userInfo[SLTestExceptionLineNumberKey] = @(_lastKnownLineNumber);
+        
+        return [NSException exceptionWithName:[exception name] reason:[exception reason] userInfo:userInfo];
+    } else {
+        return exception;
     }
-    userInfo[SLTestExceptionFilenameKey] = _lastKnownFilename;
-    userInfo[SLTestExceptionLineNumberKey] = @(_lastKnownLineNumber);
-    
-    return [NSException exceptionWithName:[exception name] reason:[exception reason] userInfo:userInfo];
 }
 
 @end

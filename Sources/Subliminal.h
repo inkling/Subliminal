@@ -14,6 +14,7 @@
 
 #import "SLTerminal.h"
 
+#import "SLDevice.h"
 #import "SLElement.h"
 
 #import "SLLogger.h"

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA75E78216697A1200D57E92 /* SLDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = CA75E78016697A1200D57E92 /* SLDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CA75E78516697C0000D57E92 /* SLDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = CA75E78116697A1200D57E92 /* SLDevice.m */; };
 		CAC388051641CD7500F995F9 /* NSString+SLJavaScript.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC388031641CD7500F995F9 /* NSString+SLJavaScript.h */; };
 		CAC388061641CD7500F995F9 /* NSString+SLJavaScript.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC388041641CD7500F995F9 /* NSString+SLJavaScript.m */; };
 		CAC3883F1643503C00F995F9 /* SLAccessibility.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC3883D1643503C00F995F9 /* SLAccessibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -31,6 +33,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CA75E78016697A1200D57E92 /* SLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLDevice.h; sourceTree = "<group>"; };
+		CA75E78116697A1200D57E92 /* SLDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDevice.m; sourceTree = "<group>"; };
 		CAC388031641CD7500F995F9 /* NSString+SLJavaScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+SLJavaScript.h"; path = "Categories/NSString+SLJavaScript.h"; sourceTree = "<group>"; };
 		CAC388041641CD7500F995F9 /* NSString+SLJavaScript.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+SLJavaScript.m"; path = "Categories/NSString+SLJavaScript.m"; sourceTree = "<group>"; };
 		CAC3883D1643503C00F995F9 /* SLAccessibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLAccessibility.h; sourceTree = "<group>"; };
@@ -138,6 +142,8 @@
 		F0695DD6160138DF000B05D0 /* Interface Elements */ = {
 			isa = PBXGroup;
 			children = (
+				CA75E78016697A1200D57E92 /* SLDevice.h */,
+				CA75E78116697A1200D57E92 /* SLDevice.m */,
 				F0695DD7160138DF000B05D0 /* SLElement.h */,
 				F0695DD8160138DF000B05D0 /* SLElement.m */,
 			);
@@ -172,6 +178,7 @@
 				F0271AFF162E0B950098F5F2 /* SLTestController+AppContext.h in Headers */,
 				CAC388051641CD7500F995F9 /* NSString+SLJavaScript.h in Headers */,
 				CAC3883F1643503C00F995F9 /* SLAccessibility.h in Headers */,
+				CA75E78216697A1200D57E92 /* SLDevice.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -235,6 +242,7 @@
 				F0271B00162E0B950098F5F2 /* SLTestController+AppContext.m in Sources */,
 				CAC388061641CD7500F995F9 /* NSString+SLJavaScript.m in Sources */,
 				CAC388401643503C00F995F9 /* SLAccessibility.m in Sources */,
+				CA75E78516697C0000D57E92 /* SLDevice.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

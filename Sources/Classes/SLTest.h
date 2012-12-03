@@ -173,8 +173,8 @@ extern NSString *const SLTestExceptionLineNumberKey;
 #pragma mark - Test Assertions
 
 #define SLAssertTrue(expr, ...) ({ \
-    BOOL result = (expr); \
     [self recordLastKnownFile:__FILE__ line:__LINE__]; \
+    BOOL result = (expr); \
     if (!result) { \
         NSString *reason = [NSString stringWithFormat:@"\"%@\" should be true. %@", @(#expr), [NSString stringWithFormat:__VA_ARGS__]]; \
         @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
@@ -182,8 +182,8 @@ extern NSString *const SLTestExceptionLineNumberKey;
 })
 
 #define SLAssertFalse(expr, ...) ({ \
-    BOOL result = (expr); \
     [self recordLastKnownFile:__FILE__ line:__LINE__]; \
+    BOOL result = (expr); \
     if (result) { \
         NSString *reason = [NSString stringWithFormat:@"\"%@\" should be false. %@", @(#expr), [NSString stringWithFormat:__VA_ARGS__]]; \
         @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \

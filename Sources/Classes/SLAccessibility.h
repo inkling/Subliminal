@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-#import "SLElement.h"
+@class SLElement;
 
 
 @interface NSObject (SLAccessibility)

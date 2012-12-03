@@ -231,6 +231,10 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     [self sendMessage:@"defaultButton().tap()"];
 }
 
+- (void)dismissWithButtonTitled:(NSString *)buttonTitle {
+    [self sendMessage:@"buttons()['%@'].tap()", [buttonTitle slStringByEscapingForJavaScriptLiteral]];
+}
+
 @end
 
 #pragma mark - SLControl
