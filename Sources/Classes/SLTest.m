@@ -200,7 +200,10 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
 
 - (void)logException:(NSException *)exception inTestCase:(NSString *)testCase {
     NSString *message = nil;
-    if ([[exception name] isEqualToString:SLTestAssertionFailedException]) {
+    // "Expected" exceptions (failures in assertions or UIAccessibilityElement lookup)
+    // are logged more tersely than other exceptions.
+    if ([[exception name] isEqualToString:SLTestAssertionFailedException] ||
+        [[exception name] isEqualToString:SLInvalidElementException]) {
         message = [NSString stringWithFormat:@"%@:%d: %@", _lastKnownFilename, _lastKnownLineNumber, [exception reason]];
     } else {
         message = [NSString stringWithFormat:@"%@:%d: Exception occurred ***%@*** for reason: %@",
