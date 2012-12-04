@@ -13,9 +13,28 @@
 #import "NSString+SLJavaScript.h"
 
 
+@interface NSObject (SLAccessibility_Internal)
+
+/**
+ All accessibility elements must have names (labels or identifiers),
+ so that they may be referenced in an accessor chain to pass to UIAutomation.
+ If an element does not have a name, it should be given this value.
+ */
+@property (nonatomic, readonly) NSString *defaultSLAccessibilityName;
+
+@end
+
+
 @implementation NSObject (SLAccessibility)
 
+- (NSString *)defaultSLAccessibilityName {
+    return [NSString stringWithFormat:@"%@: %p", [self class], self];
+}
+
 - (NSString *)slAccessibilityName {
+    if (![self.accessibilityLabel length]) {
+        self.accessibilityLabel = self.defaultSLAccessibilityName;
+    }
     return self.accessibilityLabel;
 }
 
@@ -111,10 +130,15 @@
 @implementation UIAccessibilityElement (SLAccessibility)
 
 - (NSString *)slAccessibilityName {
-    if (self.accessibilityLabel) {
+    // Prioritize identifiers over labels because identifiers guarantee uniqueness.
+    if ([self.accessibilityIdentifier length]) {
+        return self.accessibilityIdentifier;
+    } else if ([self.accessibilityLabel length]) {
         return self.accessibilityLabel;
     }
-    
+
+    // fallback
+    self.accessibilityIdentifier = self.defaultSLAccessibilityName;
     return self.accessibilityIdentifier;
 }
 
@@ -125,18 +149,21 @@
 
 @implementation UIView (SLAccessibility)
 
+// unfortunately NSObject does not implement the UIAccessibilityIdentification protocol,
+// and UIView does not inherit from UIAccessibilityElement,
+// so we must repeat the implementation of -[UIAccessibilityElement slAccessibilityName] here
 - (NSString *)slAccessibilityName {
-    // Prioritize identifiers over labels because some UIKit objects have transient labels.
+    // Prioritize identifiers over labels because identifiers guarantee uniqueness,
+    // also because some UIKit objects have transient labels.
     // For example: UIActivityIndicatorViews have label 'In progress' only while spinning.
     if (self.accessibilityIdentifier) {
         return self.accessibilityIdentifier;
     } else if (self.accessibilityLabel) {
         return self.accessibilityLabel;
     }
-    
-    // If any view doesn't have a name yet, create a unique one so this view can be used in an accessor chain
-    self.accessibilityIdentifier = [NSString stringWithFormat:@"%@: %p", [self class], self];
-    
+
+    // fallback
+    self.accessibilityIdentifier = self.defaultSLAccessibilityName;
     return self.accessibilityIdentifier;
 }
 
@@ -157,15 +184,16 @@
 @implementation UIButton (SLAccessibility)
 
 - (NSString *)slAccessibilityName {
-    if (self.accessibilityIdentifier) {
-        return self.accessibilityIdentifier;
+    NSString *slAccessibilityName = [super slAccessibilityName];
+    if ([slAccessibilityName isEqualToString:self.defaultSLAccessibilityName]) {
+        // if we don't have an accessibilityLabel or (non-default) accessibilityIdentifier set,
+        // try to use the button's title
+        NSString *title = [self titleForState:UIControlStateNormal];
+        if ([title length]) {
+            slAccessibilityName = title;
+        }
     }
-
-    if (self.accessibilityLabel) {
-        return self.accessibilityLabel;
-    }
-    
-    return [self titleForState:UIControlStateNormal];
+    return slAccessibilityName;
 }
 
 @end
