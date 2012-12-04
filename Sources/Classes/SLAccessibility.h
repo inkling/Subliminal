@@ -15,7 +15,7 @@
 
 /** A string Subliminal will use to reference this element in UIAutomation.
  
- The default implementation returns the object's accessibility label. Subclasses of UIView and UIAccessibilityElement return the object's accessibility identifier or accessbility label or creates an accessibility identifier if both are `nil`. UIButton's return the accessibility identifier or the button's title is the identifier is `nil`.
+ The default implementation returns the object's accessibility label. Subclasses of UIView and UIAccessibilityElement return the object's accessibility identifier or accessibility label or creates an accessibility identifier if both are `nil`. UIButton's return the accessibility identifier or the button's title is the identifier is `nil`.
  */
 @property (nonatomic, readonly) NSString *slAccessibilityName;
 
