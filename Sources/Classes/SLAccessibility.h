@@ -13,13 +13,9 @@
 
 @interface NSObject (SLAccessibility)
 
-/** A string Subliminal will use to reference this element when communicating with UIAutomation.
+/** A string Subliminal will use to reference this element in UIAutomation.
  
- The name is considered to be the object's accessibilityIdentifier if available, 
- otherwise the object's accessibilityLabel (otherwise, if the object is a UIButton, 
- the button's title).
- 
- If none of the above are available, an identifier will be created and assigned to the object.
+ The default implementation returns the object's accessibility label. Subclasses of UIView and UIAccessibilityElement return the object's accessibility identifier or accessbility label or creates an accessibility identifier if both are `nil`. UIButton's return the accessibility identifier or the button's title is the identifier is `nil`.
  */
 @property (nonatomic, readonly) NSString *slAccessibilityName;
 
