@@ -134,31 +134,29 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
             
             // We use objc_msgSend so that Clang won't complain about performSelector leaks
             ((void(*)(id, SEL))objc_msgSend)(self, testSelector);
-
-            [self tearDownTestCaseWithSelector:testSelector];
         }
         @catch (NSException *e) {
             // Catch all exceptions in test cases. If the app is in an inconsistent state then -tearDown: should abort completely.
-            NSString *message = nil;
-            if ([[e name] isEqualToString:SLTestAssertionFailedException]) {
-                message = [NSString stringWithFormat:@"%@:%d: %@", _lastKnownFilename, _lastKnownLineNumber, [e reason]];
-            } else {
-                message = [NSString stringWithFormat:@"%@:%d: Exception occurred ***%@*** for reason: %@", _lastKnownFilename, _lastKnownLineNumber, [e name], [e reason]];
-            }
-            [[SLLogger sharedLogger] logError:message test:test testCase:testSelectorString];
-            [[SLLogger sharedLogger] logTest:test caseFail:testSelectorString];
-            
-            _lastKnownFilename = nil;
-            _lastKnownLineNumber = 0;
-            
+            [self logException:e inTestCase:testSelectorString];
             caseFailed = YES;
-            numberOfCasesFailed++;
         }
         @finally {
-            if (!caseFailed) {
+            // tear-down test case last so that it always executes, regardless of earlier failures
+            @try {
+                [self tearDownTestCaseWithSelector:testSelector];
+            }
+            @catch (NSException *e) {
+                [self logException:e inTestCase:testSelectorString];
+                caseFailed = YES;
+            }
+
+            if (caseFailed) {
+                [[SLLogger sharedLogger] logTest:test caseFail:testSelectorString];
+                numberOfCasesFailed++;
+            } else {
                 [[SLLogger sharedLogger] logTest:test casePass:testSelectorString];
             }
-                        
+
             numberOfCasesExecuted++;
         }
     }
@@ -198,6 +196,22 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
     } else {
         return exception;
     }
+}
+
+- (void)logException:(NSException *)exception inTestCase:(NSString *)testCase {
+    NSString *message = nil;
+    if ([[exception name] isEqualToString:SLTestAssertionFailedException]) {
+        message = [NSString stringWithFormat:@"%@:%d: %@", _lastKnownFilename, _lastKnownLineNumber, [exception reason]];
+    } else {
+        message = [NSString stringWithFormat:@"%@:%d: Exception occurred ***%@*** for reason: %@",
+                    _lastKnownFilename, _lastKnownLineNumber, [exception name], [exception reason]];
+    }
+
+    _lastKnownFilename = nil;
+    _lastKnownLineNumber = 0;
+
+    NSString *test = NSStringFromClass([self class]);
+    [[SLLogger sharedLogger] logError:message test:test testCase:testCase];
 }
 
 @end
