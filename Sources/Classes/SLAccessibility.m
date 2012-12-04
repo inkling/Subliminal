@@ -157,6 +157,10 @@
 @implementation UIButton (SLAccessibility)
 
 - (NSString *)slAccessibilityName {
+    if (self.accessibilityIdentifier) {
+        return self.accessibilityIdentifier;
+    }
+
     if (self.accessibilityLabel) {
         return self.accessibilityLabel;
     }
