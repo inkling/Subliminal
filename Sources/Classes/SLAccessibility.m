@@ -70,6 +70,29 @@
     if ([self.accessibilityValue length]) {
         [properties addObject:[NSString stringWithFormat:@"value = '%@'", [self.accessibilityValue slStringByEscapingForJavaScriptLiteral]]];
     }
+    
+    UIAccessibilityTraits traits = self.accessibilityTraits;
+    NSMutableArray *traitNames = [NSMutableArray array];
+    if (traits & UIAccessibilityTraitButton)                  [traitNames addObject:@"Button"];
+    if (traits & UIAccessibilityTraitLink)                    [traitNames addObject:@"Link"];
+    if (traits & UIAccessibilityTraitHeader)                  [traitNames addObject:@"Header"];
+    if (traits & UIAccessibilityTraitSearchField)             [traitNames addObject:@"Search Field"];
+    if (traits & UIAccessibilityTraitImage)                   [traitNames addObject:@"Image"];
+    if (traits & UIAccessibilityTraitSelected)                [traitNames addObject:@"Selected"];
+    if (traits & UIAccessibilityTraitPlaysSound)              [traitNames addObject:@"Plays Sound"];
+    if (traits & UIAccessibilityTraitKeyboardKey)             [traitNames addObject:@"Keyboard Key"];
+    if (traits & UIAccessibilityTraitStaticText)              [traitNames addObject:@"Static Text"];
+    if (traits & UIAccessibilityTraitSummaryElement)          [traitNames addObject:@"Summary Element"];
+    if (traits & UIAccessibilityTraitNotEnabled)              [traitNames addObject:@"Not Enabled"];
+    if (traits & UIAccessibilityTraitUpdatesFrequently)       [traitNames addObject:@"Updates Frequently"];
+    if (traits & UIAccessibilityTraitStartsMediaSession)      [traitNames addObject:@"Starts Media Session"];
+    if (traits & UIAccessibilityTraitAdjustable)              [traitNames addObject:@"Adjustable"];
+    if (traits & UIAccessibilityTraitAllowsDirectInteraction) [traitNames addObject:@"Allows Direct Interaction"];
+    if (traits & UIAccessibilityTraitCausesPageTurn)          [traitNames addObject:@"Causes Page Turn"];
+    
+    if ([traitNames count]) {
+        [properties addObject:[NSString stringWithFormat:@"traits = (%@)", [traitNames componentsJoinedByString:@", "]]];
+    }
     if (self.isAccessibilityElement) {
         [properties addObject:@"accessibilityElement = YES"];
     }
