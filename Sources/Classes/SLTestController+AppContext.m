@@ -187,7 +187,7 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
             // use objc_msgSend so that Clang won't complain about performSelector leaks
             returnValue = ((id<NSCopying>(*)(id, SEL, id))objc_msgSend)(target, action, arg);
         } else {
-            ((id<NSCopying>(*)(id, SEL, id))objc_msgSend)(target, action, arg);
+            ((void(*)(id, SEL, id))objc_msgSend)(target, action, arg);
             returnValue = nil;
         }
 
