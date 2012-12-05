@@ -203,7 +203,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
             // element in the chain.  We have found by experiment that skipping these troublesome elements usually results in a chain that the automation instrument
             // can interpret successfully.
             NSString *accessibilityName = [[accessorChain[i] slAccessibilityName] slStringByEscapingForJavaScriptLiteral];
-            if (accessibilityName) {
+            if ([accessibilityName length] > 0) {
                 [uiaPrefix appendFormat:@".elements()['%@']", accessibilityName];
             }
         }
