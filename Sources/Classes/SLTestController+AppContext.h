@@ -78,7 +78,7 @@ extern NSString *const SLAppActionTargetDoesNotExistException;
  @throw SLAppActionTargetDoesNotExistException If no target is registered for action, 
  or if the target has fallen out of scope.
  */
-- (id<NSCopying>)sendAction:(SEL)action;
+- (id)sendAction:(SEL)action;
 
 /**
  Sends a specified action message to its registered target with an object as the argument,
@@ -98,6 +98,6 @@ extern NSString *const SLAppActionTargetDoesNotExistException;
  @throw SLAppActionTargetDoesNotExistException If no target is registered for action,
  or if the target has fallen out of scope.
  */
-- (id<NSCopying>)sendAction:(SEL)action withObject:(id<NSCopying>)object;
+- (id)sendAction:(SEL)action withObject:(id<NSCopying>)object;
 
 @end

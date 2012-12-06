@@ -133,7 +133,7 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
     return target;
 }
 
-- (id<NSCopying>)sendAction:(SEL)action {
+- (id)sendAction:(SEL)action {
     NSAssert(![NSThread isMainThread], @"-sendAction: must not be called from the main thread.");
 
     id target = [self targetForAction:action];
@@ -145,26 +145,28 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
     }
 
     // perform the action on the main thread, for thread safety
-    __block id<NSCopying> returnValue;
+    __block id returnValue;
     dispatch_sync(dispatch_get_main_queue(), ^{
         NSMethodSignature *actionSignature = [target methodSignatureForSelector:action];
         const char *actionReturnType = [actionSignature methodReturnType];
         if (strcmp(actionReturnType, @encode(void)) != 0) {
             // use objc_msgSend so that Clang won't complain about performSelector leaks
-            returnValue = ((id<NSCopying>(*)(id, SEL))objc_msgSend)(target, action);
+            returnValue = ((id(*)(id, SEL))objc_msgSend)(target, action);
         } else {
             ((void(*)(id, SEL))objc_msgSend)(target, action);
             returnValue = nil;
         }
 
         // return a copy, for thread safety
+        // note: if actions return an object, that object is required to conform to NSCopying (see header)
+        // no way for us to enforce that at compile-time, though
         returnValue = [returnValue copyWithZone:NULL];
     });
 
     return returnValue;
 }
 
-- (id<NSCopying>)sendAction:(SEL)action withObject:(id<NSCopying>)object {
+- (id)sendAction:(SEL)action withObject:(id<NSCopying>)object {
     NSAssert(![NSThread isMainThread], @"-sendAction:withObject: must not be called from the main thread.");
 
     id target = [self targetForAction:action];
@@ -179,19 +181,21 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
     id arg = [object copyWithZone:NULL];
 
     // perform the action on the main thread, for thread safety
-    __block id<NSCopying> returnValue;
+    __block id returnValue;
     dispatch_sync(dispatch_get_main_queue(), ^{
         NSMethodSignature *actionSignature = [target methodSignatureForSelector:action];
         const char *actionReturnType = [actionSignature methodReturnType];
         if (strcmp(actionReturnType, @encode(void)) != 0) {
             // use objc_msgSend so that Clang won't complain about performSelector leaks
-            returnValue = ((id<NSCopying>(*)(id, SEL, id))objc_msgSend)(target, action, arg);
+            returnValue = ((id(*)(id, SEL, id))objc_msgSend)(target, action, arg);
         } else {
             ((void(*)(id, SEL, id))objc_msgSend)(target, action, arg);
             returnValue = nil;
         }
 
         // return a copy, for thread safety
+        // note: if actions return an object, that object is required to conform to NSCopying (see header)
+        // no way for us to enforce that at compile-time, though
         returnValue = [returnValue copyWithZone:NULL];
     });
 
