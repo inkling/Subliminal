@@ -153,14 +153,9 @@
     // For example: UIActivityIndicatorViews have label 'In progress' only while spinning.
     if (self.accessibilityIdentifier) {
         return self.accessibilityIdentifier;
-    } else if (self.accessibilityLabel) {
+    } else {
         return self.accessibilityLabel;
     }
-    
-    // If any view doesn't have a name yet, create a unique one so this view can be used in an accessor chain
-    self.accessibilityIdentifier = [NSString stringWithFormat:@"%@: %p", [self class], self];
-    
-    return self.accessibilityIdentifier;
 }
 
 - (NSArray *)slChildAccessibilityElements {
@@ -170,6 +165,51 @@
         [children addObject:view];
     }
     return children;
+}
+
+@end
+
+
+
+#pragma mark - 
+
+
+@implementation UIScrollView (SLAccessibility)
+
+- (NSString *)slAccessibilityName {
+
+    NSString *accessibilityName = [super slAccessibilityName];
+    
+    if ([accessibilityName length] == 0) {
+        // If any view doesn't have a name yet, create a unique one so this view can be used in an accessor chain
+        self.accessibilityIdentifier = [NSString stringWithFormat:@"%@: %p", [self class], self];
+        return self.accessibilityIdentifier;
+    
+    } else {
+        return accessibilityName;
+    }
+}
+
+@end
+
+
+#pragma mark -
+
+
+@implementation UIImageView (SLAccessibility)
+
+- (NSString *)slAccessibilityName {
+    
+    NSString *accessibilityName = [super slAccessibilityName];
+    
+    if ([accessibilityName length] == 0) {
+        // If any view doesn't have a name yet, create a unique one so this view can be used in an accessor chain
+        self.accessibilityIdentifier = [NSString stringWithFormat:@"%@: %p", [self class], self];
+        return self.accessibilityIdentifier;
+        
+    } else {
+        return accessibilityName;
+    }
 }
 
 @end
