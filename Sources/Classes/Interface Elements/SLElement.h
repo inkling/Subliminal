@@ -33,9 +33,8 @@ extern NSString *const SLInvalidElementException;
 // If value is nil the condition on accessibilityValue is ignored.
 + (id)elementWithAccessibilityLabel:(NSString *)label value:(NSString *)value traits:(UIAccessibilityTraits)traits;
 
-// If the UIAccessibilityElement corresponding to the receiver does not exist,
-// isValid and isVisible will return NO.
-// All other methods below will throw an SLElementAccessException.
+// If the UIAccessibilityElement corresponding to the receiver does not exist, isValid will return NO.
+// All other methods below will throw an SLInvalidElementException.
 - (BOOL)isValid;
 - (BOOL)isVisible;
 - (void)waitUntilVisible:(NSTimeInterval)timeout;
