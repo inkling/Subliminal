@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import <UIKit/UIAccessibilityConstants.h>
+#import <QuartzCore/QuartzCore.h>
 
 
 #pragma mark - SLElement
@@ -41,6 +42,12 @@ extern NSString *const SLInvalidElementException;
 - (void)waitUntilInvisible:(NSTimeInterval)timeout;
 
 - (void)tap;
+
+// Triggers the JavaScript call dragInsideWithOptions, passing the start and end points in floating point format.
+// This causes the automation JavaScript system to interpret the points in the normalized coordinates of the target
+// SLElement's view.  That is, a start or end point of {0.5, 0.5} is interpretted to be at the center of the target
+// element's view.
+- (void)dragWithStartPoint:(CGPoint)startPoint endPoint:(CGPoint)endPoint;
 
 - (NSString *)value;
 
