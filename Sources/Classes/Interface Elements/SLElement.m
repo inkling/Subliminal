@@ -165,6 +165,11 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     [self sendMessage:@"tap()"];
 }
 
+- (void)dragWithStartPoint:(CGPoint)startPoint endPoint:(CGPoint)endPoint
+{
+    [self sendMessage:@"dragInsideWithOptions({startOffset:{x:%f, y:%f}, endOffset:{x:%f, y:%f}})", startPoint.x, startPoint.y, endPoint.x, endPoint.y];
+}
+
 - (NSString *)value {
     return [self sendMessage:@"value()"];
 }
