@@ -158,6 +158,25 @@
     }
 }
 
+/*
+    Used by certain UIView subclasses that must be included in the accessibility chain in order for UIAutomation to
+    function correctly.  UIViews that must be included in the accessibility chain should call this method and return
+    the result from slAccessibilityName.
+
+    slAccessibilityNameWithStandardIdentifierReplacement assigns a unique string, based on the class and address of the
+    object to the object's accessibilityIdentifier if the object does not already have an accessibility identifier or
+    accessibility name.
+*/
+- (NSString *)slAccessibilityNameWithStandardIdentifierReplacement {
+    NSString *accessibilityName = [super slAccessibilityName];
+    if ([accessibilityName length] == 0) {
+        self.accessibilityIdentifier = [NSString stringWithFormat:@"%@: %p", [self class], self];
+        return self.accessibilityIdentifier;
+    } else {
+        return accessibilityName;
+    }
+}
+
 - (NSArray *)slChildAccessibilityElements {
     NSMutableArray *children = [[super slChildAccessibilityElements] mutableCopy];
     
@@ -171,42 +190,58 @@
 
 
 
-#pragma mark - 
-
+#pragma mark -
+#pragma mark UIView subclasses that must have a non-nil slAccessibilityName
 
 @implementation UIScrollView (SLAccessibility)
-
 - (NSString *)slAccessibilityName {
-
-    NSString *accessibilityName = [super slAccessibilityName];
-    
-    if ([accessibilityName length] == 0) {
-        // If any view doesn't have a name yet, create a unique one so this view can be used in an accessor chain
-        self.accessibilityIdentifier = [NSString stringWithFormat:@"%@: %p", [self class], self];
-        return self.accessibilityIdentifier;
-    
-    } else {
-        return accessibilityName;
-    }
+    return [self slAccessibilityNameWithStandardIdentifierReplacement];
 }
-
 @end
-
-
-#pragma mark -
-
 
 @implementation UIImageView (SLAccessibility)
+- (NSString *)slAccessibilityName {
+    return [self slAccessibilityNameWithStandardIdentifierReplacement];
+}
+@end
+
+@implementation UIToolbar (SLAccessibility)
+- (NSString *)slAccessibilityName {
+    return [self slAccessibilityNameWithStandardIdentifierReplacement];
+}
+@end
+
+@implementation UINavigationBar (SLAccessibility)
+- (NSString *)slAccessibilityName {
+    return [self slAccessibilityNameWithStandardIdentifierReplacement];
+}
+@end
+
+@implementation UISegmentedControl (SLAccessibility)
+- (NSString *)slAccessibilityName {
+    return [self slAccessibilityNameWithStandardIdentifierReplacement];
+}
+@end
+
+@implementation UIAlertView (SLAccessibility)
+- (NSString *)slAccessibilityName {
+    return [self slAccessibilityNameWithStandardIdentifierReplacement];
+}
+@end
+
+
+#pragma mark -
+#pragma mark UITableView custom slAccessibilityName
+
+@implementation UITableView (SLAccessibility)
 
 - (NSString *)slAccessibilityName {
-    
     NSString *accessibilityName = [super slAccessibilityName];
-    
-    if ([accessibilityName length] == 0) {
-        // If any view doesn't have a name yet, create a unique one so this view can be used in an accessor chain
+    // Replace the accessibilityIdentifier with a unique string if the accessibilityName is empty *or* equal to the default 'Empty list'
+    // because the 'Empty list' label that UIKit assigns is not useful for (uniquely) identifying UITableViews in the accessibility hierarchy.
+    if ([accessibilityName length] == 0 || [accessibilityName isEqualToString:@"Empty list"]) {
         self.accessibilityIdentifier = [NSString stringWithFormat:@"%@: %p", [self class], self];
         return self.accessibilityIdentifier;
-        
     } else {
         return accessibilityName;
     }
@@ -216,6 +251,7 @@
 
 
 #pragma mark -
+#pragma mark UIButton custom slAccessibilityName
 
 @implementation UIButton (SLAccessibility)
 
