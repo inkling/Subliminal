@@ -217,7 +217,7 @@
 }
 @end
 
-@implementation UISegmentedControl (SLAccessibility)
+@implementation UIControl (SLAccessibility)
 - (NSString *)slAccessibilityName {
     return [self slAccessibilityNameWithStandardIdentifierReplacement];
 }
