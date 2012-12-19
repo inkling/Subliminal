@@ -184,6 +184,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 - (BOOL)matchesObject:(NSObject *)object
 {
+    NSAssert(_matchesObject, @"matchesObject called on %@, which has no _matchesObject predicate", self);
     return _matchesObject(object);
 }
 
@@ -289,6 +290,39 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 - (NSString *)uiaSelf {
 	return @"UIATarget.localTarget().frontMostApp().mainWindow()";
+}
+
+@end
+
+#pragma mark - SLKeyboard
+
+@implementation SLKeyboard
+
++ (SLKeyboard *)keyboard {
+    return [[SLKeyboard alloc] initWithPredicate:nil description:@"Keyboard"];
+}
+
+- (NSString *)uiaSelf {
+    return @"UIATarget.localTarget().frontMostApp().keyboard()";
+}
+
+@end
+
+@interface SLKeyboardKey ()
+@property (nonatomic, retain) NSString *keyLabel;
+@end
+
+@implementation SLKeyboardKey
+
++ (id)elementWithAccessibilityLabel:(NSString *)label
+{
+    SLKeyboardKey *key = [[SLKeyboardKey alloc] initWithPredicate:nil description:[NSString stringWithFormat:@"Keyboard Key: %@", label]];
+    key.keyLabel = label;
+    return key;
+}
+
+- (NSString *)uiaSelf {
+    return [NSString stringWithFormat:@"UIATarget.localTarget().frontMostApp().keyboard().elements()['%@']", self.keyLabel];
 }
 
 @end

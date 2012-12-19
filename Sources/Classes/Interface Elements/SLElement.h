@@ -94,6 +94,16 @@ extern NSString *const SLInvalidElementException;
 + (SLWindow *)mainWindow;
 @end
 
+// Instances always refer to the keyboard.  Use to check if the keyboard is visible.
+// To use individual keys on the keyboard, use SLKeyboardKey.
+@interface SLKeyboard : SLElement
++ (SLWindow *)keyboard;
+@end
+
+// Instances refer to individual keys on the keyboard.
+@interface SLKeyboardKey : SLButton
+@end
+
 // Instances refer to the first instance of (a kind of) UIWebView that appears in the view hierarchy.
 @interface SLCurrentWebView : SLElement
 @end
