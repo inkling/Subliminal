@@ -82,6 +82,7 @@ extern NSString *const SLInvalidElementException;
 - (BOOL)isEnabled;
 @end
 
+// SLButton will match any object, and only objects, with the UIAccessibilityTraitButton accessibility trait.
 @interface SLButton : SLControl
 @end
 
