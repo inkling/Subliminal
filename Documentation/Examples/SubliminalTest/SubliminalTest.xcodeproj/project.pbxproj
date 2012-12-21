@@ -67,6 +67,13 @@
 			remoteGlobalIDString = 030EF0DB14632FF700B04273;
 			remoteInfo = OCMockLib;
 		};
+		F024BE15168B7BE000708350 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0695E0E16014101000B05D0 /* Subliminal.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0D240521683F7130031B67C;
+			remoteInfo = "Subliminal Unit Tests";
+		};
 		F0695E1516014101000B05D0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F0695E0E16014101000B05D0 /* Subliminal.xcodeproj */;
@@ -164,6 +171,7 @@
 			isa = PBXGroup;
 			children = (
 				F0695E1616014101000B05D0 /* libSubliminal.a */,
+				F024BE16168B7BE000708350 /* Subliminal Unit Tests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -329,6 +337,13 @@
 			fileType = wrapper.cfbundle;
 			path = OCMockTestsTouch.octest;
 			remoteRef = 1F18746E1606AEE7000360CA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F024BE16168B7BE000708350 /* Subliminal Unit Tests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "Subliminal Unit Tests.octest";
+			remoteRef = F024BE15168B7BE000708350 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		F0695E1616014101000B05D0 /* libSubliminal.a */ = {
