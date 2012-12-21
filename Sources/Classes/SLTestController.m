@@ -31,6 +31,16 @@ static void SLUncaughtExceptionHandler(NSException *exception)
 
 @implementation SLTestController
 
++ (void)initialize {
+    // initialize shared test controller,
+    // to prevent manual initialization of an SLTestController
+    // prior to +sharedTestController being invoked
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-value"
+    [SLTestController sharedTestController];
+#pragma clang diagnostic pop
+}
+
 static SLTestController *__sharedController = nil;
 + (id)sharedTestController {
     static dispatch_once_t onceToken;
