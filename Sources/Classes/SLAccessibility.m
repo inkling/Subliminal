@@ -59,8 +59,14 @@
     if ([self isKindOfClass:[UIWebView class]] && [chain count] > 2) {
         UIView *webBrowserView = [chain objectAtIndex:2];
         if ([[webBrowserView slAccessibilityName] length] == 0) {
-            webBrowserView.accessibilityIdentifier = [NSString stringWithFormat:@"%@: %p", [webBrowserView class], webBrowserView];
+            [webBrowserView setAccessibilityIdentifierWithStandardReplacement];
         }
+    }
+    
+    // Every element in accessorChain that returns true to isAccessibilityElement should have an accessibility value or name. This ensures Subliminal
+    // will be able to construct an accessor chain that identifies each element that UIAutomation will place in the accessibility chain.
+    if (self.isAccessibilityElement && !self.slAccessibilityName && ![self.accessibilityValue length] > 0) {
+        [self setAccessibilityIdentifierWithStandardReplacement];
     }
 }
 
@@ -145,6 +151,15 @@
     return recursiveDescription;
 }
 
+
+- (void)setAccessibilityIdentifierWithStandardReplacement {
+    if ([self conformsToProtocol:@protocol(UIAccessibilityIdentification)] || [self isKindOfClass:[UIView class]]) {
+        id<UIAccessibilityIdentification> selfUIAElement = (id<UIAccessibilityIdentification>)self;
+        selfUIAElement.accessibilityIdentifier = [NSString stringWithFormat:@"%@: %p", [self class], self];
+    }
+}
+
+
 @end
 
 
@@ -189,7 +204,7 @@
 - (NSString *)slAccessibilityNameWithStandardIdentifierReplacement {
     NSString *accessibilityName = [super slAccessibilityName];
     if ([accessibilityName length] == 0) {
-        self.accessibilityIdentifier = [NSString stringWithFormat:@"%@: %p", [self class], self];
+        [self setAccessibilityIdentifierWithStandardReplacement];
         return self.accessibilityIdentifier;
     } else {
         return accessibilityName;
