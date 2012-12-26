@@ -26,8 +26,8 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
     int _lastKnownLineNumber;
 }
 
-+ (NSArray *)allTests {
-    NSMutableArray *tests = [[NSMutableArray alloc] init];
++ (NSSet *)allTests {
+    NSMutableSet *tests = [[NSMutableSet alloc] init];
     
     int numClasses = objc_getClassList(NULL, 0);
     if (numClasses > 0) {

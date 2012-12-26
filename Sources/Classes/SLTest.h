@@ -21,7 +21,7 @@ extern NSString *const SLTestExceptionLineNumberKey;
 
 @property (nonatomic, weak, readonly) SLTestController *testController;
 
-+ (NSArray *)allTests;
++ (NSSet *)allTests;
 + (Class)testNamed:(NSString *)test;
 
 /**

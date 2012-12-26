@@ -81,29 +81,28 @@ static SLTestController *__sharedController = nil;
     [[SLLogger sharedLogger] logTestingStart];
 }
 
-- (void)runTests:(NSArray *)tests {
+- (void)runTests:(NSSet *)tests {
     dispatch_async([[self class] runQueue], ^{
         NSAssert([SLLogger sharedLogger], @"SLTestController cannot run tests without a logger.");
         
         [self _beginTesting];
 
-        // search for startup test
+        // ensure we'll execute startup test first if present
+        NSMutableArray *orderedTests = [NSMutableArray arrayWithArray:[tests allObjects]];
         __block NSUInteger startupTestIndex = NSNotFound;
-        [tests enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [orderedTests enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             if ([obj isStartUpTest]) {
                 startupTestIndex = idx;
                 *stop = YES;
             }
         }];
-        // ensure we'll execute startup test first if present
-        NSMutableArray *sortedTests = [NSMutableArray arrayWithArray:tests];
         if (startupTestIndex != NSNotFound) {
-            id startupTestClass = [sortedTests objectAtIndex:startupTestIndex];
-            [sortedTests removeObjectAtIndex:startupTestIndex];
-            [sortedTests insertObject:startupTestClass atIndex:0];
+            id startupTestClass = [orderedTests objectAtIndex:startupTestIndex];
+            [orderedTests removeObjectAtIndex:startupTestIndex];
+            [orderedTests insertObject:startupTestClass atIndex:0];
         }
         
-        for (Class testClass in sortedTests) {
+        for (Class testClass in orderedTests) {
             if (![testClass supportsCurrentPlatform]) {
                 continue;
             }

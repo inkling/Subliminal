@@ -16,6 +16,6 @@
 
 + (id)sharedTestController;
 
-- (void)runTests:(NSArray *)tests;
+- (void)runTests:(NSSet *)tests;
 
 @end
