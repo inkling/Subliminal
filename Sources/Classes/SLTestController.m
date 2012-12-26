@@ -81,7 +81,7 @@ static SLTestController *__sharedController = nil;
     [[SLLogger sharedLogger] logTestingStart];
 }
 
-- (void)runTests:(NSSet *)tests {
+- (void)runTests:(NSSet *)tests withCompletionBlock:(void (^)())completionBlock {
     dispatch_async([[self class] runQueue], ^{
         NSAssert([SLLogger sharedLogger], @"A shared SLLogger must be set (+[SLLogger setSharedLogger:]) before SLTestController can run tests.");
         
@@ -143,12 +143,15 @@ static SLTestController *__sharedController = nil;
             }
         }
         
-       [self _finishTesting];
+        [self _finishTestingWithCompletionBlock:completionBlock];
     });
 }
 
-- (void)_finishTesting {
+- (void)_finishTestingWithCompletionBlock:(void (^)())completionBlock {
     [[SLLogger sharedLogger] logTestingFinish];
+
+    if (completionBlock) dispatch_sync(dispatch_get_main_queue(), completionBlock);
+    
     [[SLTerminal sharedTerminal] eval:@"_testingHasFinished = true;"];
 }
 
