@@ -19,3 +19,7 @@
 @interface EmptyTest : SLTest
 
 @end
+
+@interface TestNotSupportingCurrentPlatform : SLTest
+
+@end

@@ -11,3 +11,11 @@
 @implementation EmptyTest
 
 @end
+
+@implementation TestNotSupportingCurrentPlatform
+
++ (BOOL)supportsCurrentPlatform {
+    return NO;
+}
+
+@end

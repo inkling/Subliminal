@@ -21,6 +21,7 @@
     NSSet *allTests = [SLTest allTests];
     NSSet *expectedTests = [NSSet setWithObjects:
         [EmptyTest class],
+        [TestNotSupportingCurrentPlatform class],
         nil
     ];
     STAssertEqualObjects(allTests, expectedTests, @"Unexpected tests returned.");
