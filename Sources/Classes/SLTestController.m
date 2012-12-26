@@ -83,7 +83,7 @@ static SLTestController *__sharedController = nil;
 
 - (void)runTests:(NSSet *)tests {
     dispatch_async([[self class] runQueue], ^{
-        NSAssert([SLLogger sharedLogger], @"SLTestController cannot run tests without a logger.");
+        NSAssert([SLLogger sharedLogger], @"A shared SLLogger must be set (+[SLLogger setSharedLogger:]) before SLTestController can run tests.");
         
         [self _beginTesting];
 
