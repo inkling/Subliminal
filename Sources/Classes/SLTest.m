@@ -90,30 +90,29 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
     // nothing to do here
 }
 
-- (NSUInteger)run:(NSUInteger *)numCasesExecuted {
-    // Run all methods beginning with "test" and taking no arguments
+// Returns the names of all methods beginning with "test", taking no arguments
+- (NSArray *)testCaseNames {
     static NSString *const kSelectorPrefix = @"test";
-    
+
     unsigned int methodCount;
     Method *methods = class_copyMethodList([self class], &methodCount);
     NSMutableArray *selectorStrings = [NSMutableArray array];
     for (unsigned int i = 0; i < methodCount; i++) {
-        SEL selector = method_getName(methods[i]);
+        Method method = methods[i];
+        SEL selector = method_getName(method);
         NSString *selectorString = NSStringFromSelector(selector);
+
         if ([selectorString hasPrefix:kSelectorPrefix] &&
             ![selectorString hasSuffix:@":"]) {
-            UIUserInterfaceIdiom userInterfaceIdiom = [[UIDevice currentDevice] userInterfaceIdiom];
-            BOOL hasIPadSuffix = [selectorString hasSuffix:@"_iPad"];
-            BOOL hasIPhoneSuffix = [selectorString hasSuffix:@"_iPhone"];
-            if ((userInterfaceIdiom == UIUserInterfaceIdiomPad && hasIPadSuffix) ||
-                (userInterfaceIdiom == UIUserInterfaceIdiomPhone && hasIPhoneSuffix) ||
-                (!hasIPadSuffix && !hasIPhoneSuffix)) {
-                [selectorStrings addObject:selectorString];
-            }
+            [selectorStrings addObject:selectorString];
         }
     }
     if (methods) free(methods);
 
+    return selectorStrings;
+}
+
+- (NSUInteger)run:(NSUInteger *)numCasesExecuted {
     @try {
         [self setUp];
     }
@@ -124,37 +123,44 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
 
     NSString *test = NSStringFromClass([self class]);
     NSUInteger numberOfCasesExecuted = 0, numberOfCasesFailed = 0;
-    for (NSString *testSelectorString in selectorStrings) {
-        [[SLLogger sharedLogger] logTest:test caseStart:testSelectorString];
-        SEL testSelector = NSSelectorFromString(testSelectorString);
+    for (NSString *testCaseName in [self testCaseNames]) {
+        // only run test case if it's appropriate for the current platform
+        UIUserInterfaceIdiom userInterfaceIdiom = [[UIDevice currentDevice] userInterfaceIdiom];
+        if (([testCaseName hasSuffix:@"_iPad"] && (userInterfaceIdiom != UIUserInterfaceIdiomPad)) ||
+            ([testCaseName hasSuffix:@"_iPhone"] && (userInterfaceIdiom != UIUserInterfaceIdiomPhone))) {
+            continue;
+        }
+
+        [[SLLogger sharedLogger] logTest:test caseStart:testCaseName];
+        SEL testCaseSelector = NSSelectorFromString(testCaseName);
 
         BOOL caseFailed = NO;
         @try {            
-            [self setUpTestCaseWithSelector:testSelector];
+            [self setUpTestCaseWithSelector:testCaseSelector];
             
             // We use objc_msgSend so that Clang won't complain about performSelector leaks
-            ((void(*)(id, SEL))objc_msgSend)(self, testSelector);
+            ((void(*)(id, SEL))objc_msgSend)(self, testCaseSelector);
         }
         @catch (NSException *e) {
             // Catch all exceptions in test cases. If the app is in an inconsistent state then -tearDown: should abort completely.
-            [self logException:e inTestCase:testSelectorString];
+            [self logException:e inTestCase:testCaseName];
             caseFailed = YES;
         }
         @finally {
             // tear-down test case last so that it always executes, regardless of earlier failures
             @try {
-                [self tearDownTestCaseWithSelector:testSelector];
+                [self tearDownTestCaseWithSelector:testCaseSelector];
             }
             @catch (NSException *e) {
-                [self logException:e inTestCase:testSelectorString];
+                [self logException:e inTestCase:testCaseName];
                 caseFailed = YES;
             }
 
             if (caseFailed) {
-                [[SLLogger sharedLogger] logTest:test caseFail:testSelectorString];
+                [[SLLogger sharedLogger] logTest:test caseFail:testCaseName];
                 numberOfCasesFailed++;
             } else {
-                [[SLLogger sharedLogger] logTest:test casePass:testSelectorString];
+                [[SLLogger sharedLogger] logTest:test casePass:testCaseName];
             }
 
             numberOfCasesExecuted++;
