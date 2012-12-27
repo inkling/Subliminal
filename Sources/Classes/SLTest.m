@@ -90,7 +90,7 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
     // nothing to do here
 }
 
-// Returns the names of all methods beginning with "test", taking no arguments
+// Returns the names of all methods beginning with "test", taking no arguments, returning void
 - (NSArray *)testCaseNames {
     static NSString *const kSelectorPrefix = @"test";
 
@@ -100,12 +100,16 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
     for (unsigned int i = 0; i < methodCount; i++) {
         Method method = methods[i];
         SEL selector = method_getName(method);
+        char *methodReturnType = method_copyReturnType(method);
         NSString *selectorString = NSStringFromSelector(selector);
 
         if ([selectorString hasPrefix:kSelectorPrefix] &&
+            methodReturnType && strlen(methodReturnType) > 0 && methodReturnType[0] == 'v' &&
             ![selectorString hasSuffix:@":"]) {
             [selectorStrings addObject:selectorString];
         }
+        
+        if (methodReturnType) free(methodReturnType);
     }
     if (methods) free(methods);
 

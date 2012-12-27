@@ -68,15 +68,18 @@ extern NSString *const SLTestExceptionLineNumberKey;
 
 
 /**
- The following methods are used to set up before and clean up after individual test case methods.
- Only methods whose names have the prefix "test," implemented on a subclass of SLTest, will be run
- as part of the test suite for the SLTest subclass.
-
  A test case method whose name has the suffix "_iPhone," like testFoo_iPhone, will be executed only
  when [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone.  A test case method
  whose name has the suffix "_iPad" will be executed only when the current device user interface idiom
  is UIUserInterfaceIdiomPad.  A test case method whose name has neither the "_iPhone" nor the "_iPad"
  suffix will be executed on all devices regardless of the user interface idiom.
+ The following methods are used to set up before and clean up after individual 
+ test case methods. Test case methods are methods, defined on a subclass of SLTest:
+ 
+    * whose names have the prefix "test",
+    * with void return types, and
+    * which take no arguments.
+
  */
 @interface SLTest (SLTestCase)
 
