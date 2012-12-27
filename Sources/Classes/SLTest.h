@@ -55,6 +55,10 @@ extern NSString *const SLTestExceptionLineNumberKey;
  checking the scale of the main screen.
 
  SLTest's implementation returns YES.
+ 
+ If this method returns NO, none of this test's cases will run.
+ You may instead conditionalize individual cases by suffixing the method name,
+ as explained in the comment on SLTest (SLTestCase).
 
  @return YES if this class has test cases that can currently run, NO otherwise.
  */
@@ -68,11 +72,6 @@ extern NSString *const SLTestExceptionLineNumberKey;
 
 
 /**
- A test case method whose name has the suffix "_iPhone," like testFoo_iPhone, will be executed only
- when [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone.  A test case method
- whose name has the suffix "_iPad" will be executed only when the current device user interface idiom
- is UIUserInterfaceIdiomPad.  A test case method whose name has neither the "_iPhone" nor the "_iPad"
- suffix will be executed on all devices regardless of the user interface idiom.
  The following methods are used to set up before and clean up after individual 
  test case methods. Test case methods are methods, defined on a subclass of SLTest:
  
@@ -80,6 +79,17 @@ extern NSString *const SLTestExceptionLineNumberKey;
     * with void return types, and
     * which take no arguments.
 
+ Test cases may be conditionally run on certain platforms by suffixing the method 
+ name in the following fashion:
+ 
+    * A test case method whose name has the suffix "_iPhone," like "testFoo_iPhone",
+      will be executed only when [[UIDevice currentDevice] userInterfaceIdiom] ==
+      UIUserInterfaceIdiomPhone.
+    * A test case method whose name has the suffix "_iPad" will be executed only 
+      when the current device user interface idiom is UIUserInterfaceIdiomPad. 
+    * A test case method whose name has neither the "_iPhone" nor the "_iPad" 
+      suffix will be executed on all devices regardless of the user interface idiom.
+ 
  */
 @interface SLTest (SLTestCase)
 
