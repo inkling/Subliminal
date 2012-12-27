@@ -16,7 +16,13 @@
  If you add a new SLTest, please remember to update -[SLTestTests testAllTestsReturnsExpected].
  */
 
-@interface EmptyTest : SLTest
+@interface TestWithSomeTestCases : SLTest
+
+- (void)testOne;
+- (void)testTwo;
+- (void)testThree;
+- (BOOL)testThatIsntATestBecauseItsReturnTypeIsNonVoid;
+- (void)testThatIsntATestBecauseItTakesAnArgument:(NSString *)foo;
 
 @end
 

@@ -8,7 +8,13 @@
 
 #import "SharedTests.h"
 
-@implementation EmptyTest
+@implementation TestWithSomeTestCases
+
+- (void)testOne{}
+- (void)testTwo{}
+- (void)testThree{}
+- (BOOL)testThatIsntATestBecauseItsReturnTypeIsNonVoid{return NO;}
+- (void)testThatIsntATestBecauseItTakesAnArgument:(NSString *)foo{}
 
 @end
 
