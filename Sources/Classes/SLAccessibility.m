@@ -40,11 +40,30 @@
         if (chain) {
             NSMutableArray *chainWithSelf = [chain mutableCopy];
             [chainWithSelf insertObject:self atIndex:0];
+            [self adjustAccessibilityNamesInAccessibilityChain:chainWithSelf];
             return chainWithSelf;
         }
     }
     return nil;
 }
+
+
+- (void)adjustAccessibilityNamesInAccessibilityChain:(NSArray *)chain {
+    
+    // UIWebViews contain a UIWebViewScrollView, which contains a UIWebBrowserView. Both of these classes will be
+    // added to UIAutomation's accessibility hierarchy regardless of their lack of accessibility label, value, and name.
+    // As a subclass of UIScrollView UIWebScrollView is added to our generated UIAPrefix because of its SLAccessibility
+    // category. We do not want to create a category for UIWebBrowserView however, because it is a private class. Instead,
+    // here we rely on what we know of UIWebView's internal structure to pull it from its location as the second object
+    // below UIWebView in the accessorChain, and modify it to ensure it occurs in the UIAPrefix we generate.
+    if ([self isKindOfClass:[UIWebView class]] && [chain count] > 2) {
+        UIView *webBrowserView = [chain objectAtIndex:2];
+        if ([[webBrowserView slAccessibilityName] length] == 0) {
+            webBrowserView.accessibilityIdentifier = [NSString stringWithFormat:@"%@: %p", [webBrowserView class], webBrowserView];
+        }
+    }
+}
+
 
 - (NSString *)slAccessibilityDescription {
     NSInteger count = [self accessibilityElementCount];
