@@ -7,7 +7,7 @@
 //
 
 #import "SLElement.h"
-
+#import "SLLogger.h"
 #import "SLAccessibility.h"
 #import "SLTerminal.h"
 #import "NSString+SLJavaScript.h"
@@ -25,9 +25,8 @@ static const NSTimeInterval kDefaultRetryDelay = 0.25;
 @interface SLElement ()
 
 - (id)initWithPredicate:(BOOL (^)(NSObject *obj))predicate description:(NSString *)description;
-
 - (NSString *)sendMessage:(NSString *)action, ... NS_FORMAT_FUNCTION(1, 2);
-- (NSString *)uiaSelf;
+- (NSString *)staticUIASelf;
 
 @end
 
@@ -86,35 +85,124 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return [NSString stringWithFormat:@"<%@ description:\"%@\">", NSStringFromClass([self class]), _description];
 }
 
+- (NSString *)staticUIASelf {
+    return nil;
+}
+
 #pragma mark Sending Actions
 
-- (NSString *)uiaPrefix {
-    __block NSString *uiaPrefix = nil;
+
+- (void)performActionWithUIASelf:(void(^)(NSString *uiaSelf))block {
+
+    // A uiaSelf is created, unless a staticUIASelf is provided, and is passed to the action block. uiaSelf is created
+    // by creating one chain from the main window to a matching element that prefers to match on a UIView, and another
+    // chain that prefers to match to UIAccessibilityElements. Unique identifiers are set on the objects in the first
+    // chain, and then the elements in the second chain are serialized to create the uiaSelf which is passed to the
+    // action. This ensures that the identifiers are set successfully, and that the chain does not contain any extra
+    // elements. After the action has been performed the accessibilityLabels and accessibilityIdentifiers on each
+    // element in the view matching chain are reset.
     
-    // Attempt the find the element the same way UIAutomation does (including the 5 second timeout)
+    NSString *staticUIASelf = [self staticUIASelf];
+    if (staticUIASelf) {
+        block(staticUIASelf);
+        return;
+    }
+    
+    NSArray *uiAccessibilityElementFirstAccessorChain = [self waitForAccessibilityChainFavoringSubviews:NO];
+    NSArray *viewFirstAccessorChain = [self waitForAccessibilityChainFavoringSubviews:YES];
+    
+    if ([uiAccessibilityElementFirstAccessorChain count] == 0) {
+        @throw [NSException exceptionWithName:SLInvalidElementException reason:[NSString stringWithFormat:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]] userInfo:nil];
+    }
+
+    // Previous accessibility chains and labels are stored in a separate loop, before they are reassigned. This is because
+    // some subclasses' accessibility identification values depend on their parent view's, and will change when they are
+    // updated.
+    NSMutableArray *previousAccessorChainIdentifiers = [[NSMutableArray alloc] init];
+    NSMutableArray *previousAccessorChainLabels = [[NSMutableArray alloc] init];
+    for (NSObject *obj in viewFirstAccessorChain) {
+        NSAssert([obj respondsToSelector:@selector(accessibilityIdentifier)], @"elements in the accessibility chain must conform to UIAccessibilityIdentification");
+        
+        NSObject *previousIdentifier = [obj performSelector:@selector(accessibilityIdentifier)];
+        if (previousIdentifier == nil) {
+            previousIdentifier = [NSNull null];
+        }
+        [previousAccessorChainIdentifiers addObject:previousIdentifier];
+
+        NSObject *previousLabel = [obj accessibilityLabel];
+        if (previousLabel == nil) {
+            previousLabel = [NSNull null];
+        }
+        [previousAccessorChainLabels addObject:previousLabel];
+    }
+    
+    // viewFirstAccessorChain was created putting a priority on matching UIViews. We set the unique identifiers
+    // on the members of this chain, instead of uiAccessibilityElementFirstAccessorChain, because the new
+    // identifiers will be mirrored on all the objects in uiAccessibilityElementFirstAccessorChain
+    
+    // The chain's elements' accessibility information is updated in reverse order, because of the issue listed in the
+    // above note
+    for (NSObject *obj in [viewFirstAccessorChain reverseObjectEnumerator]) {
+        NSAssert([obj respondsToSelector:@selector(accessibilityIdentifier)], @"elements in the accessibility chain must conform to UIAccessibilityIdentification");
+        [obj setAccessibilityIdentifierWithStandardReplacement];
+
+        // Some objects will not allow their accessibilityIdentifier to be modified. In these cases, if the accessibilityIdentifer
+        // is empty, we can uniquely identify the object with its label.
+        if ([[obj performSelector:@selector(accessibilityIdentifier)] length] == 0) {
+            obj.accessibilityLabel = [obj standardAccessibilityIdentifierReplacement];
+        }
+    }
+
+    NSMutableString *targettedUIAPrefix = [@"UIATarget.localTarget().frontMostApp().mainWindow()" mutableCopy];
+    
+    // The prefix must be generated from the accessibility information on the elements of uiAccessibilityElementFirstAccessorChain
+    // instead of viewFirstAccessorChain because uiAccessibilityElementFirstAccessorChain contains the actual elements
+    // UIAutomation will interact with, and its chain may be shorter than that in viewFirstAccessorChain.
+    
+    for (NSObject *obj in uiAccessibilityElementFirstAccessorChain) {
+        NSAssert([obj respondsToSelector:@selector(accessibilityIdentifier)], @"elements in the accessibility chain must conform to UIAccessibilityIdentification");
+        
+        // Elements must be identified by their accessibility identifier as long as one exists. The accessiblity identifier may be nil
+        // for some classes on which you cannot set an accessibility identifer ex UISegmentedControl. In these cases the element can
+        // be identified by its label.
+        NSString *currentIdentifier = [obj performSelector:@selector(accessibilityIdentifier)];
+        if ([currentIdentifier length] > 0) {
+            [targettedUIAPrefix appendFormat:@".elements()['%@']",  [currentIdentifier slStringByEscapingForJavaScriptLiteral]];
+            
+        } else  {
+            [targettedUIAPrefix appendFormat:@".elements()['%@']",  [obj.accessibilityLabel slStringByEscapingForJavaScriptLiteral]];
+        }
+    }
+    
+    block(targettedUIAPrefix);
+    
+    // The chain's elements' accessibility information is updated in reverse order, because of the issue listed in the
+    // above note
+    [viewFirstAccessorChain enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        NSObject *identifierObj = [previousAccessorChainIdentifiers objectAtIndex:idx];
+        NSString *identifier = ([identifierObj isEqual:[NSNull null]] ? nil : (NSString *)identifierObj);
+        NSObject *labelObj = [previousAccessorChainLabels objectAtIndex:idx];
+        NSString *label = ([labelObj isEqual:[NSNull null]] ? nil : (NSString *)labelObj);
+        [obj resetAccessibilityInfoIfNecessaryWithPreviousIdentifier:identifier previousLabel:label];
+    }];
+}
+
+
+- (NSArray *)waitForAccessibilityChainFavoringSubviews:(BOOL)favoringSubviews {
+    __block NSArray *accessibilityChain = nil;
     NSDate *startDate = [NSDate date];
     while ([[NSDate date] timeIntervalSinceDate:startDate] < [[self class] defaultTimeout]) {
         dispatch_sync(dispatch_get_main_queue(), ^{
-            uiaPrefix = [self currentUIAPrefix];
+            accessibilityChain = [[[UIApplication sharedApplication] keyWindow] slAccessibilityChainToElement:self favoringUISubviews:favoringSubviews];
         });
-        if (uiaPrefix) {
+        if ([accessibilityChain count] > 0) {
             break;
         }
         [NSThread sleepForTimeInterval:kDefaultRetryDelay];
     }
-
-    return uiaPrefix;
+    return accessibilityChain;
 }
 
-- (NSString *)uiaSelf {
-	NSString *uiaPrefix = [self uiaPrefix];
-    
-    if (!uiaPrefix) {
-        @throw [NSException exceptionWithName:SLInvalidElementException reason:[NSString stringWithFormat:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]] userInfo:nil];
-    } else {
-        return uiaPrefix;
-    }
-}
 
 - (NSString *)sendMessage:(NSString *)action, ... {
     va_list(args);
@@ -122,15 +210,24 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     NSString *formattedAction = [[NSString alloc] initWithFormat:action arguments:args];
     va_end(args);
     
-    return [[SLTerminal sharedTerminal] evalWithFormat:@"%@.%@", [self uiaSelf], formattedAction];
+    __block NSString *returnValue = nil;
+    [self performActionWithUIASelf:^(NSString *uiaSelf) {
+            returnValue = [[SLTerminal sharedTerminal] evalWithFormat:@"%@.%@", uiaSelf, formattedAction];
+    }];
+    
+    return returnValue;
 }
 
 - (BOOL)isValid {
-    return [self uiaPrefix] != nil;
+    return ([[self waitForAccessibilityChainFavoringSubviews:NO] count] > 0);
 }
 
 - (BOOL)isVisible {
-    return [[[SLTerminal sharedTerminal] evalWithFormat:@"(%@.isVisible() ? 'YES' : 'NO')", [self uiaSelf]] boolValue];
+    __block BOOL isVisible = NO;
+    [self performActionWithUIASelf:^(NSString *uiaSelf) {
+        isVisible = [[[SLTerminal sharedTerminal] evalWithFormat:@"(%@.isVisible() ? 'YES' : 'NO')", uiaSelf] boolValue];
+    }];
+    return isVisible;
 }
 
 - (BOOL)waitFor:(NSTimeInterval)timeout untilCondition:(NSString *)condition {
@@ -150,15 +247,19 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (void)waitUntilVisible:(NSTimeInterval)timeout {
-    if (![self waitFor:timeout untilCondition:[NSString stringWithFormat:@"%@.isVisible()", [self uiaSelf]]]) {
-        [NSException raise:@"SLWaitUntilVisibleException" format:@"Element %@ did not become visible within %g seconds.", self, timeout];
-    }
+    [self performActionWithUIASelf:^(NSString *uiaSelf) {
+        if (![self waitFor:timeout untilCondition:[NSString stringWithFormat:@"%@.isVisible()", uiaSelf]]) {
+            [NSException raise:@"SLWaitUntilVisibleException" format:@"Element %@ did not become visible within %g seconds.", self, timeout];
+        }
+    }];
 }
 
 - (void)waitUntilInvisible:(NSTimeInterval)timeout {
-    if (![self waitFor:timeout untilCondition:[NSString stringWithFormat:@"!%@.isVisible()", [self uiaSelf]]]) {
-        [NSException raise:@"SLWaitUntilInvisibleException" format:@"Element %@ was still visible after %g seconds.", self, timeout];
-    }
+    [self performActionWithUIASelf:^(NSString *uiaSelf) {
+        if (![self waitFor:timeout untilCondition:[NSString stringWithFormat:@"!%@.isVisible()", uiaSelf]]) {
+            [NSException raise:@"SLWaitUntilInvisibleException" format:@"Element %@ was still visible after %g seconds.", self, timeout];
+        }
+    }];
 }
 
 - (void)tap {
@@ -190,55 +291,28 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 @end
 
-@implementation SLElement (Debugging)
-
-- (NSString *)currentUIAPrefix {
-    // TODO: If the application's going to search all the windows,
-    // we should not here assume the element's going to be found in the keyWindow.
-    UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
-
-    NSMutableString *uiaPrefix;
-    NSArray *accessorChain = [keyWindow slAccessibilityChainToElement:self];
-    if (accessorChain) {
-        uiaPrefix = [@"UIATarget.localTarget().frontMostApp().mainWindow()" mutableCopy];
-
-        // Skip the window element
-        for (int i = 1; i < [accessorChain count]; i++) {
-            // Some objects (in particular instances of several internal UIKit classes) refuse to respect the setting of accessibilityLabel, accessibilityIdentifier, etc.
-            // In these cases we can't get a non-nil slAccessibilityName despite our best efforts.  If we get back a nil accessibility name then we should just skip this
-            // element in the chain.  We have found by experiment that skipping these troublesome elements usually results in a chain that the automation instrument
-            // can interpret successfully.
-            
-            NSString *accessibilityName = [[accessorChain[i] slAccessibilityName] slStringByEscapingForJavaScriptLiteral];
-            NSString *accessibilityValue = [[accessorChain[i] accessibilityValue] slStringByEscapingForJavaScriptLiteral];
-            NSString *valuePredicate = ([accessibilityValue length] > 0 ? [NSString stringWithFormat:@"value = \\\"%@\\\"", accessibilityValue] : nil);
-            NSString *namePredicate = ([accessibilityName length] > 0 ? [NSString stringWithFormat:@"name = \\\"%@\\\"", accessibilityName] : nil);
-            NSString *completePredicate = [NSString stringWithFormat:@"%@%@%@", (namePredicate ? namePredicate : @""), (namePredicate && valuePredicate ? @" and " : @""), (valuePredicate ? valuePredicate : @"")];
-            
-            BOOL isAccessibilityElement = [accessorChain[i] isAccessibilityElement];
-            
-            if ([accessibilityName length] > 0 || isAccessibilityElement) {
-                NSAssert([accessibilityName length] > 0 || [accessibilityValue length] > 0, @"Every element in accessorChain that returns true to isAccessibilityElement should have an accessibility value or name.");
-                [uiaPrefix appendFormat:@".elements().firstWithPredicate(\"%@\")", completePredicate];
-            }
-        }
-    }
-
-    return uiaPrefix;
-}
-
-@end
-
 
 #pragma mark - SLAlert
 
 @implementation SLAlert
 
+
++ (id)elementWithAccessibilityLabel:(NSString *)label {
+    return [[self alloc] initWithPredicate:^BOOL(NSObject *obj) {
+        if ([obj isKindOfClass:[UIAlertView class]]) {
+            UIAlertView *alert = (UIAlertView *)obj;
+            return ([alert.accessibilityLabel isEqualToString:label] || [alert.title isEqualToString:label]);
+        } else {
+            return NO;
+        }
+    } description:label];
+}
+
 // only one alert shows at a time, and it doesn't have an accessibility label
 // -- we match the title of the alert instead
-- (NSString *)uiaSelf {
+- (NSString *)staticUIASelf {
     return [NSString stringWithFormat:
-            @"((UIATarget.localTarget().frontMostApp().alert().staticTexts()[0].label() == \"%@\") \
+                            @"((UIATarget.localTarget().frontMostApp().alert().staticTexts()[0].label() == \"%@\") \
                             ? UIATarget.localTarget().frontMostApp().alert() : null)", [_description slStringByEscapingForJavaScriptLiteral]];
 }
 
@@ -257,7 +331,11 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 @implementation SLControl
 
 - (BOOL)isEnabled {
-    return [[[SLTerminal sharedTerminal] evalWithFormat:@"(%@.isEnabled() ? 'YES' : 'NO')", [self uiaSelf]] boolValue];
+    __block BOOL isEnabled = NO;
+    [self performActionWithUIASelf:^(NSString *uiaSelf) {
+        isEnabled = [[[SLTerminal sharedTerminal] evalWithFormat:@"(%@.isEnabled() ? 'YES' : 'NO')", uiaSelf] boolValue];
+    }];
+    return isEnabled;
 }
 
 @end
@@ -297,8 +375,9 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     } description:@"Main Window"];
 }
 
-- (NSString *)uiaSelf {
-	return @"UIATarget.localTarget().frontMostApp().mainWindow()";
+
+- (NSString *)staticUIASelf {
+    return @"UIATarget.localTarget().frontMostApp().mainWindow()";
 }
 
 @end
@@ -311,7 +390,8 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return [[SLKeyboard alloc] initWithPredicate:nil description:@"Keyboard"];
 }
 
-- (NSString *)uiaSelf {
+
+- (NSString *)staticUIASelf {
     return @"UIATarget.localTarget().frontMostApp().keyboard()";
 }
 
@@ -330,7 +410,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return key;
 }
 
-- (NSString *)uiaSelf {
+- (NSString *)staticUIASelf {
     return [NSString stringWithFormat:@"UIATarget.localTarget().frontMostApp().keyboard().elements()['%@']", self.keyLabel];
 }
 
