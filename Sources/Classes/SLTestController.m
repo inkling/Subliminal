@@ -16,8 +16,18 @@
 #import <objc/runtime.h>
 
 
+static NSUncaughtExceptionHandler *appsUncaughtExceptionHandler;
 static const NSTimeInterval kDefaultTimeout = 5.0;
 
+static void SLUncaughtExceptionHandler(NSException *exception)
+{
+    NSString *exceptionMessage = [NSString stringWithFormat:@"Exception occurred: **%@** for reason: %@", [exception name], [exception reason]];
+    [[SLLogger sharedLogger] logError:exceptionMessage];
+
+    if (appsUncaughtExceptionHandler) {
+        appsUncaughtExceptionHandler(exception);
+    }
+}
 
 @implementation SLTestController
 
@@ -50,6 +60,9 @@ static SLTestController *__sharedController = nil;
 }
 
 - (void)_beginTesting {
+    appsUncaughtExceptionHandler = NSGetUncaughtExceptionHandler();
+    NSSetUncaughtExceptionHandler(&SLUncaughtExceptionHandler);
+
     // register defaults
     SLLog(@"Tests are starting up... ");
 
