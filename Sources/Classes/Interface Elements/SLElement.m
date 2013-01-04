@@ -208,9 +208,18 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
             // In these cases we can't get a non-nil slAccessibilityName despite our best efforts.  If we get back a nil accessibility name then we should just skip this
             // element in the chain.  We have found by experiment that skipping these troublesome elements usually results in a chain that the automation instrument
             // can interpret successfully.
+            
             NSString *accessibilityName = [[accessorChain[i] slAccessibilityName] slStringByEscapingForJavaScriptLiteral];
-            if ([accessibilityName length] > 0) {
-                [uiaPrefix appendFormat:@".elements()['%@']", accessibilityName];
+            NSString *accessibilityValue = [[accessorChain[i] accessibilityValue] slStringByEscapingForJavaScriptLiteral];
+            NSString *valuePredicate = ([accessibilityValue length] > 0 ? [NSString stringWithFormat:@"value = \\\"%@\\\"", accessibilityValue] : nil);
+            NSString *namePredicate = ([accessibilityName length] > 0 ? [NSString stringWithFormat:@"name = \\\"%@\\\"", accessibilityName] : nil);
+            NSString *completePredicate = [NSString stringWithFormat:@"%@%@%@", (namePredicate ? namePredicate : @""), (namePredicate && valuePredicate ? @" and " : @""), (valuePredicate ? valuePredicate : @"")];
+            
+            BOOL isAccessibilityElement = [accessorChain[i] isAccessibilityElement];
+            
+            if ([accessibilityName length] > 0 || isAccessibilityElement) {
+                NSAssert([accessibilityName length] > 0 || [accessibilityValue length] > 0, @"Every element in accessorChain that returns true to isAccessibilityElement should have an accessibility value or name.");
+                [uiaPrefix appendFormat:@".elements().firstWithPredicate(\"%@\")", completePredicate];
             }
         }
     }
