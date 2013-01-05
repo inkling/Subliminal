@@ -102,9 +102,10 @@ extern NSString *const SLTestExceptionLineNumberKey;
  In this method, tests can (and should) use SLTest assertions and SLElement "wait until..."
  methods to ensure that set-up was successful.
  
- @warning If set-up fails, this test will be aborted and its cases skipped.
+ @warning If set-up fails, this test will be aborted and its cases skipped. 
+ However, -tearDown will still be executed.
  
- @sa tearDown
+ @sa -tearDown
  */
 - (void)setUp;
 
@@ -132,11 +133,12 @@ extern NSString *const SLTestExceptionLineNumberKey;
  In this method, tests can (and should) use SLTest assertions and SLElement "wait until..."
  methods to ensure that set-up was successful.
  
- @warning If set-up fails, this test case will be logged as having failed.
+ @warning If set-up fails, this test case will be skipped and logged as having failed.
+ However, -tearDownTestCaseWithSelector: will still be executed.
 
  @param testSelector The selector identifying the test case about to be run.
 
- @sa tearDownTestCaseWithSelector:
+ @sa -tearDownTestCaseWithSelector:
  */
 - (void)setUpTestCaseWithSelector:(SEL)testSelector;
 
@@ -154,7 +156,7 @@ extern NSString *const SLTestExceptionLineNumberKey;
  
  @param testSelector The selector identifying the test case that was run.
 
- @sa setUpTestCaseWithSelector:
+ @sa -setUpTestCaseWithSelector:
  */
 - (void)tearDownTestCaseWithSelector:(SEL)testSelector;
 

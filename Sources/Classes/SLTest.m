@@ -117,66 +117,79 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
 }
 
 - (NSUInteger)run:(NSUInteger *)numCasesExecuted {
+    NSUInteger numberOfCasesExecuted = 0, numberOfCasesFailed = 0;
+
+    NSException *setUpOrTearDownException = nil;
     @try {
         [self setUp];
     }
     @catch (NSException *e) {
-        // Abort if the test failed during setup
-        @throw [self exceptionByAddingFileInfo:e];
+        // save exception to throw after tearDown
+        setUpOrTearDownException = [self exceptionByAddingFileInfo:e];
     }
 
-    NSString *test = NSStringFromClass([self class]);
-    NSUInteger numberOfCasesExecuted = 0, numberOfCasesFailed = 0;
-    for (NSString *testCaseName in [self testCaseNames]) {
-        // only run test case if it's appropriate for the current platform
-        UIUserInterfaceIdiom userInterfaceIdiom = [[UIDevice currentDevice] userInterfaceIdiom];
-        if (([testCaseName hasSuffix:@"_iPad"] && (userInterfaceIdiom != UIUserInterfaceIdiomPad)) ||
-            ([testCaseName hasSuffix:@"_iPhone"] && (userInterfaceIdiom != UIUserInterfaceIdiomPhone))) {
-            continue;
-        }
+    // if setUp failed, skip the test cases
+    if (!setUpOrTearDownException) {
+        NSString *test = NSStringFromClass([self class]);
+        for (NSString *testCaseName in [self testCaseNames]) {
+            // only run test case if it's appropriate for the current platform
+            UIUserInterfaceIdiom userInterfaceIdiom = [[UIDevice currentDevice] userInterfaceIdiom];
+            if (([testCaseName hasSuffix:@"_iPad"] && (userInterfaceIdiom != UIUserInterfaceIdiomPad)) ||
+                ([testCaseName hasSuffix:@"_iPhone"] && (userInterfaceIdiom != UIUserInterfaceIdiomPhone))) {
+                continue;
+            }
 
-        [[SLLogger sharedLogger] logTest:test caseStart:testCaseName];
-        SEL testCaseSelector = NSSelectorFromString(testCaseName);
+            [[SLLogger sharedLogger] logTest:test caseStart:testCaseName];
+            SEL testCaseSelector = NSSelectorFromString(testCaseName);
 
-        BOOL caseFailed = NO;
-        @try {            
-            [self setUpTestCaseWithSelector:testCaseSelector];
-            
-            // We use objc_msgSend so that Clang won't complain about performSelector leaks
-            ((void(*)(id, SEL))objc_msgSend)(self, testCaseSelector);
-        }
-        @catch (NSException *e) {
-            // Catch all exceptions in test cases. If the app is in an inconsistent state then -tearDown: should abort completely.
-            [self logException:e inTestCase:testCaseName];
-            caseFailed = YES;
-        }
-        @finally {
-            // tear-down test case last so that it always executes, regardless of earlier failures
-            @try {
-                [self tearDownTestCaseWithSelector:testCaseSelector];
+            BOOL caseFailed = NO;
+            @try {            
+                [self setUpTestCaseWithSelector:testCaseSelector];
+                
+                // We use objc_msgSend so that Clang won't complain about performSelector leaks
+                ((void(*)(id, SEL))objc_msgSend)(self, testCaseSelector);
             }
             @catch (NSException *e) {
+                // Catch all exceptions in test cases. If the app is in an inconsistent state then -tearDown: should abort completely.
                 [self logException:e inTestCase:testCaseName];
                 caseFailed = YES;
             }
+            @finally {
+                // tear-down test case last so that it always executes, regardless of earlier failures
+                @try {
+                    [self tearDownTestCaseWithSelector:testCaseSelector];
+                }
+                @catch (NSException *e) {
+                    [self logException:e inTestCase:testCaseName];
+                    caseFailed = YES;
+                }
 
-            if (caseFailed) {
-                [[SLLogger sharedLogger] logTest:test caseFail:testCaseName];
-                numberOfCasesFailed++;
-            } else {
-                [[SLLogger sharedLogger] logTest:test casePass:testCaseName];
+                if (caseFailed) {
+                    [[SLLogger sharedLogger] logTest:test caseFail:testCaseName];
+                    numberOfCasesFailed++;
+                } else {
+                    [[SLLogger sharedLogger] logTest:test casePass:testCaseName];
+                }
+
+                numberOfCasesExecuted++;
             }
-
-            numberOfCasesExecuted++;
         }
     }
 
+    // still perform tearDown even if setUp failed
     @try {
         [self tearDown];
     }
     @catch (NSException *e) {
-        // Abort if the test failed during teardown
-        @throw [self exceptionByAddingFileInfo:e];
+        // ignore the exception if we already failed during setUp
+        if (!setUpOrTearDownException) {
+            setUpOrTearDownException = [self exceptionByAddingFileInfo:e];
+        }
+    }
+
+    // if setUp or tearDown failed, report their failure rather than returning normally
+    if (setUpOrTearDownException) {
+        @throw setUpOrTearDownException;
     }
 
     if (numCasesExecuted) *numCasesExecuted = numberOfCasesExecuted;
