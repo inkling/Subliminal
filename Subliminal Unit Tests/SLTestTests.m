@@ -667,4 +667,27 @@
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
+#pragma mark - Miscellaneous
+
+#pragma mark -Wait
+
+- (void)testWaitDelaysForSpecifiedInterval {
+    Class testClass = [TestWithSomeTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testClass];
+
+    // have testOne wait
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+        NSTimeInterval waitTimeInterval = 1.5;
+        [test wait:waitTimeInterval];
+        NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+        STAssertEqualsWithAccuracy(endTimeInterval - startTimeInterval, waitTimeInterval, .01,
+                                   @"Test did not delay for expected interval.");
+    }] testOne];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    STAssertNoThrow([testMock verify], @"Test case was not executed as expected.");
+}
+
 @end
