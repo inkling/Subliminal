@@ -581,4 +581,90 @@
     STAssertNoThrow([failingTestMock verify], @"Test did not run as expected.");
 }
 
+#pragma mark - Test assertions
+
+- (void)testAssertionLoggingIncludesFilenameAndLineNumber {
+    Class testClass = [TestWithSomeTestCases class];
+    SEL failingTestCase = @selector(testOne);
+    id testMock = [OCMockObject partialMockForClass:testClass];
+
+    // verify that the test case is executed, then an error is logged
+    OCMExpectationSequencer *sequencer = [OCMExpectationSequencer sequencerWithMocks:@[ testMock, _loggerMock ]];
+
+    // when testOne is executed, cause it to fail
+    // and record the filename and line number that the failing assertion should use
+    __block NSString *filenameAndLineNumberPrefix = nil;
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        NSString *__autoreleasing filename = nil; int lineNumber = 0;
+        @try {
+            [test slAssertFailAtFilename:&filename lineNumber:&lineNumber];
+        }
+        @catch (NSException *exception) {
+            filenameAndLineNumberPrefix = [NSString stringWithFormat:@"%@:%d: ", filename, lineNumber];
+            @throw exception;
+        }
+    }] testOne];
+
+    // check that the error logged includes the filename and line number as recorded above
+    [[_loggerMock expect] logError:[OCMArg checkWithBlock:^BOOL(id errorMessage) {
+        return [errorMessage hasPrefix:filenameAndLineNumberPrefix];
+    }] test:NSStringFromClass(testClass) testCase:NSStringFromSelector(failingTestCase)];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    STAssertNoThrow([sequencer verify], @"Test did not run/message was not logged in expected sequence.");
+}
+
+#pragma mark -SLAssertTrue
+
+- (void)testSLAssertTrueThrowsIffExpressionIsFalse {
+    Class testClass = [TestWithSomeTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testClass];
+
+    // have "testOne" assert true and succeed
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        STAssertNoThrow([test slAssertTrue:^BOOL{
+            return YES;
+        }], @"Assertion should not have failed.");
+    }] testOne];
+
+    // have "testOne" assert true and fail
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        STAssertThrows([test slAssertTrue:^BOOL{
+            return NO;
+        }], @"Assertion should have failed.");
+    }] testTwo];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
+}
+
+#pragma mark -SLAssertFalse
+
+- (void)testSLAssertFalseThrowsIffExpressionIsTrue {
+    Class testClass = [TestWithSomeTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testClass];
+
+    // have "testOne" assert false and succeed
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        STAssertNoThrow([test slAssertFalse:^BOOL{
+            return NO;
+        }], @"Assertion should not have failed.");
+    }] testOne];
+
+    // have "testTwo" assert false and fail
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        STAssertThrows([test slAssertFalse:^BOOL{
+            return YES;
+        }], @"Assertion should have failed.");
+    }] testTwo];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
+}
+
 @end

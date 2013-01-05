@@ -7,7 +7,6 @@
 //
 
 #import "TestUtilities.h"
-#import <Subliminal/Subliminal.h>
 
 void SLRunTestsAndWaitUntilFinished(NSSet *tests, void (^completionBlock)()) {
     __block BOOL testingHasFinished = NO;
@@ -28,3 +27,28 @@ void SLRunTestsAndWaitUntilFinished(NSSet *tests, void (^completionBlock)()) {
     // as the controller tries to use the terminal.
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.001]];
 }
+
+
+@implementation SLTest (SLTestTestsMacroHelpers)
+
+- (void)slAssertFailAtFilename:(NSString *__autoreleasing *)filename lineNumber:(int *)lineNumber {
+    NSParameterAssert(filename);
+    NSParameterAssert(lineNumber);
+
+    // purposefully put everything below on one line
+    // so that we return by-reference the same filename and line number
+    // as the assertion uses
+    *filename = [@(__FILE__) lastPathComponent]; *lineNumber = __LINE__; SLAssertTrue(NO, @"Expected failure.");
+}
+
+- (void)slAssertTrue:(BOOL (^)(void))condition {
+    NSParameterAssert(condition);
+    SLAssertTrue(condition(), @"");
+}
+
+- (void)slAssertFalse:(BOOL (^)(void))condition {
+    NSParameterAssert(condition);
+    SLAssertFalse(condition(), @"");
+}
+
+@end
