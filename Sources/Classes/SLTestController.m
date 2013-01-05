@@ -127,12 +127,7 @@ static SLTestController *__sharedController = nil;
 
                 // all exceptions caught at this level should be considered unexpected,
                 // and logged as such (contrast SLTest exception logging)
-                NSString *message = nil;
-                if (fileName) {
-                    message = [NSString stringWithFormat:@"%@:%d: Exception occurred: **%@** for reason: %@", fileName, lineNumber, [e name], [e reason]];
-                } else {
-                    message =[NSString stringWithFormat:@"Exception occurred: **%@** for reason: %@", [e name], [e reason]];
-                }
+                NSString *message = [NSString stringWithFormat:@"%@:%d: Exception occurred: **%@** for reason: %@", fileName, lineNumber, [e name], [e reason]];
                 [[SLLogger sharedLogger] logError:message];
                 [[SLLogger sharedLogger] logTestAbort:testName];
 
