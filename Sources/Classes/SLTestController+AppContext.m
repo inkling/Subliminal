@@ -107,7 +107,7 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
 - (void)deregisterTarget:(id)target forAction:(SEL)action {
     id mapKey = [[self class] actionTargetMapKeyForAction:action];
     dispatch_async([self actionTargetMapQueue], ^{
-        [self actionTargetMap][mapKey] = nil;
+        [[self actionTargetMap] removeObjectForKey:mapKey];
     });
 }
 
