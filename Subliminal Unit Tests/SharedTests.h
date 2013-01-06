@@ -27,5 +27,12 @@
 @end
 
 @interface TestNotSupportingCurrentPlatform : SLTest
+@end
+
+@interface TestWithPlatformSpecificTestCases : SLTest
+
+- (void)testFoo;
+- (void)testBar_iPad;
+- (void)testBaz_iPhone;
 
 @end

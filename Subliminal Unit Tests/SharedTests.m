@@ -25,3 +25,11 @@
 }
 
 @end
+
+@implementation TestWithPlatformSpecificTestCases
+
+- (void)testFoo {}
+- (void)testBar_iPad {}
+- (void)testBaz_iPhone {}
+
+@end

@@ -42,6 +42,7 @@
     NSSet *expectedTests = [NSSet setWithObjects:
         [TestWithSomeTestCases class],
         [TestNotSupportingCurrentPlatform class],
+        [TestWithPlatformSpecificTestCases class],
         nil
     ];
     STAssertEqualObjects(allTests, expectedTests, @"Unexpected tests returned.");
@@ -71,4 +72,41 @@
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeTestCasesTest], nil);
     STAssertNoThrow([testMock verify], @"Test cases did not run as expected.");
 }
+
+- (void)testiPhoneSpecificTestCasesOnlyRunOnTheiPhone {
+    Class testWithPlatformSpecificTestCasesTest = [TestWithPlatformSpecificTestCases class];
+    NSSet *testSet = [NSSet setWithObject:testWithPlatformSpecificTestCasesTest];
+
+    // we mock the current device to dynamically configure the current user interface idiom
+    id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
+    UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
+    [[[deviceMock stub] andReturnValue:OCMOCK_VALUE(currentUserInterfaceIdiom)] userInterfaceIdiom];
+
+    id testMock = [OCMockObject partialMockForClass:testWithPlatformSpecificTestCasesTest];
+    [[testMock expect] testFoo];
+    [[testMock expect] testBaz_iPhone];
+    [[testMock reject] testBar_iPad];
+
+    SLRunTestsAndWaitUntilFinished(testSet, nil);
+    STAssertNoThrow([testMock verify], @"Test cases did not run as expected on the iPhone.");
+}
+
+- (void)testiPadSpecificTestCasesOnlyRunOnTheiPad {
+    Class testWithPlatformSpecificTestCasesTest = [TestWithPlatformSpecificTestCases class];
+    NSSet *testSet = [NSSet setWithObject:testWithPlatformSpecificTestCasesTest];
+
+    // we mock the current device to dynamically configure the current user interface idiom
+    id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
+    UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPad;
+    [[[deviceMock stub] andReturnValue:OCMOCK_VALUE(currentUserInterfaceIdiom)] userInterfaceIdiom];
+
+    id testMock = [OCMockObject partialMockForClass:testWithPlatformSpecificTestCasesTest];
+    [[testMock expect] testFoo];
+    [[testMock expect] testBar_iPad];
+    [[testMock reject] testBaz_iPhone];
+
+    SLRunTestsAndWaitUntilFinished(testSet, nil);
+    STAssertNoThrow([testMock verify], @"Test cases did not run as expected on the iPad.");
+}
+
 @end
