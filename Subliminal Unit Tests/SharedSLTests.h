@@ -1,5 +1,5 @@
 //
-//  SharedTests.h
+//  SharedSLTests.h
 //  Subliminal
 //
 //  Created by Jeffrey Wear on 12/22/12.

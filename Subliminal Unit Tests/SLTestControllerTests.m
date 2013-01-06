@@ -11,7 +11,7 @@
 #import <OCMock/OCMock.h>
 
 #import "TestUtilities.h"
-#import "SharedTests.h"
+#import "SharedSLTests.h"
 
 @interface SLTestControllerTests : SenTestCase
 @end

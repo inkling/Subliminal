@@ -32,7 +32,7 @@
 		F0695E2116014491000B05D0 /* SLLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDA160138DF000B05D0 /* SLLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0695E2216014491000B05D0 /* SLUIALogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDC160138DF000B05D0 /* SLUIALogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F08B86EB16859C8D00C4FE44 /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F08B86DB16859C4000C4FE44 /* libOCMock.a */; };
-		F08B87F21685A00400C4FE44 /* SharedTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F08B87F11685A00400C4FE44 /* SharedTests.m */; };
+		F08B87F21685A00400C4FE44 /* SharedSLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F08B87F11685A00400C4FE44 /* SharedSLTests.m */; };
 		F08B87F51685A07B00C4FE44 /* SLTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F08B87F41685A07B00C4FE44 /* SLTestTests.m */; };
 		F0D240541683F7130031B67C /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0D240531683F7130031B67C /* SenTestingKit.framework */; };
 		F0D240551683F7130031B67C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695E0C16013D77000B05D0 /* UIKit.framework */; };
@@ -116,8 +116,8 @@
 		F0695DEB1601391C000B05D0 /* Subliminal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Subliminal.h; sourceTree = "<group>"; };
 		F0695E0C16013D77000B05D0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OCMock.xcodeproj; path = OCMock/Source/OCMock.xcodeproj; sourceTree = "<group>"; };
-		F08B87F01685A00400C4FE44 /* SharedTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedTests.h; sourceTree = "<group>"; };
-		F08B87F11685A00400C4FE44 /* SharedTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharedTests.m; sourceTree = "<group>"; };
+		F08B87F01685A00400C4FE44 /* SharedSLTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedSLTests.h; sourceTree = "<group>"; };
+		F08B87F11685A00400C4FE44 /* SharedSLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharedSLTests.m; sourceTree = "<group>"; };
 		F08B87F41685A07B00C4FE44 /* SLTestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestTests.m; sourceTree = "<group>"; };
 		F0D240521683F7130031B67C /* Subliminal Unit Tests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Subliminal Unit Tests.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0D240531683F7130031B67C /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -159,6 +159,17 @@
 				CAC388041641CD7500F995F9 /* NSString+SLJavaScript.m */,
 			);
 			name = Categories;
+			sourceTree = "<group>";
+		};
+		F002BF451698ED8100819291 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				F024BE31168BD70900708350 /* TestUtilities.h */,
+				F024BE32168BD70900708350 /* TestUtilities.m */,
+				F08B87F01685A00400C4FE44 /* SharedSLTests.h */,
+				F08B87F11685A00400C4FE44 /* SharedSLTests.m */,
+			);
+			name = Utilities;
 			sourceTree = "<group>";
 		};
 		F0695D8016011515000B05D0 = {
@@ -267,10 +278,7 @@
 			children = (
 				F08B86CA16859B1A00C4FE44 /* OCMock */,
 				F0D240581683F7130031B67C /* Supporting Files */,
-				F024BE31168BD70900708350 /* TestUtilities.h */,
-				F024BE32168BD70900708350 /* TestUtilities.m */,
-				F08B87F01685A00400C4FE44 /* SharedTests.h */,
-				F08B87F11685A00400C4FE44 /* SharedTests.m */,
+				F002BF451698ED8100819291 /* Utilities */,
 				F0D240661683F8520031B67C /* SLTestControllerTests.m */,
 				F08B87F41685A07B00C4FE44 /* SLTestTests.m */,
 			);
@@ -462,7 +470,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F0D240671683F8520031B67C /* SLTestControllerTests.m in Sources */,
-				F08B87F21685A00400C4FE44 /* SharedTests.m in Sources */,
+				F08B87F21685A00400C4FE44 /* SharedSLTests.m in Sources */,
 				F08B87F51685A07B00C4FE44 /* SLTestTests.m in Sources */,
 				F024BE33168BD70900708350 /* TestUtilities.m in Sources */,
 			);
