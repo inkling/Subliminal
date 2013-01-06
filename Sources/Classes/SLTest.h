@@ -175,6 +175,41 @@ extern NSString *const SLTestExceptionLineNumberKey;
  */
 - (void)wait:(NSTimeInterval)interval;
 
+/**
+ The SLWaitOnCondition macro allows an SLTest to wait for an arbitrary
+ condition to become true within a specified timeout.
+ 
+ The macro polls the condition at small intervals. 
+ If the condition is not true when the timeout elapses, the macro
+ will throw an exception.
+
+ This macro should be used to wait on conditions that can be evaluated
+ entirely within the application. To wait on conditions that involve
+ user interface elements, it will likely be more efficient and declarative to use 
+ the SLElement "waitUntil..." methods.
+ 
+ @param expr A boolean expression on whose truth the test should wait.
+ @param timeout The interval for which to wait.
+ @param varargs A format string and arguments giving a description of the wait's 
+ failure, if that should occur.
+ @exception SLTestAssertionFailedException if expr does not evaluate to true 
+ within the specified timeout.
+ */
+#define SLWaitOnCondition(expr, timeout, ...) do {\
+    [self recordLastKnownFile:__FILE__ line:__LINE__]; \
+    NSTimeInterval _retryDelay = 0.25; \
+    \
+    NSDate *_startDate = [NSDate date]; \
+    BOOL _exprTrue = NO; \
+    while (!(_exprTrue = (expr)) && \
+            ([[NSDate date] timeIntervalSinceDate:_startDate] < timeout)) { \
+        [NSThread sleepForTimeInterval:_retryDelay]; \
+    } \
+    if (!_exprTrue) { \
+        NSString *reason = [NSString stringWithFormat:@"\"%@\" did not become true within %g seconds. %@", @(#expr), timeout, [NSString stringWithFormat:__VA_ARGS__]]; \
+        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
+    } \
+} while (0)
 
 #pragma mark - SLElement Use
 
