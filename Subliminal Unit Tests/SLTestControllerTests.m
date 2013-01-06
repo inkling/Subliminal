@@ -11,6 +11,7 @@
 #import <OCMock/OCMock.h>
 
 #import "TestUtilities.h"
+#import "SharedTests.h"
 
 @interface SLTestControllerTests : SenTestCase
 @end
@@ -70,6 +71,27 @@
 
     SLRunTestsAndWaitUntilFinished(allTests, nil);
     STAssertNoThrow([testMocks makeObjectsPerformSelector:@selector(verify)], @"Tests were not run as expected.");
+}
+
+- (void)testStartupTestIsRunFirst {
+    NSSet *allTests = [SLTest allTests];
+
+    NSMutableArray *orderedTests = [NSMutableArray arrayWithCapacity:[allTests count]];
+    NSMutableArray *testMocks = [NSMutableArray arrayWithCapacity:[allTests count]];
+    for (Class testClass in allTests) {
+        id testMock = [OCMockObject partialMockForClass:testClass];
+
+        // cause tests to be recorded in order of execution
+        [[[testMock stub] andDo:^(NSInvocation *invocation) {
+            [orderedTests addObject:testClass];
+        }] run:[OCMArg anyPointer]];
+
+        [testMocks addObject:testMock];
+    }
+
+    SLRunTestsAndWaitUntilFinished(allTests, nil);
+    STAssertEqualObjects([orderedTests objectAtIndex:0], [StartupTest class],
+                         @"The startup test was not run first.");
 }
 
 @end

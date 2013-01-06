@@ -33,3 +33,11 @@
 - (void)testBaz_iPhone {}
 
 @end
+
+@implementation StartupTest
+
++ (BOOL)isStartUpTest {
+    return YES;
+}
+
+@end

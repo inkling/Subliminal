@@ -43,6 +43,7 @@
         [TestWithSomeTestCases class],
         [TestNotSupportingCurrentPlatform class],
         [TestWithPlatformSpecificTestCases class],
+        [StartupTest class],
         nil
     ];
     STAssertEqualObjects(allTests, expectedTests, @"Unexpected tests returned.");

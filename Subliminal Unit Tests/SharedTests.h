@@ -36,3 +36,6 @@
 - (void)testBaz_iPhone;
 
 @end
+
+@interface StartupTest : SLTest
+@end
