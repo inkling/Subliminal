@@ -16,7 +16,7 @@
 #import <objc/runtime.h>
 
 
-static NSUncaughtExceptionHandler *appsUncaughtExceptionHandler;
+static NSUncaughtExceptionHandler *appsUncaughtExceptionHandler = NULL;
 static const NSTimeInterval kDefaultTimeout = 5.0;
 
 static void SLUncaughtExceptionHandler(NSException *exception)
@@ -148,6 +148,12 @@ static SLTestController *__sharedController = nil;
     if (completionBlock) dispatch_sync(dispatch_get_main_queue(), completionBlock);
     
     [[SLTerminal sharedTerminal] eval:@"_testingHasFinished = true;"];
+
+    // set exception handler back to the app's handler, if there was one
+    // this is important when unit testing Subliminal, so that successive Subliminal testing runs
+    // don't treat Subliminal's handler as the app's handler,
+    // which would cause Subliminal's handler to recurse (as it calls the app's handler)
+    if (appsUncaughtExceptionHandler) NSSetUncaughtExceptionHandler(appsUncaughtExceptionHandler);
 }
 
 @end
