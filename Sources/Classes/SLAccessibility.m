@@ -16,6 +16,13 @@
 @implementation NSObject (SLAccessibility)
 
 - (NSString *)slAccessibilityName {
+    if ([self respondsToSelector:@selector(accessibilityIdentifier)]) {
+        NSString *identifier = [self performSelector:@selector(accessibilityIdentifier)];
+        if ([identifier length] > 0) {
+            return identifier;
+        }
+    }
+    
     return self.accessibilityLabel;
 }
 
@@ -211,11 +218,11 @@
 @implementation UIAccessibilityElement (SLAccessibility)
 
 - (NSString *)slAccessibilityName {
-    if (self.accessibilityLabel) {
-        return self.accessibilityLabel;
+    if ([self.accessibilityIdentifier length] > 0) {
+        return self.accessibilityIdentifier;
     }
     
-    return self.accessibilityIdentifier;
+    return self.accessibilityLabel;
 }
 
 @end
