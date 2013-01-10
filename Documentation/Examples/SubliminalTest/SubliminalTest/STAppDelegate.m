@@ -26,7 +26,7 @@
 #if INTEGRATION_TESTING
     SLTestController *testController = [SLTestController sharedTestController];
     [SLLogger setSharedLogger:[[SLUIALogger alloc] init]];
-    [testController runTests:[SLTest allTests]];
+    [testController runTests:[SLTest allTests] withCompletionBlock:nil];
 #endif
     
     return YES;

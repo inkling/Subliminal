@@ -13,6 +13,7 @@
 		CAC388061641CD7500F995F9 /* NSString+SLJavaScript.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC388041641CD7500F995F9 /* NSString+SLJavaScript.m */; };
 		CAC3883F1643503C00F995F9 /* SLAccessibility.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC3883D1643503C00F995F9 /* SLAccessibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CAC388401643503C00F995F9 /* SLAccessibility.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC3883E1643503C00F995F9 /* SLAccessibility.m */; };
+		F024BE33168BD70900708350 /* TestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = F024BE32168BD70900708350 /* TestUtilities.m */; };
 		F0271AFF162E0B950098F5F2 /* SLTestController+AppContext.h in Headers */ = {isa = PBXBuildFile; fileRef = F0271AFD162E0B950098F5F2 /* SLTestController+AppContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0271B00162E0B950098F5F2 /* SLTestController+AppContext.m in Sources */ = {isa = PBXBuildFile; fileRef = F0271AFE162E0B950098F5F2 /* SLTestController+AppContext.m */; };
 		F0695D8F16011515000B05D0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8E16011515000B05D0 /* Foundation.framework */; };
@@ -30,7 +31,62 @@
 		F0695E2016014491000B05D0 /* SLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DD7160138DF000B05D0 /* SLElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0695E2116014491000B05D0 /* SLLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDA160138DF000B05D0 /* SLLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0695E2216014491000B05D0 /* SLUIALogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDC160138DF000B05D0 /* SLUIALogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F08B86EB16859C8D00C4FE44 /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F08B86DB16859C4000C4FE44 /* libOCMock.a */; };
+		F08B87F21685A00400C4FE44 /* SharedSLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F08B87F11685A00400C4FE44 /* SharedSLTests.m */; };
+		F08B87F51685A07B00C4FE44 /* SLTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F08B87F41685A07B00C4FE44 /* SLTestTests.m */; };
+		F0A040131698ECDE009D8157 /* SLTestController+AppContextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A040121698ECDE009D8157 /* SLTestController+AppContextTests.m */; };
+		F0D240541683F7130031B67C /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0D240531683F7130031B67C /* SenTestingKit.framework */; };
+		F0D240551683F7130031B67C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695E0C16013D77000B05D0 /* UIKit.framework */; };
+		F0D240561683F7130031B67C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8E16011515000B05D0 /* Foundation.framework */; };
+		F0D2405C1683F7130031B67C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F0D2405A1683F7130031B67C /* InfoPlist.strings */; };
+		F0D240671683F8520031B67C /* SLTestControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D240661683F8520031B67C /* SLTestControllerTests.m */; };
+		F0D2406A1683F9800031B67C /* libSubliminal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8B16011515000B05D0 /* libSubliminal.a */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F08B86D616859C4000C4FE44 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 030EF0A814632FD000B04273;
+			remoteInfo = OCMock;
+		};
+		F08B86D816859C4000C4FE44 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 030EF0C014632FD000B04273;
+			remoteInfo = OCMockTests;
+		};
+		F08B86DA16859C4000C4FE44 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 030EF0DC14632FF700B04273;
+			remoteInfo = OCMockLib;
+		};
+		F08B86DC16859C4000C4FE44 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F04D5FDD1547E14D009D1CBF;
+			remoteInfo = OCMockTestsTouch;
+		};
+		F08B86DE16859C5500C4FE44 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 030EF0DB14632FF700B04273;
+			remoteInfo = OCMockLib;
+		};
+		F0D240681683F97A0031B67C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0695D8216011515000B05D0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F0695D8A16011515000B05D0;
+			remoteInfo = Subliminal;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		CA75E78016697A1200D57E92 /* SLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLDevice.h; sourceTree = "<group>"; };
@@ -39,6 +95,8 @@
 		CAC388041641CD7500F995F9 /* NSString+SLJavaScript.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+SLJavaScript.m"; path = "Categories/NSString+SLJavaScript.m"; sourceTree = "<group>"; };
 		CAC3883D1643503C00F995F9 /* SLAccessibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLAccessibility.h; sourceTree = "<group>"; };
 		CAC3883E1643503C00F995F9 /* SLAccessibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAccessibility.m; sourceTree = "<group>"; };
+		F024BE31168BD70900708350 /* TestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestUtilities.h; sourceTree = "<group>"; };
+		F024BE32168BD70900708350 /* TestUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestUtilities.m; sourceTree = "<group>"; };
 		F0271AFD162E0B950098F5F2 /* SLTestController+AppContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLTestController+AppContext.h"; sourceTree = "<group>"; };
 		F0271AFE162E0B950098F5F2 /* SLTestController+AppContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SLTestController+AppContext.m"; sourceTree = "<group>"; };
 		F0695D8B16011515000B05D0 /* libSubliminal.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSubliminal.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -58,6 +116,17 @@
 		F0695DEA16013908000B05D0 /* Subliminal-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Subliminal-Prefix.pch"; sourceTree = "<group>"; };
 		F0695DEB1601391C000B05D0 /* Subliminal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Subliminal.h; sourceTree = "<group>"; };
 		F0695E0C16013D77000B05D0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OCMock.xcodeproj; path = OCMock/Source/OCMock.xcodeproj; sourceTree = "<group>"; };
+		F08B87F01685A00400C4FE44 /* SharedSLTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedSLTests.h; sourceTree = "<group>"; };
+		F08B87F11685A00400C4FE44 /* SharedSLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharedSLTests.m; sourceTree = "<group>"; };
+		F08B87F41685A07B00C4FE44 /* SLTestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestTests.m; sourceTree = "<group>"; };
+		F0A040121698ECDE009D8157 /* SLTestController+AppContextTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SLTestController+AppContextTests.m"; sourceTree = "<group>"; };
+		F0D240521683F7130031B67C /* Subliminal Unit Tests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Subliminal Unit Tests.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F0D240531683F7130031B67C /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		F0D240591683F7130031B67C /* Subliminal Unit Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Subliminal Unit Tests-Info.plist"; sourceTree = "<group>"; };
+		F0D2405B1683F7130031B67C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F0D240601683F7130031B67C /* Subliminal Unit Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Subliminal Unit Tests-Prefix.pch"; sourceTree = "<group>"; };
+		F0D240661683F8520031B67C /* SLTestControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestControllerTests.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +136,18 @@
 			files = (
 				F0695D8F16011515000B05D0 /* Foundation.framework in Frameworks */,
 				F0695E0D16013D77000B05D0 /* UIKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F0D2404E1683F7130031B67C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0D2406A1683F9800031B67C /* libSubliminal.a in Frameworks */,
+				F08B86EB16859C8D00C4FE44 /* libOCMock.a in Frameworks */,
+				F0D240541683F7130031B67C /* SenTestingKit.framework in Frameworks */,
+				F0D240551683F7130031B67C /* UIKit.framework in Frameworks */,
+				F0D240561683F7130031B67C /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,10 +163,22 @@
 			name = Categories;
 			sourceTree = "<group>";
 		};
+		F002BF451698ED8100819291 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				F024BE31168BD70900708350 /* TestUtilities.h */,
+				F024BE32168BD70900708350 /* TestUtilities.m */,
+				F08B87F01685A00400C4FE44 /* SharedSLTests.h */,
+				F08B87F11685A00400C4FE44 /* SharedSLTests.m */,
+			);
+			name = Utilities;
+			sourceTree = "<group>";
+		};
 		F0695D8016011515000B05D0 = {
 			isa = PBXGroup;
 			children = (
 				F0695DD016013891000B05D0 /* Sources */,
+				F0D240571683F7130031B67C /* Subliminal Unit Tests */,
 				F0695D8D16011515000B05D0 /* Frameworks */,
 				F0695D8C16011515000B05D0 /* Products */,
 			);
@@ -96,6 +189,7 @@
 			isa = PBXGroup;
 			children = (
 				F0695D8B16011515000B05D0 /* libSubliminal.a */,
+				F0D240521683F7130031B67C /* Subliminal Unit Tests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -105,6 +199,7 @@
 			children = (
 				F0695D8E16011515000B05D0 /* Foundation.framework */,
 				F0695E0C16013D77000B05D0 /* UIKit.framework */,
+				F0D240531683F7130031B67C /* SenTestingKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -161,6 +256,48 @@
 			path = Logging;
 			sourceTree = "<group>";
 		};
+		F08B86CA16859B1A00C4FE44 /* OCMock */ = {
+			isa = PBXGroup;
+			children = (
+				F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */,
+			);
+			name = OCMock;
+			sourceTree = "<group>";
+		};
+		F08B86CD16859C4000C4FE44 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F08B86D716859C4000C4FE44 /* OCMock.framework */,
+				F08B86D916859C4000C4FE44 /* OCMockTests.octest */,
+				F08B86DB16859C4000C4FE44 /* libOCMock.a */,
+				F08B86DD16859C4000C4FE44 /* OCMockTestsTouch.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F0D240571683F7130031B67C /* Subliminal Unit Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F08B86CA16859B1A00C4FE44 /* OCMock */,
+				F0D240581683F7130031B67C /* Supporting Files */,
+				F002BF451698ED8100819291 /* Utilities */,
+				F0D240661683F8520031B67C /* SLTestControllerTests.m */,
+				F08B87F41685A07B00C4FE44 /* SLTestTests.m */,
+				F0A040121698ECDE009D8157 /* SLTestController+AppContextTests.m */,
+			);
+			path = "Subliminal Unit Tests";
+			sourceTree = "<group>";
+		};
+		F0D240581683F7130031B67C /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F0D240591683F7130031B67C /* Subliminal Unit Tests-Info.plist */,
+				F0D2405A1683F7130031B67C /* InfoPlist.strings */,
+				F0D240601683F7130031B67C /* Subliminal Unit Tests-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -202,6 +339,26 @@
 			productReference = F0695D8B16011515000B05D0 /* libSubliminal.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		F0D240511683F7130031B67C /* Subliminal Unit Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F0D240631683F7130031B67C /* Build configuration list for PBXNativeTarget "Subliminal Unit Tests" */;
+			buildPhases = (
+				F0D2404D1683F7130031B67C /* Sources */,
+				F0D2404E1683F7130031B67C /* Frameworks */,
+				F0D2404F1683F7130031B67C /* Resources */,
+				F0D240501683F7130031B67C /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F0D240691683F97A0031B67C /* PBXTargetDependency */,
+				F08B86DF16859C5500C4FE44 /* PBXTargetDependency */,
+			);
+			name = "Subliminal Unit Tests";
+			productName = "Subliminal Unit Tests";
+			productReference = F0D240521683F7130031B67C /* Subliminal Unit Tests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -221,12 +378,77 @@
 			mainGroup = F0695D8016011515000B05D0;
 			productRefGroup = F0695D8C16011515000B05D0 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = F08B86CD16859C4000C4FE44 /* Products */;
+					ProjectRef = F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				F0695D8A16011515000B05D0 /* Subliminal */,
+				F0D240511683F7130031B67C /* Subliminal Unit Tests */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		F08B86D716859C4000C4FE44 /* OCMock.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = OCMock.framework;
+			remoteRef = F08B86D616859C4000C4FE44 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F08B86D916859C4000C4FE44 /* OCMockTests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = OCMockTests.octest;
+			remoteRef = F08B86D816859C4000C4FE44 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F08B86DB16859C4000C4FE44 /* libOCMock.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libOCMock.a;
+			remoteRef = F08B86DA16859C4000C4FE44 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F08B86DD16859C4000C4FE44 /* OCMockTestsTouch.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = OCMockTestsTouch.octest;
+			remoteRef = F08B86DC16859C4000C4FE44 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F0D2404F1683F7130031B67C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0D2405C1683F7130031B67C /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		F0D240501683F7130031B67C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		F0695D8716011515000B05D0 /* Sources */ = {
@@ -246,7 +468,43 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F0D2404D1683F7130031B67C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0D240671683F8520031B67C /* SLTestControllerTests.m in Sources */,
+				F08B87F21685A00400C4FE44 /* SharedSLTests.m in Sources */,
+				F08B87F51685A07B00C4FE44 /* SLTestTests.m in Sources */,
+				F024BE33168BD70900708350 /* TestUtilities.m in Sources */,
+				F0A040131698ECDE009D8157 /* SLTestController+AppContextTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F08B86DF16859C5500C4FE44 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = OCMockLib;
+			targetProxy = F08B86DE16859C5500C4FE44 /* PBXContainerItemProxy */;
+		};
+		F0D240691683F97A0031B67C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F0695D8A16011515000B05D0 /* Subliminal */;
+			targetProxy = F0D240681683F97A0031B67C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		F0D2405A1683F7130031B67C /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F0D2405B1683F7130031B67C /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		F0695D9716011515000B05D0 /* Debug */ = {
@@ -323,6 +581,53 @@
 			};
 			name = Release;
 		};
+		F0D240611683F7130031B67C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Subliminal Unit Tests/Subliminal Unit Tests-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(BUILT_PRODUCTS_DIR)\"",
+				);
+				INFOPLIST_FILE = "Subliminal Unit Tests/Subliminal Unit Tests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		F0D240621683F7130031B67C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Subliminal Unit Tests/Subliminal Unit Tests-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(BUILT_PRODUCTS_DIR)\"",
+				);
+				INFOPLIST_FILE = "Subliminal Unit Tests/Subliminal Unit Tests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -340,6 +645,15 @@
 			buildConfigurations = (
 				F0695D9A16011515000B05D0 /* Debug */,
 				F0695D9B16011515000B05D0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F0D240631683F7130031B67C /* Build configuration list for PBXNativeTarget "Subliminal Unit Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F0D240611683F7130031B67C /* Debug */,
+				F0D240621683F7130031B67C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

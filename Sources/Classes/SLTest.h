@@ -21,7 +21,7 @@ extern NSString *const SLTestExceptionLineNumberKey;
 
 @property (nonatomic, weak, readonly) SLTestController *testController;
 
-+ (NSArray *)allTests;
++ (NSSet *)allTests;
 + (Class)testNamed:(NSString *)test;
 
 /**
@@ -55,6 +55,10 @@ extern NSString *const SLTestExceptionLineNumberKey;
  checking the scale of the main screen.
 
  SLTest's implementation returns YES.
+ 
+ If this method returns NO, none of this test's cases will run.
+ You may instead conditionalize individual cases by suffixing the method name,
+ as explained in the comment on SLTest (SLTestCase).
 
  @return YES if this class has test cases that can currently run, NO otherwise.
  */
@@ -68,15 +72,24 @@ extern NSString *const SLTestExceptionLineNumberKey;
 
 
 /**
- The following methods are used to set up before and clean up after individual test case methods.
- Only methods whose names have the prefix "test," implemented on a subclass of SLTest, will be run
- as part of the test suite for the SLTest subclass.
+ The following methods are used to set up before and clean up after individual 
+ test case methods. Test case methods are methods, defined on a subclass of SLTest:
+ 
+    * whose names have the prefix "test",
+    * with void return types, and
+    * which take no arguments.
 
- A test case method whose name has the suffix "_iPhone," like testFoo_iPhone, will be executed only
- when [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone.  A test case method
- whose name has the suffix "_iPad" will be executed only when the current device user interface idiom
- is UIUserInterfaceIdiomPad.  A test case method whose name has neither the "_iPhone" nor the "_iPad"
- suffix will be executed on all devices regardless of the user interface idiom.
+ Test cases may be conditionally run on certain platforms by suffixing the method 
+ name in the following fashion:
+ 
+    * A test case method whose name has the suffix "_iPhone," like "testFoo_iPhone",
+      will be executed only when [[UIDevice currentDevice] userInterfaceIdiom] ==
+      UIUserInterfaceIdiomPhone.
+    * A test case method whose name has the suffix "_iPad" will be executed only 
+      when the current device user interface idiom is UIUserInterfaceIdiomPad. 
+    * A test case method whose name has neither the "_iPhone" nor the "_iPad" 
+      suffix will be executed on all devices regardless of the user interface idiom.
+ 
  */
 @interface SLTest (SLTestCase)
 
@@ -89,9 +102,10 @@ extern NSString *const SLTestExceptionLineNumberKey;
  In this method, tests can (and should) use SLTest assertions and SLElement "wait until..."
  methods to ensure that set-up was successful.
  
- @warning If set-up fails, this test will be aborted and its cases skipped.
+ @warning If set-up fails, this test will be aborted and its cases skipped. 
+ However, -tearDown will still be executed.
  
- @sa tearDown
+ @sa -tearDown
  */
 - (void)setUp;
 
@@ -119,11 +133,12 @@ extern NSString *const SLTestExceptionLineNumberKey;
  In this method, tests can (and should) use SLTest assertions and SLElement "wait until..."
  methods to ensure that set-up was successful.
  
- @warning If set-up fails, this test case will be logged as having failed.
+ @warning If set-up fails, this test case will be skipped and logged as having failed.
+ However, -tearDownTestCaseWithSelector: will still be executed.
 
  @param testSelector The selector identifying the test case about to be run.
 
- @sa tearDownTestCaseWithSelector:
+ @sa -tearDownTestCaseWithSelector:
  */
 - (void)setUpTestCaseWithSelector:(SEL)testSelector;
 
@@ -141,7 +156,7 @@ extern NSString *const SLTestExceptionLineNumberKey;
  
  @param testSelector The selector identifying the test case that was run.
 
- @sa setUpTestCaseWithSelector:
+ @sa -setUpTestCaseWithSelector:
  */
 - (void)tearDownTestCaseWithSelector:(SEL)testSelector;
 
@@ -160,6 +175,41 @@ extern NSString *const SLTestExceptionLineNumberKey;
  */
 - (void)wait:(NSTimeInterval)interval;
 
+/**
+ The SLWaitOnCondition macro allows an SLTest to wait for an arbitrary
+ condition to become true within a specified timeout.
+ 
+ The macro polls the condition at small intervals. 
+ If the condition is not true when the timeout elapses, the macro
+ will throw an exception.
+
+ This macro should be used to wait on conditions that can be evaluated
+ entirely within the application. To wait on conditions that involve
+ user interface elements, it will likely be more efficient and declarative to use 
+ the SLElement "waitUntil..." methods.
+ 
+ @param expr A boolean expression on whose truth the test should wait.
+ @param timeout The interval for which to wait.
+ @param varargs A format string and arguments giving a description of the wait's 
+ failure, if that should occur.
+ @exception SLTestAssertionFailedException if expr does not evaluate to true 
+ within the specified timeout.
+ */
+#define SLWaitOnCondition(expr, timeout, ...) do {\
+    [self recordLastKnownFile:__FILE__ line:__LINE__]; \
+    NSTimeInterval _retryDelay = 0.25; \
+    \
+    NSDate *_startDate = [NSDate date]; \
+    BOOL _exprTrue = NO; \
+    while (!(_exprTrue = (expr)) && \
+            ([[NSDate date] timeIntervalSinceDate:_startDate] < timeout)) { \
+        [NSThread sleepForTimeInterval:_retryDelay]; \
+    } \
+    if (!_exprTrue) { \
+        NSString *reason = [NSString stringWithFormat:@"\"%@\" did not become true within %g seconds. %@", @(#expr), timeout, [NSString stringWithFormat:__VA_ARGS__]]; \
+        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
+    } \
+} while (0)
 
 #pragma mark - SLElement Use
 

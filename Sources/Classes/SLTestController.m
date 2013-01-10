@@ -31,6 +31,16 @@ static void SLUncaughtExceptionHandler(NSException *exception)
 
 @implementation SLTestController
 
++ (void)initialize {
+    // initialize shared test controller,
+    // to prevent manual initialization of an SLTestController
+    // prior to +sharedTestController being invoked
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-value"
+    [SLTestController sharedTestController];
+#pragma clang diagnostic pop
+}
+
 static SLTestController *__sharedController = nil;
 + (id)sharedTestController {
     static dispatch_once_t onceToken;
@@ -71,29 +81,28 @@ static SLTestController *__sharedController = nil;
     [[SLLogger sharedLogger] logTestingStart];
 }
 
-- (void)runTests:(NSArray *)tests {
+- (void)runTests:(NSSet *)tests withCompletionBlock:(void (^)())completionBlock {
     dispatch_async([[self class] runQueue], ^{
-        NSAssert([SLLogger sharedLogger], @"SLTestController cannot run tests without a logger.");
+        NSAssert([SLLogger sharedLogger], @"A shared SLLogger must be set (+[SLLogger setSharedLogger:]) before SLTestController can run tests.");
         
         [self _beginTesting];
 
-        // search for startup test
+        // ensure we'll execute startup test first if present
+        NSMutableArray *orderedTests = [NSMutableArray arrayWithArray:[tests allObjects]];
         __block NSUInteger startupTestIndex = NSNotFound;
-        [tests enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [orderedTests enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             if ([obj isStartUpTest]) {
                 startupTestIndex = idx;
                 *stop = YES;
             }
         }];
-        // ensure we'll execute startup test first if present
-        NSMutableArray *sortedTests = [NSMutableArray arrayWithArray:tests];
         if (startupTestIndex != NSNotFound) {
-            id startupTestClass = [sortedTests objectAtIndex:startupTestIndex];
-            [sortedTests removeObjectAtIndex:startupTestIndex];
-            [sortedTests insertObject:startupTestClass atIndex:0];
+            id startupTestClass = [orderedTests objectAtIndex:startupTestIndex];
+            [orderedTests removeObjectAtIndex:startupTestIndex];
+            [orderedTests insertObject:startupTestClass atIndex:0];
         }
         
-        for (Class testClass in sortedTests) {
+        for (Class testClass in orderedTests) {
             if (![testClass supportsCurrentPlatform]) {
                 continue;
             }
@@ -118,12 +127,7 @@ static SLTestController *__sharedController = nil;
 
                 // all exceptions caught at this level should be considered unexpected,
                 // and logged as such (contrast SLTest exception logging)
-                NSString *message = nil;
-                if (fileName) {
-                    message = [NSString stringWithFormat:@"%@:%d: Exception occurred: **%@** for reason: %@", fileName, lineNumber, [e name], [e reason]];
-                } else {
-                    message =[NSString stringWithFormat:@"Exception occurred: **%@** for reason: %@", [e name], [e reason]];
-                }
+                NSString *message = [NSString stringWithFormat:@"%@:%d: Exception occurred: **%@** for reason: %@", fileName, lineNumber, [e name], [e reason]];
                 [[SLLogger sharedLogger] logError:message];
                 [[SLLogger sharedLogger] logTestAbort:testName];
 
@@ -134,12 +138,15 @@ static SLTestController *__sharedController = nil;
             }
         }
         
-       [self _finishTesting];
+        [self _finishTestingWithCompletionBlock:completionBlock];
     });
 }
 
-- (void)_finishTesting {
+- (void)_finishTestingWithCompletionBlock:(void (^)())completionBlock {
     [[SLLogger sharedLogger] logTestingFinish];
+
+    if (completionBlock) dispatch_sync(dispatch_get_main_queue(), completionBlock);
+    
     [[SLTerminal sharedTerminal] eval:@"_testingHasFinished = true;"];
 }
 
