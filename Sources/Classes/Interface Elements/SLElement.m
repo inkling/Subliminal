@@ -387,7 +387,9 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 @implementation SLKeyboard
 
 + (SLKeyboard *)keyboard {
-    return [[SLKeyboard alloc] initWithPredicate:nil description:@"Keyboard"];
+    return [[SLKeyboard alloc] initWithPredicate:^(NSObject *obj) {
+        return YES;
+    } description:@"Keyboard"];
 }
 
 
@@ -405,7 +407,9 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 + (id)elementWithAccessibilityLabel:(NSString *)label
 {
-    SLKeyboardKey *key = [[SLKeyboardKey alloc] initWithPredicate:nil description:[NSString stringWithFormat:@"Keyboard Key: %@", label]];
+    SLKeyboardKey *key = [[SLKeyboardKey alloc] initWithPredicate:^(NSObject *obj) {
+        return YES;
+    } description:[NSString stringWithFormat:@"Keyboard Key: %@", label]];
     key.keyLabel = label;
     return key;
 }
