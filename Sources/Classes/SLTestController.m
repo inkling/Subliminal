@@ -150,10 +150,11 @@ static SLTestController *__sharedController = nil;
     [[SLTerminal sharedTerminal] eval:@"_testingHasFinished = true;"];
 
     // set exception handler back to the app's handler, if there was one
+    // deregister Subliminal's exception handler
     // this is important when unit testing Subliminal, so that successive Subliminal testing runs
     // don't treat Subliminal's handler as the app's handler,
     // which would cause Subliminal's handler to recurse (as it calls the app's handler)
-    if (appsUncaughtExceptionHandler) NSSetUncaughtExceptionHandler(appsUncaughtExceptionHandler);
+    NSSetUncaughtExceptionHandler(appsUncaughtExceptionHandler);
 }
 
 @end
