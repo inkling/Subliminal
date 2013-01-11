@@ -16,10 +16,17 @@
 @implementation NSObject (SLAccessibility)
 
 - (NSString *)slAccessibilityName {
+    if ([self respondsToSelector:@selector(accessibilityIdentifier)]) {
+        NSString *identifier = [self performSelector:@selector(accessibilityIdentifier)];
+        if ([identifier length] > 0) {
+            return identifier;
+        }
+    }
+    
     return self.accessibilityLabel;
 }
 
-- (NSArray *)slChildAccessibilityElements {
+- (NSArray *)slChildAccessibilityElementsFavoringUISubviews:(BOOL)favoringUISubviews {
     NSMutableArray *children = [NSMutableArray array];
     NSInteger count = [self accessibilityElementCount];
     if (count != NSNotFound && count > 0) {
@@ -30,17 +37,16 @@
     return children;
 }
 
-- (NSArray *)slAccessibilityChainToElement:(SLElement *)element {
+- (NSArray *)fullSLAccessibilityChainToElement:(SLElement *)element favoringUISubviews:(BOOL)favoringUISubviews {
     if ([element matchesObject:self]) {
         return [NSArray arrayWithObject:self];
     }
     
-    for (NSObject *child in self.slChildAccessibilityElements) {
-        NSArray *chain = [child slAccessibilityChainToElement:element];
+    for (NSObject *child in [self slChildAccessibilityElementsFavoringUISubviews:favoringUISubviews]) {
+        NSArray *chain = [child fullSLAccessibilityChainToElement:element favoringUISubviews:favoringUISubviews];
         if (chain) {
             NSMutableArray *chainWithSelf = [chain mutableCopy];
             [chainWithSelf insertObject:self atIndex:0];
-            [self adjustAccessibilityNamesInAccessibilityChain:chainWithSelf];
             return chainWithSelf;
         }
     }
@@ -48,26 +54,51 @@
 }
 
 
-- (void)adjustAccessibilityNamesInAccessibilityChain:(NSArray *)chain {
-    
-    // UIWebViews contain a UIWebViewScrollView, which contains a UIWebBrowserView. Both of these classes will be
-    // added to UIAutomation's accessibility hierarchy regardless of their lack of accessibility label, value, and name.
-    // As a subclass of UIScrollView UIWebScrollView is added to our generated UIAPrefix because of its SLAccessibility
-    // category. We do not want to create a category for UIWebBrowserView however, because it is a private class. Instead,
-    // here we rely on what we know of UIWebView's internal structure to pull it from its location as the second object
-    // below UIWebView in the accessorChain, and modify it to ensure it occurs in the UIAPrefix we generate.
-    if ([self isKindOfClass:[UIWebView class]] && [chain count] > 2) {
-        UIView *webBrowserView = [chain objectAtIndex:2];
-        if ([[webBrowserView slAccessibilityName] length] == 0) {
-            [webBrowserView setAccessibilityIdentifierWithStandardReplacement];
+- (NSArray *)slAccessibilityChainToElement:(SLElement *)element favoringUISubviews:(BOOL)favoringUISubviews {
+    NSArray *fullAccessibilityChain = [self fullSLAccessibilityChainToElement:element favoringUISubviews:favoringUISubviews];
+    [self addAccessibilityNamesIfNecessaryToElementsInFullAccessibilityChain:fullAccessibilityChain];
+    return [self sanitizeAccessibilityChainToMatchAccessibilityHierarchy:fullAccessibilityChain];
+}
+
+
+- (NSArray *)sanitizeAccessibilityChainToMatchAccessibilityHierarchy:(NSArray *)accessibilityChain {
+    NSMutableArray *trimmedArray = [[NSMutableArray alloc] init];
+    [accessibilityChain enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        NSString *accessibilityName = [[obj slAccessibilityName] slStringByEscapingForJavaScriptLiteral];
+        BOOL isAccessibilityElement = [obj isAccessibilityElement];
+        BOOL isWebBrowserView = (idx >= 2 && [accessibilityChain[idx-2] isKindOfClass:[UIWebView class]]);
+        if ([accessibilityName length] > 0 || isAccessibilityElement || isWebBrowserView) {
+            [trimmedArray addObject:obj];
         }
-    }
-    
-    // Every element in accessorChain that returns true to isAccessibilityElement should have an accessibility value or name. This ensures Subliminal
-    // will be able to construct an accessor chain that identifies each element that UIAutomation will place in the accessibility chain.
-    if (self.isAccessibilityElement && !self.slAccessibilityName && ![self.accessibilityValue length] > 0) {
-        [self setAccessibilityIdentifierWithStandardReplacement];
-    }
+    }];
+    return trimmedArray;
+}
+
+
+- (void)addAccessibilityNamesIfNecessaryToElementsInFullAccessibilityChain:(NSArray *)chain {
+    [chain enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        NSAssert([obj isKindOfClass:[NSObject class]], @"All elements should be NSObjects");
+        NSObject *element = (NSObject *)obj;
+        
+        // UIWebViews contain a UIWebViewScrollView, which contains a UIWebBrowserView. Both of these classes will be
+        // added to UIAutomation's accessibility hierarchy regardless of their lack of accessibility label, value, and name.
+        // As a subclass of UIScrollView UIWebScrollView is added to our generated UIAPrefix because of its SLAccessibility
+        // category. We do not want to create a category for UIWebBrowserView however, because it is a private class. Instead,
+        // here we rely on what we know of UIWebView's internal structure to pull it from its location as the second object
+        // below UIWebView in the accessorChain, and modify it to ensure it occurs in the UIAPrefix we generate.
+        if ([element isKindOfClass:[UIWebView class]] && [chain count] > idx + 2) {
+            UIView *webBrowserView = [chain objectAtIndex:idx + 2];
+            if ([[webBrowserView slAccessibilityName] length] == 0) {
+                [webBrowserView setAccessibilityIdentifierWithStandardReplacement];
+            }
+        }
+        
+        // Every element in accessorChain that returns true to isAccessibilityElement should have an accessibility value or name. This ensures Subliminal
+        // will be able to construct an accessor chain that identifies each element that UIAutomation will place in the accessibility chain.
+        if (element.isAccessibilityElement && !element.slAccessibilityName && ![element.accessibilityValue length] > 0) {
+            [self setAccessibilityIdentifierWithStandardReplacement];
+        }
+    }];
 }
 
 
@@ -153,9 +184,28 @@
 
 
 - (void)setAccessibilityIdentifierWithStandardReplacement {
-    if ([self conformsToProtocol:@protocol(UIAccessibilityIdentification)] || [self isKindOfClass:[UIView class]]) {
-        id<UIAccessibilityIdentification> selfUIAElement = (id<UIAccessibilityIdentification>)self;
-        selfUIAElement.accessibilityIdentifier = [NSString stringWithFormat:@"%@: %p", [self class], self];
+    if ([self respondsToSelector:@selector(setAccessibilityIdentifier:)]) {
+        [self performSelector:@selector(setAccessibilityIdentifier:) withObject:[self standardAccessibilityIdentifierReplacement]];
+    }
+}
+
+
+- (NSString *)standardAccessibilityIdentifierReplacement {
+    return [NSString stringWithFormat:@"%@: %p", [self class], self];
+}
+
+
+- (void)resetAccessibilityInfoIfNecessaryWithPreviousIdentifier:(NSString *)previousIdentifier previousLabel:(NSString *)previousLabel {
+    
+    if ([self respondsToSelector:@selector(accessibilityIdentifier)] && [self respondsToSelector:@selector(setAccessibilityIdentifier:)]) {
+        NSString *currentIdentifier = [self performSelector:@selector(accessibilityIdentifier)];
+        if ([currentIdentifier isEqualToString:[self standardAccessibilityIdentifierReplacement]]) {
+            [self performSelector:@selector(setAccessibilityIdentifier:) withObject:previousIdentifier];
+        }
+    }
+    
+    if ([self.accessibilityLabel isEqualToString:[self standardAccessibilityIdentifierReplacement]]) {
+        self.accessibilityLabel = previousLabel;
     }
 }
 
@@ -168,11 +218,11 @@
 @implementation UIAccessibilityElement (SLAccessibility)
 
 - (NSString *)slAccessibilityName {
-    if (self.accessibilityLabel) {
-        return self.accessibilityLabel;
+    if ([self.accessibilityIdentifier length] > 0) {
+        return self.accessibilityIdentifier;
     }
     
-    return self.accessibilityIdentifier;
+    return self.accessibilityLabel;
 }
 
 @end
@@ -211,13 +261,21 @@
     }
 }
 
-- (NSArray *)slChildAccessibilityElements {
-    NSMutableArray *children = [[super slChildAccessibilityElements] mutableCopy];
-    
-    for (UIView *view in [self.subviews reverseObjectEnumerator]) {
-        [children addObject:view];
+- (NSArray *)slChildAccessibilityElementsFavoringUISubviews:(BOOL)favoringUISubViews {
+    if (favoringUISubViews) {
+        NSMutableArray *children = [[NSMutableArray alloc] init];
+        for (UIView *view in [self.subviews reverseObjectEnumerator]) {
+            [children addObject:view];
+        }
+        [children addObjectsFromArray:[super slChildAccessibilityElementsFavoringUISubviews:NO]];
+        return children;
+    } else {
+        NSMutableArray *children = [[super slChildAccessibilityElementsFavoringUISubviews:NO] mutableCopy];
+        for (UIView *view in [self.subviews reverseObjectEnumerator]) {
+            [children addObject:view];
+        }
+        return children;
     }
-    return children;
 }
 
 @end
@@ -293,13 +351,10 @@
     if (self.accessibilityIdentifier) {
         return self.accessibilityIdentifier;
     }
-
-    if (self.accessibilityLabel) {
-        return self.accessibilityLabel;
-    }
     
-    return [self titleForState:UIControlStateNormal];
+    return self.accessibilityLabel;
 }
+
 
 @end
 
