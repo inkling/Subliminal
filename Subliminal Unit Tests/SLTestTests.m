@@ -41,6 +41,7 @@
     NSSet *allTests = [SLTest allTests];
     NSSet *expectedTests = [NSSet setWithObjects:
         [TestWithSomeTestCases class],
+        [TestWithNoTestCases class],
         [TestNotSupportingCurrentPlatform class],
         [TestWithPlatformSpecificTestCases class],
         [StartupTest class],

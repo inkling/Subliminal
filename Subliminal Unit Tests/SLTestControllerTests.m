@@ -94,4 +94,21 @@
                          @"The startup test was not run first.");
 }
 
+// Tests should execute if specified, even if they don't have test cases,
+// so that the user will see and add some cases.
+- (void)testTestIsRunEvenWithoutTestCases {
+    Class testWithoutTestCasesClass = [TestWithNoTestCases class];
+
+    id testMock = [OCMockObject partialMockForClass:testWithoutTestCasesClass];
+    [[testMock expect] run:[OCMArg anyPointer]];
+
+    [[_loggerMock expect] logTestFinish:NSStringFromClass(testWithoutTestCasesClass)
+                   withNumCasesExecuted:0
+                         numCasesFailed:0];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithoutTestCasesClass], nil);
+    STAssertNoThrow([testMock verify], @"Test with no test cases was not run as expected.");
+    STAssertNoThrow([_loggerMock verify], @"Test with no test cases was not logged as expected.");
+}
+
 @end

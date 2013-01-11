@@ -18,6 +18,9 @@
 
 @end
 
+@implementation TestWithNoTestCases
+@end
+
 @implementation TestNotSupportingCurrentPlatform
 
 + (BOOL)supportsCurrentPlatform {

@@ -26,6 +26,9 @@
 
 @end
 
+@interface TestWithNoTestCases : SLTest
+@end
+
 @interface TestNotSupportingCurrentPlatform : SLTest
 @end
 
