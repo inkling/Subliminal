@@ -169,6 +169,23 @@
                          @"The startup test was not run first.");
 }
 
+- (void)testStartupTestIsNotAutomaticallyAddedToTheSetOfTestsToRun {
+    Class testWithSomeTestCasesClass = [TestWithSomeTestCases class];
+    Class startupTestClass = [StartupTest class];
+    STAssertTrue([startupTestClass isStartUpTest], @"For the purposes of this test, this SLTest must be the start-up test.");
+
+    id testWithSomeTestCasesClassMock = [OCMockObject partialMockForClass:testWithSomeTestCasesClass];
+    [[testWithSomeTestCasesClassMock expect] run:[OCMArg anyPointer]];
+
+    id startupTestClassMock = [OCMockObject partialMockForClass:startupTestClass];
+    [[startupTestClassMock reject] run:[OCMArg anyPointer]];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeTestCasesClass], nil);
+    STAssertNoThrow([testWithSomeTestCasesClassMock verify], @"Test was not run as expected.");
+    STAssertNoThrow([startupTestClassMock verify],
+                    @"Start-up test was run even though the SLTestController wasn't told to run it.");
+}
+
 #pragma mark - Miscellaneous
 
 - (void)testMustUseSharedController {
