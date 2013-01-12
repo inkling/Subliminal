@@ -106,7 +106,7 @@ extern NSString *const SLAppActionTargetDoesNotExistException;
  
  @param selName The name of the app hook's action selector 
  */
-#define SLAskApp(selName) [[[SLTestController sharedController] sendAction:@selector(selName)] boolValue]
+#define SLAskApp(selName) [[[SLTestController sharedTestController] sendAction:@selector(selName)] boolValue]
 
 /**
  The SLAsk macro allows provides a more compact method for retrieving a bool
@@ -115,6 +115,6 @@ extern NSString *const SLAppActionTargetDoesNotExistException;
  @param selName The name of the app hook's action selector
  @param arg An argument to pass along with the app hook action
  */
-#define SLAskApp1(selName, arg) [[[SLTestController sharedController] sendAction:@selector(selName) withObject:arg] boolValue]
+#define SLAskApp1(selName, arg) [[[SLTestController sharedTestController] sendAction:@selector(selName) withObject:arg] boolValue]
 
 @end
