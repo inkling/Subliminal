@@ -195,6 +195,28 @@ extern NSString *const SLTestExceptionLineNumberKey;
  */
 - (void)tearDownTestCaseWithSelector:(SEL)testSelector;
 
+/**
+ Returns YES if the test has at least one test case which is focused
+ and which can run on the current platform.
+
+ When a test is run, if any of its test cases are focused, only those test cases will run.
+ This may be useful when writing or debugging tests.
+
+ A test case is focused by prefixing its name with "focus_", like so:
+
+     - (void)focus_testFoo;
+
+ It is also possible to implicitly focus all test cases by prefixing
+ their test's name with "Focus_".
+
+ @warning Focused test cases will not be run if their test is not run.
+
+ @return YES if any test cases are focused and can be run on the current platform.
+
+ @see -[SLTestController runTests:withCompletionBlock:]
+ */
++ (BOOL)isFocused;
+
 
 #pragma mark - Utilities
 

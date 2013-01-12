@@ -18,8 +18,10 @@
 
 @end
 
+
 @implementation TestWithNoTestCases
 @end
+
 
 @implementation TestNotSupportingCurrentPlatform
 
@@ -41,6 +43,7 @@
 @implementation TestWhichSupportsOnlyiPhone_iPhone
 @end
 
+
 @implementation TestWithPlatformSpecificTestCases
 
 + (BOOL)testCaseWithSelectorSupportsCurrentPlatform:(SEL)testCaseSelector {
@@ -56,10 +59,59 @@
 
 @end
 
+
 @implementation StartupTest
 
 + (BOOL)isStartUpTest {
     return YES;
 }
+
+@end
+
+
+@implementation TestThatIsNotFocused
+@end
+
+
+@implementation TestWithAFocusedTestCase
+
+- (void)testOne {}
+- (void)focus_testTwo {}
+
+@end
+
+
+@implementation TestWithSomeFocusedTestCases
+
+- (void)testOne {}
+- (void)focus_testTwo {}
+- (void)focus_testThree {}
+
+@end
+
+
+@implementation TestWithAFocusedPlatformSpecificTestCase
+
+- (void)testFoo {}
+- (void)focus_testBar_iPad {}
+
+@end
+
+
+@implementation Focus_TestThatIsFocused
+
+- (void)testOne {}
+- (void)focus_testTwo {}
+
+@end
+
+
+@implementation Focus_TestThatIsFocusedButDoesntSupportCurrentPlatform
+
++ (BOOL)supportsCurrentPlatform {
+    return NO;
+}
+
+- (void)testOne {}
 
 @end

@@ -26,8 +26,10 @@
 
 @end
 
+
 @interface TestWithNoTestCases : SLTest
 @end
+
 
 @interface TestNotSupportingCurrentPlatform : SLTest
 
@@ -44,6 +46,7 @@
 @interface TestWhichSupportsOnlyiPhone_iPhone : SLTest
 @end
 
+
 @interface TestWithPlatformSpecificTestCases : SLTest
 
 - (void)testFoo;
@@ -53,5 +56,50 @@
 
 @end
 
+
 @interface StartupTest : SLTest
+@end
+
+
+@interface TestThatIsNotFocused : SLTest
+@end
+
+
+@interface TestWithAFocusedTestCase : SLTest
+
+- (void)testOne;
+- (void)focus_testTwo;
+
+@end
+
+
+@interface TestWithSomeFocusedTestCases : SLTest
+
+- (void)testOne;
+- (void)focus_testTwo;
+- (void)focus_testThree;
+
+@end
+
+
+@interface TestWithAFocusedPlatformSpecificTestCase : SLTest
+
+- (void)testFoo;
+- (void)focus_testBar_iPad;
+
+@end
+
+
+@interface Focus_TestThatIsFocused : SLTest
+
+- (void)testOne;
+- (void)focus_testTwo;
+
+@end
+
+
+@interface Focus_TestThatIsFocusedButDoesntSupportCurrentPlatform : SLTest
+
+- (void)testOne;
+
 @end

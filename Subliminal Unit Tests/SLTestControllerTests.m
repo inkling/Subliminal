@@ -186,6 +186,178 @@
                     @"Start-up test was run even though the SLTestController wasn't told to run it.");
 }
 
+#pragma mark -Focusing
+
+- (void)testWhenSomeTestsAreFocusedOnlyThoseTestsAreRun {
+    Class testThatIsNotFocusedClass = [TestThatIsNotFocused class];
+    STAssertFalse([testThatIsNotFocusedClass isFocused],
+                  @"For the purposes of this test, this SLTest must not be focused.");
+    Class testWithSomeFocusedTestCasesClass = [TestWithSomeFocusedTestCases class];
+    STAssertTrue([testWithSomeFocusedTestCasesClass isFocused],
+                 @"For the purposes of this test, this SLTest must be focused.");
+    NSSet *tests = [NSSet setWithObjects:
+        testThatIsNotFocusedClass,
+        testWithSomeFocusedTestCasesClass,
+        nil
+    ];
+
+    // only the focused test should run
+    id testThatIsNotFocusedClassMock = [OCMockObject partialMockForClass:testThatIsNotFocusedClass];
+    [[testThatIsNotFocusedClassMock reject] run:[OCMArg anyPointer]];
+
+    id testWithSomeFocusedTestCasesClassMock = [OCMockObject partialMockForClass:testWithSomeFocusedTestCasesClass];
+    [[testWithSomeFocusedTestCasesClassMock expect] run:[OCMArg anyPointer]];
+
+    SLRunTestsAndWaitUntilFinished(tests, nil);
+    STAssertNoThrow([testThatIsNotFocusedClassMock verify], @"Un-focused tests was still run.");
+    STAssertNoThrow([testWithSomeFocusedTestCasesClassMock verify], @"Focused test was not run.");
+}
+
+- (void)testThatMultipleTestsCanBeFocusedAndRun {
+    NSSet *tests = [NSSet setWithObjects:
+        [TestThatIsNotFocused class],
+        [TestWithSomeFocusedTestCases class],
+        [Focus_TestThatIsFocused class],
+        nil
+    ];
+    NSUInteger numberOfFocusedTests = 0;
+    for (Class testClass in tests) {
+        // All SLTests used here must support the current platform lest this test
+        // overlap with -testTestsMustSupportCurrentPlatformInOrderToRunDespiteFocus.
+        STAssertTrue([testClass supportsCurrentPlatform],
+                     @"All SLTests used by this test must support the current platform.");
+
+        if ([testClass isFocused]) numberOfFocusedTests++;
+    }
+    STAssertTrue(numberOfFocusedTests > 0, @"For the purposes of this test, multiple tests must be focused.");
+
+    NSMutableArray *testMocks = [NSMutableArray arrayWithCapacity:[tests count]];
+    for (Class testClass in tests) {
+        id testMock = [OCMockObject partialMockForClass:testClass];
+
+        // expect test instances to be run only if they're focused
+        if ([testClass isFocused]) {
+            [[testMock expect] run:[OCMArg anyPointer]];
+        } else {
+            [[testMock reject] run:[OCMArg anyPointer]];
+        }
+
+        [testMocks addObject:testMock];
+    }
+
+    SLRunTestsAndWaitUntilFinished(tests, nil);
+    STAssertNoThrow([testMocks makeObjectsPerformSelector:@selector(verify)], @"Tests were not run as expected.");
+}
+
+- (void)testAFocusedTestMustSupportTheCurrentPlatformInOrderToBeRun {
+    Class testThatIsNotFocusedClass = [TestThatIsNotFocused class];
+    STAssertFalse([testThatIsNotFocusedClass isFocused],
+                  @"For the purposes of this test, this SLTest must not be focused.");
+    Class testThatIsFocusedButDoesntSupportCurrentPlatformClass = [Focus_TestThatIsFocusedButDoesntSupportCurrentPlatform class];
+    STAssertTrue([testThatIsFocusedButDoesntSupportCurrentPlatformClass isFocused],
+                 @"For the purposes of this test, this SLTest must be focused.");
+    STAssertFalse([testThatIsFocusedButDoesntSupportCurrentPlatformClass supportsCurrentPlatform],
+                  @"For the purposes of this test, this SLTest must not support current platform.");
+
+    NSSet *tests = [NSSet setWithObjects:
+        testThatIsNotFocusedClass,
+        testThatIsFocusedButDoesntSupportCurrentPlatformClass,
+        nil
+    ];
+
+     // While TestThatIsFocusedButDoesntSupportCurrentPlatform is focused,
+    // it doesn't support the current platform, thus isn't going to run.
+    // If it's not going to run, its focus is irrelevant, and so the other test should run after all.
+    id testThatIsFocusedButDoesntSupportCurrentPlatformClassMock = [OCMockObject partialMockForClass:testThatIsFocusedButDoesntSupportCurrentPlatformClass];
+    [[testThatIsFocusedButDoesntSupportCurrentPlatformClassMock reject] run:[OCMArg anyPointer]];
+
+    id testThatIsNotFocusedClassMock = [OCMockObject partialMockForClass:testThatIsNotFocusedClass];
+    [[testThatIsNotFocusedClassMock expect] run:[OCMArg anyPointer]];
+
+    SLRunTestsAndWaitUntilFinished(tests, nil);
+    STAssertNoThrow([testThatIsFocusedButDoesntSupportCurrentPlatformClassMock verify], @"Test doesn't support the current platform but was still run.");
+    STAssertNoThrow([testThatIsNotFocusedClassMock verify], @"Other test was not run as expected.");
+}
+
+- (void)testFocusedTestsAreNotAutomaticallyAddedToTheSetOfTestsToRun {
+    Class testWithSomeTestCasesClass = [TestWithSomeTestCases class];
+    STAssertFalse([testWithSomeTestCasesClass isFocused],
+                  @"For the purposes of this test, this SLTest must not be focused.");
+    Class testWithSomeFocusedTestCasesClass = [TestWithSomeFocusedTestCases class];
+    STAssertTrue([testWithSomeFocusedTestCasesClass isFocused],
+                 @"For the purposes of this test, this SLTest must be focused.");
+
+    // The test controller won't be told to run the focused test, thus it won't be run...
+    NSSet *testsToRun = [NSSet setWithObject:testWithSomeTestCasesClass];
+
+    id testWithSomeFocusedTestCasesClassMock = [OCMockObject partialMockForClass:testWithSomeFocusedTestCasesClass];
+    [[testWithSomeFocusedTestCasesClassMock reject] run:[OCMArg anyPointer]];
+
+    // ...and if it won't run, its focus is irrelevant, and so the other test should run after all.
+    id testWithSomeTestCasesClassMock = [OCMockObject partialMockForClass:testWithSomeTestCasesClass];
+    [[testWithSomeTestCasesClassMock expect] run:[OCMArg anyPointer]];
+
+    SLRunTestsAndWaitUntilFinished(testsToRun, nil);
+    STAssertNoThrow([testWithSomeFocusedTestCasesClassMock verify],
+                    @"Focused test was run even though the SLTestController wasn't told to run it.");
+    STAssertNoThrow([testWithSomeTestCasesClassMock verify], @"Other test was not run.");
+}
+
+- (void)testStartupTestIsNotRunIfItIsNotFocused {
+    Class startupTestClass = [StartupTest class];
+    STAssertTrue([startupTestClass isStartUpTest],
+                 @"For the purposes of this test, this SLTest must be start-up test.");
+    STAssertFalse([startupTestClass isFocused],
+                  @"For the purposes of this test, this SLTest must not be focused.");
+    Class testWithSomeFocusedTestCasesClass = [TestWithSomeFocusedTestCases class];
+    STAssertTrue([testWithSomeFocusedTestCasesClass isFocused],
+                 @"For the purposes of this test, this SLTest must be focused.");
+
+    NSSet *tests = [NSSet setWithObjects:
+        startupTestClass,
+        testWithSomeFocusedTestCasesClass,
+        nil
+    ];
+
+    // only the focused test should run
+    id startupTestClassMock = [OCMockObject partialMockForClass:startupTestClass];
+    [[startupTestClassMock reject] run:[OCMArg anyPointer]];
+
+    id testWithSomeFocusedTestCasesClassMock = [OCMockObject partialMockForClass:testWithSomeFocusedTestCasesClass];
+    [[testWithSomeFocusedTestCasesClassMock expect] run:[OCMArg anyPointer]];
+
+    SLRunTestsAndWaitUntilFinished(tests, nil);
+    STAssertNoThrow([startupTestClassMock verify], @"Un-focused tests was still run.");
+    STAssertNoThrow([testWithSomeFocusedTestCasesClassMock verify], @"Focused test was not run.");
+}
+
+- (void)testTheUserIsWarnedWhenRunningFocusedTests {
+    Class testClass = [TestWithSomeFocusedTestCases class];
+    STAssertTrue([testClass isFocused],
+                 @"For the purposes of this test, this SLTest must be focused.");
+    id testMock = [OCMockObject partialMockForClass:testClass];
+    OCMExpectationSequencer *sequencer = [OCMExpectationSequencer sequencerWithMocks:@[ testMock, _loggerMock ]];
+
+    // warning at start
+    [[_loggerMock expect] logMessage:[OCMArg checkWithBlock:^BOOL(id message) {
+        // The focused tests are actually printed out in an array following the colon
+        // but it's tricky to reproduce that formatting here
+        BOOL messageDescribesFocusedTests = [message rangeOfString:NSStringFromClass(testClass)].location != NSNotFound;
+        return ([message hasPrefix:@"Focusing on test cases in specific tests:"] &&
+                messageDescribesFocusedTests);
+    }]];
+    [[_loggerMock expect] logTestingStart];
+
+    [[testMock expect] run:[OCMArg anyPointer]];
+
+    [[_loggerMock expect] logTestingFinish];
+    // warning at end
+    [[_loggerMock expect] logMessage:@"Warning: this was a focused run. Fewer test cases may have run than normal."];
+    
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    STAssertNoThrow([sequencer verify], @"Test was not run/messages were not logged as expected.");
+}
+
 #pragma mark - Miscellaneous
 
 - (void)testMustUseSharedController {
