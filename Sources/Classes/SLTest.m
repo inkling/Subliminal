@@ -121,6 +121,15 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
     return selectorStrings;
 }
 
++ (BOOL)testCaseWithSelectorSupportsCurrentPlatform:(SEL)testCaseSelector {
+    NSString *testCaseName = NSStringFromSelector(testCaseSelector);
+    
+    UIUserInterfaceIdiom userInterfaceIdiom = [[UIDevice currentDevice] userInterfaceIdiom];
+    if ([testCaseName hasSuffix:@"_iPad"]) return (userInterfaceIdiom == UIUserInterfaceIdiomPad);
+    if ([testCaseName hasSuffix:@"_iPhone"]) return (userInterfaceIdiom == UIUserInterfaceIdiomPhone);
+    return YES;
+ }
+
 - (NSUInteger)run:(NSUInteger *)numCasesExecuted {
     NSUInteger numberOfCasesExecuted = 0, numberOfCasesFailed = 0;
 
@@ -138,14 +147,12 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
         NSString *test = NSStringFromClass([self class]);
         for (NSString *testCaseName in [self testCaseNames]) {
             // only run test case if it's appropriate for the current platform
-            UIUserInterfaceIdiom userInterfaceIdiom = [[UIDevice currentDevice] userInterfaceIdiom];
-            if (([testCaseName hasSuffix:@"_iPad"] && (userInterfaceIdiom != UIUserInterfaceIdiomPad)) ||
-                ([testCaseName hasSuffix:@"_iPhone"] && (userInterfaceIdiom != UIUserInterfaceIdiomPhone))) {
+            SEL testCaseSelector = NSSelectorFromString(testCaseName);
+            if (![[self class] testCaseWithSelectorSupportsCurrentPlatform:testCaseSelector]) {
                 continue;
             }
 
             [[SLLogger sharedLogger] logTest:test caseStart:testCaseName];
-            SEL testCaseSelector = NSSelectorFromString(testCaseName);
 
             BOOL caseFailed = NO;
             @try {            

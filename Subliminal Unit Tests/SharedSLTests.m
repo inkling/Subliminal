@@ -43,9 +43,16 @@
 
 @implementation TestWithPlatformSpecificTestCases
 
++ (BOOL)testCaseWithSelectorSupportsCurrentPlatform:(SEL)testCaseSelector {
+    BOOL testCaseSupportsCurrentDevice = [super testCaseWithSelectorSupportsCurrentPlatform:testCaseSelector];
+    return (testCaseSupportsCurrentDevice &&
+            (testCaseSelector != @selector(testCaseNotSupportingCurrentPlatform)));
+}
+
 - (void)testFoo {}
 - (void)testBar_iPad {}
 - (void)testBaz_iPhone {}
+- (void)testCaseNotSupportingCurrentPlatform {}
 
 @end
 

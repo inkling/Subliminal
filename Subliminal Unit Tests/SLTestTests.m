@@ -80,6 +80,51 @@
     STAssertNoThrow([testMock verify], @"Test cases did not run as expected.");
 }
 
+- (void)testOnlyTestCasesSupportingCurrentPlatformAreRun {
+    Class testWithPlatformSpecificTestCasesTest = [TestWithPlatformSpecificTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testWithPlatformSpecificTestCasesTest];
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+    SEL supportedTestCaseSelector = @selector(testFoo);
+    STAssertTrue([testWithPlatformSpecificTestCasesTest testCaseWithSelectorSupportsCurrentPlatform:supportedTestCaseSelector],
+                  @"For the purposes of this test, this test case must support the current platform.");
+    // note: this causes the mock to expect the invocation of the test case selector, not performSelector: itself
+    [[testMock expect] performSelector:supportedTestCaseSelector];
+
+    SEL unsupportedTestCaseSelector = @selector(testCaseNotSupportingCurrentPlatform);
+    STAssertFalse([testWithPlatformSpecificTestCasesTest testCaseWithSelectorSupportsCurrentPlatform:unsupportedTestCaseSelector],
+                  @"For the purposes of this test, this test case must not support the current platform.");
+    // note: this causes the mock to expect the invocation of the test case selector, not performSelector: itself
+    [[testMock reject] performSelector:unsupportedTestCaseSelector];
+#pragma clang diagnostic pop
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithPlatformSpecificTestCasesTest], nil);
+    STAssertNoThrow([testMock verify], @"Test cases did not run as expected.");
+}
+
+- (void)testIfTestDoesNotSupportCurrentPlatformTestCasesWillNotRunRegardlessOfSupport {
+    Class testNotSupportingCurrentPlatformClass = [TestNotSupportingCurrentPlatform class];
+    STAssertFalse([testNotSupportingCurrentPlatformClass supportsCurrentPlatform],
+                  @"For the purposes of this test, this SLTest must not support the current platform.");
+
+    SEL supportedTestCaseSelector = @selector(testFoo);
+    STAssertTrue([testNotSupportingCurrentPlatformClass instancesRespondToSelector:supportedTestCaseSelector] &&
+                 [testNotSupportingCurrentPlatformClass testCaseWithSelectorSupportsCurrentPlatform:supportedTestCaseSelector],
+                 @"For the purposes of this test, this SLTest must have a test case which supports the current platform.");
+
+    id testNotSupportingCurrentPlatformClassMock = [OCMockObject partialMockForClass:testNotSupportingCurrentPlatformClass];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+    // note: this causes the mock to expect the invocation of the test case selector, not performSelector: itself
+    [[testNotSupportingCurrentPlatformClassMock reject] performSelector:supportedTestCaseSelector];
+#pragma clang diagnostic pop
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testNotSupportingCurrentPlatformClass], nil);
+    STAssertNoThrow([testNotSupportingCurrentPlatformClassMock verify],
+                    @"Test case supporting current platform was run despite its test not supporting the current platform.");
+}
+
 - (void)testiPhoneSpecificTestCasesOnlyRunOnTheiPhone {
     Class testWithPlatformSpecificTestCasesTest = [TestWithPlatformSpecificTestCases class];
     NSSet *testSet = [NSSet setWithObject:testWithPlatformSpecificTestCasesTest];

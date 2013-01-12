@@ -49,6 +49,7 @@
 - (void)testFoo;
 - (void)testBar_iPad;
 - (void)testBaz_iPhone;
+- (void)testCaseNotSupportingCurrentPlatform;
 
 @end
 

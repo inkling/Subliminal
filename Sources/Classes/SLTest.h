@@ -68,10 +68,10 @@ extern NSString *const SLTestExceptionLineNumberKey;
  An override of this method should incorporate `super`'s response, which checks the selector's suffix.
 
  If this method returns NO, none of this test's cases will run.
- You may instead conditionalize individual cases by suffixing the method name,
- as explained in the comment on SLTest (SLTestCase).
 
  @return YES if this class has test cases that can currently run, NO otherwise.
+ 
+ @see -testCaseWithSelectorSupportsCurrentPlatform:
  */
 + (BOOL)supportsCurrentPlatform;
 
@@ -89,20 +89,39 @@ extern NSString *const SLTestExceptionLineNumberKey;
     * whose names have the prefix "test",
     * with void return types, and
     * which take no arguments.
-
- Test cases may be conditionally run on certain platforms by suffixing the method 
- name in the following fashion:
- 
-    * A test case method whose name has the suffix "_iPhone," like "testFoo_iPhone",
-      will be executed only when [[UIDevice currentDevice] userInterfaceIdiom] ==
-      UIUserInterfaceIdiomPhone.
-    * A test case method whose name has the suffix "_iPad" will be executed only 
-      when the current device user interface idiom is UIUserInterfaceIdiomPad. 
-    * A test case method whose name has neither the "_iPhone" nor the "_iPad" 
-      suffix will be executed on all devices regardless of the user interface idiom.
  
  */
 @interface SLTest (SLTestCase)
+
+/**
+ Returns YES if this test case can be run given the current device, screen, etc.
+ Subclasses of SLTest should override if they need to do any run time checks
+ to determine whether or not their test cases can run.  Typical checks might include
+ checking the user interface idiom (phone or pad) of the current device, or
+ checking the scale of the main screen.
+
+ As a convenience, test writers may specify the device type(s) on which a 
+ test case can run by suffixing test cases' names in the following fashion:
+
+     * A test case whose name has the suffix "_iPhone," like "testFoo_iPhone",
+     will be executed only when [[UIDevice currentDevice] userInterfaceIdiom] ==
+     UIUserInterfaceIdiomPhone.
+     * A test case whose name has the suffix "_iPad" will be executed only
+     when the current device user interface idiom is UIUserInterfaceIdiomPad.
+     * A test case whose name has neither the "_iPhone" nor the "_iPad"
+     suffix will be executed on all devices regardless of the user interface idiom.
+
+ An override of this method should incorporate `super`'s response, which checks the selector's suffix.
+ 
+ @warning If the test does not support the current platform, test cases
+ will not be run regardless of what this method returns.
+
+ @param testCaseSelector A selector identifying a test case.
+ @return YES if the test case can be run.
+ 
+ @see -supportsCurrentPlatform
+ */
++ (BOOL)testCaseWithSelectorSupportsCurrentPlatform:(SEL)testCaseSelector;
 
 /**
  Called before any test cases are run.
