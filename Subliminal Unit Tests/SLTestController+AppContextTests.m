@@ -26,6 +26,9 @@
 - (NSNumber *)actionTakingNoArgumentReturningAValue;
 - (NSNumber *)actionTakingAnArgumentReturningAValue:(NSNumber *)arg;
 
+- (NSNumber *)actionReturningABOOLValue;
+- (NSNumber *)actionTakingAnArgumentReturningABOOLValue:(NSNumber *)arg;
+
 @end
 
 @implementation SLAppTarget
@@ -55,6 +58,14 @@
 }
 
 - (NSNumber *)actionTakingAnArgumentReturningAValue:(NSNumber *)arg {
+    return arg;
+}
+
+- (NSNumber *)actionReturningABOOLValue {
+    return @YES;
+}
+
+- (NSNumber *)actionTakingAnArgumentReturningABOOLValue:(NSNumber *)arg {
     return arg;
 }
 
@@ -402,6 +413,59 @@
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
+}
+
+- (void)testSLAskAppReturnsABOOL {
+    // make the action name a macro so we can use the same value throughout the test
+#undef actionName
+#define actionName actionReturningABOOLValue
+    SEL action = @selector(actionName);
+    STAssertNoThrow([_controller registerTarget:_targetMock forAction:action],
+                    @"Should not have thrown an exception.");
+
+    // have testOne call the action, and check to see that we got the expected value back
+    BOOL expectedReturnValue = YES;
+    [[[_testMock expect] andDo:^(NSInvocation *invocation) {
+        BOOL actualReturnValue;
+        STAssertNoThrow(actualReturnValue = SLAskApp(actionName),
+                        @"Should not have thrown an exception.");
+        STAssertEquals(actualReturnValue, expectedReturnValue, @"Action did not return expected value.");
+    }] testOne];
+
+    // expect the action to be received with the given argument, and return the expected value
+    [[[_targetMock expect] andReturn:@(expectedReturnValue)] actionReturningABOOLValue];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    STAssertNoThrow([_testMock verify], @"Should have executed test.");
+    STAssertNoThrow([_targetMock verify], @"Target should have received action.");
+#undef actionName
+}
+
+- (void)testSLAskApp1TakesAnArgAndReturnsBOOL {
+    // make the action name a macro so we can use the same value throughout the test
+#undef actionName
+#define actionName actionTakingAnArgumentReturningABOOLValue:
+    SEL action = @selector(actionName);
+    STAssertNoThrow([_controller registerTarget:_targetMock forAction:action],
+                    @"Should not have thrown an exception.");
+
+    // have testOne call the action with the given argument, and check to see that we got the expected value back
+    NSNumber *actionArg = @YES;
+    BOOL expectedReturnValue = YES;
+    [[[_testMock expect] andDo:^(NSInvocation *invocation) {
+        BOOL actualReturnValue;
+        STAssertNoThrow(actualReturnValue = SLAskApp1(actionName, actionArg),
+                        @"Should not have thrown an exception.");
+        STAssertEquals(actualReturnValue, expectedReturnValue, @"Action did not return expected value.");
+    }] testOne];
+
+    // expect the action to be received with the given argument, and return the expected value
+    [[[_targetMock expect] andReturn:@(expectedReturnValue)] actionTakingAnArgumentReturningABOOLValue:actionArg];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    STAssertNoThrow([_testMock verify], @"Should have executed test.");
+    STAssertNoThrow([_targetMock verify], @"Target should have received action.");
+#undef actionName
 }
 
 @end
