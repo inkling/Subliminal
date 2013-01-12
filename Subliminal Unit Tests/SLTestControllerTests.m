@@ -34,29 +34,36 @@
     [_terminalMock stopMocking];
 }
 
-- (void)testMustUseSharedController {
-    NSLog(@"*** The two assertion failures seen in the test output immediately below are an expected part of the tests.");
+#pragma mark - Test execution
 
-    // ignore the unused results below
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-value"
+// Tests should execute if specified, even if they don't have test cases,
+// so that the user will see and add some cases.
+- (void)testTestWithoutTestCasesIsStillRun {
+    Class testWithoutTestCasesClass = [TestWithNoTestCases class];
 
-    // test attempted manual allocation before retrieving shared controller
-    STAssertThrows([[SLTestController alloc] init], @"Should not have been able to manually initialize an SLTestController.");
+    id testMock = [OCMockObject partialMockForClass:testWithoutTestCasesClass];
+    [[testMock expect] run:[OCMArg anyPointer]];
 
-    STAssertNotNil([SLTestController sharedTestController], @"Should have been able to retrieve shared controller.");
+    [[_loggerMock expect] logTestFinish:NSStringFromClass(testWithoutTestCasesClass)
+                   withNumCasesExecuted:0
+                         numCasesFailed:0];
 
-    // test attempted manual allocation after retrieving shared controller
-    STAssertThrows([[SLTestController alloc] init], @"Should not have been able to manually initialize an SLTestController.");
-
-#pragma clang diagnostic pop
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithoutTestCasesClass], nil);
+    STAssertNoThrow([testMock verify], @"Test with no test cases was not run as expected.");
+    STAssertNoThrow([_loggerMock verify], @"Test with no test cases was not logged as expected.");
 }
 
-- (void)testOnlyTestsSupportingCurrentPlatformAreRun {
-    NSSet *allTests = [SLTest allTests];
+#pragma mark -Platform support
 
-    NSMutableArray *testMocks = [NSMutableArray arrayWithCapacity:[allTests count]];
-    for (Class testClass in allTests) {
+- (void)testOnlyTestsSupportingCurrentPlatformAreRun {
+    NSSet *tests = [NSSet setWithObjects:
+        [TestWithSomeTestCases class],
+        [TestNotSupportingCurrentPlatform class],
+        nil
+    ];
+
+    NSMutableArray *testMocks = [NSMutableArray arrayWithCapacity:[tests count]];
+    for (Class testClass in tests) {
         id testMock = [OCMockObject partialMockForClass:testClass];
 
         // expect test instances to be run only if they're supported on the current platform
@@ -69,7 +76,7 @@
         [testMocks addObject:testMock];
     }
 
-    SLRunTestsAndWaitUntilFinished(allTests, nil);
+    SLRunTestsAndWaitUntilFinished(tests, nil);
     STAssertNoThrow([testMocks makeObjectsPerformSelector:@selector(verify)], @"Tests were not run as expected.");
 }
 
@@ -131,12 +138,22 @@
     STAssertNoThrow([testWhichSupportsOnlyiPadClassMock verify], @"Tests did not run as expected on the iPad.");
 }
 
-- (void)testStartupTestIsRunFirst {
-    NSSet *allTests = [SLTest allTests];
+#pragma mark -Startup test
 
-    NSMutableArray *orderedTests = [NSMutableArray arrayWithCapacity:[allTests count]];
-    NSMutableArray *testMocks = [NSMutableArray arrayWithCapacity:[allTests count]];
-    for (Class testClass in allTests) {
+- (void)testStartupTestIsRunFirst {
+    Class startupTestClass = [StartupTest class];
+    NSSet *tests = [NSSet setWithObjects:
+        [TestWithSomeTestCases class],
+        [TestWithNoTestCases class],
+        [TestWithPlatformSpecificTestCases class],
+        startupTestClass,
+        nil
+    ];
+    STAssertTrue([startupTestClass isStartUpTest], @"For the purposes of this test, this SLTest must be the start-up test.");
+
+    NSMutableArray *orderedTests = [NSMutableArray arrayWithCapacity:[tests count]];
+    NSMutableArray *testMocks = [NSMutableArray arrayWithCapacity:[tests count]];
+    for (Class testClass in tests) {
         id testMock = [OCMockObject partialMockForClass:testClass];
 
         // cause tests to be recorded in order of execution
@@ -147,26 +164,29 @@
         [testMocks addObject:testMock];
     }
 
-    SLRunTestsAndWaitUntilFinished(allTests, nil);
+    SLRunTestsAndWaitUntilFinished(tests, nil);
     STAssertEqualObjects([orderedTests objectAtIndex:0], [StartupTest class],
                          @"The startup test was not run first.");
 }
 
-// Tests should execute if specified, even if they don't have test cases,
-// so that the user will see and add some cases.
-- (void)testTestIsRunEvenWithoutTestCases {
-    Class testWithoutTestCasesClass = [TestWithNoTestCases class];
+#pragma mark - Miscellaneous
 
-    id testMock = [OCMockObject partialMockForClass:testWithoutTestCasesClass];
-    [[testMock expect] run:[OCMArg anyPointer]];
+- (void)testMustUseSharedController {
+    NSLog(@"*** The two assertion failures seen in the test output immediately below are an expected part of the tests.");
 
-    [[_loggerMock expect] logTestFinish:NSStringFromClass(testWithoutTestCasesClass)
-                   withNumCasesExecuted:0
-                         numCasesFailed:0];
+    // ignore the unused results below
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-value"
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithoutTestCasesClass], nil);
-    STAssertNoThrow([testMock verify], @"Test with no test cases was not run as expected.");
-    STAssertNoThrow([_loggerMock verify], @"Test with no test cases was not logged as expected.");
+    // test attempted manual allocation before retrieving shared controller
+    STAssertThrows([[SLTestController alloc] init], @"Should not have been able to manually initialize an SLTestController.");
+
+    STAssertNotNil([SLTestController sharedTestController], @"Should have been able to retrieve shared controller.");
+
+    // test attempted manual allocation after retrieving shared controller
+    STAssertThrows([[SLTestController alloc] init], @"Should not have been able to manually initialize an SLTestController.");
+
+#pragma clang diagnostic pop
 }
 
 @end
