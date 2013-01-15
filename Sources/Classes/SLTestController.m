@@ -83,7 +83,7 @@ static SLTestController *__sharedController = nil;
     [SLElement setDefaultTimeout:_defaultTimeout];
     
     if (_runningWithFocus) {
-        SLLog(@"Focusing on test cases in specific tests: %@.", _testsToRun);
+        SLLog(@"Focusing on test cases in specific tests: %@.", [_testsToRun componentsJoinedByString:@","]);
     }
     [[SLLogger sharedLogger] logTestingStart];
 }
