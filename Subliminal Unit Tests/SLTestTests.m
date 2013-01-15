@@ -43,6 +43,9 @@
         [TestWithSomeTestCases class],
         [TestWithNoTestCases class],
         [TestNotSupportingCurrentPlatform class],
+        [TestWhichSupportsAllPlatforms class],
+        [TestWhichSupportsOnlyiPad_iPad class],
+        [TestWhichSupportsOnlyiPhone_iPhone class],
         [TestWithPlatformSpecificTestCases class],
         [StartupTest class],
         nil

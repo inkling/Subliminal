@@ -63,6 +63,11 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
 }
 
 + (BOOL)supportsCurrentPlatform {
+    NSString *testName = NSStringFromClass(self);
+
+    UIUserInterfaceIdiom userInterfaceIdiom = [[UIDevice currentDevice] userInterfaceIdiom];
+    if ([testName hasSuffix:@"_iPad"]) return (userInterfaceIdiom == UIUserInterfaceIdiomPad);
+    if ([testName hasSuffix:@"_iPhone"]) return (userInterfaceIdiom == UIUserInterfaceIdiomPhone);
     return YES;
 }
 

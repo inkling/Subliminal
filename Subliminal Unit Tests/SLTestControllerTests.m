@@ -73,6 +73,64 @@
     STAssertNoThrow([testMocks makeObjectsPerformSelector:@selector(verify)], @"Tests were not run as expected.");
 }
 
+- (void)testiPhoneSpecificTestsOnlyRunOnTheiPhone {
+    Class testWhichSupportsAllPlatformsClass = [TestWhichSupportsAllPlatforms class];
+    Class testWhichSupportsOnlyiPadClass = [TestWhichSupportsOnlyiPad_iPad class];
+    Class testWhichSupportsOnlyiPhoneClass = [TestWhichSupportsOnlyiPhone_iPhone class];
+    NSSet *testSet = [NSSet setWithObjects:
+        testWhichSupportsAllPlatformsClass,
+        testWhichSupportsOnlyiPadClass,
+        testWhichSupportsOnlyiPhoneClass,
+        nil
+    ];
+
+    // we mock the current device to dynamically configure the current user interface idiom
+    id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
+    UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
+    [[[deviceMock stub] andReturnValue:OCMOCK_VALUE(currentUserInterfaceIdiom)] userInterfaceIdiom];
+
+    id testWhichSupportsAllPlatformsClassMock = [OCMockObject partialMockForClass:testWhichSupportsAllPlatformsClass];
+    [[testWhichSupportsAllPlatformsClassMock expect] run:[OCMArg anyPointer]];
+
+    id testWhichSupportsOnlyiPhoneClassMock = [OCMockObject partialMockForClass:testWhichSupportsOnlyiPhoneClass];
+    [[testWhichSupportsOnlyiPhoneClassMock expect] run:[OCMArg anyPointer]];
+
+    id testWhichSupportsOnlyiPadClassMock = [OCMockObject partialMockForClass:testWhichSupportsOnlyiPadClass];
+    [[testWhichSupportsOnlyiPadClassMock reject] run:[OCMArg anyPointer]];
+
+    SLRunTestsAndWaitUntilFinished(testSet, nil);
+    STAssertNoThrow([testWhichSupportsOnlyiPadClassMock verify], @"Tests did not run as expected on the iPhone.");
+}
+
+- (void)testiPadSpecificTestsOnlyRunOnTheiPad {
+    Class testWhichSupportsAllPlatformsClass = [TestWhichSupportsAllPlatforms class];
+    Class testWhichSupportsOnlyiPadClass = [TestWhichSupportsOnlyiPad_iPad class];
+    Class testWhichSupportsOnlyiPhoneClass = [TestWhichSupportsOnlyiPhone_iPhone class];
+    NSSet *testSet = [NSSet setWithObjects:
+                      testWhichSupportsAllPlatformsClass,
+                      testWhichSupportsOnlyiPadClass,
+                      testWhichSupportsOnlyiPhoneClass,
+                      nil
+                      ];
+
+    // we mock the current device to dynamically configure the current user interface idiom
+    id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
+    UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPad;
+    [[[deviceMock stub] andReturnValue:OCMOCK_VALUE(currentUserInterfaceIdiom)] userInterfaceIdiom];
+
+    id testWhichSupportsAllPlatformsClassMock = [OCMockObject partialMockForClass:testWhichSupportsAllPlatformsClass];
+    [[testWhichSupportsAllPlatformsClassMock expect] run:[OCMArg anyPointer]];
+
+    id testWhichSupportsOnlyiPadClassMock = [OCMockObject partialMockForClass:testWhichSupportsOnlyiPadClass];
+    [[testWhichSupportsOnlyiPadClassMock expect] run:[OCMArg anyPointer]];
+
+    id testWhichSupportsOnlyiPhoneClassMock = [OCMockObject partialMockForClass:testWhichSupportsOnlyiPhoneClass];
+    [[testWhichSupportsOnlyiPhoneClassMock reject] run:[OCMArg anyPointer]];
+
+    SLRunTestsAndWaitUntilFinished(testSet, nil);
+    STAssertNoThrow([testWhichSupportsOnlyiPadClassMock verify], @"Tests did not run as expected on the iPad.");
+}
+
 - (void)testStartupTestIsRunFirst {
     NSSet *allTests = [SLTest allTests];
 

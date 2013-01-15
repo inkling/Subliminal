@@ -30,6 +30,18 @@
 @end
 
 @interface TestNotSupportingCurrentPlatform : SLTest
+
+- (void)testFoo;
+
+@end
+
+@interface TestWhichSupportsAllPlatforms : SLTest
+@end
+
+@interface TestWhichSupportsOnlyiPad_iPad : SLTest
+@end
+
+@interface TestWhichSupportsOnlyiPhone_iPhone : SLTest
 @end
 
 @interface TestWithPlatformSpecificTestCases : SLTest

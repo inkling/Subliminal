@@ -27,6 +27,18 @@
     return NO;
 }
 
+- (void)testFoo {}
+
+@end
+
+@implementation TestWhichSupportsAllPlatforms
+// no need to override +supportsCurrentPlatform
+@end
+
+@implementation TestWhichSupportsOnlyiPad_iPad
+@end
+
+@implementation TestWhichSupportsOnlyiPhone_iPhone
 @end
 
 @implementation TestWithPlatformSpecificTestCases
