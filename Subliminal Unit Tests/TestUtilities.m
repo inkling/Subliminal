@@ -16,15 +16,12 @@ void SLRunTestsAndWaitUntilFinished(NSSet *tests, void (^completionBlock)()) {
                                       testingHasFinished = YES;
                                   }];
     while (!testingHasFinished) {
-        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.001]];
     }
     
     // After the SLTestController executes its completion block
-    // it still has one more command to send through the terminal.
-    // We must spin once more to give it time to do so,
-    // lest the unit test which called this tear down,
-    // and destroy its partial mock for the terminal,
-    // as the controller tries to use the terminal.
+    // it still has a little more work to do to tear down its state.
+    // We must spin once more to give it time to do so.
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.001]];
 }
 

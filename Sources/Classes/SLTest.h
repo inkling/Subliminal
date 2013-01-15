@@ -30,37 +30,53 @@ extern NSString *const SLTestExceptionLineNumberKey;
 
  Tests should be independent, and thus can be (and are) run in no particular order.
  But designating one test to be run first may be useful:
- *  the state exercised might occur only once, upon launch;
-    and reproducing it later might be difficult or unnatural
- *  the test can clear that state (i.e. in its tearDown), 
-    so that other tests' set-up phases might be more concise
  
+     *  the state exercised might occur only once, upon launch;
+        and reproducing it later might be difficult or unnatural
+     *  the test can clear that state (i.e. in its tearDown), 
+        so that other tests' set-up phases might be more concise
+
  Only one test can be the start-up test. (Remember, however, that a test can have 
  multiple test cases.) If multiple tests return YES from this method, the 
  test framework's behavior is undefined.
  
  @warning If this test throws an exception during set-up or tear-down, 
  testing will abort, on the assumption that the app was not able to start-up.
+ 
+ @warning The start-up test will not be run first if it is not run at all.
 
  @return YES if this state is the one-and-only start-up test, and should be run first;
          NO otherwise.
+ 
+ @see -[SLTestController runTests:withCompletionBlock:]
  */
 + (BOOL)isStartUpTest;
 
 /**
- Returns YES if this test can be run on the current device, main screen, etc.
+ Returns YES if this test can be run given the current device, screen, etc.
  Subclasses of SLTest should override if they need to do any run time checks
  to determine whether or not their test cases can run.  Typical checks might include
  checking the user interface idiom (phone or pad) of the current device, or
  checking the scale of the main screen.
 
- SLTest's implementation returns YES.
- 
+ As a convenience, test writers may specify the device type(s) on which a
+ test can run by suffixing tests' names in the following fashion:
+
+     * A test whose name has the suffix "_iPhone," like "TestFoo_iPhone",
+     will be executed only when [[UIDevice currentDevice] userInterfaceIdiom] ==
+     UIUserInterfaceIdiomPhone.
+     * A test whose name has the suffix "_iPad" will be executed only
+     when the current device user interface idiom is UIUserInterfaceIdiomPad.
+     * A test whose name has neither the "_iPhone" nor the "_iPad"
+     suffix will be executed on all devices regardless of the user interface idiom.
+
+ An override of this method should incorporate `super`'s response, which checks the selector's suffix.
+
  If this method returns NO, none of this test's cases will run.
- You may instead conditionalize individual cases by suffixing the method name,
- as explained in the comment on SLTest (SLTestCase).
 
  @return YES if this class has test cases that can currently run, NO otherwise.
+ 
+ @see -testCaseWithSelectorSupportsCurrentPlatform:
  */
 + (BOOL)supportsCurrentPlatform;
 
@@ -78,20 +94,39 @@ extern NSString *const SLTestExceptionLineNumberKey;
     * whose names have the prefix "test",
     * with void return types, and
     * which take no arguments.
-
- Test cases may be conditionally run on certain platforms by suffixing the method 
- name in the following fashion:
- 
-    * A test case method whose name has the suffix "_iPhone," like "testFoo_iPhone",
-      will be executed only when [[UIDevice currentDevice] userInterfaceIdiom] ==
-      UIUserInterfaceIdiomPhone.
-    * A test case method whose name has the suffix "_iPad" will be executed only 
-      when the current device user interface idiom is UIUserInterfaceIdiomPad. 
-    * A test case method whose name has neither the "_iPhone" nor the "_iPad" 
-      suffix will be executed on all devices regardless of the user interface idiom.
  
  */
 @interface SLTest (SLTestCase)
+
+/**
+ Returns YES if this test case can be run given the current device, screen, etc.
+ Subclasses of SLTest should override if they need to do any run time checks
+ to determine whether or not their test cases can run.  Typical checks might include
+ checking the user interface idiom (phone or pad) of the current device, or
+ checking the scale of the main screen.
+
+ As a convenience, test writers may specify the device type(s) on which a 
+ test case can run by suffixing test cases' names in the following fashion:
+
+     * A test case whose name has the suffix "_iPhone," like "testFoo_iPhone",
+     will be executed only when [[UIDevice currentDevice] userInterfaceIdiom] ==
+     UIUserInterfaceIdiomPhone.
+     * A test case whose name has the suffix "_iPad" will be executed only
+     when the current device user interface idiom is UIUserInterfaceIdiomPad.
+     * A test case whose name has neither the "_iPhone" nor the "_iPad"
+     suffix will be executed on all devices regardless of the user interface idiom.
+
+ An override of this method should incorporate `super`'s response, which checks the selector's suffix.
+ 
+ @warning If the test does not support the current platform, test cases
+ will not be run regardless of what this method returns.
+
+ @param testCaseSelector A selector identifying a test case.
+ @return YES if the test case can be run.
+ 
+ @see -supportsCurrentPlatform
+ */
++ (BOOL)testCaseWithSelectorSupportsCurrentPlatform:(SEL)testCaseSelector;
 
 /**
  Called before any test cases are run.
@@ -159,6 +194,28 @@ extern NSString *const SLTestExceptionLineNumberKey;
  @sa -setUpTestCaseWithSelector:
  */
 - (void)tearDownTestCaseWithSelector:(SEL)testSelector;
+
+/**
+ Returns YES if the test has at least one test case which is focused
+ and which can run on the current platform.
+
+ When a test is run, if any of its test cases are focused, only those test cases will run.
+ This may be useful when writing or debugging tests.
+
+ A test case is focused by prefixing its name with "focus_", like so:
+
+     - (void)focus_testFoo;
+
+ It is also possible to implicitly focus all test cases by prefixing
+ their test's name with "Focus_".
+
+ @warning Focused test cases will not be run if their test is not run.
+
+ @return YES if any test cases are focused and can be run on the current platform.
+
+ @see -[SLTestController runTests:withCompletionBlock:]
+ */
++ (BOOL)isFocused;
 
 
 #pragma mark - Utilities

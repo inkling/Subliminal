@@ -18,26 +18,100 @@
 
 @end
 
+
+@implementation TestWithNoTestCases
+@end
+
+
 @implementation TestNotSupportingCurrentPlatform
 
 + (BOOL)supportsCurrentPlatform {
     return NO;
 }
 
+- (void)testFoo {}
+
 @end
 
+@implementation TestWhichSupportsAllPlatforms
+// no need to override +supportsCurrentPlatform
+@end
+
+@implementation TestWhichSupportsOnlyiPad_iPad
+@end
+
+@implementation TestWhichSupportsOnlyiPhone_iPhone
+@end
+
+
 @implementation TestWithPlatformSpecificTestCases
+
++ (BOOL)testCaseWithSelectorSupportsCurrentPlatform:(SEL)testCaseSelector {
+    BOOL testCaseSupportsCurrentDevice = [super testCaseWithSelectorSupportsCurrentPlatform:testCaseSelector];
+    return (testCaseSupportsCurrentDevice &&
+            (testCaseSelector != @selector(testCaseNotSupportingCurrentPlatform)));
+}
 
 - (void)testFoo {}
 - (void)testBar_iPad {}
 - (void)testBaz_iPhone {}
+- (void)testCaseNotSupportingCurrentPlatform {}
 
 @end
+
 
 @implementation StartupTest
 
 + (BOOL)isStartUpTest {
     return YES;
 }
+
+@end
+
+
+@implementation TestThatIsNotFocused
+@end
+
+
+@implementation TestWithAFocusedTestCase
+
+- (void)testOne {}
+- (void)focus_testTwo {}
+
+@end
+
+
+@implementation TestWithSomeFocusedTestCases
+
+- (void)testOne {}
+- (void)focus_testTwo {}
+- (void)focus_testThree {}
+
+@end
+
+
+@implementation TestWithAFocusedPlatformSpecificTestCase
+
+- (void)testFoo {}
+- (void)focus_testBar_iPad {}
+
+@end
+
+
+@implementation Focus_TestThatIsFocused
+
+- (void)testOne {}
+- (void)focus_testTwo {}
+
+@end
+
+
+@implementation Focus_TestThatIsFocusedButDoesntSupportCurrentPlatform
+
++ (BOOL)supportsCurrentPlatform {
+    return NO;
+}
+
+- (void)testOne {}
 
 @end

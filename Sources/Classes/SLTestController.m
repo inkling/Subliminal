@@ -29,7 +29,11 @@ static void SLUncaughtExceptionHandler(NSException *exception)
     }
 }
 
-@implementation SLTestController
+@implementation SLTestController {
+    BOOL _runningWithFocus;
+    NSMutableArray *_testsToRun;
+    void(^_completionBlock)(void);
+}
 
 + (void)initialize {
     // initialize shared test controller,
@@ -78,6 +82,9 @@ static SLTestController *__sharedController = nil;
 
     [SLElement setDefaultTimeout:_defaultTimeout];
     
+    if (_runningWithFocus) {
+        SLLog(@"Focusing on test cases in specific tests: %@.", _testsToRun);
+    }
     [[SLLogger sharedLogger] logTestingStart];
 }
 
@@ -85,24 +92,47 @@ static SLTestController *__sharedController = nil;
     dispatch_async([[self class] runQueue], ^{
         NSAssert([SLLogger sharedLogger], @"A shared SLLogger must be set (+[SLLogger setSharedLogger:]) before SLTestController can run tests.");
         
+        _completionBlock = [completionBlock copy];
+
+        // if any tests are focused and can be run, only run those tests
+        _testsToRun = [NSMutableArray arrayWithArray:[tests allObjects]];
+        for (Class testClass in _testsToRun) {
+            // a focused test must support the current platform in order to run
+            if ([testClass supportsCurrentPlatform] && [testClass isFocused]) {
+                _runningWithFocus = YES;
+                break;
+            }
+        }
+        if (_runningWithFocus) {
+            [_testsToRun filterUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+                return [evaluatedObject isFocused];
+            }]];
+        }
+
+        if (![_testsToRun count]) {
+            SLLog(@"%@%@%@", @"There are no tests to run", (_runningWithFocus) ? @": no tests are focused" : @"", @".");
+            [self _finishTesting];
+            return;
+        }
+
         [self _beginTesting];
 
         // ensure we'll execute startup test first if present
-        NSMutableArray *orderedTests = [NSMutableArray arrayWithArray:[tests allObjects]];
+        // note: if this is a focused run, the startup test will only run if it is focused
         __block NSUInteger startupTestIndex = NSNotFound;
-        [orderedTests enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [_testsToRun enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             if ([obj isStartUpTest]) {
                 startupTestIndex = idx;
                 *stop = YES;
             }
         }];
         if (startupTestIndex != NSNotFound) {
-            id startupTestClass = [orderedTests objectAtIndex:startupTestIndex];
-            [orderedTests removeObjectAtIndex:startupTestIndex];
-            [orderedTests insertObject:startupTestClass atIndex:0];
+            id startupTestClass = [_testsToRun objectAtIndex:startupTestIndex];
+            [_testsToRun removeObjectAtIndex:startupTestIndex];
+            [_testsToRun insertObject:startupTestClass atIndex:0];
         }
-        
-        for (Class testClass in orderedTests) {
+
+        for (Class testClass in _testsToRun) {
             if (![testClass supportsCurrentPlatform]) {
                 continue;
             }
@@ -137,23 +167,39 @@ static SLTestController *__sharedController = nil;
                 }
             }
         }
-        
-        [self _finishTestingWithCompletionBlock:completionBlock];
+
+        [self _finishTesting];
     });
 }
 
-- (void)_finishTestingWithCompletionBlock:(void (^)())completionBlock {
-    [[SLLogger sharedLogger] logTestingFinish];
+- (void)_finishTesting {
+    // only log that we finished if we ran some tests
+    if ([_testsToRun count]) {
+        [[SLLogger sharedLogger] logTestingFinish];
 
-    if (completionBlock) dispatch_sync(dispatch_get_main_queue(), completionBlock);
-    
+        if (_runningWithFocus) {
+            SLLog(@"Warning: this was a focused run. Fewer test cases may have run than normal.");
+        }
+    } else {
+        SLLog(@"Testing aborted.");
+    }
+
+    if (_completionBlock) dispatch_sync(dispatch_get_main_queue(), _completionBlock);
+
+    // NOTE: Everything below the next line will not execute when running with Instruments attached,
+    // because the UIAutomation script will terminate, and then the app.
     [[SLTerminal sharedTerminal] eval:@"_testingHasFinished = true;"];
 
-    // set exception handler back to the app's handler, if there was one
+    // clear controller state (important when testing Subliminal, when the controller will test repeatedly)
+    _runningWithFocus = NO;
+    _testsToRun = nil;
+    _completionBlock = nil;
+
+    // deregister Subliminal's exception handler
     // this is important when unit testing Subliminal, so that successive Subliminal testing runs
     // don't treat Subliminal's handler as the app's handler,
     // which would cause Subliminal's handler to recurse (as it calls the app's handler)
-    if (appsUncaughtExceptionHandler) NSSetUncaughtExceptionHandler(appsUncaughtExceptionHandler);
+    NSSetUncaughtExceptionHandler(appsUncaughtExceptionHandler);
 }
 
 @end
