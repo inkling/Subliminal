@@ -87,11 +87,11 @@ NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
     return self;
 }
 
-- (void)setUp {
+- (void)setUpTest {
     // nothing to do here
 }
 
-- (void)tearDown {
+- (void)tearDownTest {
     // nothing to do here
 }
 
@@ -184,14 +184,14 @@ static NSString *const kFocusPrefix = @"focus_";
 
     NSException *setUpOrTearDownException = nil;
     @try {
-        [self setUp];
+        [self setUpTest];
     }
     @catch (NSException *e) {
-        // save exception to throw after tearDown
+        // save exception to throw after tearDownTest
         setUpOrTearDownException = [self exceptionByAddingFileInfo:e];
     }
 
-    // if setUp failed, skip the test cases
+    // if setUpTest failed, skip the test cases
     if (!setUpOrTearDownException) {
         NSString *test = NSStringFromClass([self class]);
         NSArray *testCasesToRun = ([[self class] isFocused]) ?
@@ -239,18 +239,18 @@ static NSString *const kFocusPrefix = @"focus_";
         }
     }
 
-    // still perform tearDown even if setUp failed
+    // still perform tearDownTest even if setUpTest failed
     @try {
-        [self tearDown];
+        [self tearDownTest];
     }
     @catch (NSException *e) {
-        // ignore the exception if we already failed during setUp
+        // ignore the exception if we already failed during setUpTest
         if (!setUpOrTearDownException) {
             setUpOrTearDownException = [self exceptionByAddingFileInfo:e];
         }
     }
 
-    // if setUp or tearDown failed, report their failure rather than returning normally
+    // if setUpTest or tearDownTest failed, report their failure rather than returning normally
     if (setUpOrTearDownException) {
         @throw setUpOrTearDownException;
     }

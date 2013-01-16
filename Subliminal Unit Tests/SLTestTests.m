@@ -181,7 +181,7 @@
 
     [[[testMock expect] andForwardToRealObject] run:[OCMArg anyPointer]];
     
-    [[testMock expect] setUp];
+    [[testMock expect] setUpTest];
 
     [[_loggerMock expect] logTest:NSStringFromClass(testClass) caseStart:@"testOne"];
     [[testMock expect] setUpTestCaseWithSelector:@selector(testOne)];
@@ -194,7 +194,7 @@
     // but we don't replicate their sequence here,
     // because we can't guarantee the order in which the cases will execute.
 
-    [[testMock expect] tearDown];
+    [[testMock expect] tearDownTest];
 
     // It's possible for us to get the latter values below dynamically but it would just clutter this test.
     // These values will need to be updated if the test class' definition changes.
@@ -209,31 +209,31 @@
     STAssertNoThrow([testSequencer verify], @"Testing did not execute in the expected sequence.");
 }
 
-- (void)testSetUpAndTearDownExecuteOnceAtTheStartAndEndOfEachTest {
+- (void)testSetUpAndTearDownTest {
     Class testClass = [TestWithSomeTestCases class];
     id testMock = [OCMockObject partialMockForClass:testClass];
     [testMock setExpectationOrderMatters:YES];
 
     // *** Begin expected test run
 
-    [[testMock expect] setUp];
+    [[testMock expect] setUpTest];
     // We now reject any further invocations of -setUp.
-    [[testMock reject] setUp];
+    [[testMock reject] setUpTest];
 
     [[testMock expect] testOne];
 
-    [[testMock expect] tearDown];
+    [[testMock expect] tearDownTest];
     // We now reject any further invocations of -tearDown.
-    [[testMock reject] tearDown];
+    [[testMock reject] tearDownTest];
 
     // *** End expected test run
 
     // Run tests and verify
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
-    STAssertNoThrow([testMock verify], @"-setUp and -tearDown did not execute once, at the start and end of the test.");
+    STAssertNoThrow([testMock verify], @"-setUpTest and -tearDownTest did not execute once, at the start and end of the test.");
 }
 
-- (void)testSetUpTestCaseWithSelectorAndTearDownTestCaseWithSelectorExecuteOnceBeforeAndAfterEachTestCase {
+- (void)testSetUpAndTearDownTestCase {
     Class testClass = [TestWithSomeTestCases class];
     id testMock = nil;
     // because we can only can't guarantee the order in which test cases execute,
@@ -284,12 +284,12 @@
         exception = [NSException exceptionWithName:SLTestAssertionFailedException
                                             reason:@"Test setup failed."
                                           userInfo:nil];
-        [[[failingTestMock expect] andThrow:exception] setUp];
+        [[[failingTestMock expect] andThrow:exception] setUpTest];
     } else {
         exception = [NSException exceptionWithName:SLTestAssertionFailedException
                                             reason:@"Test teardown failed."
                                           userInfo:nil];
-        [[[failingTestMock expect] andThrow:exception] tearDown];
+        [[[failingTestMock expect] andThrow:exception] tearDownTest];
     }
 
     // ...the test controller logs an error...
@@ -324,12 +324,12 @@
         exception = [NSException exceptionWithName:SLTestAssertionFailedException
                                             reason:@"Test setup failed."
                                           userInfo:nil];
-        [[[failingTestMock expect] andThrow:exception] setUp];
+        [[[failingTestMock expect] andThrow:exception] setUpTest];
     } else {
         exception = [NSException exceptionWithName:SLTestAssertionFailedException
                                             reason:@"Test teardown failed."
                                           userInfo:nil];
-        [[[failingTestMock expect] andThrow:exception] tearDown];
+        [[[failingTestMock expect] andThrow:exception] tearDownTest];
     }
 
     // ...the other test(s) should still run.
@@ -360,10 +360,10 @@
     NSException *exception = [NSException exceptionWithName:SLTestAssertionFailedException
                                         reason:@"Test setup failed."
                                       userInfo:nil];
-    [[[failingTestMock expect] andThrow:exception] setUp];
+    [[[failingTestMock expect] andThrow:exception] setUpTest];
 
     // we expect teardown to still execute
-    [[failingTestMock expect] tearDown];
+    [[failingTestMock expect] tearDownTest];
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObjects:failingTestClass, nil], nil);
     STAssertNoThrow([failingTestMock verify], @"Test did not run as expected.");
@@ -377,7 +377,7 @@
     NSException *exception = [NSException exceptionWithName:SLTestAssertionFailedException
                                                      reason:@"Test setup failed."
                                                    userInfo:nil];
-    [[[failingTestMock expect] andThrow:exception] setUp];
+    [[[failingTestMock expect] andThrow:exception] setUpTest];
 
     // none of the test cases should have executed
     [[failingTestMock reject] setUpTestCaseWithSelector:[OCMArg anySelector]];
@@ -398,12 +398,12 @@
         exception = [NSException exceptionWithName:SLTestAssertionFailedException
                                             reason:@"Test setup failed."
                                           userInfo:nil];
-        [[[failingTestMock expect] andThrow:exception] setUp];
+        [[[failingTestMock expect] andThrow:exception] setUpTest];
     } else {
         exception = [NSException exceptionWithName:SLTestAssertionFailedException
                                             reason:@"Test teardown failed."
                                           userInfo:nil];
-        [[[failingTestMock expect] andThrow:exception] tearDown];
+        [[[failingTestMock expect] andThrow:exception] tearDownTest];
     }
 
     // ...the other test(s) don't run--the assumption being that the app failed to start up.
