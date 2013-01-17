@@ -138,17 +138,22 @@ extern NSString *const SLTestExceptionLineNumberKey;
  methods to ensure that set-up was successful.
  
  @warning If set-up fails, this test will be aborted and its cases skipped. 
- However, -tearDown will still be executed.
- 
- @sa -tearDown
+ However, -tearDownTest will still be executed.
+
+ Users of OCUnit (or other JUnit-inspired frameworks) may wonder why there's no -setUp.
+ The reason is that Subliminal distinguishes between setting up the whole test and
+ setting up individual test cases (OCUnit's -setUp is called for every test case).
+ The same consideration holds for the tear-down methods.
+
+ @sa -tearDownTest
  */
-- (void)setUp;
+- (void)setUpTest;
 
 /**
  Called after all test cases are run.
 
  In this method, tests should clean up any state shared by all test cases, 
- such as that which was established in setUp.
+ such as that which was established in setUpTest.
 
  In this method, tests can (and should) use SLTest assertions and SLElement "wait until..."
  methods to ensure that tear-down was successful.
@@ -156,9 +161,9 @@ extern NSString *const SLTestExceptionLineNumberKey;
  @warning If tear-down fails, the test will be logged as having aborted rather than finished, 
  but its test cases will have already executed, so their logs will be preserved.
 
- @sa setUp
+ @sa setUpTest
  */
-- (void)tearDown;
+- (void)tearDownTest;
 
 /**
  Called before each test case is run.

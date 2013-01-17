@@ -14,12 +14,12 @@
 
 @implementation ___FILEBASENAMEASIDENTIFIER___
 
-- (void)setUp {
+- (void)setUpTest {
 	// Navigate to the part of the app being exercised by the test cases,
 	// initialize SLElements common to the test cases, etc.
 }
 
-- (void)tearDown {
+- (void)tearDownTest {
 	// Navigate back to "home", if applicable.
 }
 
