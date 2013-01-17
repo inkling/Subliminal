@@ -339,13 +339,7 @@
     OCMExpectationSequencer *sequencer = [OCMExpectationSequencer sequencerWithMocks:@[ testMock, _loggerMock ]];
 
     // warning at start
-    [[_loggerMock expect] logMessage:[OCMArg checkWithBlock:^BOOL(id message) {
-        // The focused tests are actually printed out in an array following the colon
-        // but it's tricky to reproduce that formatting here
-        BOOL messageDescribesFocusedTests = [message rangeOfString:NSStringFromClass(testClass)].location != NSNotFound;
-        return ([message hasPrefix:@"Focusing on test cases in specific tests:"] &&
-                messageDescribesFocusedTests);
-    }]];
+    [[_loggerMock expect] logMessage:[NSString stringWithFormat:@"Focusing on test cases in specific tests: %@.", testClass]];
     [[_loggerMock expect] logTestingStart];
 
     [[testMock expect] run:[OCMArg anyPointer]];
