@@ -340,6 +340,7 @@
     // *** End expected test run
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObjects:failingTestClass, otherTestClass, nil], nil);
+    STAssertNoThrow([failingTestMock verify], @"Failing test did not run.");
     STAssertNoThrow([otherTestMock verify], @"Other test did not run.");
 }
 
@@ -385,24 +386,44 @@
     STAssertNoThrow([failingTestMock verify], @"Test did not run as expected.");
 }
 
-- (void)testTestingAbortsIfSetUpOfStartUpClassFails {
+- (void)runWithStartUpTestFailingInTestSetupOrTeardownToTestTestingAborts:(BOOL)failInSetUp {
     Class failingTestClass = [StartupTest class];
     id failingTestMock = [OCMockObject partialMockForClass:failingTestClass];
 
-    // If the startup test fails...
-    NSException *setUpException = [NSException exceptionWithName:SLTestAssertionFailedException
-                                                          reason:@"Test setup failed."
-                                                        userInfo:nil];
-    [[[failingTestMock expect] andThrow:setUpException] setUp];
+    // *** Begin expected test run
 
-    // ...the other tests don't run--the assumption being that the app failed to start up.
+    // If either setup or teardown of the start-up test fails...
+    NSException *exception;
+    if (failInSetUp) {
+        exception = [NSException exceptionWithName:SLTestAssertionFailedException
+                                            reason:@"Test setup failed."
+                                          userInfo:nil];
+        [[[failingTestMock expect] andThrow:exception] setUp];
+    } else {
+        exception = [NSException exceptionWithName:SLTestAssertionFailedException
+                                            reason:@"Test teardown failed."
+                                          userInfo:nil];
+        [[[failingTestMock expect] andThrow:exception] tearDown];
+    }
+
+    // ...the other test(s) don't run--the assumption being that the app failed to start up.
     Class otherTestClass = [TestWithPlatformSpecificTestCases class];
     id otherTestMock = [OCMockObject partialMockForClass:otherTestClass];
     [[otherTestMock reject] run:[OCMArg anyPointer]];
 
+    // *** End expected test run
+
     SLRunTestsAndWaitUntilFinished([NSSet setWithObjects:failingTestClass, otherTestClass, nil], nil);
-    STAssertNoThrow([failingTestMock verify], @"Failing test did not run.");
-    STAssertNoThrow([otherTestMock verify], @"Other test should not have executed.");
+    STAssertNoThrow([failingTestMock verify], @"Start-up test did not run.");
+    STAssertNoThrow([otherTestMock verify], @"Other test ran despite failure of start-up test.");
+}
+
+- (void)testTestingAbortsIfSetUpOfStartUpClassFails {
+    [self runWithStartUpTestFailingInTestSetupOrTeardownToTestTestingAborts:YES];
+}
+
+- (void)testTestingAbortsIfTearDownOfStartUpClassFails {
+    [self runWithStartUpTestFailingInTestSetupOrTeardownToTestTestingAborts:NO];
 }
 
 #pragma mark -Test case setup and teardown

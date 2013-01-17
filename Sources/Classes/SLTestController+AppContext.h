@@ -101,17 +101,25 @@ extern NSString *const SLAppActionTargetDoesNotExistException;
 - (id)sendAction:(SEL)action withObject:(id<NSCopying>)object;
 
 /**
- The SLAsk macro allows provides a more compact method for retrieving a bool 
- indicating some app state from an application hook
+ The SLAskApp macro provides a compact syntax for calling an application hook 
+ which returns an NSNumber representing a BOOL.
+ 
+ This is useful in conjunction with the SLTest assertion macros:
+ 
+    SLAssertTrue(SLAskApp(isUserLoggedIn), @"User is not logged in.")
  
  @param selName The name of the app hook's action selector 
  */
 #define SLAskApp(selName) [[[SLTestController sharedTestController] sendAction:@selector(selName)] boolValue]
 
 /**
- The SLAsk macro allows provides a more compact method for retrieving a bool
- indicating some app state from an application hook
- 
+ The SLAskApp1 macro provides a compact syntax for calling an application hook
+ which takes an argument and returns an NSNumber representing a BOOL.
+
+ This is useful in conjunction with the SLTest assertion macros:
+
+     SLAssertTrue(SLAskApp1(isBookDownloaded:, bookID), @"Book is not downloaded.")
+
  @param selName The name of the app hook's action selector
  @param arg An argument to pass along with the app hook action
  */
