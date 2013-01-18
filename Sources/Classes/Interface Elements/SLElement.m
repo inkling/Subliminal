@@ -118,73 +118,77 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     // Previous accessibility chains and labels are stored in a separate loop, before they are reassigned. This is because
     // some subclasses' accessibility identification values depend on their parent view's, and will change when they are
     // updated.
-    NSMutableArray *previousAccessorChainIdentifiers = [[NSMutableArray alloc] init];
-    NSMutableArray *previousAccessorChainLabels = [[NSMutableArray alloc] init];
-    for (NSObject *obj in viewFirstAccessorChain) {
-        NSAssert([obj respondsToSelector:@selector(accessibilityIdentifier)], @"elements in the accessibility chain must conform to UIAccessibilityIdentification");
-        
-        NSObject *previousIdentifier = [obj performSelector:@selector(accessibilityIdentifier)];
-        if (previousIdentifier == nil) {
-            previousIdentifier = [NSNull null];
-        }
-        [previousAccessorChainIdentifiers addObject:previousIdentifier];
-
-        NSObject *previousLabel = [obj accessibilityLabel];
-        if (previousLabel == nil) {
-            previousLabel = [NSNull null];
-        }
-        [previousAccessorChainLabels addObject:previousLabel];
-    }
+    __block NSMutableArray *previousAccessorChainIdentifiers = [[NSMutableArray alloc] init];
+    __block NSMutableArray *previousAccessorChainLabels = [[NSMutableArray alloc] init];
+    __block NSMutableString *targettedUIAPrefix = [@"UIATarget.localTarget().frontMostApp().mainWindow()" mutableCopy];
     
-    // viewFirstAccessorChain was created putting a priority on matching UIViews. We set the unique identifiers
-    // on the members of this chain, instead of uiAccessibilityElementFirstAccessorChain, because the new
-    // identifiers will be mirrored on all the objects in uiAccessibilityElementFirstAccessorChain
-    
-    // The chain's elements' accessibility information is updated in reverse order, because of the issue listed in the
-    // above note
-    for (NSObject *obj in [viewFirstAccessorChain reverseObjectEnumerator]) {
-        NSAssert([obj respondsToSelector:@selector(accessibilityIdentifier)], @"elements in the accessibility chain must conform to UIAccessibilityIdentification");
-        [obj setAccessibilityIdentifierWithStandardReplacement];
-
-        // Some objects will not allow their accessibilityIdentifier to be modified. In these cases, if the accessibilityIdentifer
-        // is empty, we can uniquely identify the object with its label.
-        if ([[obj performSelector:@selector(accessibilityIdentifier)] length] == 0) {
-            obj.accessibilityLabel = [obj standardAccessibilityIdentifierReplacement];
-        }
-    }
-
-    NSMutableString *targettedUIAPrefix = [@"UIATarget.localTarget().frontMostApp().mainWindow()" mutableCopy];
-    
-    // The prefix must be generated from the accessibility information on the elements of uiAccessibilityElementFirstAccessorChain
-    // instead of viewFirstAccessorChain because uiAccessibilityElementFirstAccessorChain contains the actual elements
-    // UIAutomation will interact with, and its chain may be shorter than that in viewFirstAccessorChain.
-    
-    for (NSObject *obj in uiAccessibilityElementFirstAccessorChain) {
-        NSAssert([obj respondsToSelector:@selector(accessibilityIdentifier)], @"elements in the accessibility chain must conform to UIAccessibilityIdentification");
-        
-        // Elements must be identified by their accessibility identifier as long as one exists. The accessiblity identifier may be nil
-        // for some classes on which you cannot set an accessibility identifer ex UISegmentedControl. In these cases the element can
-        // be identified by its label.
-        NSString *currentIdentifier = [obj performSelector:@selector(accessibilityIdentifier)];
-        if ([currentIdentifier length] > 0) {
-            [targettedUIAPrefix appendFormat:@".elements()['%@']",  [currentIdentifier slStringByEscapingForJavaScriptLiteral]];
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        for (NSObject *obj in viewFirstAccessorChain) {
+            NSAssert([obj respondsToSelector:@selector(accessibilityIdentifier)], @"elements in the accessibility chain must conform to UIAccessibilityIdentification");
             
-        } else  {
-            [targettedUIAPrefix appendFormat:@".elements()['%@']",  [obj.accessibilityLabel slStringByEscapingForJavaScriptLiteral]];
+            NSObject *previousIdentifier = [obj performSelector:@selector(accessibilityIdentifier)];
+            if (previousIdentifier == nil) {
+                previousIdentifier = [NSNull null];
+            }
+            [previousAccessorChainIdentifiers addObject:previousIdentifier];
+
+            NSObject *previousLabel = [obj accessibilityLabel];
+            if (previousLabel == nil) {
+                previousLabel = [NSNull null];
+            }
+            [previousAccessorChainLabels addObject:previousLabel];
         }
-    }
     
+        // viewFirstAccessorChain was created putting a priority on matching UIViews. We set the unique identifiers
+        // on the members of this chain, instead of uiAccessibilityElementFirstAccessorChain, because the new
+        // identifiers will be mirrored on all the objects in uiAccessibilityElementFirstAccessorChain
+        
+        // The chain's elements' accessibility information is updated in reverse order, because of the issue listed in the
+        // above note
+        for (NSObject *obj in [viewFirstAccessorChain reverseObjectEnumerator]) {
+            NSAssert([obj respondsToSelector:@selector(accessibilityIdentifier)], @"elements in the accessibility chain must conform to UIAccessibilityIdentification");
+            [obj setAccessibilityIdentifierWithStandardReplacement];
+
+            // Some objects will not allow their accessibilityIdentifier to be modified. In these cases, if the accessibilityIdentifer
+            // is empty, we can uniquely identify the object with its label.
+            if ([[obj performSelector:@selector(accessibilityIdentifier)] length] == 0) {
+                obj.accessibilityLabel = [obj standardAccessibilityIdentifierReplacement];
+            }
+        }
+        
+        // The prefix must be generated from the accessibility information on the elements of uiAccessibilityElementFirstAccessorChain
+        // instead of viewFirstAccessorChain because uiAccessibilityElementFirstAccessorChain contains the actual elements
+        // UIAutomation will interact with, and its chain may be shorter than that in viewFirstAccessorChain.
+        
+        for (NSObject *obj in uiAccessibilityElementFirstAccessorChain) {
+            NSAssert([obj respondsToSelector:@selector(accessibilityIdentifier)], @"elements in the accessibility chain must conform to UIAccessibilityIdentification");
+            
+            // Elements must be identified by their accessibility identifier as long as one exists. The accessiblity identifier may be nil
+            // for some classes on which you cannot set an accessibility identifer ex UISegmentedControl. In these cases the element can
+            // be identified by its label.
+            NSString *currentIdentifier = [obj performSelector:@selector(accessibilityIdentifier)];
+            if ([currentIdentifier length] > 0) {
+                [targettedUIAPrefix appendFormat:@".elements()['%@']",  [currentIdentifier slStringByEscapingForJavaScriptLiteral]];
+                
+            } else  {
+                [targettedUIAPrefix appendFormat:@".elements()['%@']",  [obj.accessibilityLabel slStringByEscapingForJavaScriptLiteral]];
+            }
+        }
+    });
+        
     block(targettedUIAPrefix);
     
-    // The chain's elements' accessibility information is updated in reverse order, because of the issue listed in the
-    // above note
-    [viewFirstAccessorChain enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        NSObject *identifierObj = [previousAccessorChainIdentifiers objectAtIndex:idx];
-        NSString *identifier = ([identifierObj isEqual:[NSNull null]] ? nil : (NSString *)identifierObj);
-        NSObject *labelObj = [previousAccessorChainLabels objectAtIndex:idx];
-        NSString *label = ([labelObj isEqual:[NSNull null]] ? nil : (NSString *)labelObj);
-        [obj resetAccessibilityInfoIfNecessaryWithPreviousIdentifier:identifier previousLabel:label];
-    }];
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        // The chain's elements' accessibility information is updated in reverse order, because of the issue listed in the
+        // above note
+        [viewFirstAccessorChain enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            NSObject *identifierObj = [previousAccessorChainIdentifiers objectAtIndex:idx];
+            NSString *identifier = ([identifierObj isEqual:[NSNull null]] ? nil : (NSString *)identifierObj);
+            NSObject *labelObj = [previousAccessorChainLabels objectAtIndex:idx];
+            NSString *label = ([labelObj isEqual:[NSNull null]] ? nil : (NSString *)labelObj);
+            [obj resetAccessibilityInfoIfNecessaryWithPreviousIdentifier:identifier previousLabel:label];
+        }];
+    });
 }
 
 
