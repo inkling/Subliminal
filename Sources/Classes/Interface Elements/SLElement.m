@@ -18,7 +18,7 @@
 NSString *const SLInvalidElementException = @"SLInvalidElementException";
 
 static const NSTimeInterval kDefaultRetryDelay = 0.25;
-
+static const NSTimeInterval kWebviewTextfieldDelay = 1;
 
 #pragma mark SLElement
 
@@ -364,6 +364,24 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 @end
+
+
+@implementation SLWebTextField
+
+// Experimentation has shown that SLTextFields within a webview must be tapped, and
+// a waiting period is necessary, before setValue() will have any effect. A wait period
+// after setting the value is also necessary, otherwise it seems as if regardless of
+// correct matching, the next actions sent to UIAutomation will be applied incorrectly
+// to this webview textfield.
+- (void)setText:(NSString *)text {
+    [self tap];
+    [NSThread sleepForTimeInterval:kWebviewTextfieldDelay];
+    [super setText:text];
+    [NSThread sleepForTimeInterval:kWebviewTextfieldDelay];
+}
+
+@end
+
 
 #pragma mark - SLWindow
 
