@@ -15,10 +15,14 @@
 #import <objc/message.h>
 
 
-NSString *const SLTestAssertionFailedException = @"SLTestCaseAssertionFailedException";
+// all exceptions thrown by SLTest must have names beginning with this prefix
+// so that they may be identified as "expected" throughout the testing framework
+NSString *const SLTestExceptionNamePrefix       = @"SLTest";
 
-NSString *const SLTestExceptionFilenameKey = @"SLExceptionFilenameKey";
-NSString *const SLTestExceptionLineNumberKey = @"SLExceptionLineNumberKey";
+NSString *const SLTestAssertionFailedException  = @"SLTestCaseAssertionFailedException";
+
+NSString *const SLTestExceptionFilenameKey      = @"SLTestExceptionFilenameKey";
+NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey";
 
 
 @implementation SLTest {
@@ -286,10 +290,11 @@ static NSString *const kFocusPrefix = @"focus_";
 
 - (void)logException:(NSException *)exception inTestCase:(NSString *)testCase {
     NSString *message = nil;
-    // "Expected" exceptions (failures in assertions or UIAccessibilityElement lookup)
-    // are logged more tersely than other exceptions.
-    if ([[exception name] isEqualToString:SLTestAssertionFailedException] ||
-        [[exception name] isEqualToString:SLInvalidElementException]) {
+    // Exceptions thrown by SLTest or SLElement were likely expected
+    // --with call site information recorded by an assertion or UIAElement macro--
+    // and are logged more tersely than other exceptions.
+    if ([[exception name] hasPrefix:SLTestExceptionNamePrefix] ||
+        [[exception name] hasPrefix:SLElementExceptionNamePrefix]) {
         message = [NSString stringWithFormat:@"%@:%d: %@", _lastKnownFilename, _lastKnownLineNumber, [exception reason]];
     } else {
         message = [NSString stringWithFormat:@"%@:%d: Exception occurred ***%@*** for reason: %@",

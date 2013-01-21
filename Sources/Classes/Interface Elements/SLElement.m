@@ -15,10 +15,17 @@
 #import <objc/runtime.h>
 
 
-NSString *const SLInvalidElementException = @"SLInvalidElementException";
+// all exceptions thrown by SLElement must have names beginning with this prefix
+// so that they may be identified as "expected" throughout the testing framework
+NSString *const SLElementExceptionNamePrefix    = @"SLElement";
+
+NSString *const SLElementInvalidException       = @"SLElementInvalidException";
+NSString *const SLElementNotVisibleException    = @"SLElementNotVisibleException";
+NSString *const SLElementVisibleException       = @"SLElementVisibleException";
 
 static const NSTimeInterval kDefaultRetryDelay = 0.25;
 static const NSTimeInterval kWebviewTextfieldDelay = 1;
+
 
 #pragma mark SLElement
 
@@ -112,7 +119,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     NSArray *viewFirstAccessorChain = [self waitForAccessibilityChainFavoringSubviews:YES];
     
     if ([uiAccessibilityElementFirstAccessorChain count] == 0) {
-        @throw [NSException exceptionWithName:SLInvalidElementException reason:[NSString stringWithFormat:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]] userInfo:nil];
+        @throw [NSException exceptionWithName:SLElementInvalidException reason:[NSString stringWithFormat:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]] userInfo:nil];
     }
 
     // Previous accessibility chains and labels are stored in a separate loop, before they are reassigned. This is because
@@ -253,7 +260,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 - (void)waitUntilVisible:(NSTimeInterval)timeout {
     [self performActionWithUIASelf:^(NSString *uiaSelf) {
         if (![self waitFor:timeout untilCondition:[NSString stringWithFormat:@"%@.isVisible()", uiaSelf]]) {
-            [NSException raise:@"SLWaitUntilVisibleException" format:@"Element %@ did not become visible within %g seconds.", self, timeout];
+            [NSException raise:SLElementNotVisibleException format:@"Element %@ did not become visible within %g seconds.", self, timeout];
         }
     }];
 }
@@ -261,7 +268,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 - (void)waitUntilInvisible:(NSTimeInterval)timeout {
     [self performActionWithUIASelf:^(NSString *uiaSelf) {
         if (![self waitFor:timeout untilCondition:[NSString stringWithFormat:@"!%@.isVisible()", uiaSelf]]) {
-            [NSException raise:@"SLWaitUntilInvisibleException" format:@"Element %@ was still visible after %g seconds.", self, timeout];
+            [NSException raise:SLElementVisibleException format:@"Element %@ was still visible after %g seconds.", self, timeout];
         }
     }];
 }

@@ -14,8 +14,12 @@
 
 #pragma mark - SLElement
 
+// all exceptions thrown by SLElement will have names beginning with this prefix
+extern NSString *const SLElementExceptionNamePrefix;
 
-extern NSString *const SLInvalidElementException;
+extern NSString *const SLElementInvalidException;
+extern NSString *const SLElementNotVisibleException;
+extern NSString *const SLElementVisibleException;
 
 
 @interface SLElement : NSObject
