@@ -297,8 +297,8 @@ static NSString *const kFocusPrefix = @"focus_";
         [[exception name] hasPrefix:SLElementExceptionNamePrefix]) {
         message = [NSString stringWithFormat:@"%@:%d: %@", _lastKnownFilename, _lastKnownLineNumber, [exception reason]];
     } else {
-        message = [NSString stringWithFormat:@"%@:%d: Exception occurred ***%@*** for reason: %@",
-                    _lastKnownFilename, _lastKnownLineNumber, [exception name], [exception reason]];
+        message = [NSString stringWithFormat:@"Unexpected exception occurred ***%@*** for reason: %@",
+                    [exception name], [exception reason]];
     }
 
     _lastKnownFilename = nil;
