@@ -271,12 +271,12 @@ static NSString *const kFocusPrefix = @"focus_";
 - (NSException *)exceptionByAddingFileInfo:(NSException *)exception {
     if (_lastKnownFilename) {
         // If there is file information, insert it into the userInfo dictionary
-        NSMutableDictionary *userInfo = [[exception userInfo] mutableCopy];
-        if (!userInfo) {
-            userInfo = [NSMutableDictionary dictionary];
-        }
+        NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:[exception userInfo]];
         userInfo[SLTestExceptionFilenameKey] = _lastKnownFilename;
         userInfo[SLTestExceptionLineNumberKey] = @(_lastKnownLineNumber);
+
+        _lastKnownFilename = nil;
+        _lastKnownLineNumber = 0;
         
         return [NSException exceptionWithName:[exception name] reason:[exception reason] userInfo:userInfo];
     } else {
