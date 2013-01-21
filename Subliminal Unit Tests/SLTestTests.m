@@ -719,6 +719,12 @@
 
 #pragma mark - Test assertions
 
+// Note: throughout the below tests, we provide implementations of SLTest test cases
+// that mimic how test writers would use SLTest assertions in those cases,
+// and verify that the assertions succeed or fail as expected.
+// But, we can't use the assertion macros directly, because they make reference
+// to SLTest members when expanded, hence the methods in SLTest (SLTestTestsMacroHelpers).
+
 - (void)testAssertionLoggingIncludesFilenameAndLineNumber {
     Class testClass = [TestWithSomeTestCases class];
     SEL failingTestCase = @selector(testOne);
