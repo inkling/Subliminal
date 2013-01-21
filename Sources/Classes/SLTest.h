@@ -308,5 +308,33 @@ extern NSString *const SLTestExceptionLineNumberKey;
     } \
 } while (0)
 
+#define SLAssertThrows(expr, description, ...) do { \
+    [self recordLastKnownFile:__FILE__ line:__LINE__]; \
+    BOOL __caughtException = NO; \
+    @try { \
+        (expr); \
+    } \
+    @catch (id anException) { \
+        __caughtException = YES; \
+    } \
+    if (!__caughtException) { \
+        NSString *reason = [NSString stringWithFormat:@"\"%@\" should have thrown an exception. %@", \
+                                @(#expr), [NSString stringWithFormat:description, ##__VA_ARGS__]]; \
+        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
+    } \
+} while (0)
+
+#define SLAssertNoThrow(expr, description, ...) do { \
+    [self recordLastKnownFile:__FILE__ line:__LINE__]; \
+    @try { \
+        (expr); \
+    } \
+    @catch (id anException) { \
+        NSString *reason = [NSString stringWithFormat:@"\"%@\" should not have thrown an exception: %@. %@", \
+                                @(#expr), anException, [NSString stringWithFormat:description, ##__VA_ARGS__]]; \
+        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
+    } \
+} while (0)
+
 @end
 

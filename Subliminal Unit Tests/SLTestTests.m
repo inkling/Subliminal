@@ -877,6 +877,54 @@
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
+#pragma mark -SLAssertThrows
+
+- (void)testSLAssertThrowsThrowsIffExceptionDoesNotThrow {
+    Class testClass = [TestWithSomeTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testClass];
+
+    // have "testOne" throw and succeed
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        STAssertNoThrow([test slAssertThrows:^{
+            [NSException raise:NSInternalInconsistencyException format:nil];
+        }], @"Assertion should not have failed.");
+    }] testOne];
+
+    // have "testTwo" not throw and fail
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        STAssertThrows([test slAssertThrows:^{}], @"Assertion should have failed.");
+    }] testTwo];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
+}
+
+#pragma mark -SLAssertNoThrow
+
+- (void)testSLAssertNoThrowThrowsIffExceptionThrows {
+    Class testClass = [TestWithSomeTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testClass];
+
+    // have "testOne" not throw and succeed
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        STAssertNoThrow([test slAssertNoThrow:^{}], @"Assertion should not have failed.");
+    }] testOne];
+
+    // have "testTwo" not throw and fail
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        STAssertThrows([test slAssertNoThrow:^{
+            [NSException raise:NSInternalInconsistencyException format:nil];
+        }], @"Assertion should have failed.");
+    }] testTwo];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
+}
+
 #pragma mark - Miscellaneous
 
 #pragma mark -Wait
