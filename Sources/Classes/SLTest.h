@@ -11,10 +11,13 @@
 #import "SLTestController+AppContext.h"
 
 
+// all exceptions thrown by SLTest will have names beginning with this prefix
+extern NSString *const SLTestExceptionNamePrefix;
+
 extern NSString *const SLTestAssertionFailedException;
+
 extern NSString *const SLTestExceptionFilenameKey;
 extern NSString *const SLTestExceptionLineNumberKey;
-
 
 
 @interface SLTest : NSObject
