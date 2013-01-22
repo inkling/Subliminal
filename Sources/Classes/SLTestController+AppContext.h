@@ -100,17 +100,36 @@ extern NSString *const SLAppActionTargetDoesNotExistException;
  */
 - (id)sendAction:(SEL)action withObject:(id<NSCopying>)object;
 
+#pragma mark - Convenience Macros
+
 /**
- The SLAskApp macro provides a compact syntax for calling an application hook 
+ The SLAskApp macro provides a compact syntax for calling an application hook. 
+ The idea is that you're asking the app to perform some action and potentially return a value.
+
+ @param selName The name of the app hook's action selector
+ */
+#define SLAskApp(selName) [[SLTestController sharedTestController] sendAction:@selector(selName)]
+
+/**
+ The SLAskApp1 macro provides a compact syntax for calling an application hook 
+ which takes an argument.
+
+ @param selName The name of the app hook's action selector
+ @param arg An argument to pass along with the app hook action
+ */
+#define SLAskApp1(selName, arg) [[SLTestController sharedTestController] sendAction:@selector(selName) withObject:arg]
+
+/**
+ The SLAskAppYesNo macro provides a compact syntax for calling an application hook
  which returns an NSNumber representing a BOOL.
  
  This is useful in conjunction with the SLTest assertion macros:
  
-    SLAssertTrue(SLAskApp(isUserLoggedIn), @"User is not logged in.")
+    SLAssertTrue(SLAskAppYesNo(isUserLoggedIn), @"User is not logged in.")
  
  @param selName The name of the app hook's action selector 
  */
-#define SLAskApp(selName) [[[SLTestController sharedTestController] sendAction:@selector(selName)] boolValue]
+#define SLAskAppYesNo(selName) [SLAskApp(selName) boolValue]
 
 /**
  The SLAskApp1 macro provides a compact syntax for calling an application hook
@@ -118,11 +137,11 @@ extern NSString *const SLAppActionTargetDoesNotExistException;
 
  This is useful in conjunction with the SLTest assertion macros:
 
-     SLAssertTrue(SLAskApp1(isBookDownloaded:, bookID), @"Book is not downloaded.")
+     SLAssertTrue(SLAskAppYesNo1(isBookDownloaded:, bookID), @"Book is not downloaded.")
 
  @param selName The name of the app hook's action selector
  @param arg An argument to pass along with the app hook action
  */
-#define SLAskApp1(selName, arg) [[[SLTestController sharedTestController] sendAction:@selector(selName) withObject:arg] boolValue]
+#define SLAskAppYesNo1(selName, arg) [SLAskApp1(selName, arg) boolValue]
 
 @end

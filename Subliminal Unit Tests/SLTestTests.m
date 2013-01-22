@@ -719,6 +719,12 @@
 
 #pragma mark - Test assertions
 
+// Note: throughout the below tests, we provide implementations of SLTest test cases
+// that mimic how test writers would use SLTest assertions in those cases,
+// and verify that the assertions succeed or fail as expected.
+// But, we can't use the assertion macros directly, because they make reference
+// to SLTest members when expanded, hence the methods in SLTest (SLTestTestsMacroHelpers).
+
 - (void)testAssertionLoggingIncludesFilenameAndLineNumber {
     Class testClass = [TestWithSomeTestCases class];
     SEL failingTestCase = @selector(testOne);
@@ -803,9 +809,9 @@
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
-#pragma mark -SLWaitOnCondition
+#pragma mark -SLWaitUntilTrue
 
-- (void)testSLWaitOnConditionDoesNotThrowAndReturnsImmediatelyWhenConditionIsTrueUponWait {
+- (void)testSLWaitUntilTrueDoesNotThrowAndReturnsImmediatelyWhenConditionIsTrueUponWait {
     Class testClass = [TestWithSomeTestCases class];
     id testMock = [OCMockObject partialMockForClass:testClass];
 
@@ -814,7 +820,7 @@
         SLTest *test = [invocation target];
         NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
         
-        STAssertNoThrow([test slWaitOnCondition:^BOOL{
+        STAssertNoThrow([test sLWaitUntilTrue:^BOOL{
             return YES;
         } withTimeout:1.5], @"Assertion should not have failed.");
 
@@ -826,7 +832,7 @@
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
-- (void)testSLWaitOnConditionDoesNotThrowAndReturnsImmediatelyAfterConditionBecomesTrue {
+- (void)testSLWaitUntilTrueDoesNotThrowAndReturnsImmediatelyAfterConditionBecomesTrue {
     Class testClass = [TestWithSomeTestCases class];
     id testMock = [OCMockObject partialMockForClass:testClass];
 
@@ -838,7 +844,7 @@
 
         NSTimeInterval waitTimeout = 1.5;
         NSTimeInterval truthTimeout = 1.0;
-        STAssertNoThrow([test slWaitOnCondition:^BOOL{
+        STAssertNoThrow([test sLWaitUntilTrue:^BOOL{
             NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
             NSTimeInterval waitInterval = endTimeInterval - startTimeInterval;
             return (waitInterval >= truthTimeout);
@@ -854,7 +860,7 @@
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
-- (void)testSLWaitOnConditionThrowsIfConditionIsStillFalseAtEndOfTimeout {
+- (void)testSLWaitUntilTrueThrowsIfConditionIsStillFalseAtEndOfTimeout {
     Class testClass = [TestWithSomeTestCases class];
     id testMock = [OCMockObject partialMockForClass:testClass];
 
@@ -864,13 +870,61 @@
         NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
 
         NSTimeInterval timeout = 1.5;
-        STAssertThrows([test slWaitOnCondition:^BOOL{
+        STAssertThrows([test sLWaitUntilTrue:^BOOL{
             return NO;
         } withTimeout:timeout], @"Assertion should have failed.");
 
         NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
         STAssertEqualsWithAccuracy(endTimeInterval - startTimeInterval, timeout, .01,
                                    @"Test should have waited for the specified timeout.");
+    }] testTwo];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
+}
+
+#pragma mark -SLAssertThrows
+
+- (void)testSLAssertThrowsThrowsIffExceptionDoesNotThrow {
+    Class testClass = [TestWithSomeTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testClass];
+
+    // have "testOne" throw and succeed
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        STAssertNoThrow([test slAssertThrows:^{
+            [NSException raise:NSInternalInconsistencyException format:nil];
+        }], @"Assertion should not have failed.");
+    }] testOne];
+
+    // have "testTwo" not throw and fail
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        STAssertThrows([test slAssertThrows:^{}], @"Assertion should have failed.");
+    }] testTwo];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
+}
+
+#pragma mark -SLAssertNoThrow
+
+- (void)testSLAssertNoThrowThrowsIffExceptionThrows {
+    Class testClass = [TestWithSomeTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testClass];
+
+    // have "testOne" not throw and succeed
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        STAssertNoThrow([test slAssertNoThrow:^{}], @"Assertion should not have failed.");
+    }] testOne];
+
+    // have "testTwo" not throw and fail
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        STAssertThrows([test slAssertNoThrow:^{
+            [NSException raise:NSInternalInconsistencyException format:nil];
+        }], @"Assertion should have failed.");
     }] testTwo];
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
