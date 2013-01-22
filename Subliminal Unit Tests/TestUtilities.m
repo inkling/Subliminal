@@ -48,9 +48,9 @@ void SLRunTestsAndWaitUntilFinished(NSSet *tests, void (^completionBlock)()) {
     SLAssertFalse(condition(), @"");
 }
 
-- (void)slWaitOnCondition:(BOOL (^)(void))condition withTimeout:(NSTimeInterval)timeout {
+- (void)sLWaitUntilTrue:(BOOL (^)(void))condition withTimeout:(NSTimeInterval)timeout {
     NSParameterAssert(condition);
-    SLWaitOnCondition(condition(), timeout, @"");
+    SLWaitUntilTrue(condition(), timeout, @"");
 }
 
 @end

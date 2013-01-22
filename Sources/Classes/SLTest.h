@@ -234,14 +234,14 @@ extern NSString *const SLTestExceptionLineNumberKey;
  You can use this method to provide enough time for lengthy operations to complete.
  
  If you have a specific condition on which you're waiting, it is more appropriate 
- to use the SLElement "waitUntil..." methods.
+ to use the SLWaitUntilTrue macro or the the SLElement "waitUntil..." methods.
  
  @param interval The time interval for which to wait.
  */
 - (void)wait:(NSTimeInterval)interval;
 
 /**
- The SLWaitOnCondition macro allows an SLTest to wait for an arbitrary
+ The SLWaitUntilTrue macro allows an SLTest to wait for an arbitrary
  condition to become true within a specified timeout.
  
  The macro polls the condition at small intervals. 
@@ -260,7 +260,7 @@ extern NSString *const SLTestExceptionLineNumberKey;
  @exception SLTestAssertionFailedException if expr does not evaluate to true 
  within the specified timeout.
  */
-#define SLWaitOnCondition(expr, timeout, description, ...) do {\
+#define SLWaitUntilTrue(expr, timeout, description, ...) do {\
     [self recordLastKnownFile:__FILE__ line:__LINE__]; \
     NSTimeInterval _retryDelay = 0.25; \
     \

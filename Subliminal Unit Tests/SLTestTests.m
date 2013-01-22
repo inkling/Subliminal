@@ -803,9 +803,9 @@
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
-#pragma mark -SLWaitOnCondition
+#pragma mark -SLWaitUntilTrue
 
-- (void)testSLWaitOnConditionDoesNotThrowAndReturnsImmediatelyWhenConditionIsTrueUponWait {
+- (void)testSLWaitUntilTrueDoesNotThrowAndReturnsImmediatelyWhenConditionIsTrueUponWait {
     Class testClass = [TestWithSomeTestCases class];
     id testMock = [OCMockObject partialMockForClass:testClass];
 
@@ -814,7 +814,7 @@
         SLTest *test = [invocation target];
         NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
         
-        STAssertNoThrow([test slWaitOnCondition:^BOOL{
+        STAssertNoThrow([test sLWaitUntilTrue:^BOOL{
             return YES;
         } withTimeout:1.5], @"Assertion should not have failed.");
 
@@ -826,7 +826,7 @@
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
-- (void)testSLWaitOnConditionDoesNotThrowAndReturnsImmediatelyAfterConditionBecomesTrue {
+- (void)testSLWaitUntilTrueDoesNotThrowAndReturnsImmediatelyAfterConditionBecomesTrue {
     Class testClass = [TestWithSomeTestCases class];
     id testMock = [OCMockObject partialMockForClass:testClass];
 
@@ -838,7 +838,7 @@
 
         NSTimeInterval waitTimeout = 1.5;
         NSTimeInterval truthTimeout = 1.0;
-        STAssertNoThrow([test slWaitOnCondition:^BOOL{
+        STAssertNoThrow([test sLWaitUntilTrue:^BOOL{
             NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
             NSTimeInterval waitInterval = endTimeInterval - startTimeInterval;
             return (waitInterval >= truthTimeout);
@@ -854,7 +854,7 @@
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
-- (void)testSLWaitOnConditionThrowsIfConditionIsStillFalseAtEndOfTimeout {
+- (void)testSLWaitUntilTrueThrowsIfConditionIsStillFalseAtEndOfTimeout {
     Class testClass = [TestWithSomeTestCases class];
     id testMock = [OCMockObject partialMockForClass:testClass];
 
@@ -864,7 +864,7 @@
         NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
 
         NSTimeInterval timeout = 1.5;
-        STAssertThrows([test slWaitOnCondition:^BOOL{
+        STAssertThrows([test sLWaitUntilTrue:^BOOL{
             return NO;
         } withTimeout:timeout], @"Assertion should have failed.");
 
