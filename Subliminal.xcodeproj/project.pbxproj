@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0F21788816AE08F700C46068 /* SLMultiLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F21788616AE08F700C46068 /* SLMultiLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0F21788916AE08F700C46068 /* SLMultiLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F21788716AE08F700C46068 /* SLMultiLogger.m */; };
 		CA75E78216697A1200D57E92 /* SLDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = CA75E78016697A1200D57E92 /* SLDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CA75E78516697C0000D57E92 /* SLDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = CA75E78116697A1200D57E92 /* SLDevice.m */; };
 		CAC388051641CD7500F995F9 /* NSString+SLJavaScript.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC388031641CD7500F995F9 /* NSString+SLJavaScript.h */; };
@@ -89,6 +91,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0F21788616AE08F700C46068 /* SLMultiLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLMultiLogger.h; sourceTree = "<group>"; };
+		0F21788716AE08F700C46068 /* SLMultiLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLMultiLogger.m; sourceTree = "<group>"; };
 		CA75E78016697A1200D57E92 /* SLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLDevice.h; sourceTree = "<group>"; };
 		CA75E78116697A1200D57E92 /* SLDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDevice.m; sourceTree = "<group>"; };
 		CAC388031641CD7500F995F9 /* NSString+SLJavaScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+SLJavaScript.h"; path = "Categories/NSString+SLJavaScript.h"; sourceTree = "<group>"; };
@@ -248,6 +252,8 @@
 		F0695DD9160138DF000B05D0 /* Logging */ = {
 			isa = PBXGroup;
 			children = (
+				0F21788616AE08F700C46068 /* SLMultiLogger.h */,
+				0F21788716AE08F700C46068 /* SLMultiLogger.m */,
 				F0695DDA160138DF000B05D0 /* SLLogger.h */,
 				F0695DDB160138DF000B05D0 /* SLLogger.m */,
 				F0695DDC160138DF000B05D0 /* SLUIALogger.h */,
@@ -316,6 +322,7 @@
 				CAC388051641CD7500F995F9 /* NSString+SLJavaScript.h in Headers */,
 				CAC3883F1643503C00F995F9 /* SLAccessibility.h in Headers */,
 				CA75E78216697A1200D57E92 /* SLDevice.h in Headers */,
+				0F21788816AE08F700C46068 /* SLMultiLogger.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -465,6 +472,7 @@
 				CAC388061641CD7500F995F9 /* NSString+SLJavaScript.m in Sources */,
 				CAC388401643503C00F995F9 /* SLAccessibility.m in Sources */,
 				CA75E78516697C0000D57E92 /* SLDevice.m in Sources */,
+				0F21788916AE08F700C46068 /* SLMultiLogger.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
