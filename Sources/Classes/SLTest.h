@@ -255,12 +255,12 @@ extern NSString *const SLTestExceptionLineNumberKey;
  
  @param expr A boolean expression on whose truth the test should wait.
  @param timeout The interval for which to wait.
- @param varargs A format string and arguments giving a description of the wait's 
- failure, if that should occur.
+ @param description A description of the wait's failure should that occur. 
+ This may be a format string taking variable arguments.
  @exception SLTestAssertionFailedException if expr does not evaluate to true 
  within the specified timeout.
  */
-#define SLWaitOnCondition(expr, timeout, ...) do {\
+#define SLWaitOnCondition(expr, timeout, description, ...) do {\
     [self recordLastKnownFile:__FILE__ line:__LINE__]; \
     NSTimeInterval _retryDelay = 0.25; \
     \
@@ -271,7 +271,8 @@ extern NSString *const SLTestExceptionLineNumberKey;
         [NSThread sleepForTimeInterval:_retryDelay]; \
     } \
     if (!_exprTrue) { \
-        NSString *reason = [NSString stringWithFormat:@"\"%@\" did not become true within %g seconds. %@", @(#expr), timeout, [NSString stringWithFormat:__VA_ARGS__]]; \
+        NSString *reason = [NSString stringWithFormat:@"\"%@\" did not become true within %g seconds. %@", \
+                                @(#expr), timeout, [NSString stringWithFormat:description, ##__VA_ARGS__]]; \
         @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
     } \
 } while (0)
@@ -287,20 +288,22 @@ extern NSString *const SLTestExceptionLineNumberKey;
 
 #pragma mark - Test Assertions
 
-#define SLAssertTrue(expr, ...) do { \
+#define SLAssertTrue(expr, description, ...) do { \
     [self recordLastKnownFile:__FILE__ line:__LINE__]; \
     BOOL result = (expr); \
     if (!result) { \
-        NSString *reason = [NSString stringWithFormat:@"\"%@\" should be true. %@", @(#expr), [NSString stringWithFormat:__VA_ARGS__]]; \
+        NSString *reason = [NSString stringWithFormat:@"\"%@\" should be true. %@", \
+                                @(#expr), [NSString stringWithFormat:description, ##__VA_ARGS__]]; \
         @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
     } \
 } while (0)
 
-#define SLAssertFalse(expr, ...) do { \
+#define SLAssertFalse(expr, description, ...) do { \
     [self recordLastKnownFile:__FILE__ line:__LINE__]; \
     BOOL result = (expr); \
     if (result) { \
-        NSString *reason = [NSString stringWithFormat:@"\"%@\" should be false. %@", @(#expr), [NSString stringWithFormat:__VA_ARGS__]]; \
+        NSString *reason = [NSString stringWithFormat:@"\"%@\" should be false. %@", \
+                                @(#expr), [NSString stringWithFormat:description, ##__VA_ARGS__]]; \
         @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
     } \
 } while (0)
