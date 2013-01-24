@@ -66,13 +66,13 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 + (id)elementWithAccessibilityLabel:(NSString *)label {
     return [[self alloc] initWithPredicate:^BOOL(NSObject *obj) {
-        return [obj.slAccessibilityName isEqualToString:label];
+        return [obj.slAccessibilityName isEqualToString:label] || ([obj.accessibilityLabel length] > 0 && [obj.accessibilityLabel isEqualToString:label]);
     } description:label];
 }
 
 + (id)elementWithAccessibilityLabel:(NSString *)label value:(NSString *)value traits:(UIAccessibilityTraits)traits {
     return [[self alloc] initWithPredicate:^BOOL(NSObject *obj) {
-        BOOL matchesLabel = (label == nil || [obj.slAccessibilityName isEqualToString:label]);
+        BOOL matchesLabel = (label == nil || [obj.slAccessibilityName isEqualToString:label] || ([obj.accessibilityLabel length] > 0 && [obj.accessibilityLabel isEqualToString:label]));
         BOOL matchesValue = (value == nil || [obj.accessibilityValue isEqualToString:value]);
         BOOL matchesTraits = (obj.accessibilityTraits & traits) == traits;
         return (matchesLabel && matchesValue && matchesTraits);

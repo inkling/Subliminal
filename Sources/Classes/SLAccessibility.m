@@ -95,7 +95,7 @@
         
         // Every element in accessorChain that returns true to isAccessibilityElement should have an accessibility value or name. This ensures Subliminal
         // will be able to construct an accessor chain that identifies each element that UIAutomation will place in the accessibility chain.
-        if (element.isAccessibilityElement && !element.slAccessibilityName && ![element.accessibilityValue length] > 0) {
+        if (element.isAccessibilityElement && !element.slAccessibilityName && [element.accessibilityValue length] == 0) {
             [self setAccessibilityIdentifierWithStandardReplacement];
         }
     }];
