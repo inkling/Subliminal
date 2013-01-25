@@ -94,19 +94,24 @@ static SLTestController *__sharedController = nil;
         
         _completionBlock = [completionBlock copy];
 
-        // if any tests are focused and can be run, only run those tests
+        // only run tests that support the current platform...
         _testsToRun = [NSMutableArray arrayWithArray:[tests allObjects]];
-        for (Class testClass in _testsToRun) {
-            // a focused test must support the current platform in order to run
-            if ([testClass supportsCurrentPlatform] && [testClass isFocused]) {
-                _runningWithFocus = YES;
-                break;
-            }
-        }
+        [_testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"supportsCurrentPlatform == YES"]];
+
+        // ...and, of those, only that are focused (if any are focused)
+        _runningWithFocus = ([_testsToRun indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+            return [obj isFocused];
+        }] != NSNotFound);
         if (_runningWithFocus) {
-            [_testsToRun filterUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
-                return [evaluatedObject isFocused];
-            }]];
+            [_testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"isFocused == YES"]];
+        }
+
+        // ensure we'll execute startup test first if (still) present
+        NSUInteger startupTestIndex = [_testsToRun indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+            return [obj isStartUpTest];
+        }];
+        if (startupTestIndex != NSNotFound) {
+            [_testsToRun exchangeObjectAtIndex:startupTestIndex withObjectAtIndex:0];
         }
 
         if (![_testsToRun count]) {
@@ -117,26 +122,7 @@ static SLTestController *__sharedController = nil;
 
         [self _beginTesting];
 
-        // ensure we'll execute startup test first if present
-        // note: if this is a focused run, the startup test will only run if it is focused
-        __block NSUInteger startupTestIndex = NSNotFound;
-        [_testsToRun enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            if ([obj isStartUpTest]) {
-                startupTestIndex = idx;
-                *stop = YES;
-            }
-        }];
-        if (startupTestIndex != NSNotFound) {
-            id startupTestClass = [_testsToRun objectAtIndex:startupTestIndex];
-            [_testsToRun removeObjectAtIndex:startupTestIndex];
-            [_testsToRun insertObject:startupTestClass atIndex:0];
-        }
-
         for (Class testClass in _testsToRun) {
-            if (![testClass supportsCurrentPlatform]) {
-                continue;
-            }
-
             SLTest *test = (SLTest *)[[testClass alloc] initWithTestController:self];
             
             NSString *testName = NSStringFromClass(testClass);
