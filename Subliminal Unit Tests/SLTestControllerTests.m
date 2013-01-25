@@ -36,21 +36,14 @@
 
 #pragma mark - Test execution
 
-// Tests should execute if specified, even if they don't have test cases,
-// so that the user will see and add some cases.
-- (void)testTestWithoutTestCasesIsStillRun {
+- (void)testTestWithoutTestCasesIsNotRun {  // because then no test case supports the current platform
     Class testWithoutTestCasesClass = [TestWithNoTestCases class];
 
     id testMock = [OCMockObject partialMockForClass:testWithoutTestCasesClass];
-    [[testMock expect] run:[OCMArg anyPointer]];
-
-    [[_loggerMock expect] logTestFinish:NSStringFromClass(testWithoutTestCasesClass)
-                   withNumCasesExecuted:0
-                         numCasesFailed:0];
+    [[testMock reject] run:[OCMArg anyPointer]];
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithoutTestCasesClass], nil);
-    STAssertNoThrow([testMock verify], @"Test with no test cases was not run as expected.");
-    STAssertNoThrow([_loggerMock verify], @"Test with no test cases was not logged as expected.");
+    STAssertNoThrow([testMock verify], @"Test was run despite not having any test cases.");
 }
 
 #pragma mark -Platform support

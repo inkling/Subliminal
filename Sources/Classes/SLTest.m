@@ -77,10 +77,18 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
 + (BOOL)supportsCurrentPlatform {
     NSString *testName = NSStringFromClass(self);
 
+    BOOL testSupportsCurrentDevice = YES;
     UIUserInterfaceIdiom userInterfaceIdiom = [[UIDevice currentDevice] userInterfaceIdiom];
-    if ([testName hasSuffix:@"_iPad"]) return (userInterfaceIdiom == UIUserInterfaceIdiomPad);
-    if ([testName hasSuffix:@"_iPhone"]) return (userInterfaceIdiom == UIUserInterfaceIdiomPhone);
-    return YES;
+    if ([testName hasSuffix:@"_iPad"]) {
+        testSupportsCurrentDevice = (userInterfaceIdiom == UIUserInterfaceIdiomPad);
+    } else if ([testName hasSuffix:@"_iPhone"]) {
+        testSupportsCurrentDevice = (userInterfaceIdiom == UIUserInterfaceIdiomPhone);
+    }
+    
+    BOOL oneTestCaseSupportsCurrentPlatform = ([[self testCaseNames] indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+        return [self testCaseWithSelectorSupportsCurrentPlatform:NSSelectorFromString(obj)];
+    }] != NSNotFound);
+    return (testSupportsCurrentDevice && oneTestCaseSupportsCurrentPlatform);
 }
 
 - (id)initWithTestController:(SLTestController *)testController {
