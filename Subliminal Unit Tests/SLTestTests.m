@@ -40,6 +40,7 @@
 - (void)testAllTestsReturnsExpected {
     NSSet *allTests = [SLTest allTests];
     NSSet *expectedTests = [NSSet setWithObjects:
+        [SLTest class],
         [TestWithSomeTestCases class],
         [TestWithNoTestCases class],
         [TestNotSupportingCurrentPlatform class],

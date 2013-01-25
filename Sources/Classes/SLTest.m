@@ -44,8 +44,7 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
             // Class methods are defined on the metaclass
             if (class_respondsToSelector(metaClass, @selector(isSubclassOfClass:)) &&
                 [klass isSubclassOfClass:[SLTest class]]) {
-                // Add all SLTests except SLTest itself
-                if (klass != [SLTest class]) [tests addObject:klass];
+                [tests addObject:klass];
             }
         }
         
