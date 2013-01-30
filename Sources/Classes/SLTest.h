@@ -56,11 +56,13 @@ extern NSString *const SLTestExceptionLineNumberKey;
 + (BOOL)isStartUpTest;
 
 /**
- Returns YES if this test can be run given the current device, screen, etc.
- Subclasses of SLTest should override if they need to do any run time checks
- to determine whether or not their test cases can run.  Typical checks might include
- checking the user interface idiom (phone or pad) of the current device, or
- checking the scale of the main screen.
+ Returns YES if this test has at least one test case which can be run
+ given the current device, screen, etc.
+ 
+ Subclasses of SLTest should override this method if some run-time condition 
+ should determine whether or not all test cases should run. 
+ Typical checks might include checking the user interface idiom (phone or pad) 
+ of the current device, or checking the scale of the main screen.
 
  As a convenience, test writers may specify the device type(s) on which a
  test can run by suffixing tests' names in the following fashion:
@@ -73,7 +75,9 @@ extern NSString *const SLTestExceptionLineNumberKey;
      * A test whose name has neither the "_iPhone" nor the "_iPad"
      suffix will be executed on all devices regardless of the user interface idiom.
 
- An override of this method should incorporate `super`'s response, which checks the selector's suffix.
+ The default implementation of this method checks that the class is suffixed 
+ appropriately and that there is at least one test case for which
+ testCaseWithSelectorSupportsCurrentPlatform: returns YES.
 
  If this method returns NO, none of this test's cases will run.
 
@@ -103,8 +107,9 @@ extern NSString *const SLTestExceptionLineNumberKey;
 
 /**
  Returns YES if this test case can be run given the current device, screen, etc.
+
  Subclasses of SLTest should override if they need to do any run time checks
- to determine whether or not their test cases can run.  Typical checks might include
+ to determine whether or not specific test cases can run.  Typical checks might include
  checking the user interface idiom (phone or pad) of the current device, or
  checking the scale of the main screen.
 
@@ -119,7 +124,8 @@ extern NSString *const SLTestExceptionLineNumberKey;
      * A test case whose name has neither the "_iPhone" nor the "_iPad"
      suffix will be executed on all devices regardless of the user interface idiom.
 
- An override of this method should incorporate `super`'s response, which checks the selector's suffix.
+ The default implementation of this method checks that the selector is suffixed 
+ appropriately.
  
  @warning If the test does not support the current platform, test cases
  will not be run regardless of what this method returns.

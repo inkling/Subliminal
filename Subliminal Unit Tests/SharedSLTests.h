@@ -38,12 +38,21 @@
 @end
 
 @interface TestWhichSupportsAllPlatforms : SLTest
+
+- (void)testFoo;
+
 @end
 
 @interface TestWhichSupportsOnlyiPad_iPad : SLTest
+
+- (void)testFoo;
+
 @end
 
 @interface TestWhichSupportsOnlyiPhone_iPhone : SLTest
+
+- (void)testFoo;
+
 @end
 
 
@@ -58,10 +67,16 @@
 
 
 @interface StartupTest : SLTest
+
+- (void)testFoo;
+
 @end
 
 
 @interface TestThatIsNotFocused : SLTest
+
+- (void)testFoo;
+
 @end
 
 

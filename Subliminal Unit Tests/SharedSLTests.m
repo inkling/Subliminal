@@ -35,12 +35,21 @@
 
 @implementation TestWhichSupportsAllPlatforms
 // no need to override +supportsCurrentPlatform
+
+- (void)testFoo {}
+
 @end
 
 @implementation TestWhichSupportsOnlyiPad_iPad
+
+- (void)testFoo {}
+
 @end
 
 @implementation TestWhichSupportsOnlyiPhone_iPhone
+
+- (void)testFoo {}
+
 @end
 
 
@@ -66,10 +75,15 @@
     return YES;
 }
 
+- (void)testFoo {}
+
 @end
 
 
 @implementation TestThatIsNotFocused
+
+- (void)testFoo {}
+
 @end
 
 
