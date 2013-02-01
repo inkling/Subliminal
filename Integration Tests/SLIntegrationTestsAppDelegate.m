@@ -7,15 +7,31 @@
 //
 
 #import "SLIntegrationTestsAppDelegate.h"
+#import "SLTestsViewController.h"
+
+#import <Subliminal/Subliminal.h>
+#import "SLTestController+Internal.h"
 
 @implementation SLIntegrationTestsAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
+
+    // Filter the tests for the SLTestController
+    // so that the SLTestsViewController only displays appropriate tests
+    NSArray *testsToRun = [SLTestController testsToRun:[SLTest allTests] withFocus:NULL];
+    NSSet *tests = [NSSet setWithArray:testsToRun];
+    SLTestsViewController *testsViewController = [[SLTestsViewController alloc] initWithTests:testsToRun];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:testsViewController];
+    self.window.rootViewController = navController;
+
     [self.window makeKeyAndVisible];
+
+    [SLLogger setSharedLogger:[[SLUIALogger alloc] init]];
+    [[SLTestController sharedTestController] runTests:tests withCompletionBlock:nil];
+
     return YES;
 }
 
