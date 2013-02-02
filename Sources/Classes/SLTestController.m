@@ -22,7 +22,7 @@ static const NSTimeInterval kDefaultTimeout = 5.0;
 static void SLUncaughtExceptionHandler(NSException *exception)
 {
     NSString *exceptionMessage = [NSString stringWithFormat:@"Exception occurred: **%@** for reason: %@", [exception name], [exception reason]];
-    [[SLLogger sharedLogger] logError:exceptionMessage];
+    NSLog(@"%@", exceptionMessage);
 
     if (appsUncaughtExceptionHandler) {
         appsUncaughtExceptionHandler(exception);
