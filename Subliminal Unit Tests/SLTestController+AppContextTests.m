@@ -115,21 +115,25 @@
 }
 
 - (void)testThrowsOnRegistrationForActionNotHandledByTarget {
+    NSLog(@"*** The assertion failure seen in the test output immediately below is an expected part of the tests.");
     STAssertThrows([_controller registerTarget:_targetMock forAction:_cmd],
                    @"Should have raised an exception because the target does not respond to the action.");
 }
 
 - (void)testThrowsOnRegistrationForActionThatTakesMoreThanOneArgument {
+    NSLog(@"*** The assertion failure seen in the test output immediately below is an expected part of the tests.");
     STAssertThrows([_controller registerTarget:_targetMock forAction:@selector(invalidActionTakingMoreThanOneArgument:two:)],
                    @"Should have raised an exception because the action takes more than one argument.");
 }
 
 - (void)testThrowsOnRegistrationForActionTakingAnArgumentNotOfTypeId {
+    NSLog(@"*** The assertion failure seen in the test output immediately below is an expected part of the tests.");
     STAssertThrows([_controller registerTarget:_targetMock forAction:@selector(invalidActionTakingAnArgumentNotOfTypeId:)],
                    @"Should have raised an exception because the action takes an argument not of type id.");
 }
 
 - (void)testThrowsOnRegistrationForActionThatReturnsNeitherVoidNorIdType {
+    NSLog(@"*** The assertion failure seen in the test output immediately below is an expected part of the tests.");
     STAssertThrows([_controller registerTarget:_targetMock forAction:@selector(invalidActionReturningNeitherVoidNorIdType)],
                    @"Should have raised an exception because the action returns neither void nor id type.");
 }
