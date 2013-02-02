@@ -115,8 +115,9 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         return;
     }
     
-    NSArray *uiAccessibilityElementFirstAccessorChain = [self waitForAccessibilityChainFavoringSubviews:NO];
-    NSArray *viewFirstAccessorChain = [self waitForAccessibilityChainFavoringSubviews:YES];
+    NSDictionary *accessibilityChains = [self waitForAccessibilityChains];
+    NSArray *uiAccessibilityElementFirstAccessorChain = accessibilityChains[SLMockViewAccessibilityChainKey];
+    NSArray *viewFirstAccessorChain = accessibilityChains[SLUIViewAccessibilityChainKey];
     
     if ([uiAccessibilityElementFirstAccessorChain count] == 0) {
         @throw [NSException exceptionWithName:SLElementInvalidException reason:[NSString stringWithFormat:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]] userInfo:nil];
@@ -199,19 +200,19 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 
-- (NSArray *)waitForAccessibilityChainFavoringSubviews:(BOOL)favoringSubviews {
-    __block NSArray *accessibilityChain = nil;
+- (NSDictionary *)waitForAccessibilityChains {
+    __block NSDictionary *accessibilityChains = nil;
     NSDate *startDate = [NSDate date];
     while ([[NSDate date] timeIntervalSinceDate:startDate] < [[self class] defaultTimeout]) {
         dispatch_sync(dispatch_get_main_queue(), ^{
-            accessibilityChain = [[[UIApplication sharedApplication] keyWindow] slAccessibilityChainToElement:self favoringUISubviews:favoringSubviews];
+            accessibilityChains = [[[UIApplication sharedApplication] keyWindow] slAccessibilityChainsToElement:self];
         });
-        if ([accessibilityChain count] > 0) {
+        if ([accessibilityChains[SLUIViewAccessibilityChainKey] count] > 0) {
             break;
         }
         [NSThread sleepForTimeInterval:kDefaultRetryDelay];
     }
-    return accessibilityChain;
+    return accessibilityChains;
 }
 
 
@@ -230,7 +231,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (BOOL)isValid {
-    return ([[self waitForAccessibilityChainFavoringSubviews:NO] count] > 0);
+    return ([[self waitForAccessibilityChains][SLMockViewAccessibilityChainKey] count] > 0);
 }
 
 - (BOOL)isVisible {

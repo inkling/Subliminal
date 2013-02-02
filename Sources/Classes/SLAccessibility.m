@@ -12,6 +12,8 @@
 #import "SLElement.h"
 #import "NSString+SLJavaScript.h"
 
+NSString * const SLMockViewAccessibilityChainKey = @"SLMockViewAccessibilityChainKey";
+NSString * const SLUIViewAccessibilityChainKey = @"SLUIViewAccessibilityChainKey";
 
 @implementation NSObject (SLAccessibility)
 
@@ -26,6 +28,114 @@
     return self.accessibilityLabel;
 }
 
+
+// If an object fulfills these requirements it will appear in the accessibility hierarchy,
+// regardless of any other factors.
+- (BOOL)shouldAppearInAccessibilityHierarchy {
+    NSObject *parent = [self accessibilityParent];
+    if ([parent isAccessibilityElement]) {
+        return NO;
+    }
+    
+    NSString *accessibilityIdentifier;
+    if ([self respondsToSelector:@selector(accessibilityIdentifier)]) {
+        accessibilityIdentifier = [self performSelector:@selector(accessibilityIdentifier)];
+    }
+    BOOL isAccessibilityElement = [self isAccessibilityElement];
+    
+    // In the standard case, an element will appear in the accessibility hierarchy if it returns YES
+    // to isAccessibilityElement or has an accessibility identifier.
+    if (isAccessibilityElement || [accessibilityIdentifier length] > 0) {
+        return YES;
+    }
+
+    if ([self accessibilityTraitsForcePresenceInAccessibilityHierarchy]) {
+        return YES;
+    }
+    
+    return NO;
+}
+
+
+// This method defines the conditions a UIView must meet in order to appear directly
+// in the accessibility hierarchy
+- (BOOL)shouldAppearInUIViewAccessibilityHierarchy {
+    BOOL shouldAppear = [self shouldAppearInAccessibilityHierarchy];
+    if (shouldAppear) {
+        return YES;
+    }
+    
+    if ([self classForcesPresenceInAccessibilityHierarchy]) {
+        return YES;
+    }
+    
+    return NO;
+}
+
+
+// This method defines the conditions a UIView must meet in order for an object mocking
+// it to appear directly in the accessibility hierarchy
+- (BOOL)elementMockingSelfShouldAppearInAccessibilityHierarchy {
+    BOOL shouldAppear = [self shouldAppearInAccessibilityHierarchy];
+    if (shouldAppear) {
+        return YES;
+    }
+    
+    if ([self classForcesPresenceOfMockingViewsInAccessibilityHierarchy]) {
+        return YES;
+    }
+    
+    return NO;
+}
+
+
+// Elements matching these accessibility traits have been shown to exist in
+// UIAutomation's accessibility hierarchy by trial and error.
+- (BOOL)accessibilityTraitsForcePresenceInAccessibilityHierarchy {
+    UIAccessibilityTraits traits = self.accessibilityTraits;
+    return ((traits & UIAccessibilityTraitButton) ||
+            (traits & UIAccessibilityTraitLink) ||
+            (traits & UIAccessibilityTraitImage) ||
+            (traits & UIAccessibilityTraitKeyboardKey) ||
+            (traits & UIAccessibilityTraitStaticText));
+}
+
+
+// This method determines whether or not the object is descendent from any class within
+// a set of classes that will always appear in the accessibility hierarchy, regardless of
+// their accessibility identification.
+- (BOOL)classForcesPresenceInAccessibilityHierarchy {
+    // UIWebBrowserView is a private api class that appears to be a special case, they will
+    // always exist in the accessibility hierarchy. We identify them by their superviews and
+    // by the non UIAccessibilityElement objects they vend from elementAtAccessibilityIndex:
+    // to avoid accessing private api's.
+    BOOL isWebBrowserView = NO;
+    if([[[self accessibilityParent] accessibilityParent] isKindOfClass:[UIWebView class]]) {
+        for (int i = 0; i < [self accessibilityElementCount]; i++) {
+            id accessibilityObject = [self accessibilityElementAtIndex:i];
+            if (![accessibilityObject isKindOfClass:[UIAccessibilityElement class]]) {
+                isWebBrowserView = YES;
+                break;
+            }
+        }
+    }
+    
+    // _UIPopoverView is another private api special case. It will always exist in the accessibility
+    // hierarchy, and is identified by its parent's label to avoid accessing private apis.
+    NSObject *parent = [self accessibilityParent];
+    BOOL isPopover = [[parent accessibilityLabel] isEqualToString:@"dismiss popup"];
+    return (isWebBrowserView || isPopover);
+}
+
+
+// This method determines whether or not the object is descendent from any class within
+// a set of classes whose mock objects will always appear in the accessibility hierarchy
+// regardless of their accessibility identification
+- (BOOL)classForcesPresenceOfMockingViewsInAccessibilityHierarchy {
+    return NO;
+}
+
+             
 - (NSArray *)slChildAccessibilityElementsFavoringUISubviews:(BOOL)favoringUISubviews {
     NSMutableArray *children = [NSMutableArray array];
     NSInteger count = [self accessibilityElementCount];
@@ -36,6 +146,22 @@
     }
     return children;
 }
+
+
+// This method is meant to provide an inverse to slChildAccessibilityElementsFavoringUISubviews:
+// not as an inverse of UIAutomation's accessibility hierarchy. Objects returned from this method
+// come with no guarantee regarding their accessibility identification or existence in the
+// accessibility hierarchy.
+- (NSObject *)accessibilityParent {
+    if ([self isKindOfClass:[UIView class]]) {
+        return [(UIView *)self superview];
+    } else if ([self isKindOfClass:[UIAccessibilityElement class]]) {
+        return [(UIAccessibilityElement *)self accessibilityContainer];
+    } else {
+        return nil;
+    }
+}
+
 
 - (NSArray *)fullSLAccessibilityChainToElement:(SLElement *)element favoringUISubviews:(BOOL)favoringUISubviews {
     if ([element matchesObject:self]) {
@@ -54,51 +180,99 @@
 }
 
 
-- (NSArray *)slAccessibilityChainToElement:(SLElement *)element favoringUISubviews:(BOOL)favoringUISubviews {
-    NSArray *fullAccessibilityChain = [self fullSLAccessibilityChainToElement:element favoringUISubviews:favoringUISubviews];
-    [self addAccessibilityNamesIfNecessaryToElementsInFullAccessibilityChain:fullAccessibilityChain];
-    return [self sanitizeAccessibilityChainToMatchAccessibilityHierarchy:fullAccessibilityChain];
+- (NSDictionary *)slAccessibilityChainsToElement:(SLElement *)element {
+    NSArray *uiViewAccessibilityChain = [self fullSLAccessibilityChainToElement:element favoringUISubviews:YES];
+    
+    NSArray *mockViewAccessibilityChain = [self fullSLAccessibilityChainToElement:element favoringUISubviews:NO];
+    mockViewAccessibilityChain = [self sanitizeMockViewAccessibilityChain:mockViewAccessibilityChain usingUIViewAccessibilityChain:uiViewAccessibilityChain];
+
+    uiViewAccessibilityChain = [self sanitizeUIViewAccessibilityChain:uiViewAccessibilityChain];
+    
+    if (!mockViewAccessibilityChain || !uiViewAccessibilityChain) {
+        return nil;
+    } else {
+        return @{SLMockViewAccessibilityChainKey:mockViewAccessibilityChain, SLUIViewAccessibilityChainKey:uiViewAccessibilityChain};
+    }
 }
 
 
-- (NSArray *)sanitizeAccessibilityChainToMatchAccessibilityHierarchy:(NSArray *)accessibilityChain {
-    NSMutableArray *trimmedArray = [[NSMutableArray alloc] init];
+- (NSArray *)sanitizeUIViewAccessibilityChain:(NSArray *)accessibilityChain {
+    NSMutableArray *trimmedAccessibilityChain = [[NSMutableArray alloc] init];
     [accessibilityChain enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        NSString *accessibilityName = [[obj slAccessibilityName] slStringByEscapingForJavaScriptLiteral];
-        BOOL isAccessibilityElement = [obj isAccessibilityElement];
-        BOOL isWebBrowserView = (idx >= 2 && [accessibilityChain[idx-2] isKindOfClass:[UIWebView class]]);
-        if ([accessibilityName length] > 0 || isAccessibilityElement || isWebBrowserView) {
-            [trimmedArray addObject:obj];
+        // We will need the UIView accessibility chain to contain any views that will
+        // be directly in the accessibility hierarchy, as well as any elements that are
+        // mocked by elements that will be directly in the accessibility hierarchy
+        if ([obj shouldAppearInUIViewAccessibilityHierarchy] || [obj elementMockingSelfShouldAppearInAccessibilityHierarchy]) {
+            [trimmedAccessibilityChain addObject:obj];
         }
     }];
-    return trimmedArray;
+    return trimmedAccessibilityChain;
 }
 
 
-- (void)addAccessibilityNamesIfNecessaryToElementsInFullAccessibilityChain:(NSArray *)chain {
-    [chain enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        NSAssert([obj isKindOfClass:[NSObject class]], @"All elements should be NSObjects");
-        NSObject *element = (NSObject *)obj;
+- (NSArray *)sanitizeMockViewAccessibilityChain:(NSArray *)mockAccessibilityChain usingUIViewAccessibilityChain:(NSArray *)viewAccessibilityChain {
+    NSMutableArray *sanitizedArray = [[NSMutableArray alloc] init];
+    
+    // Iterate through the elements of the mockAccessibilityChain. Each view in the chain will
+    // be included in the accessibility hierarchy if it returns YES from shouldAppearInUIViewAccessibilityHierarchy.
+    // Each UIAccessibilityElement that mocks a view will be included in the accessibility hierachy if the view
+    // that it mocks returns YES from elementMockingSelfShouldAppearInAccessibilityHierarchy. Each UIAccessibility
+    // element that does not mock a view will be included in the accessibility hierarchy if it returns YES from
+    // shouldAppearInAccessibilityHierarchy.
+    
+    __block int viewAccessibilityChainIndex = 0;
+    [mockAccessibilityChain enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        id objectFromMockChain = obj;
+        id currentViewChainObject =  ([viewAccessibilityChain count] > viewAccessibilityChainIndex ? [viewAccessibilityChain objectAtIndex:viewAccessibilityChainIndex] : nil);
         
-        // UIWebViews contain a UIWebViewScrollView, which contains a UIWebBrowserView. Both of these classes will be
-        // added to UIAutomation's accessibility hierarchy regardless of their lack of accessibility label, value, and name.
-        // As a subclass of UIScrollView UIWebScrollView is added to our generated UIAPrefix because of its SLAccessibility
-        // category. We do not want to create a category for UIWebBrowserView however, because it is a private class. Instead,
-        // here we rely on what we know of UIWebView's internal structure to pull it from its location as the second object
-        // below UIWebView in the accessorChain, and modify it to ensure it occurs in the UIAPrefix we generate.
-        if ([element isKindOfClass:[UIWebView class]] && [chain count] > idx + 2) {
-            UIView *webBrowserView = [chain objectAtIndex:idx + 2];
-            if ([[webBrowserView slAccessibilityName] length] == 0) {
-                [webBrowserView setAccessibilityIdentifierWithStandardReplacement];
+        // For each objectFromMockChain, if it mocks a view, that view will be in viewAccessibilityChain. Elements from the mockAccessibilityChain that do not mock views will
+        // exist at the end of the mockAccessibilityChain, and will also exist at the end of the viewAccessibilityChain.
+        if (![objectFromMockChain isKindOfClass:[UIView class]]) {
+            while (![self element:objectFromMockChain isMockingViewChainObject:currentViewChainObject] && currentViewChainObject) {
+                viewAccessibilityChainIndex++;
+                currentViewChainObject = ([viewAccessibilityChain count] > viewAccessibilityChainIndex ? [viewAccessibilityChain objectAtIndex:viewAccessibilityChainIndex] : nil);
             }
         }
-        
-        // Every element in accessorChain that returns true to isAccessibilityElement should have an accessibility value or name. This ensures Subliminal
-        // will be able to construct an accessor chain that identifies each element that UIAutomation will place in the accessibility chain.
-        if (element.isAccessibilityElement && !element.slAccessibilityName && [element.accessibilityValue length] == 0) {
-            [self setAccessibilityIdentifierWithStandardReplacement];
+
+        if ([objectFromMockChain isKindOfClass:[UIView class]]) {
+            viewAccessibilityChainIndex++;
+            if ([objectFromMockChain shouldAppearInUIViewAccessibilityHierarchy]) {
+                [sanitizedArray addObject:obj];
+            }
+            
+        } else if ([self element:objectFromMockChain isMockingViewChainObject:currentViewChainObject]) {
+            viewAccessibilityChainIndex++;
+            if ([currentViewChainObject elementMockingSelfShouldAppearInAccessibilityHierarchy]) {
+                [sanitizedArray addObject:objectFromMockChain];
+            }
+
+        // If the currentViewChainObject is nil or a UIAccessibilityElement, then objectFromMockChain does not mock a view
+        } else if ((![currentViewChainObject isKindOfClass:[UIView class]] && [objectFromMockChain shouldAppearInAccessibilityHierarchy])){
+            [sanitizedArray addObject:objectFromMockChain];
         }
     }];
+    return sanitizedArray;
+}
+
+
+// Determines whether or not the potentialMockElement is mocking the viewChainObject
+- (BOOL)element:(id)potentialMockElement isMockingViewChainObject:(id)viewChainObject {
+    if (![viewChainObject isKindOfClass:[UIView class]]) {
+        return NO;
+    }
+    UIView *view = (UIView *)viewChainObject;
+    NSString *previousIdentifier = view.accessibilityIdentifier;
+    [view setAccessibilityIdentifierWithStandardReplacement];
+    
+    BOOL isMocking = NO;
+    if ([potentialMockElement respondsToSelector:@selector(accessibilityIdentifier)]) {
+        NSString *mockIdentifier = [potentialMockElement performSelector:@selector(accessibilityIdentifier)];
+        isMocking = [mockIdentifier isEqualToString:view.accessibilityIdentifier];
+    }
+    
+    view.accessibilityIdentifier = previousIdentifier;
+    
+    return isMocking;
 }
 
 
@@ -242,25 +416,6 @@
     }
 }
 
-/*
-    Used by certain UIView subclasses that must be included in the accessibility chain in order for UIAutomation to
-    function correctly.  UIViews that must be included in the accessibility chain should call this method and return
-    the result from slAccessibilityName.
-
-    slAccessibilityNameWithStandardIdentifierReplacement assigns a unique string, based on the class and address of the
-    object to the object's accessibilityIdentifier if the object does not already have an accessibility identifier or
-    accessibility name.
-*/
-- (NSString *)slAccessibilityNameWithStandardIdentifierReplacement {
-    NSString *accessibilityName = [super slAccessibilityName];
-    if ([accessibilityName length] == 0) {
-        [self setAccessibilityIdentifierWithStandardReplacement];
-        return self.accessibilityIdentifier;
-    } else {
-        return accessibilityName;
-    }
-}
-
 - (NSArray *)slChildAccessibilityElementsFavoringUISubviews:(BOOL)favoringUISubViews {
     if (favoringUISubViews) {
         NSMutableArray *children = [[NSMutableArray alloc] init];
@@ -283,41 +438,41 @@
 
 
 #pragma mark -
-#pragma mark UIView subclasses that must have a non-nil slAccessibilityName
 
-@implementation UIScrollView (SLAccessibility)
-- (NSString *)slAccessibilityName {
-    return [self slAccessibilityNameWithStandardIdentifierReplacement];
+
+@implementation UITableViewCell (SLAccessibility)
+- (BOOL)classForcesPresenceOfMockingViewsInAccessibilityHierarchy {
+    return YES;
 }
 @end
-
-@implementation UIImageView (SLAccessibility)
-- (NSString *)slAccessibilityName {
-    return [self slAccessibilityNameWithStandardIdentifierReplacement];
+    
+@implementation UIScrollView (SLAccessibility)
+- (BOOL)classForcesPresenceInAccessibilityHierarchy {
+    return YES;
 }
 @end
 
 @implementation UIToolbar (SLAccessibility)
-- (NSString *)slAccessibilityName {
-    return [self slAccessibilityNameWithStandardIdentifierReplacement];
+- (BOOL)classForcesPresenceInAccessibilityHierarchy {
+    return YES;
 }
 @end
 
 @implementation UINavigationBar (SLAccessibility)
-- (NSString *)slAccessibilityName {
-    return [self slAccessibilityNameWithStandardIdentifierReplacement];
+- (BOOL)classForcesPresenceInAccessibilityHierarchy {
+    return YES;
 }
 @end
 
 @implementation UIControl (SLAccessibility)
-- (NSString *)slAccessibilityName {
-    return [self slAccessibilityNameWithStandardIdentifierReplacement];
+- (BOOL)classForcesPresenceInAccessibilityHierarchy {
+    return YES;
 }
 @end
 
 @implementation UIAlertView (SLAccessibility)
-- (NSString *)slAccessibilityName {
-    return [self slAccessibilityNameWithStandardIdentifierReplacement];
+- (BOOL)classForcesPresenceInAccessibilityHierarchy {
+    return YES;
 }
 @end
 
