@@ -75,8 +75,9 @@ extern NSString *const SLAppActionTargetDoesNotExistException;
  @param action The message to be performed.
  @return The result of the action, if any; otherwise nil.
  
- @throw SLAppActionTargetDoesNotExistException If no target is registered for action, 
- or if the target has fallen out of scope.
+ @throw SLAppActionTargetDoesNotExistException If, after several seconds' wait 
+ (to avoid race conditions between the tests and the app) no target has been 
+ registered for action, or a registered target has fallen out of scope.
  */
 - (id)sendAction:(SEL)action;
 
@@ -95,8 +96,9 @@ extern NSString *const SLAppActionTargetDoesNotExistException;
  @param object An object which is the sole argument of the action message.
  @return The result of the action, if any; otherwise nil.
 
- @throw SLAppActionTargetDoesNotExistException If no target is registered for action,
- or if the target has fallen out of scope.
+ @throw SLAppActionTargetDoesNotExistException If, after several seconds' wait
+ (to avoid race conditions between the tests and the app) no target has been
+ registered for action, or a registered target has fallen out of scope.
  */
 - (id)sendAction:(SEL)action withObject:(id<NSCopying>)object;
 
