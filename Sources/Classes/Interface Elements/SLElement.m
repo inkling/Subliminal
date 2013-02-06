@@ -378,6 +378,16 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 @end
 
 
+
+@implementation SLSearchBar
+
+- (BOOL)matchesObject:(NSObject *)object {
+    return ([super matchesObject:object] && ([object accessibilityTraits] & UIAccessibilityTraitSearchField));
+}
+
+@end
+
+
 @implementation SLWebTextField
 
 // Experimentation has shown that SLTextFields within a webview must be tapped, and

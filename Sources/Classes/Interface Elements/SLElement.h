@@ -89,6 +89,9 @@ extern NSString *const SLElementVisibleException;
 @property (nonatomic, strong) NSString *text;
 @end
 
+@interface SLSearchBar : SLTextField
+@end
+
 // SLWebTextField should be used to match any textfields displayed in UIWebviews.
 // It is necessary to match these objects with SLWebTextField instead of SLTextField
 // in order to be able to set the element's value successfully.
