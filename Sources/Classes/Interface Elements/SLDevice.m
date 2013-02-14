@@ -22,8 +22,8 @@
     return device;
 }
 
-- (void)lockForDuration:(NSTimeInterval)duration {
-    [[SLTerminal sharedTerminal] evalWithFormat:@"UIATarget.localTarget().lockForDuration(%g)", duration];
+- (void)deactivateAppForDuration:(NSTimeInterval)duration {
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIATarget.localTarget().deactivateAppForDuration(%g)", duration];
 }
 
 @end

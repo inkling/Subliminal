@@ -13,6 +13,6 @@
 
 + (SLDevice *)currentDevice;
 
-- (void)lockForDuration:(NSTimeInterval)duration;
+- (void)deactivateAppForDuration:(NSTimeInterval)duration;
 
 @end
