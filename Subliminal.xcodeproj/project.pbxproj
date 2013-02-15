@@ -50,6 +50,7 @@
 		F0AC80AA16BB299500C5D5C0 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0AC80A916BB299500C5D5C0 /* Default-568h@2x.png */; };
 		F0AC80B316BB29B700C5D5C0 /* libSubliminal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8B16011515000B05D0 /* libSubliminal.a */; };
 		F0AC80BD16BB50FF00C5D5C0 /* SLTestsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AC80BC16BB50FF00C5D5C0 /* SLTestsViewController.m */; };
+		F0AC80C416BC355D00C5D5C0 /* SLTerminalTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AC80C316BC355D00C5D5C0 /* SLTerminalTest.m */; };
 		F0D240541683F7130031B67C /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0D240531683F7130031B67C /* SenTestingKit.framework */; };
 		F0D240551683F7130031B67C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695E0C16013D77000B05D0 /* UIKit.framework */; };
 		F0D240561683F7130031B67C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8E16011515000B05D0 /* Foundation.framework */; };
@@ -160,6 +161,7 @@
 		F0AC80A916BB299500C5D5C0 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		F0AC80BB16BB50FF00C5D5C0 /* SLTestsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTestsViewController.h; sourceTree = "<group>"; };
 		F0AC80BC16BB50FF00C5D5C0 /* SLTestsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestsViewController.m; sourceTree = "<group>"; };
+		F0AC80C316BC355D00C5D5C0 /* SLTerminalTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTerminalTest.m; sourceTree = "<group>"; };
 		F0D240521683F7130031B67C /* Subliminal Unit Tests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Subliminal Unit Tests.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0D240531683F7130031B67C /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		F0D240591683F7130031B67C /* Subliminal Unit Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Subliminal Unit Tests-Info.plist"; sourceTree = "<group>"; };
@@ -222,6 +224,14 @@
 				F08B87F11685A00400C4FE44 /* SharedSLTests.m */,
 			);
 			name = Utilities;
+			sourceTree = "<group>";
+		};
+		F013798E16D0843B009BAF22 /* SLTerminal Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F0AC80C316BC355D00C5D5C0 /* SLTerminalTest.m */,
+			);
+			name = "SLTerminal Tests";
 			sourceTree = "<group>";
 		};
 		F0695D8016011515000B05D0 = {
@@ -356,6 +366,14 @@
 				F0AC80A916BB299500C5D5C0 /* Default-568h@2x.png */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F0AC80BE16BB542400C5D5C0 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F013798E16D0843B009BAF22 /* SLTerminal Tests */,
+			);
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		F0D240571683F7130031B67C /* Subliminal Unit Tests */ = {
@@ -592,6 +610,7 @@
 				F0AC80A016BB299500C5D5C0 /* main.m in Sources */,
 				F0AC80A416BB299500C5D5C0 /* SLIntegrationTestsAppDelegate.m in Sources */,
 				F0AC80BD16BB50FF00C5D5C0 /* SLTestsViewController.m in Sources */,
+				F0AC80C416BC355D00C5D5C0 /* SLTerminalTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
