@@ -49,6 +49,7 @@
         [TestWhichSupportsOnlyiPad_iPad class],
         [TestWhichSupportsOnlyiPhone_iPhone class],
         [TestWithPlatformSpecificTestCases class],
+        [ConcreteTestWhichSupportsOnlyiPad class],
         [StartupTest class],
         [TestThatIsNotFocused class],
         [TestWithAFocusedTestCase class],
@@ -56,6 +57,7 @@
         [TestWithAFocusedPlatformSpecificTestCase class],
         [Focus_TestThatIsFocused class],
         [Focus_TestThatIsFocusedButDoesntSupportCurrentPlatform class],
+        [ConcreteTestThatIsFocused class],
         nil
     ];
     STAssertEqualObjects(allTests, expectedTests, @"Unexpected tests returned.");
@@ -685,6 +687,23 @@
 }
 
 #pragma mark -Focusing
+
+- (void)testFocusAnnotationsAffectSubclasses {
+    Class concreteTestClass = [ConcreteTestThatIsFocused class];
+    STAssertFalse([[NSStringFromClass(concreteTestClass) lowercaseString] hasPrefix:SLTestFocusPrefix],
+                  @"For the purposes of this test, this SLTest class should not have a focus annotation.");
+
+    Class abstractTestClass = [Focus_AbstractTestThatIsFocused class];
+    STAssertTrue([[NSStringFromClass(abstractTestClass) lowercaseString] hasPrefix:SLTestFocusPrefix],
+                 @"For the purposes of this test, this SLTest class should have a focus annotation.");
+
+    STAssertTrue([concreteTestClass isSubclassOfClass:abstractTestClass],
+                 @"For the purposes of this test, this SLTest class should be a subclass of a class with a focus annotation.");
+
+    STAssertTrue([concreteTestClass isFocused],
+                 @"This SLTest class should be focused despite not having a focus annotation,\
+                 because its superclass has a focus annotation.");
+}
 
 - (void)testWhenSomeTestCasesAreFocusedOnlyThoseTestCasesRun {
     Class testWithAFocusedTestCaseClass = [TestWithAFocusedTestCase class];

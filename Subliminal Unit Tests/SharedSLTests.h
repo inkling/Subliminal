@@ -66,6 +66,16 @@
 @end
 
 
+@interface AbstractTestWhichSupportsOnly_iPad : SLTest
+@end
+
+@interface ConcreteTestWhichSupportsOnlyiPad : AbstractTestWhichSupportsOnly_iPad
+
+- (void)testFoo;
+
+@end
+
+
 @interface StartupTest : SLTest
 
 - (void)testFoo;
@@ -116,5 +126,15 @@
 @interface Focus_TestThatIsFocusedButDoesntSupportCurrentPlatform : SLTest
 
 - (void)testOne;
+
+@end
+
+
+@interface Focus_AbstractTestThatIsFocused : SLTest
+@end
+
+@interface ConcreteTestThatIsFocused : Focus_AbstractTestThatIsFocused
+
+- (void)testFoo;
 
 @end

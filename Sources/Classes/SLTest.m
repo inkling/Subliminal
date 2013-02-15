@@ -79,16 +79,23 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
 }
 
 + (BOOL)supportsCurrentPlatform {
-    NSString *testName = NSStringFromClass(self);
-
+    // examine whether this test or any of its superclasses are annotated
+    // the "nearest" annotation determines support ("nearest" like with method overrides)
     BOOL testSupportsCurrentDevice = YES;
     UIUserInterfaceIdiom userInterfaceIdiom = [[UIDevice currentDevice] userInterfaceIdiom];
-    if ([testName hasSuffix:@"_iPad"]) {
-        testSupportsCurrentDevice = (userInterfaceIdiom == UIUserInterfaceIdiomPad);
-    } else if ([testName hasSuffix:@"_iPhone"]) {
-        testSupportsCurrentDevice = (userInterfaceIdiom == UIUserInterfaceIdiomPhone);
+    Class testClass = self;
+    while (testClass != [SLTest class]) {
+        NSString *testName = NSStringFromClass(testClass);
+        if ([testName hasSuffix:@"_iPad"]) {
+            testSupportsCurrentDevice = (userInterfaceIdiom == UIUserInterfaceIdiomPad);
+            break;
+        } else if ([testName hasSuffix:@"_iPhone"]) {
+            testSupportsCurrentDevice = (userInterfaceIdiom == UIUserInterfaceIdiomPhone);
+            break;
+        }
+        testClass = [testClass superclass];
     }
-    
+
     return testSupportsCurrentDevice;
 }
 
@@ -161,8 +168,17 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     if (!focusedTestCases) {
         NSArray *testCases = [self testCases];
         
-        // if our class name is prefixed, all test cases are focused
-        if ([[NSStringFromClass(self) lowercaseString] hasPrefix:SLTestFocusPrefix]) {
+        // if our class' name (or the name of any superclass) is prefixed, all test cases are focused
+        BOOL classIsFocused = NO;
+        Class testClass = self;
+        while (testClass != [SLTest class]) {
+            if ([[NSStringFromClass(testClass) lowercaseString] hasPrefix:SLTestFocusPrefix]) {
+                classIsFocused = YES;
+                break;
+            }
+            testClass = [testClass superclass];
+        }
+        if (classIsFocused) {
             focusedTestCases = [testCases copy];
 
         // otherwise, only prefixed test cases are focused

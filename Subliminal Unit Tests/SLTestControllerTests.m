@@ -135,6 +135,26 @@
     STAssertNoThrow([testWhichSupportsOnlyiPadClassMock verify], @"Tests did not run as expected on the iPad.");
 }
 
+- (void)testPlatformSupportAnnotationsAffectSubclasses {
+    // we mock the current device to dynamically configure the current user interface idiom
+    id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
+    __block UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
+    [[[deviceMock stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&currentUserInterfaceIdiom];
+    }] userInterfaceIdiom];
+
+    STAssertFalse([AbstractTestWhichSupportsOnly_iPad supportsCurrentPlatform],
+                 @"The base class should not support the iPhone.");
+    STAssertFalse([ConcreteTestWhichSupportsOnlyiPad supportsCurrentPlatform],
+                  @"The subclass should not support the iPhone.");
+
+    currentUserInterfaceIdiom = UIUserInterfaceIdiomPad;
+    STAssertTrue([AbstractTestWhichSupportsOnly_iPad supportsCurrentPlatform],
+                  @"The base class should support the iPad.");
+    STAssertTrue([ConcreteTestWhichSupportsOnlyiPad supportsCurrentPlatform],
+                  @"The subclass should support the iPad.");
+}
+
 #pragma mark -Startup test
 
 - (void)testStartupTestIsRunFirst {

@@ -69,6 +69,16 @@
 @end
 
 
+@implementation AbstractTestWhichSupportsOnly_iPad
+@end
+
+@implementation ConcreteTestWhichSupportsOnlyiPad
+
+- (void)testFoo {}
+
+@end
+
+
 @implementation StartupTest
 
 + (BOOL)isStartUpTest {
@@ -127,5 +137,15 @@
 }
 
 - (void)testOne {}
+
+@end
+
+
+@implementation Focus_AbstractTestThatIsFocused
+@end
+
+@implementation ConcreteTestThatIsFocused
+
+- (void)testFoo {}
 
 @end
