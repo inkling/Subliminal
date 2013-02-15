@@ -160,40 +160,40 @@
                     @"Test case supporting current platform was run despite its test not supporting the current platform.");
 }
 
-- (void)testiPhoneSpecificTestCasesOnlyRunOnTheiPhone {
+- (void)testTestCasesWithiPhoneSuffixOnlySupportiPhone {
     Class testWithPlatformSpecificTestCasesTest = [TestWithPlatformSpecificTestCases class];
-    NSSet *testSet = [NSSet setWithObject:testWithPlatformSpecificTestCasesTest];
 
     // we mock the current device to dynamically configure the current user interface idiom
     id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
-    UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
-    [[[deviceMock stub] andReturnValue:OCMOCK_VALUE(currentUserInterfaceIdiom)] userInterfaceIdiom];
+    __block UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
+    [[[deviceMock stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&currentUserInterfaceIdiom];
+    }] userInterfaceIdiom];
 
-    id testMock = [OCMockObject partialMockForClass:testWithPlatformSpecificTestCasesTest];
-    [[testMock expect] testFoo];
-    [[testMock expect] testBaz_iPhone];
-    [[testMock reject] testBar_iPad];
+    STAssertTrue([testWithPlatformSpecificTestCasesTest testCaseWithSelectorSupportsCurrentPlatform:@selector(testBaz_iPhone)],
+                 @"Test case with '_iPhone' suffix should support the iPhone.");
 
-    SLRunTestsAndWaitUntilFinished(testSet, nil);
-    STAssertNoThrow([testMock verify], @"Test cases did not run as expected on the iPhone.");
+    currentUserInterfaceIdiom = UIUserInterfaceIdiomPad;
+    STAssertFalse([testWithPlatformSpecificTestCasesTest testCaseWithSelectorSupportsCurrentPlatform:@selector(testBaz_iPhone)],
+                  @"Test case with '_iPhone' suffix should not support the iPad.");
 }
 
-- (void)testiPadSpecificTestCasesOnlyRunOnTheiPad {
+- (void)testTestCasesWithiPadSuffixOnlySupportiPad {
     Class testWithPlatformSpecificTestCasesTest = [TestWithPlatformSpecificTestCases class];
-    NSSet *testSet = [NSSet setWithObject:testWithPlatformSpecificTestCasesTest];
 
     // we mock the current device to dynamically configure the current user interface idiom
     id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
-    UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPad;
-    [[[deviceMock stub] andReturnValue:OCMOCK_VALUE(currentUserInterfaceIdiom)] userInterfaceIdiom];
+    __block UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPad;
+    [[[deviceMock stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&currentUserInterfaceIdiom];
+    }] userInterfaceIdiom];
 
-    id testMock = [OCMockObject partialMockForClass:testWithPlatformSpecificTestCasesTest];
-    [[testMock expect] testFoo];
-    [[testMock expect] testBar_iPad];
-    [[testMock reject] testBaz_iPhone];
+    STAssertTrue([testWithPlatformSpecificTestCasesTest testCaseWithSelectorSupportsCurrentPlatform:@selector(testBar_iPad)],
+                 @"Test case with '_iPad' suffix should support the iPad.");
 
-    SLRunTestsAndWaitUntilFinished(testSet, nil);
-    STAssertNoThrow([testMock verify], @"Test cases did not run as expected on the iPad.");
+    currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
+    STAssertFalse([testWithPlatformSpecificTestCasesTest testCaseWithSelectorSupportsCurrentPlatform:@selector(testBar_iPad)],
+                  @"Test case with '_iPhone' suffix should not support the iPhone.");
 }
 
 // this test verifies the complete order in which testing normally executes,
