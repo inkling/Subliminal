@@ -19,7 +19,7 @@
 @end
 
 
-@implementation TestWithNoTestCases
+@implementation AbstractTest
 @end
 
 

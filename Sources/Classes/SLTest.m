@@ -62,6 +62,10 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     return (classIsTestClass ? klass : nil);
 }
 
++ (BOOL)isAbstract {
+    return ![[self testCases] count];
+}
+
 + (BOOL)isFocused {    
     for (NSString *testCaseName in [self focusedTestCases]) {
         SEL testCaseSelector = NSSelectorFromString(testCaseName);
@@ -85,10 +89,7 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
         testSupportsCurrentDevice = (userInterfaceIdiom == UIUserInterfaceIdiomPhone);
     }
     
-    BOOL oneTestCaseSupportsCurrentPlatform = ([[self testCases] indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-        return [self testCaseWithSelectorSupportsCurrentPlatform:NSSelectorFromString(obj)];
-    }] != NSNotFound);
-    return (testSupportsCurrentDevice && oneTestCaseSupportsCurrentPlatform);
+    return testSupportsCurrentDevice;
 }
 
 - (id)initWithTestController:(SLTestController *)testController {

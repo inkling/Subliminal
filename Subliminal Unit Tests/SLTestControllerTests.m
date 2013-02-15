@@ -36,13 +36,17 @@
 
 #pragma mark - Test execution
 
-- (void)testTestWithoutTestCasesIsNotRun {  // because then no test case supports the current platform
-    Class testWithoutTestCasesClass = [TestWithNoTestCases class];
+#pragma mark -Abstract tests
 
-    id testMock = [OCMockObject partialMockForClass:testWithoutTestCasesClass];
+- (void)testAbstractTestsAreNotRun {
+    Class abstractTestClass = [AbstractTest class];
+    STAssertTrue([abstractTestClass isAbstract],
+                 @"For the purposes of this test, this SLTest must be abstract.");
+
+    id testMock = [OCMockObject partialMockForClass:abstractTestClass];
     [[testMock reject] run:[OCMArg anyPointer]];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithoutTestCasesClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:abstractTestClass], nil);
     STAssertNoThrow([testMock verify], @"Test was run despite not having any test cases.");
 }
 
@@ -137,7 +141,6 @@
     Class startupTestClass = [StartupTest class];
     NSSet *tests = [NSSet setWithObjects:
         [TestWithSomeTestCases class],
-        [TestWithNoTestCases class],
         [TestWithPlatformSpecificTestCases class],
         startupTestClass,
         nil

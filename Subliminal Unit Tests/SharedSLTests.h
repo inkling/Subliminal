@@ -27,7 +27,7 @@
 @end
 
 
-@interface TestWithNoTestCases : SLTest
+@interface AbstractTest : SLTest
 @end
 
 

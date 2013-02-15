@@ -43,7 +43,7 @@
     NSSet *expectedTests = [NSSet setWithObjects:
         [SLTest class],
         [TestWithSomeTestCases class],
-        [TestWithNoTestCases class],
+        [AbstractTest class],
         [TestNotSupportingCurrentPlatform class],
         [TestWhichSupportsAllPlatforms class],
         [TestWhichSupportsOnlyiPad_iPad class],
@@ -68,6 +68,20 @@
 
     Class undefinedTestClass = [SLTest testNamed:NSStringFromSelector(_cmd)];
     STAssertNil(undefinedTestClass, @"+testNamed: should not have found a test.");
+}
+
+#pragma mark - Abstract tests
+
+- (void)testATestIsAbstractIfItDefinesNoTestCases {
+    Class abstractTestClass = [AbstractTest class];
+    STAssertFalse([[abstractTestClass testCases] count],
+                  @"For the purposes of this test, this SLTest class must not define any test cases.");
+    STAssertTrue([abstractTestClass isAbstract], @"This SLTest class should be abstract.");
+
+    Class concreteTestClass = [TestWithSomeTestCases class];
+    STAssertTrue([[concreteTestClass testCases] count],
+                 @"For the purposes of this test, this SLTest class must define test cases.");
+    STAssertFalse([concreteTestClass isAbstract], @"This SLTest class should not be abstract.");
 }
 
 #pragma mark - Test case execution
