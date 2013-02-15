@@ -7,6 +7,7 @@
 //
 
 #import "SLTest.h"
+#import "SLTest+Internal.h"
 
 #import "SLLogger.h"
 #import "SLElement.h"
@@ -62,7 +63,7 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
 }
 
 + (BOOL)isFocused {    
-    for (NSString *testCaseName in [self focusedTestCaseNames]) {
+    for (NSString *testCaseName in [self focusedTestCases]) {
         SEL testCaseSelector = NSSelectorFromString(testCaseName);
         if ([self testCaseWithSelectorSupportsCurrentPlatform:testCaseSelector]) return YES;
     }
@@ -84,7 +85,7 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
         testSupportsCurrentDevice = (userInterfaceIdiom == UIUserInterfaceIdiomPhone);
     }
     
-    BOOL oneTestCaseSupportsCurrentPlatform = ([[self testCaseNames] indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+    BOOL oneTestCaseSupportsCurrentPlatform = ([[self testCases] indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
         return [self testCaseWithSelectorSupportsCurrentPlatform:NSSelectorFromString(obj)];
     }] != NSNotFound);
     return (testSupportsCurrentDevice && oneTestCaseSupportsCurrentPlatform);
@@ -114,13 +115,10 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     // nothing to do here
 }
 
-static NSString *const kFocusPrefix = @"focus_";
-
-// Returns the names of all methods beginning with "test", taking no arguments, returning void
-+ (NSArray *)testCaseNames {
-    static const void *const kTestCaseNamesKey = &kTestCaseNamesKey;
-    NSArray *testCaseNames = objc_getAssociatedObject(self, kTestCaseNamesKey);
-    if (!testCaseNames) {
++ (NSArray *)testCases {
+    static const void *const kTestCasesKey = &kTestCasesKey;
+    NSArray *testCases = objc_getAssociatedObject(self, kTestCasesKey);
+    if (!testCases) {
         static NSString *const kTestCaseNamePrefix = @"test";
 
         unsigned int methodCount;
@@ -134,7 +132,7 @@ static NSString *const kFocusPrefix = @"focus_";
 
             // ignore the focus prefix for the purposes of aggregating all the test cases
             NSString *unfocusedTestCaseName = selectorString;
-            NSRange rangeOfFocusPrefix = [selectorString rangeOfString:kFocusPrefix];
+            NSRange rangeOfFocusPrefix = [selectorString rangeOfString:SLTestFocusPrefix];
             if (rangeOfFocusPrefix.location != NSNotFound) {
                 unfocusedTestCaseName = [selectorString substringFromIndex:NSMaxRange(rangeOfFocusPrefix)];
             }
@@ -150,35 +148,39 @@ static NSString *const kFocusPrefix = @"focus_";
         }
         if (methods) free(methods);
 
-        objc_setAssociatedObject(self, kTestCaseNamesKey, selectorStrings, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-        testCaseNames = selectorStrings;
+        objc_setAssociatedObject(self, kTestCasesKey, selectorStrings, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        testCases = selectorStrings;
     }
-    return testCaseNames;
+    return testCases;
 }
 
-+ (NSArray *)focusedTestCaseNames {
-    static const void *const kFocusedTestCaseNamesKey = &kFocusedTestCaseNamesKey;
-    NSArray *focusedTestCaseNames = objc_getAssociatedObject(self, kFocusedTestCaseNamesKey);
-    if (!focusedTestCaseNames) {
-        NSArray *testCaseNames = [self testCaseNames];
++ (NSArray *)focusedTestCases {
+    static const void *const kFocusedTestCasesKey = &kFocusedTestCasesKey;
+    NSArray *focusedTestCases = objc_getAssociatedObject(self, kFocusedTestCasesKey);
+    if (!focusedTestCases) {
+        NSArray *testCases = [self testCases];
         
         // if our class name is prefixed, all test cases are focused
-        if ([[NSStringFromClass(self) lowercaseString] hasPrefix:kFocusPrefix]) {
-            focusedTestCaseNames = [testCaseNames copy];
+        if ([[NSStringFromClass(self) lowercaseString] hasPrefix:SLTestFocusPrefix]) {
+            focusedTestCases = [testCases copy];
 
         // otherwise, only prefixed test cases are focused
         } else {
-            NSMutableArray *filteredTestCaseNames = [NSMutableArray arrayWithCapacity:[testCaseNames count]];
-            for (NSString *name in testCaseNames) {
-                if ([[name lowercaseString] hasPrefix:kFocusPrefix]) {
-                    [filteredTestCaseNames addObject:name];
+            NSMutableArray *filteredTestCases = [NSMutableArray arrayWithCapacity:[testCases count]];
+            for (NSString *name in testCases) {
+                if ([[name lowercaseString] hasPrefix:SLTestFocusPrefix]) {
+                    [filteredTestCases addObject:name];
                 }
             }
-            focusedTestCaseNames = [filteredTestCaseNames copy];
+            focusedTestCases = [filteredTestCases copy];
         }
-        objc_setAssociatedObject(self, kFocusedTestCaseNamesKey, focusedTestCaseNames, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        objc_setAssociatedObject(self, kFocusedTestCasesKey, focusedTestCases, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
-    return focusedTestCaseNames;
+    return focusedTestCases;
+}
+
++ (NSArray *)testCasesToRun {
+    return (([[self class] isFocused]) ? [[self class] focusedTestCases] : [[self class] testCases]);
 }
 
 + (BOOL)testCaseWithSelectorSupportsCurrentPlatform:(SEL)testCaseSelector {
@@ -205,9 +207,7 @@ static NSString *const kFocusPrefix = @"focus_";
     // if setUpTest failed, skip the test cases
     if (!setUpOrTearDownException) {
         NSString *test = NSStringFromClass([self class]);
-        NSArray *testCasesToRun = ([[self class] isFocused]) ?
-                                    [[self class] focusedTestCaseNames] : [[self class] testCaseNames];
-        for (NSString *testCaseName in testCasesToRun) {
+        for (NSString *testCaseName in [[self class] testCasesToRun]) {
             // only run test case if it's appropriate for the current platform
             SEL testCaseSelector = NSSelectorFromString(testCaseName);
             if (![[self class] testCaseWithSelectorSupportsCurrentPlatform:testCaseSelector]) {

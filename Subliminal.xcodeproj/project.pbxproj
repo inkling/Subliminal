@@ -37,6 +37,7 @@
 		F08B87F21685A00400C4FE44 /* SharedSLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F08B87F11685A00400C4FE44 /* SharedSLTests.m */; };
 		F08B87F51685A07B00C4FE44 /* SLTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F08B87F41685A07B00C4FE44 /* SLTestTests.m */; };
 		F0A040131698ECDE009D8157 /* SLTestController+AppContextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A040121698ECDE009D8157 /* SLTestController+AppContextTests.m */; };
+		F0CEDA3116BF5FA5005FE8B9 /* SLTest+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = F0CEDA2F16BF5FA5005FE8B9 /* SLTest+Internal.h */; };
 		F0D240541683F7130031B67C /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0D240531683F7130031B67C /* SenTestingKit.framework */; };
 		F0D240551683F7130031B67C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695E0C16013D77000B05D0 /* UIKit.framework */; };
 		F0D240561683F7130031B67C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8E16011515000B05D0 /* Foundation.framework */; };
@@ -125,6 +126,7 @@
 		F08B87F11685A00400C4FE44 /* SharedSLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharedSLTests.m; sourceTree = "<group>"; };
 		F08B87F41685A07B00C4FE44 /* SLTestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestTests.m; sourceTree = "<group>"; };
 		F0A040121698ECDE009D8157 /* SLTestController+AppContextTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SLTestController+AppContextTests.m"; sourceTree = "<group>"; };
+		F0CEDA2F16BF5FA5005FE8B9 /* SLTest+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLTest+Internal.h"; sourceTree = "<group>"; };
 		F0D240521683F7130031B67C /* Subliminal Unit Tests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Subliminal Unit Tests.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0D240531683F7130031B67C /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		F0D240591683F7130031B67C /* Subliminal Unit Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Subliminal Unit Tests-Info.plist"; sourceTree = "<group>"; };
@@ -228,6 +230,7 @@
 				F0271AFD162E0B950098F5F2 /* SLTestController+AppContext.h */,
 				F0271AFE162E0B950098F5F2 /* SLTestController+AppContext.m */,
 				F0695DE0160138DF000B05D0 /* SLTest.h */,
+				F0CEDA2F16BF5FA5005FE8B9 /* SLTest+Internal.h */,
 				F0695DE1160138DF000B05D0 /* SLTest.m */,
 				F0695DDE160138DF000B05D0 /* SLTerminal.h */,
 				F0695DDF160138DF000B05D0 /* SLTerminal.m */,
@@ -323,6 +326,7 @@
 				CAC3883F1643503C00F995F9 /* SLAccessibility.h in Headers */,
 				CA75E78216697A1200D57E92 /* SLDevice.h in Headers */,
 				0F21788816AE08F700C46068 /* SLMultiLogger.h in Headers */,
+				F0CEDA3116BF5FA5005FE8B9 /* SLTest+Internal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

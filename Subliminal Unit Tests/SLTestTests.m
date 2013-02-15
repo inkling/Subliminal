@@ -12,6 +12,7 @@
 
 #import "TestUtilities.h"
 #import "SharedSLTests.h"
+#import "SLTest+Internal.h"
 
 @interface SLTestTests : SenTestCase
 
@@ -80,11 +81,22 @@
     [[testMock expect] testOne];
     [[testMock expect] testTwo];
     [[testMock expect] testThree];
+    
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeTestCasesTest], nil);
+    STAssertNoThrow([testMock verify], @"Test cases did not run as expected.");
+}
+
+- (void)testInvalidTestCasesAreNotRun {
+    Class testWithSomeTestCasesTest = [TestWithSomeTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testWithSomeTestCasesTest];
+
+    [[testMock expect] run:[OCMArg anyPointer]];
+
     [[testMock reject] testThatIsntATestBecauseItsReturnTypeIsNonVoid];
     [[testMock reject] testThatIsntATestBecauseItTakesAnArgument:OCMOCK_ANY];
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeTestCasesTest], nil);
-    STAssertNoThrow([testMock verify], @"Test cases did not run as expected.");
+    STAssertNoThrow([testMock verify], @"Invalid test cases were unexpectedly run.");
 }
 
 - (void)testOnlyTestCasesSupportingCurrentPlatformAreRun {
@@ -953,6 +965,14 @@
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
     STAssertNoThrow([testMock verify], @"Test case was not executed as expected.");
+}
+
+#pragma mark - Internal
+
+- (void)testTestCasesAreDiscoveredAsExpected {
+    NSArray *testCases = @[ @"testOne", @"testTwo", @"testThree" ];
+    STAssertEqualObjects(testCases, [TestWithSomeTestCases testCases],
+                         @"Test cases were not discovered as expected.");
 }
 
 @end
