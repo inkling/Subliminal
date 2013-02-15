@@ -688,6 +688,25 @@
 
 #pragma mark -Focusing
 
+- (void)testTestsAreNotFocusedByDefault {
+    STAssertFalse([SLTest isFocused], @"Tests should not be focused by default.");
+}
+
+- (void)testATestIsFocusedWhenItsNameIsPrefixed {   // a "focus annotation"
+    Class testThatIsFocusedClass = [Focus_TestThatIsFocused class];
+    STAssertTrue([[NSStringFromClass(testThatIsFocusedClass) lowercaseString] hasPrefix:SLTestFocusPrefix],
+                  @"For the purposes of this test, this SLTest class' name must be prefixed.");
+    STAssertTrue([testThatIsFocusedClass isFocused], @"This SLTest class should be focused.");
+}
+
+- (void)testATestIsFocusedWhenATestCaseIsFocused {  // that is, when that test case's name is prefixed
+    Class testThatIsFocusedClass = [TestWithAFocusedTestCase class];
+    SEL focusedTestCaseSelector = @selector(focus_testTwo);
+    STAssertTrue([testThatIsFocusedClass instancesRespondToSelector:focusedTestCaseSelector],
+                 @"For the purposes of this test, this SLTest class must have a focused test case.");
+    STAssertTrue([testThatIsFocusedClass isFocused], @"This SLTest class should be focused.");
+}
+
 - (void)testFocusAnnotationsAffectSubclasses {
     Class concreteTestClass = [ConcreteTestThatIsFocused class];
     STAssertFalse([[NSStringFromClass(concreteTestClass) lowercaseString] hasPrefix:SLTestFocusPrefix],
@@ -732,7 +751,7 @@
 
 - (void)testWhenATestItselfIsFocusedAllOfItsTestCasesRun {
     Class testThatIsFocusedClass = [Focus_TestThatIsFocused class];
-    STAssertTrue([[NSStringFromClass(testThatIsFocusedClass) lowercaseString] hasPrefix:@"focus_"],
+    STAssertTrue([[NSStringFromClass(testThatIsFocusedClass) lowercaseString] hasPrefix:SLTestFocusPrefix],
                  @"For the purposes of this test, this SLTest itself must be focused.");
 
     // note that testTwo itself is focused, while testOne, itself, is not
