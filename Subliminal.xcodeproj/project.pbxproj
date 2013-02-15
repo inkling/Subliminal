@@ -51,6 +51,9 @@
 		F0AC80B316BB29B700C5D5C0 /* libSubliminal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8B16011515000B05D0 /* libSubliminal.a */; };
 		F0AC80BD16BB50FF00C5D5C0 /* SLTestsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AC80BC16BB50FF00C5D5C0 /* SLTestsViewController.m */; };
 		F0AC80C416BC355D00C5D5C0 /* SLTerminalTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AC80C316BC355D00C5D5C0 /* SLTerminalTest.m */; };
+		F0AC80C116BB559F00C5D5C0 /* SLIntegrationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AC80C016BB559F00C5D5C0 /* SLIntegrationTest.m */; };
+		F0AC80C816BC367E00C5D5C0 /* SLTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AC80C716BC367E00C5D5C0 /* SLTestViewController.m */; };
+		F0AC80E616BCF91800C5D5C0 /* SLTestCaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AC80E516BCF91800C5D5C0 /* SLTestCaseViewController.m */; };
 		F0D240541683F7130031B67C /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0D240531683F7130031B67C /* SenTestingKit.framework */; };
 		F0D240551683F7130031B67C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695E0C16013D77000B05D0 /* UIKit.framework */; };
 		F0D240561683F7130031B67C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8E16011515000B05D0 /* Foundation.framework */; };
@@ -162,6 +165,12 @@
 		F0AC80BB16BB50FF00C5D5C0 /* SLTestsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTestsViewController.h; sourceTree = "<group>"; };
 		F0AC80BC16BB50FF00C5D5C0 /* SLTestsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestsViewController.m; sourceTree = "<group>"; };
 		F0AC80C316BC355D00C5D5C0 /* SLTerminalTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTerminalTest.m; sourceTree = "<group>"; };
+		F0AC80BF16BB559F00C5D5C0 /* SLIntegrationTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLIntegrationTest.h; sourceTree = "<group>"; };
+		F0AC80C016BB559F00C5D5C0 /* SLIntegrationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLIntegrationTest.m; sourceTree = "<group>"; };
+		F0AC80C616BC367E00C5D5C0 /* SLTestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTestViewController.h; sourceTree = "<group>"; };
+		F0AC80C716BC367E00C5D5C0 /* SLTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestViewController.m; sourceTree = "<group>"; };
+		F0AC80E416BCF91800C5D5C0 /* SLTestCaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTestCaseViewController.h; sourceTree = "<group>"; };
+		F0AC80E516BCF91800C5D5C0 /* SLTestCaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestCaseViewController.m; sourceTree = "<group>"; };
 		F0D240521683F7130031B67C /* Subliminal Unit Tests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Subliminal Unit Tests.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0D240531683F7130031B67C /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		F0D240591683F7130031B67C /* Subliminal Unit Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Subliminal Unit Tests-Info.plist"; sourceTree = "<group>"; };
@@ -350,6 +359,13 @@
 				F0AC80A316BB299500C5D5C0 /* SLIntegrationTestsAppDelegate.m */,
 				F0AC80BB16BB50FF00C5D5C0 /* SLTestsViewController.h */,
 				F0AC80BC16BB50FF00C5D5C0 /* SLTestsViewController.m */,
+				F0AC80C616BC367E00C5D5C0 /* SLTestViewController.h */,
+				F0AC80C716BC367E00C5D5C0 /* SLTestViewController.m */,
+				F0AC80E416BCF91800C5D5C0 /* SLTestCaseViewController.h */,
+				F0AC80E516BCF91800C5D5C0 /* SLTestCaseViewController.m */,
+				F0AC80BF16BB559F00C5D5C0 /* SLIntegrationTest.h */,
+				F0AC80C016BB559F00C5D5C0 /* SLIntegrationTest.m */,
+				F0AC80BE16BB542400C5D5C0 /* Tests */,
 			);
 			path = "Integration Tests";
 			sourceTree = "<group>";
@@ -611,6 +627,9 @@
 				F0AC80A416BB299500C5D5C0 /* SLIntegrationTestsAppDelegate.m in Sources */,
 				F0AC80BD16BB50FF00C5D5C0 /* SLTestsViewController.m in Sources */,
 				F0AC80C416BC355D00C5D5C0 /* SLTerminalTest.m in Sources */,
+				F0AC80C116BB559F00C5D5C0 /* SLIntegrationTest.m in Sources */,
+				F0AC80C816BC367E00C5D5C0 /* SLTestViewController.m in Sources */,
+				F0AC80E616BCF91800C5D5C0 /* SLTestCaseViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

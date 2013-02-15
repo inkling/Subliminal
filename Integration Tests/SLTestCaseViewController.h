@@ -1,0 +1,81 @@
+//
+//  SLTestCaseViewController.h
+//  Subliminal
+//
+//  Created by Jeffrey Wear on 2/1/13.
+//  Copyright (c) 2013 Inkling. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+/**
+ SLTestCaseViewController is an abstract base class whose concrete subclasses 
+ define the user interfaces exercised by [Subliminal's integration tests](SLIntegrationTest).
+ 
+ Each concrete SLTestCaseViewController subclass accompanies a subclass of 
+ SLIntegrationTest, as [specified by](+[SLIntegrationTest testCaseViewControllerClassName]) 
+ that test class. Before Subliminal executes each of that test's cases, 
+ an instance of the corresponding SLTestCaseViewController subclass 
+ will be initialized with that case and pushed onto the target's navigation stack.
+ 
+ For each case of the corresponding test, a SLTestCaseViewController subclass 
+ must either define a view [in a nib](+nibNameForTestCase:) or
+ [programmatically](+viewForTestCase:).
+ */
+@interface SLTestCaseViewController : UIViewController
+
+/**
+ The test case with which this object was initialized.
+ */
+@property (nonatomic, readonly) SEL testCase;
+
+/**
+ The name of the nib file to associate with a view controller 
+ initialized with the specified test case.
+ 
+ The nib should be located in the main bundle.
+
+ The value returned by this method will be used to initialize the view controller 
+ (i.e. using -[UIView initWithNibName:bundle:]). For a given test case, 
+ this method may return nil, so long as viewForTestCase: returns non-nil 
+ for that test case. The default implementation of this method returns nil.
+
+ @param testCase A case of the SLIntegrationTest corresponding to this class.
+ @return The name of the nib file to associate with a view controller initialized 
+ with the specified test case, or nil, if instances of this class should use 
+ programmatically-created views for the specified test case.
+ */
++ (NSString *)nibNameForTestCase:(SEL)testCase;
+
+/**
+ Creates the view that instances of this class, initialized with the specified 
+ test case, will manage.
+ 
+ For an instance initialized with a given test case, this method will be called, 
+ and the value returned assigned to the instance's [view](-[UIView view]) property, 
+ if and only if this class returns nil from +nibNameForTestCase: for that test case.
+ That is, if this class specifies that a nib should be used to present the user 
+ interface for a given test case, SLTestCaseViewController will use that nib 
+ and will not attempt to programmatically create the view. The default implementation 
+ of this method returns nil.
+ 
+ @param testCase A case of the SLIntegrationTest corresponding to this class.
+ @return The view for a view controller initialized with the specified test case, 
+ or nil, if instances of this class use a nib to present the user interface 
+ for that test case.
+ */
++ (UIView *)viewForTestCase:(SEL)testCase;
+
+/**
+ Returns a newly initialized view controller with the specified test case.
+ 
+ This is the designated initializer for this class. The default implementation 
+ calls +nibNameForTestCase: and uses the value returned to initialize the instance.
+
+ @param testCase A case of the SLIntegrationTest corresponding to this class, 
+ for which this view controller will be used to present an appropriate user interface.
+ @return A newly initialized SLTestCaseViewController object.
+ */
+- (instancetype)initWithTestCaseWithSelector:(SEL)testCase;
+
+@end
