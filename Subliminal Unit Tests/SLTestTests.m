@@ -151,7 +151,7 @@
     id testNotSupportingCurrentPlatformClassMock = [OCMockObject partialMockForClass:testNotSupportingCurrentPlatformClass];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-    // note: this causes the mock to expect the invocation of the test case selector, not performSelector: itself
+    // note: this causes the mock to reject the invocation of the test case selector, not performSelector: itself
     [[testNotSupportingCurrentPlatformClassMock reject] performSelector:supportedTestCaseSelector];
 #pragma clang diagnostic pop
 
