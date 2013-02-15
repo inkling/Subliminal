@@ -129,32 +129,36 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     if (!testCases) {
         static NSString *const kTestCaseNamePrefix = @"test";
 
-        unsigned int methodCount;
-        Method *methods = class_copyMethodList(self, &methodCount);
         NSMutableArray *selectorStrings = [NSMutableArray array];
-        for (unsigned int i = 0; i < methodCount; i++) {
-            Method method = methods[i];
-            SEL selector = method_getName(method);
-            char *methodReturnType = method_copyReturnType(method);
-            NSString *selectorString = NSStringFromSelector(selector);
+        Class testClass = self;
+        while (testClass != [SLTest class]) {
+            unsigned int methodCount;
+            Method *methods = class_copyMethodList(testClass, &methodCount);
+            for (unsigned int i = 0; i < methodCount; i++) {
+                Method method = methods[i];
+                SEL selector = method_getName(method);
+                char *methodReturnType = method_copyReturnType(method);
+                NSString *selectorString = NSStringFromSelector(selector);
 
-            // ignore the focus prefix for the purposes of aggregating all the test cases
-            NSString *unfocusedTestCaseName = selectorString;
-            NSRange rangeOfFocusPrefix = [selectorString rangeOfString:SLTestFocusPrefix];
-            if (rangeOfFocusPrefix.location != NSNotFound) {
-                unfocusedTestCaseName = [selectorString substringFromIndex:NSMaxRange(rangeOfFocusPrefix)];
-            }
+                // ignore the focus prefix for the purposes of aggregating all the test cases
+                NSString *unfocusedTestCaseName = selectorString;
+                NSRange rangeOfFocusPrefix = [selectorString rangeOfString:SLTestFocusPrefix];
+                if (rangeOfFocusPrefix.location != NSNotFound) {
+                    unfocusedTestCaseName = [selectorString substringFromIndex:NSMaxRange(rangeOfFocusPrefix)];
+                }
 
-            if ([unfocusedTestCaseName hasPrefix:kTestCaseNamePrefix] &&
-                methodReturnType && strlen(methodReturnType) > 0 && methodReturnType[0] == 'v' &&
-                ![selectorString hasSuffix:@":"]) {
-                // make sure to add the actual selector name including focus
-                [selectorStrings addObject:selectorString];
+                if ([unfocusedTestCaseName hasPrefix:kTestCaseNamePrefix] &&
+                    methodReturnType && strlen(methodReturnType) > 0 && methodReturnType[0] == 'v' &&
+                    ![selectorString hasSuffix:@":"]) {
+                    // make sure to add the actual selector name including focus
+                    [selectorStrings addObject:selectorString];
+                }
+                
+                if (methodReturnType) free(methodReturnType);
             }
-            
-            if (methodReturnType) free(methodReturnType);
+            if (methods) free(methods);
+            testClass = [testClass superclass];
         }
-        if (methods) free(methods);
 
         objc_setAssociatedObject(self, kTestCasesKey, selectorStrings, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         testCases = selectorStrings;
