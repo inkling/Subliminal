@@ -136,69 +136,76 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
 - (id)sendAction:(SEL)action {
     NSAssert(![NSThread isMainThread], @"-sendAction: must not be called from the main thread.");
 
-    id target = [self targetForAction:action];
-    if (!target) {
-        [NSException raise:SLAppActionTargetDoesNotExistException
-                    format:@"No target is currently registered for action %@. \
-                            (Either no target was ever registered, or a registered target has fallen out of scope.)",
-                            NSStringFromSelector(action)];
-    }
-
-    // perform the action on the main thread, for thread safety
     __block id returnValue;
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        NSMethodSignature *actionSignature = [target methodSignatureForSelector:action];
-        const char *actionReturnType = [actionSignature methodReturnType];
-        if (strcmp(actionReturnType, @encode(void)) != 0) {
-            // use objc_msgSend so that Clang won't complain about performSelector leaks
-            returnValue = ((id(*)(id, SEL))objc_msgSend)(target, action);
-        } else {
-            ((void(*)(id, SEL))objc_msgSend)(target, action);
-            returnValue = nil;
+    // An autoreleasepool is used here to explicitely ensure that the target is not retained beyond
+    // the message send
+    @autoreleasepool {
+        id target = [self targetForAction:action];
+        if (!target) {
+            [NSException raise:SLAppActionTargetDoesNotExistException
+                        format:@"No target is currently registered for action %@. \
+                                (Either no target was ever registered, or a registered target has fallen out of scope.)",
+                                NSStringFromSelector(action)];
         }
 
-        // return a copy, for thread safety
-        // note: if actions return an object, that object is required to conform to NSCopying (see header)
-        // no way for us to enforce that at compile-time, though
-        returnValue = [returnValue copyWithZone:NULL];
-    });
+        // perform the action on the main thread, for thread safety
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            NSMethodSignature *actionSignature = [target methodSignatureForSelector:action];
+            const char *actionReturnType = [actionSignature methodReturnType];
+            if (strcmp(actionReturnType, @encode(void)) != 0) {
+                // use objc_msgSend so that Clang won't complain about performSelector leaks
+                returnValue = ((id(*)(id, SEL))objc_msgSend)(target, action);
+            } else {
+                ((void(*)(id, SEL))objc_msgSend)(target, action);
+                returnValue = nil;
+            }
 
+            // return a copy, for thread safety
+            // note: if actions return an object, that object is required to conform to NSCopying (see header)
+            // no way for us to enforce that at compile-time, though
+            returnValue = [returnValue copyWithZone:NULL];
+        });
+    }
+    
     return returnValue;
 }
 
 - (id)sendAction:(SEL)action withObject:(id<NSCopying>)object {
     NSAssert(![NSThread isMainThread], @"-sendAction:withObject: must not be called from the main thread.");
 
-    id target = [self targetForAction:action];
-    if (!target) {
-        [NSException raise:SLAppActionTargetDoesNotExistException
-                    format:@"No target is currently registered for action %@. \
-                             (Either no target was ever registered, or a registered target has fallen out of scope.)",
-                             NSStringFromSelector(action)];
-    }
-
-    // pass a copy of the argument, for thread safety
-    id arg = [object copyWithZone:NULL];
-
-    // perform the action on the main thread, for thread safety
     __block id returnValue;
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        NSMethodSignature *actionSignature = [target methodSignatureForSelector:action];
-        const char *actionReturnType = [actionSignature methodReturnType];
-        if (strcmp(actionReturnType, @encode(void)) != 0) {
-            // use objc_msgSend so that Clang won't complain about performSelector leaks
-            returnValue = ((id(*)(id, SEL, id))objc_msgSend)(target, action, arg);
-        } else {
-            ((void(*)(id, SEL, id))objc_msgSend)(target, action, arg);
-            returnValue = nil;
+    // An autoreleasepool is used here to explicitely ensure that the target is not retained beyond
+    // the message send
+    @autoreleasepool {
+        id target = [self targetForAction:action];
+        if (!target) {
+            [NSException raise:SLAppActionTargetDoesNotExistException
+                        format:@"No target is currently registered for action %@. \
+                                 (Either no target was ever registered, or a registered target has fallen out of scope.)",
+                                 NSStringFromSelector(action)];
         }
 
-        // return a copy, for thread safety
-        // note: if actions return an object, that object is required to conform to NSCopying (see header)
-        // no way for us to enforce that at compile-time, though
-        returnValue = [returnValue copyWithZone:NULL];
-    });
+        // pass a copy of the argument, for thread safety
+        id arg = [object copyWithZone:NULL];
 
+        // perform the action on the main thread, for thread safety
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            NSMethodSignature *actionSignature = [target methodSignatureForSelector:action];
+            const char *actionReturnType = [actionSignature methodReturnType];
+            if (strcmp(actionReturnType, @encode(void)) != 0) {
+                // use objc_msgSend so that Clang won't complain about performSelector leaks
+                returnValue = ((id(*)(id, SEL, id))objc_msgSend)(target, action, arg);
+            } else {
+                ((void(*)(id, SEL, id))objc_msgSend)(target, action, arg);
+                returnValue = nil;
+            }
+
+            // return a copy, for thread safety
+            // note: if actions return an object, that object is required to conform to NSCopying (see header)
+            // no way for us to enforce that at compile-time, though
+            returnValue = [returnValue copyWithZone:NULL];
+        });
+    }
     return returnValue;
 }
 
