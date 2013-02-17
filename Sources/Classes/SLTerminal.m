@@ -23,6 +23,16 @@ static NSString *const SLTerminalPreferencesKeyException    = @"exception";
     NSUInteger _commandIndex;
 }
 
++ (void)initialize {
+    // initialize shared terminal, to prevent an SLTerminal
+    // from being manually initialized prior to +sharedTerminal being invoked,
+    // bypassing the assert at the top of -init
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-value"
+    [SLTerminal sharedTerminal];
+#pragma clang diagnostic pop
+}
+
 static SLTerminal *__sharedTerminal = nil;
 + (SLTerminal *)sharedTerminal {
     static dispatch_once_t onceToken;
