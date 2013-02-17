@@ -12,7 +12,13 @@
 #import <Subliminal/Subliminal.h>
 #import "SLTestController+Internal.h"
 
-@implementation SLIntegrationTestsAppDelegate
+@interface SLIntegrationTestsAppDelegate () <UIAlertViewDelegate>
+@end
+
+@implementation SLIntegrationTestsAppDelegate {
+    NSSet *_tests;
+    NSString *_terminalStartupResult;
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -22,17 +28,60 @@
     // Filter the tests for the SLTestController
     // so that the SLTestsViewController only displays appropriate tests
     NSArray *testsToRun = [SLTestController testsToRun:[SLTest allTests] withFocus:NULL];
-    NSSet *tests = [NSSet setWithArray:testsToRun];
+    _tests = [NSSet setWithArray:testsToRun];
     SLTestsViewController *testsViewController = [[SLTestsViewController alloc] initWithTests:testsToRun];
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:testsViewController];
     self.window.rootViewController = navController;
 
     [self.window makeKeyAndVisible];
 
-    [SLLogger setSharedLogger:[[SLUIALogger alloc] init]];
-    [[SLTestController sharedTestController] runTests:tests withCompletionBlock:nil];
+    // Verify that we can talk to the terminal
+    // (This is like "test 0", but can't be an actual SLTest
+    // because we can't rely upon the logging infrastructure if the terminal doesn't work)
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        _terminalStartupResult = [[SLTerminal sharedTerminal] eval:@"'Hello' + ' ' + 'world'"];
+    });
+    // If UIAutomation is unresponsive, the eval: call above will block indefinitely;
+    // verifying the startup result on the main thread lets us timeout.
+    // We can't block this method's return, so we verify the result after a delay.
+    [self performSelector:@selector(verifyTerminalConnectionAndRunTests) withObject:nil afterDelay:0.1];
 
     return YES;
+}
+
+- (void)verifyTerminalConnectionAndRunTests {
+    // Wait for UIAutomation to evaluate our command
+    NSTimeInterval startupTimeout = 2.0;
+    NSDate *startDate = [NSDate date];
+    while (![_terminalStartupResult isEqualToString:@"Hello world"]
+           && [[NSDate date] timeIntervalSinceDate:startDate] < startupTimeout) {
+        [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+    }
+
+    // If UIAutomation is unresponsive, show an alert and abort the application
+    if (![_terminalStartupResult isEqualToString:@"Hello world"]) {
+        NSTimeInterval abortTimeout = 5.0;
+        NSString *abortMessage = [NSString stringWithFormat:@"UIAutomation appears unresponsive. The application will abort in %g seconds.", abortTimeout];
+        [[[UIAlertView alloc] initWithTitle:@"Cannot Reach UIAutomation"
+                                    message:abortMessage
+                                   delegate:self
+                          cancelButtonTitle:@"Abort"
+                          otherButtonTitles:nil] show];
+        [NSTimer scheduledTimerWithTimeInterval:abortTimeout target:self selector:@selector(abort) userInfo:nil repeats:NO];
+    }
+
+    // Otherwise, run the tests
+    [SLLogger setSharedLogger:[[SLUIALogger alloc] init]];
+    [[SLTestController sharedTestController] runTests:_tests withCompletionBlock:nil];
+}
+
+// Called both by the UIAlertView callback below and the NSTimer above
+- (void)abort {
+    abort();
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    [self abort];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
