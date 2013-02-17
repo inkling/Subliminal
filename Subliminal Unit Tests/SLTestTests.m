@@ -86,33 +86,66 @@
     STAssertFalse([concreteTestClass isAbstract], @"This SLTest class should not be abstract.");
 }
 
-#pragma mark - Test case execution
+#pragma mark - Platform support
 
-#pragma mark -General
-
-- (void)testAllTestCasesRunByDefault {
-    Class testWithSomeTestCasesTest = [TestWithSomeTestCases class];
-
-    id testMock = [OCMockObject partialMockForClass:testWithSomeTestCasesTest];
-    [[testMock expect] testOne];
-    [[testMock expect] testTwo];
-    [[testMock expect] testThree];
-    
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeTestCasesTest], nil);
-    STAssertNoThrow([testMock verify], @"Test cases did not run as expected.");
+- (void)testTestsSupportCurrentPlatformByDefault {
+    STAssertTrue([SLTest supportsCurrentPlatform], @"Tests should support the current platform by default.");
 }
 
-- (void)testInvalidTestCasesAreNotRun {
-    Class testWithSomeTestCasesTest = [TestWithSomeTestCases class];
-    id testMock = [OCMockObject partialMockForClass:testWithSomeTestCasesTest];
+- (void)testTestsWithiPhoneSuffixOnlySupportiPhone {
+    Class testWhichSupportsOnlyiPhoneClass = [TestWhichSupportsOnlyiPhone_iPhone class];
 
-    [[testMock expect] run:[OCMArg anyPointer]];
+    // we mock the current device to dynamically configure the current user interface idiom
+    id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
+    __block UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
+    [[[deviceMock stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&currentUserInterfaceIdiom];
+    }] userInterfaceIdiom];
 
-    [[testMock reject] testThatIsntATestBecauseItsReturnTypeIsNonVoid];
-    [[testMock reject] testThatIsntATestBecauseItTakesAnArgument:OCMOCK_ANY];
+    STAssertTrue([testWhichSupportsOnlyiPhoneClass supportsCurrentPlatform],
+                 @"Test with '_iPhone' suffix should support the iPhone.");
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeTestCasesTest], nil);
-    STAssertNoThrow([testMock verify], @"Invalid test cases were unexpectedly run.");
+    currentUserInterfaceIdiom = UIUserInterfaceIdiomPad;
+    STAssertFalse([testWhichSupportsOnlyiPhoneClass supportsCurrentPlatform],
+                  @"Test with '_iPhone' suffix should not support the iPad.");
+}
+
+- (void)testTestsWithiPadSuffixOnlySupportiPad {
+    Class testWhichSupportsOnlyiPadClass = [TestWhichSupportsOnlyiPad_iPad class];
+
+    // we mock the current device to dynamically configure the current user interface idiom
+    id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
+    __block UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPad;
+    [[[deviceMock stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&currentUserInterfaceIdiom];
+    }] userInterfaceIdiom];
+
+    STAssertTrue([testWhichSupportsOnlyiPadClass supportsCurrentPlatform],
+                 @"Test with '_iPad' suffix should support the iPad.");
+
+    currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
+    STAssertFalse([testWhichSupportsOnlyiPadClass supportsCurrentPlatform],
+                  @"Test with '_iPad' suffix should not support the iPhone.");
+}
+
+- (void)testPlatformSupportAnnotationsAffectSubclasses {
+    // we mock the current device to dynamically configure the current user interface idiom
+    id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
+    __block UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
+    [[[deviceMock stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&currentUserInterfaceIdiom];
+    }] userInterfaceIdiom];
+
+    STAssertFalse([AbstractTestWhichSupportsOnly_iPad supportsCurrentPlatform],
+                  @"The base class should not support the iPhone.");
+    STAssertFalse([ConcreteTestWhichSupportsOnlyiPad supportsCurrentPlatform],
+                  @"The subclass should not support the iPhone.");
+
+    currentUserInterfaceIdiom = UIUserInterfaceIdiomPad;
+    STAssertTrue([AbstractTestWhichSupportsOnly_iPad supportsCurrentPlatform],
+                 @"The base class should support the iPad.");
+    STAssertTrue([ConcreteTestWhichSupportsOnlyiPad supportsCurrentPlatform],
+                 @"The subclass should support the iPad.");
 }
 
 - (void)testOnlyTestCasesSupportingCurrentPlatformAreRun {
@@ -123,7 +156,7 @@
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
     SEL supportedTestCaseSelector = @selector(testFoo);
     STAssertTrue([testWithPlatformSpecificTestCasesTest testCaseWithSelectorSupportsCurrentPlatform:supportedTestCaseSelector],
-                  @"For the purposes of this test, this test case must support the current platform.");
+                 @"For the purposes of this test, this test case must support the current platform.");
     // note: this causes the mock to expect the invocation of the test case selector, not performSelector: itself
     [[testMock expect] performSelector:supportedTestCaseSelector];
 
@@ -194,6 +227,35 @@
     currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
     STAssertFalse([testWithPlatformSpecificTestCasesTest testCaseWithSelectorSupportsCurrentPlatform:@selector(testBar_iPad)],
                   @"Test case with '_iPhone' suffix should not support the iPhone.");
+}
+
+#pragma mark - Test case execution
+
+#pragma mark -General
+
+- (void)testAllTestCasesRunByDefault {
+    Class testWithSomeTestCasesTest = [TestWithSomeTestCases class];
+
+    id testMock = [OCMockObject partialMockForClass:testWithSomeTestCasesTest];
+    [[testMock expect] testOne];
+    [[testMock expect] testTwo];
+    [[testMock expect] testThree];
+    
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeTestCasesTest], nil);
+    STAssertNoThrow([testMock verify], @"Test cases did not run as expected.");
+}
+
+- (void)testInvalidTestCasesAreNotRun {
+    Class testWithSomeTestCasesTest = [TestWithSomeTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testWithSomeTestCasesTest];
+
+    [[testMock expect] run:[OCMArg anyPointer]];
+
+    [[testMock reject] testThatIsntATestBecauseItsReturnTypeIsNonVoid];
+    [[testMock reject] testThatIsntATestBecauseItTakesAnArgument:OCMOCK_ANY];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeTestCasesTest], nil);
+    STAssertNoThrow([testMock verify], @"Invalid test cases were unexpectedly run.");
 }
 
 // this test verifies the complete order in which testing normally executes,
