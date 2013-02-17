@@ -229,6 +229,102 @@
                   @"Test case with '_iPhone' suffix should not support the iPhone.");
 }
 
+#pragma mark - Focusing
+
+- (void)testTestsAreNotFocusedByDefault {
+    STAssertFalse([SLTest isFocused], @"Tests should not be focused by default.");
+}
+
+- (void)testATestIsFocusedWhenItsNameIsPrefixed {   // a "focus annotation"
+    Class testThatIsFocusedClass = [Focus_TestThatIsFocused class];
+    STAssertTrue([[NSStringFromClass(testThatIsFocusedClass) lowercaseString] hasPrefix:SLTestFocusPrefix],
+                 @"For the purposes of this test, this SLTest class' name must be prefixed.");
+    STAssertTrue([testThatIsFocusedClass isFocused], @"This SLTest class should be focused.");
+}
+
+- (void)testATestIsFocusedWhenATestCaseIsFocused {  // that is, when that test case's name is prefixed
+    Class testThatIsFocusedClass = [TestWithAFocusedTestCase class];
+    SEL focusedTestCaseSelector = @selector(focus_testTwo);
+    STAssertTrue([testThatIsFocusedClass instancesRespondToSelector:focusedTestCaseSelector],
+                 @"For the purposes of this test, this SLTest class must have a focused test case.");
+    STAssertTrue([testThatIsFocusedClass isFocused], @"This SLTest class should be focused.");
+}
+
+- (void)testFocusAnnotationsAffectSubclasses {
+    Class concreteTestClass = [ConcreteTestThatIsFocused class];
+    STAssertFalse([[NSStringFromClass(concreteTestClass) lowercaseString] hasPrefix:SLTestFocusPrefix],
+                  @"For the purposes of this test, this SLTest class should not have a focus annotation.");
+
+    Class abstractTestClass = [Focus_AbstractTestThatIsFocused class];
+    STAssertTrue([[NSStringFromClass(abstractTestClass) lowercaseString] hasPrefix:SLTestFocusPrefix],
+                 @"For the purposes of this test, this SLTest class should have a focus annotation.");
+
+    STAssertTrue([concreteTestClass isSubclassOfClass:abstractTestClass],
+                 @"For the purposes of this test, this SLTest class should be a subclass of a class with a focus annotation.");
+
+    STAssertTrue([concreteTestClass isFocused],
+                 @"This SLTest class should be focused despite not having a focus annotation,\
+                 because its superclass has a focus annotation.");
+}
+
+- (void)testWhenSomeTestCasesAreFocusedOnlyThoseTestCasesRun {
+    Class testWithAFocusedTestCaseClass = [TestWithAFocusedTestCase class];
+
+    // expect only the focused test case to run
+    id testWithAFocusedTestCaseClassMock = [OCMockObject partialMockForClass:testWithAFocusedTestCaseClass];
+    [[testWithAFocusedTestCaseClassMock reject] testOne];
+    [[testWithAFocusedTestCaseClassMock expect] focus_testTwo];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithAFocusedTestCaseClass], nil);
+    STAssertNoThrow([testWithAFocusedTestCaseClassMock verify], @"Test cases did not execute as expected.");
+}
+
+- (void)testMultipleTestCasesCanBeFocused {
+    Class testWithSomeFocusedTestCasesClass = [TestWithSomeFocusedTestCases class];
+
+    // expect only the focused test cases to run
+    id testWithSomeFocusedTestCasesClassMock = [OCMockObject partialMockForClass:testWithSomeFocusedTestCasesClass];
+    [[testWithSomeFocusedTestCasesClassMock reject] testOne];
+    [[testWithSomeFocusedTestCasesClassMock expect] focus_testTwo];
+    [[testWithSomeFocusedTestCasesClassMock expect] focus_testThree];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeFocusedTestCasesClass], nil);
+    STAssertNoThrow([testWithSomeFocusedTestCasesClassMock verify], @"Test cases did not execute as expected.");
+}
+
+- (void)testWhenATestItselfIsFocusedAllOfItsTestCasesRun {
+    Class testThatIsFocusedClass = [Focus_TestThatIsFocused class];
+    STAssertTrue([[NSStringFromClass(testThatIsFocusedClass) lowercaseString] hasPrefix:SLTestFocusPrefix],
+                 @"For the purposes of this test, this SLTest itself must be focused.");
+
+    // note that testTwo itself is focused, while testOne, itself, is not
+    // but because the test itself is focused, *all* test cases are run: they are implicitly focused
+    id testThatIsFocusedClassMock = [OCMockObject partialMockForClass:testThatIsFocusedClass];
+    [[testThatIsFocusedClassMock expect] testOne];
+    [[testThatIsFocusedClassMock expect] focus_testTwo];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testThatIsFocusedClass], nil);
+    STAssertNoThrow([testThatIsFocusedClassMock verify], @"Test cases did not execute as expected.");
+}
+
+- (void)testFocusedTestCasesMustSupportTheCurrentPlatformInOrderToRun {
+    Class testWithAFocusedPlatformSpecificTestCaseClass = [TestWithAFocusedPlatformSpecificTestCase class];
+
+    // we mock the current device to dynamically configure the current user interface idiom
+    id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
+    UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
+    [[[deviceMock stub] andReturnValue:OCMOCK_VALUE(currentUserInterfaceIdiom)] userInterfaceIdiom];
+
+    // While testBar_iPad is focused, it doesn't support the current platform, thus isn't going to run.
+    // If it's not going to run, its focus is irrelevant, and so the other test case should run after all.
+    id testWithAFocusedPlatformSpecificTestCaseClassMock = [OCMockObject partialMockForClass:testWithAFocusedPlatformSpecificTestCaseClass];
+    [[testWithAFocusedPlatformSpecificTestCaseClassMock reject] focus_testBar_iPad];
+    [[testWithAFocusedPlatformSpecificTestCaseClassMock expect] testFoo];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithAFocusedPlatformSpecificTestCaseClass], nil);
+    STAssertNoThrow([testWithAFocusedPlatformSpecificTestCaseClassMock verify], @"Test cases did not execute as expected.");
+}
+
 #pragma mark - Test case execution
 
 #pragma mark -General
@@ -300,6 +396,8 @@
     STAssertNoThrow([testSequencer verify], @"Testing did not execute in the expected sequence.");
 }
 
+#pragma mark -Test setup and teardown
+
 - (void)testSetUpAndTearDownTest {
     Class testClass = [TestWithSomeTestCases class];
     id testMock = [OCMockObject partialMockForClass:testClass];
@@ -359,8 +457,6 @@
         STAssertNoThrow([testMock verify], @"-setUpTestCaseWithSelector: and -tearDownTestCaseWithSelector: did not execute once before and after each test case.");
     }
 }
-
-#pragma mark -Test setup and teardown
 
 - (void)runWithTestFailingInTestSetupOrTeardownToTestAnErrorAndTestAbortAreLogged:(BOOL)failInSetUp {
     Class failingTestClass = [TestWithSomeTestCases class];
@@ -746,102 +842,6 @@
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:failingTestClass], nil);
     STAssertNoThrow([failingTestMock verify], @"Test did not run as expected.");
-}
-
-#pragma mark -Focusing
-
-- (void)testTestsAreNotFocusedByDefault {
-    STAssertFalse([SLTest isFocused], @"Tests should not be focused by default.");
-}
-
-- (void)testATestIsFocusedWhenItsNameIsPrefixed {   // a "focus annotation"
-    Class testThatIsFocusedClass = [Focus_TestThatIsFocused class];
-    STAssertTrue([[NSStringFromClass(testThatIsFocusedClass) lowercaseString] hasPrefix:SLTestFocusPrefix],
-                  @"For the purposes of this test, this SLTest class' name must be prefixed.");
-    STAssertTrue([testThatIsFocusedClass isFocused], @"This SLTest class should be focused.");
-}
-
-- (void)testATestIsFocusedWhenATestCaseIsFocused {  // that is, when that test case's name is prefixed
-    Class testThatIsFocusedClass = [TestWithAFocusedTestCase class];
-    SEL focusedTestCaseSelector = @selector(focus_testTwo);
-    STAssertTrue([testThatIsFocusedClass instancesRespondToSelector:focusedTestCaseSelector],
-                 @"For the purposes of this test, this SLTest class must have a focused test case.");
-    STAssertTrue([testThatIsFocusedClass isFocused], @"This SLTest class should be focused.");
-}
-
-- (void)testFocusAnnotationsAffectSubclasses {
-    Class concreteTestClass = [ConcreteTestThatIsFocused class];
-    STAssertFalse([[NSStringFromClass(concreteTestClass) lowercaseString] hasPrefix:SLTestFocusPrefix],
-                  @"For the purposes of this test, this SLTest class should not have a focus annotation.");
-
-    Class abstractTestClass = [Focus_AbstractTestThatIsFocused class];
-    STAssertTrue([[NSStringFromClass(abstractTestClass) lowercaseString] hasPrefix:SLTestFocusPrefix],
-                 @"For the purposes of this test, this SLTest class should have a focus annotation.");
-
-    STAssertTrue([concreteTestClass isSubclassOfClass:abstractTestClass],
-                 @"For the purposes of this test, this SLTest class should be a subclass of a class with a focus annotation.");
-
-    STAssertTrue([concreteTestClass isFocused],
-                 @"This SLTest class should be focused despite not having a focus annotation,\
-                 because its superclass has a focus annotation.");
-}
-
-- (void)testWhenSomeTestCasesAreFocusedOnlyThoseTestCasesRun {
-    Class testWithAFocusedTestCaseClass = [TestWithAFocusedTestCase class];
-
-    // expect only the focused test case to run
-    id testWithAFocusedTestCaseClassMock = [OCMockObject partialMockForClass:testWithAFocusedTestCaseClass];
-    [[testWithAFocusedTestCaseClassMock reject] testOne];
-    [[testWithAFocusedTestCaseClassMock expect] focus_testTwo];
-
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithAFocusedTestCaseClass], nil);
-    STAssertNoThrow([testWithAFocusedTestCaseClassMock verify], @"Test cases did not execute as expected.");
-}
-
-- (void)testMultipleTestCasesCanBeFocused {
-    Class testWithSomeFocusedTestCasesClass = [TestWithSomeFocusedTestCases class];
-
-    // expect only the focused test cases to run
-    id testWithSomeFocusedTestCasesClassMock = [OCMockObject partialMockForClass:testWithSomeFocusedTestCasesClass];
-    [[testWithSomeFocusedTestCasesClassMock reject] testOne];
-    [[testWithSomeFocusedTestCasesClassMock expect] focus_testTwo];
-    [[testWithSomeFocusedTestCasesClassMock expect] focus_testThree];
-
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeFocusedTestCasesClass], nil);
-    STAssertNoThrow([testWithSomeFocusedTestCasesClassMock verify], @"Test cases did not execute as expected.");
-}
-
-- (void)testWhenATestItselfIsFocusedAllOfItsTestCasesRun {
-    Class testThatIsFocusedClass = [Focus_TestThatIsFocused class];
-    STAssertTrue([[NSStringFromClass(testThatIsFocusedClass) lowercaseString] hasPrefix:SLTestFocusPrefix],
-                 @"For the purposes of this test, this SLTest itself must be focused.");
-
-    // note that testTwo itself is focused, while testOne, itself, is not
-    // but because the test itself is focused, *all* test cases are run: they are implicitly focused
-    id testThatIsFocusedClassMock = [OCMockObject partialMockForClass:testThatIsFocusedClass];
-    [[testThatIsFocusedClassMock expect] testOne];
-    [[testThatIsFocusedClassMock expect] focus_testTwo];
-
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testThatIsFocusedClass], nil);
-    STAssertNoThrow([testThatIsFocusedClassMock verify], @"Test cases did not execute as expected.");
-}
-
-- (void)testFocusedTestCasesMustSupportTheCurrentPlatformInOrderToRun {
-    Class testWithAFocusedPlatformSpecificTestCaseClass = [TestWithAFocusedPlatformSpecificTestCase class];
-
-    // we mock the current device to dynamically configure the current user interface idiom
-    id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
-    UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
-    [[[deviceMock stub] andReturnValue:OCMOCK_VALUE(currentUserInterfaceIdiom)] userInterfaceIdiom];
-
-    // While testBar_iPad is focused, it doesn't support the current platform, thus isn't going to run.
-    // If it's not going to run, its focus is irrelevant, and so the other test case should run after all.
-    id testWithAFocusedPlatformSpecificTestCaseClassMock = [OCMockObject partialMockForClass:testWithAFocusedPlatformSpecificTestCaseClass];
-    [[testWithAFocusedPlatformSpecificTestCaseClassMock reject] focus_testBar_iPad];
-    [[testWithAFocusedPlatformSpecificTestCaseClassMock expect] testFoo];
-
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithAFocusedPlatformSpecificTestCaseClass], nil);
-    STAssertNoThrow([testWithAFocusedPlatformSpecificTestCaseClassMock verify], @"Test cases did not execute as expected.");
 }
 
 #pragma mark - Test assertions
