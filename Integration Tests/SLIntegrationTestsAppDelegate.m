@@ -8,9 +8,17 @@
 
 #import "SLIntegrationTestsAppDelegate.h"
 #import "SLTestsViewController.h"
+#import "SLTestCaseViewController.h"
 
 #import <Subliminal/Subliminal.h>
 #import "SLTestController+Internal.h"
+
+// If you wish to explore a particular test case view controller with UIAutomation attached,
+// to verify that it is configured properly for testing,
+// set DEBUG_TEST_CASE_VIEW_CONTROLLER to the view controller's class,
+// and DEBUG_TEST_CASE to the test case selector with which to initialize the view controller.
+#define DEBUG_TEST_CASE_VIEW_CONTROLLER_CLASS NSClassFromString(nil)
+#define DEBUG_TEST_CASE @selector(testCase)
 
 @interface SLIntegrationTestsAppDelegate () <UIAlertViewDelegate>
 @end
@@ -25,26 +33,35 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
 
-    // Filter the tests for the SLTestController
-    // so that the SLTestsViewController only displays appropriate tests
-    NSArray *testsToRun = [SLTestController testsToRun:[SLTest allTests] withFocus:NULL];
-    _tests = [NSSet setWithArray:testsToRun];
-    SLTestsViewController *testsViewController = [[SLTestsViewController alloc] initWithTests:testsToRun];
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:testsViewController];
+    // Initialize root view controller
+    UIViewController *rootViewController = nil;
+    if (DEBUG_TEST_CASE_VIEW_CONTROLLER_CLASS) {
+        rootViewController = [[DEBUG_TEST_CASE_VIEW_CONTROLLER_CLASS alloc] initWithTestCaseWithSelector:DEBUG_TEST_CASE];
+    } else {
+        // Filter the tests for the SLTestController
+        // so that the SLTestsViewController only displays appropriate tests
+        NSArray *testsToRun = [SLTestController testsToRun:[SLTest allTests] withFocus:NULL];
+        _tests = [NSSet setWithArray:testsToRun];
+        rootViewController = [[SLTestsViewController alloc] initWithTests:testsToRun];
+    }
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
     self.window.rootViewController = navController;
 
     [self.window makeKeyAndVisible];
 
-    // Verify that we can talk to the terminal
-    // (This is like "test 0", but can't be an actual SLTest
-    // because we can't rely upon the logging infrastructure if the terminal doesn't work)
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        _terminalStartupResult = [[SLTerminal sharedTerminal] eval:@"'Hello' + ' ' + 'world'"];
-    });
-    // If UIAutomation is unresponsive, the eval: call above will block indefinitely;
-    // verifying the startup result on the main thread lets us timeout.
-    // We can't block this method's return, so we verify the result after a delay.
-    [self performSelector:@selector(verifyTerminalConnectionAndRunTests) withObject:nil afterDelay:0.1];
+    // Begin testing
+    if (!DEBUG_TEST_CASE_VIEW_CONTROLLER_CLASS) {
+        // Verify that we can talk to the terminal
+        // (This is like "test 0", but can't be an actual SLTest
+        // because we can't rely upon the logging infrastructure if the terminal doesn't work)
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            _terminalStartupResult = [[SLTerminal sharedTerminal] eval:@"'Hello' + ' ' + 'world'"];
+        });
+        // If UIAutomation is unresponsive, the eval: call above will block indefinitely;
+        // verifying the startup result on the main thread lets us timeout.
+        // We can't block this method's return, so we verify the result after a delay.
+        [self performSelector:@selector(verifyTerminalConnectionAndRunTests) withObject:nil afterDelay:0.1];
+    }
 
     return YES;
 }
