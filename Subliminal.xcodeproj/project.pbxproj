@@ -16,6 +16,9 @@
 		CAC3883F1643503C00F995F9 /* SLAccessibility.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC3883D1643503C00F995F9 /* SLAccessibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CAC388401643503C00F995F9 /* SLAccessibility.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC3883E1643503C00F995F9 /* SLAccessibility.m */; };
 		F016493D16D42E3C000AEB50 /* SLTestController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = F016493B16D42E3C000AEB50 /* SLTestController+Internal.h */; };
+		F01B2B6D16D2C55900DBA391 /* SLElementMatchingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F01B2B6A16D2C55900DBA391 /* SLElementMatchingTest.m */; };
+		F01B2B6E16D2C55900DBA391 /* SLElementMatchingTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F01B2B6B16D2C55900DBA391 /* SLElementMatchingTestViewController.m */; };
+		F01B2B6F16D2C55900DBA391 /* SLElementMatchingTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F01B2B6C16D2C55900DBA391 /* SLElementMatchingTestViewController.xib */; };
 		F024BE33168BD70900708350 /* TestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = F024BE32168BD70900708350 /* TestUtilities.m */; };
 		F0271AFF162E0B950098F5F2 /* SLTestController+AppContext.h in Headers */ = {isa = PBXBuildFile; fileRef = F0271AFD162E0B950098F5F2 /* SLTestController+AppContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0271B00162E0B950098F5F2 /* SLTestController+AppContext.m in Sources */ = {isa = PBXBuildFile; fileRef = F0271AFE162E0B950098F5F2 /* SLTestController+AppContext.m */; };
@@ -124,6 +127,9 @@
 		CAC3883D1643503C00F995F9 /* SLAccessibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLAccessibility.h; sourceTree = "<group>"; };
 		CAC3883E1643503C00F995F9 /* SLAccessibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAccessibility.m; sourceTree = "<group>"; };
 		F016493B16D42E3C000AEB50 /* SLTestController+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLTestController+Internal.h"; sourceTree = "<group>"; };
+		F01B2B6A16D2C55900DBA391 /* SLElementMatchingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementMatchingTest.m; sourceTree = "<group>"; };
+		F01B2B6B16D2C55900DBA391 /* SLElementMatchingTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementMatchingTestViewController.m; sourceTree = "<group>"; };
+		F01B2B6C16D2C55900DBA391 /* SLElementMatchingTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementMatchingTestViewController.xib; sourceTree = "<group>"; };
 		F024BE31168BD70900708350 /* TestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestUtilities.h; sourceTree = "<group>"; };
 		F024BE32168BD70900708350 /* TestUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestUtilities.m; sourceTree = "<group>"; };
 		F0271AFD162E0B950098F5F2 /* SLTestController+AppContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLTestController+AppContext.h"; sourceTree = "<group>"; };
@@ -241,6 +247,16 @@
 				F0AC80C316BC355D00C5D5C0 /* SLTerminalTest.m */,
 			);
 			name = "SLTerminal Tests";
+			sourceTree = "<group>";
+		};
+		F05263C316D2C2CF0090174F /* SLElement Matching Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F01B2B6A16D2C55900DBA391 /* SLElementMatchingTest.m */,
+				F01B2B6B16D2C55900DBA391 /* SLElementMatchingTestViewController.m */,
+				F01B2B6C16D2C55900DBA391 /* SLElementMatchingTestViewController.xib */,
+			);
+			name = "SLElement Matching Tests";
 			sourceTree = "<group>";
 		};
 		F0695D8016011515000B05D0 = {
@@ -387,6 +403,7 @@
 		F0AC80BE16BB542400C5D5C0 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				F05263C316D2C2CF0090174F /* SLElement Matching Tests */,
 				F013798E16D0843B009BAF22 /* SLTerminal Tests */,
 			);
 			path = Tests;
@@ -571,6 +588,7 @@
 				F0AC80A616BB299500C5D5C0 /* Default.png in Resources */,
 				F0AC80A816BB299500C5D5C0 /* Default@2x.png in Resources */,
 				F0AC80AA16BB299500C5D5C0 /* Default-568h@2x.png in Resources */,
+				F01B2B6F16D2C55900DBA391 /* SLElementMatchingTestViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -630,6 +648,8 @@
 				F0AC80C116BB559F00C5D5C0 /* SLIntegrationTest.m in Sources */,
 				F0AC80C816BC367E00C5D5C0 /* SLTestViewController.m in Sources */,
 				F0AC80E616BCF91800C5D5C0 /* SLTestCaseViewController.m in Sources */,
+				F01B2B6D16D2C55900DBA391 /* SLElementMatchingTest.m in Sources */,
+				F01B2B6E16D2C55900DBA391 /* SLElementMatchingTestViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
