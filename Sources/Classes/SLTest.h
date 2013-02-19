@@ -28,6 +28,17 @@ extern NSString *const SLTestExceptionLineNumberKey;
 + (Class)testNamed:(NSString *)test;
 
 /**
+ Returns YES if this class does not define test cases.
+ 
+ An abstract test will not itself be run. Subclasses which do define test cases
+ will be run, however, allowing a single base class to define set-up and tear-down 
+ work shared among related subclasses.
+
+ @return YES if the class is without test cases, otherwise NO.
+ */
++ (BOOL)isAbstract;
+
+/**
  Returns YES if this test exercises the application's start-up state,
  and thus should be run first.
 

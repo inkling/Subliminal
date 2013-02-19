@@ -94,11 +94,14 @@ static SLTestController *__sharedController = nil;
         
         _completionBlock = [completionBlock copy];
 
-        // only run tests that support the current platform...
+        // only run tests that are concrete...
         _testsToRun = [NSMutableArray arrayWithArray:[tests allObjects]];
+        [_testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"isAbstract == NO"]];
+
+        // ...that support the current platform...
         [_testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"supportsCurrentPlatform == YES"]];
 
-        // ...and, of those, only that are focused (if any are focused)
+        // ...and that are focused (if any remaining are focused)
         _runningWithFocus = ([_testsToRun indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
             return [obj isFocused];
         }] != NSNotFound);

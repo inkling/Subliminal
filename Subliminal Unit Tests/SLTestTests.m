@@ -12,6 +12,7 @@
 
 #import "TestUtilities.h"
 #import "SharedSLTests.h"
+#import "SLTest+Internal.h"
 
 @interface SLTestTests : SenTestCase
 
@@ -42,12 +43,13 @@
     NSSet *expectedTests = [NSSet setWithObjects:
         [SLTest class],
         [TestWithSomeTestCases class],
-        [TestWithNoTestCases class],
+        [AbstractTest class],
         [TestNotSupportingCurrentPlatform class],
         [TestWhichSupportsAllPlatforms class],
         [TestWhichSupportsOnlyiPad_iPad class],
         [TestWhichSupportsOnlyiPhone_iPhone class],
         [TestWithPlatformSpecificTestCases class],
+        [ConcreteTestWhichSupportsOnlyiPad class],
         [StartupTest class],
         [TestThatIsNotFocused class],
         [TestWithAFocusedTestCase class],
@@ -55,6 +57,7 @@
         [TestWithAFocusedPlatformSpecificTestCase class],
         [Focus_TestThatIsFocused class],
         [Focus_TestThatIsFocusedButDoesntSupportCurrentPlatform class],
+        [ConcreteTestThatIsFocused class],
         nil
     ];
     STAssertEqualObjects(allTests, expectedTests, @"Unexpected tests returned.");
@@ -69,22 +72,80 @@
     STAssertNil(undefinedTestClass, @"+testNamed: should not have found a test.");
 }
 
-#pragma mark - Test case execution
+#pragma mark - Abstract tests
 
-#pragma mark -General
+- (void)testATestIsAbstractIfItDefinesNoTestCases {
+    Class abstractTestClass = [AbstractTest class];
+    STAssertFalse([[abstractTestClass testCases] count],
+                  @"For the purposes of this test, this SLTest class must not define any test cases.");
+    STAssertTrue([abstractTestClass isAbstract], @"This SLTest class should be abstract.");
 
-- (void)testAllTestCasesRunByDefault {
-    Class testWithSomeTestCasesTest = [TestWithSomeTestCases class];
+    Class concreteTestClass = [TestWithSomeTestCases class];
+    STAssertTrue([[concreteTestClass testCases] count],
+                 @"For the purposes of this test, this SLTest class must define test cases.");
+    STAssertFalse([concreteTestClass isAbstract], @"This SLTest class should not be abstract.");
+}
 
-    id testMock = [OCMockObject partialMockForClass:testWithSomeTestCasesTest];
-    [[testMock expect] testOne];
-    [[testMock expect] testTwo];
-    [[testMock expect] testThree];
-    [[testMock reject] testThatIsntATestBecauseItsReturnTypeIsNonVoid];
-    [[testMock reject] testThatIsntATestBecauseItTakesAnArgument:OCMOCK_ANY];
+#pragma mark - Platform support
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeTestCasesTest], nil);
-    STAssertNoThrow([testMock verify], @"Test cases did not run as expected.");
+- (void)testTestsSupportCurrentPlatformByDefault {
+    STAssertTrue([SLTest supportsCurrentPlatform], @"Tests should support the current platform by default.");
+}
+
+- (void)testTestsWithiPhoneSuffixOnlySupportiPhone {
+    Class testWhichSupportsOnlyiPhoneClass = [TestWhichSupportsOnlyiPhone_iPhone class];
+
+    // we mock the current device to dynamically configure the current user interface idiom
+    id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
+    __block UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
+    [[[deviceMock stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&currentUserInterfaceIdiom];
+    }] userInterfaceIdiom];
+
+    STAssertTrue([testWhichSupportsOnlyiPhoneClass supportsCurrentPlatform],
+                 @"Test with '_iPhone' suffix should support the iPhone.");
+
+    currentUserInterfaceIdiom = UIUserInterfaceIdiomPad;
+    STAssertFalse([testWhichSupportsOnlyiPhoneClass supportsCurrentPlatform],
+                  @"Test with '_iPhone' suffix should not support the iPad.");
+}
+
+- (void)testTestsWithiPadSuffixOnlySupportiPad {
+    Class testWhichSupportsOnlyiPadClass = [TestWhichSupportsOnlyiPad_iPad class];
+
+    // we mock the current device to dynamically configure the current user interface idiom
+    id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
+    __block UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPad;
+    [[[deviceMock stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&currentUserInterfaceIdiom];
+    }] userInterfaceIdiom];
+
+    STAssertTrue([testWhichSupportsOnlyiPadClass supportsCurrentPlatform],
+                 @"Test with '_iPad' suffix should support the iPad.");
+
+    currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
+    STAssertFalse([testWhichSupportsOnlyiPadClass supportsCurrentPlatform],
+                  @"Test with '_iPad' suffix should not support the iPhone.");
+}
+
+- (void)testPlatformSupportAnnotationsAffectSubclasses {
+    // we mock the current device to dynamically configure the current user interface idiom
+    id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
+    __block UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
+    [[[deviceMock stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&currentUserInterfaceIdiom];
+    }] userInterfaceIdiom];
+
+    STAssertFalse([AbstractTestWhichSupportsOnly_iPad supportsCurrentPlatform],
+                  @"The base class should not support the iPhone.");
+    STAssertFalse([ConcreteTestWhichSupportsOnlyiPad supportsCurrentPlatform],
+                  @"The subclass should not support the iPhone.");
+
+    currentUserInterfaceIdiom = UIUserInterfaceIdiomPad;
+    STAssertTrue([AbstractTestWhichSupportsOnly_iPad supportsCurrentPlatform],
+                 @"The base class should support the iPad.");
+    STAssertTrue([ConcreteTestWhichSupportsOnlyiPad supportsCurrentPlatform],
+                 @"The subclass should support the iPad.");
 }
 
 - (void)testOnlyTestCasesSupportingCurrentPlatformAreRun {
@@ -95,7 +156,7 @@
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
     SEL supportedTestCaseSelector = @selector(testFoo);
     STAssertTrue([testWithPlatformSpecificTestCasesTest testCaseWithSelectorSupportsCurrentPlatform:supportedTestCaseSelector],
-                  @"For the purposes of this test, this test case must support the current platform.");
+                 @"For the purposes of this test, this test case must support the current platform.");
     // note: this causes the mock to expect the invocation of the test case selector, not performSelector: itself
     [[testMock expect] performSelector:supportedTestCaseSelector];
 
@@ -123,7 +184,7 @@
     id testNotSupportingCurrentPlatformClassMock = [OCMockObject partialMockForClass:testNotSupportingCurrentPlatformClass];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-    // note: this causes the mock to expect the invocation of the test case selector, not performSelector: itself
+    // note: this causes the mock to reject the invocation of the test case selector, not performSelector: itself
     [[testNotSupportingCurrentPlatformClassMock reject] performSelector:supportedTestCaseSelector];
 #pragma clang diagnostic pop
 
@@ -132,40 +193,165 @@
                     @"Test case supporting current platform was run despite its test not supporting the current platform.");
 }
 
-- (void)testiPhoneSpecificTestCasesOnlyRunOnTheiPhone {
+- (void)testTestCasesWithiPhoneSuffixOnlySupportiPhone {
     Class testWithPlatformSpecificTestCasesTest = [TestWithPlatformSpecificTestCases class];
-    NSSet *testSet = [NSSet setWithObject:testWithPlatformSpecificTestCasesTest];
+
+    // we mock the current device to dynamically configure the current user interface idiom
+    id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
+    __block UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
+    [[[deviceMock stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&currentUserInterfaceIdiom];
+    }] userInterfaceIdiom];
+
+    STAssertTrue([testWithPlatformSpecificTestCasesTest testCaseWithSelectorSupportsCurrentPlatform:@selector(testBaz_iPhone)],
+                 @"Test case with '_iPhone' suffix should support the iPhone.");
+
+    currentUserInterfaceIdiom = UIUserInterfaceIdiomPad;
+    STAssertFalse([testWithPlatformSpecificTestCasesTest testCaseWithSelectorSupportsCurrentPlatform:@selector(testBaz_iPhone)],
+                  @"Test case with '_iPhone' suffix should not support the iPad.");
+}
+
+- (void)testTestCasesWithiPadSuffixOnlySupportiPad {
+    Class testWithPlatformSpecificTestCasesTest = [TestWithPlatformSpecificTestCases class];
+
+    // we mock the current device to dynamically configure the current user interface idiom
+    id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
+    __block UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPad;
+    [[[deviceMock stub] andDo:^(NSInvocation *invocation) {
+        [invocation setReturnValue:&currentUserInterfaceIdiom];
+    }] userInterfaceIdiom];
+
+    STAssertTrue([testWithPlatformSpecificTestCasesTest testCaseWithSelectorSupportsCurrentPlatform:@selector(testBar_iPad)],
+                 @"Test case with '_iPad' suffix should support the iPad.");
+
+    currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
+    STAssertFalse([testWithPlatformSpecificTestCasesTest testCaseWithSelectorSupportsCurrentPlatform:@selector(testBar_iPad)],
+                  @"Test case with '_iPhone' suffix should not support the iPhone.");
+}
+
+#pragma mark - Focusing
+
+- (void)testTestsAreNotFocusedByDefault {
+    STAssertFalse([SLTest isFocused], @"Tests should not be focused by default.");
+}
+
+- (void)testATestIsFocusedWhenItsNameIsPrefixed {   // a "focus annotation"
+    Class testThatIsFocusedClass = [Focus_TestThatIsFocused class];
+    STAssertTrue([[NSStringFromClass(testThatIsFocusedClass) lowercaseString] hasPrefix:SLTestFocusPrefix],
+                 @"For the purposes of this test, this SLTest class' name must be prefixed.");
+    STAssertTrue([testThatIsFocusedClass isFocused], @"This SLTest class should be focused.");
+}
+
+- (void)testATestIsFocusedWhenATestCaseIsFocused {  // that is, when that test case's name is prefixed
+    Class testThatIsFocusedClass = [TestWithAFocusedTestCase class];
+    SEL focusedTestCaseSelector = @selector(focus_testTwo);
+    STAssertTrue([testThatIsFocusedClass instancesRespondToSelector:focusedTestCaseSelector],
+                 @"For the purposes of this test, this SLTest class must have a focused test case.");
+    STAssertTrue([testThatIsFocusedClass isFocused], @"This SLTest class should be focused.");
+}
+
+- (void)testFocusAnnotationsAffectSubclasses {
+    Class concreteTestClass = [ConcreteTestThatIsFocused class];
+    STAssertFalse([[NSStringFromClass(concreteTestClass) lowercaseString] hasPrefix:SLTestFocusPrefix],
+                  @"For the purposes of this test, this SLTest class should not have a focus annotation.");
+
+    Class abstractTestClass = [Focus_AbstractTestThatIsFocused class];
+    STAssertTrue([[NSStringFromClass(abstractTestClass) lowercaseString] hasPrefix:SLTestFocusPrefix],
+                 @"For the purposes of this test, this SLTest class should have a focus annotation.");
+
+    STAssertTrue([concreteTestClass isSubclassOfClass:abstractTestClass],
+                 @"For the purposes of this test, this SLTest class should be a subclass of a class with a focus annotation.");
+
+    STAssertTrue([concreteTestClass isFocused],
+                 @"This SLTest class should be focused despite not having a focus annotation,\
+                 because its superclass has a focus annotation.");
+}
+
+- (void)testWhenSomeTestCasesAreFocusedOnlyThoseTestCasesRun {
+    Class testWithAFocusedTestCaseClass = [TestWithAFocusedTestCase class];
+
+    // expect only the focused test case to run
+    id testWithAFocusedTestCaseClassMock = [OCMockObject partialMockForClass:testWithAFocusedTestCaseClass];
+    [[testWithAFocusedTestCaseClassMock reject] testOne];
+    [[testWithAFocusedTestCaseClassMock expect] focus_testTwo];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithAFocusedTestCaseClass], nil);
+    STAssertNoThrow([testWithAFocusedTestCaseClassMock verify], @"Test cases did not execute as expected.");
+}
+
+- (void)testMultipleTestCasesCanBeFocused {
+    Class testWithSomeFocusedTestCasesClass = [TestWithSomeFocusedTestCases class];
+
+    // expect only the focused test cases to run
+    id testWithSomeFocusedTestCasesClassMock = [OCMockObject partialMockForClass:testWithSomeFocusedTestCasesClass];
+    [[testWithSomeFocusedTestCasesClassMock reject] testOne];
+    [[testWithSomeFocusedTestCasesClassMock expect] focus_testTwo];
+    [[testWithSomeFocusedTestCasesClassMock expect] focus_testThree];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeFocusedTestCasesClass], nil);
+    STAssertNoThrow([testWithSomeFocusedTestCasesClassMock verify], @"Test cases did not execute as expected.");
+}
+
+- (void)testWhenATestItselfIsFocusedAllOfItsTestCasesRun {
+    Class testThatIsFocusedClass = [Focus_TestThatIsFocused class];
+    STAssertTrue([[NSStringFromClass(testThatIsFocusedClass) lowercaseString] hasPrefix:SLTestFocusPrefix],
+                 @"For the purposes of this test, this SLTest itself must be focused.");
+
+    // note that testTwo itself is focused, while testOne, itself, is not
+    // but because the test itself is focused, *all* test cases are run: they are implicitly focused
+    id testThatIsFocusedClassMock = [OCMockObject partialMockForClass:testThatIsFocusedClass];
+    [[testThatIsFocusedClassMock expect] testOne];
+    [[testThatIsFocusedClassMock expect] focus_testTwo];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testThatIsFocusedClass], nil);
+    STAssertNoThrow([testThatIsFocusedClassMock verify], @"Test cases did not execute as expected.");
+}
+
+- (void)testFocusedTestCasesMustSupportTheCurrentPlatformInOrderToRun {
+    Class testWithAFocusedPlatformSpecificTestCaseClass = [TestWithAFocusedPlatformSpecificTestCase class];
 
     // we mock the current device to dynamically configure the current user interface idiom
     id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
     UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
     [[[deviceMock stub] andReturnValue:OCMOCK_VALUE(currentUserInterfaceIdiom)] userInterfaceIdiom];
 
-    id testMock = [OCMockObject partialMockForClass:testWithPlatformSpecificTestCasesTest];
-    [[testMock expect] testFoo];
-    [[testMock expect] testBaz_iPhone];
-    [[testMock reject] testBar_iPad];
+    // While testBar_iPad is focused, it doesn't support the current platform, thus isn't going to run.
+    // If it's not going to run, its focus is irrelevant, and so the other test case should run after all.
+    id testWithAFocusedPlatformSpecificTestCaseClassMock = [OCMockObject partialMockForClass:testWithAFocusedPlatformSpecificTestCaseClass];
+    [[testWithAFocusedPlatformSpecificTestCaseClassMock reject] focus_testBar_iPad];
+    [[testWithAFocusedPlatformSpecificTestCaseClassMock expect] testFoo];
 
-    SLRunTestsAndWaitUntilFinished(testSet, nil);
-    STAssertNoThrow([testMock verify], @"Test cases did not run as expected on the iPhone.");
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithAFocusedPlatformSpecificTestCaseClass], nil);
+    STAssertNoThrow([testWithAFocusedPlatformSpecificTestCaseClassMock verify], @"Test cases did not execute as expected.");
 }
 
-- (void)testiPadSpecificTestCasesOnlyRunOnTheiPad {
-    Class testWithPlatformSpecificTestCasesTest = [TestWithPlatformSpecificTestCases class];
-    NSSet *testSet = [NSSet setWithObject:testWithPlatformSpecificTestCasesTest];
+#pragma mark - Test case execution
 
-    // we mock the current device to dynamically configure the current user interface idiom
-    id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
-    UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPad;
-    [[[deviceMock stub] andReturnValue:OCMOCK_VALUE(currentUserInterfaceIdiom)] userInterfaceIdiom];
+#pragma mark -General
 
-    id testMock = [OCMockObject partialMockForClass:testWithPlatformSpecificTestCasesTest];
-    [[testMock expect] testFoo];
-    [[testMock expect] testBar_iPad];
-    [[testMock reject] testBaz_iPhone];
+- (void)testAllTestCasesRunByDefault {
+    Class testWithSomeTestCasesTest = [TestWithSomeTestCases class];
 
-    SLRunTestsAndWaitUntilFinished(testSet, nil);
-    STAssertNoThrow([testMock verify], @"Test cases did not run as expected on the iPad.");
+    id testMock = [OCMockObject partialMockForClass:testWithSomeTestCasesTest];
+    [[testMock expect] testOne];
+    [[testMock expect] testTwo];
+    [[testMock expect] testThree];
+    
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeTestCasesTest], nil);
+    STAssertNoThrow([testMock verify], @"Test cases did not run as expected.");
+}
+
+- (void)testInvalidTestCasesAreNotRun {
+    Class testWithSomeTestCasesTest = [TestWithSomeTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testWithSomeTestCasesTest];
+
+    [[testMock expect] run:[OCMArg anyPointer]];
+
+    [[testMock reject] testThatIsntATestBecauseItsReturnTypeIsNonVoid];
+    [[testMock reject] testThatIsntATestBecauseItTakesAnArgument:OCMOCK_ANY];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeTestCasesTest], nil);
+    STAssertNoThrow([testMock verify], @"Invalid test cases were unexpectedly run.");
 }
 
 // this test verifies the complete order in which testing normally executes,
@@ -209,6 +395,8 @@
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
     STAssertNoThrow([testSequencer verify], @"Testing did not execute in the expected sequence.");
 }
+
+#pragma mark -Test setup and teardown
 
 - (void)testSetUpAndTearDownTest {
     Class testClass = [TestWithSomeTestCases class];
@@ -269,8 +457,6 @@
         STAssertNoThrow([testMock verify], @"-setUpTestCaseWithSelector: and -tearDownTestCaseWithSelector: did not execute once before and after each test case.");
     }
 }
-
-#pragma mark -Test setup and teardown
 
 - (void)runWithTestFailingInTestSetupOrTeardownToTestAnErrorAndTestAbortAreLogged:(BOOL)failInSetUp {
     Class failingTestClass = [TestWithSomeTestCases class];
@@ -658,66 +844,6 @@
     STAssertNoThrow([failingTestMock verify], @"Test did not run as expected.");
 }
 
-#pragma mark -Focusing
-
-- (void)testWhenSomeTestCasesAreFocusedOnlyThoseTestCasesRun {
-    Class testWithAFocusedTestCaseClass = [TestWithAFocusedTestCase class];
-
-    // expect only the focused test case to run
-    id testWithAFocusedTestCaseClassMock = [OCMockObject partialMockForClass:testWithAFocusedTestCaseClass];
-    [[testWithAFocusedTestCaseClassMock reject] testOne];
-    [[testWithAFocusedTestCaseClassMock expect] focus_testTwo];
-
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithAFocusedTestCaseClass], nil);
-    STAssertNoThrow([testWithAFocusedTestCaseClassMock verify], @"Test cases did not execute as expected.");
-}
-
-- (void)testMultipleTestCasesCanBeFocused {
-    Class testWithSomeFocusedTestCasesClass = [TestWithSomeFocusedTestCases class];
-
-    // expect only the focused test cases to run
-    id testWithSomeFocusedTestCasesClassMock = [OCMockObject partialMockForClass:testWithSomeFocusedTestCasesClass];
-    [[testWithSomeFocusedTestCasesClassMock reject] testOne];
-    [[testWithSomeFocusedTestCasesClassMock expect] focus_testTwo];
-    [[testWithSomeFocusedTestCasesClassMock expect] focus_testThree];
-
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeFocusedTestCasesClass], nil);
-    STAssertNoThrow([testWithSomeFocusedTestCasesClassMock verify], @"Test cases did not execute as expected.");
-}
-
-- (void)testWhenATestItselfIsFocusedAllOfItsTestCasesRun {
-    Class testThatIsFocusedClass = [Focus_TestThatIsFocused class];
-    STAssertTrue([[NSStringFromClass(testThatIsFocusedClass) lowercaseString] hasPrefix:@"focus_"],
-                 @"For the purposes of this test, this SLTest itself must be focused.");
-
-    // note that testTwo itself is focused, while testOne, itself, is not
-    // but because the test itself is focused, *all* test cases are run: they are implicitly focused
-    id testThatIsFocusedClassMock = [OCMockObject partialMockForClass:testThatIsFocusedClass];
-    [[testThatIsFocusedClassMock expect] testOne];
-    [[testThatIsFocusedClassMock expect] focus_testTwo];
-
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testThatIsFocusedClass], nil);
-    STAssertNoThrow([testThatIsFocusedClassMock verify], @"Test cases did not execute as expected.");
-}
-
-- (void)testFocusedTestCasesMustSupportTheCurrentPlatformInOrderToRun {
-    Class testWithAFocusedPlatformSpecificTestCaseClass = [TestWithAFocusedPlatformSpecificTestCase class];
-
-    // we mock the current device to dynamically configure the current user interface idiom
-    id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
-    UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
-    [[[deviceMock stub] andReturnValue:OCMOCK_VALUE(currentUserInterfaceIdiom)] userInterfaceIdiom];
-
-    // While testBar_iPad is focused, it doesn't support the current platform, thus isn't going to run.
-    // If it's not going to run, its focus is irrelevant, and so the other test case should run after all.
-    id testWithAFocusedPlatformSpecificTestCaseClassMock = [OCMockObject partialMockForClass:testWithAFocusedPlatformSpecificTestCaseClass];
-    [[testWithAFocusedPlatformSpecificTestCaseClassMock reject] focus_testBar_iPad];
-    [[testWithAFocusedPlatformSpecificTestCaseClassMock expect] testFoo];
-
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithAFocusedPlatformSpecificTestCaseClass], nil);
-    STAssertNoThrow([testWithAFocusedPlatformSpecificTestCaseClassMock verify], @"Test cases did not execute as expected.");
-}
-
 #pragma mark - Test assertions
 
 // Note: throughout the below tests, we provide implementations of SLTest test cases
@@ -953,6 +1079,14 @@
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
     STAssertNoThrow([testMock verify], @"Test case was not executed as expected.");
+}
+
+#pragma mark - Internal
+
+- (void)testTestCasesAreDiscoveredAsExpected {
+    NSArray *testCases = @[ @"testOne", @"testTwo", @"testThree" ];
+    STAssertEqualObjects(testCases, [TestWithSomeTestCases testCases],
+                         @"Test cases were not discovered as expected.");
 }
 
 @end

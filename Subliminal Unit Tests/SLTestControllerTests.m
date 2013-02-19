@@ -36,99 +36,38 @@
 
 #pragma mark - Test execution
 
-- (void)testTestWithoutTestCasesIsNotRun {  // because then no test case supports the current platform
-    Class testWithoutTestCasesClass = [TestWithNoTestCases class];
+#pragma mark -Abstract tests
 
-    id testMock = [OCMockObject partialMockForClass:testWithoutTestCasesClass];
+- (void)testAbstractTestsAreNotRun {
+    Class abstractTestClass = [AbstractTest class];
+    STAssertTrue([abstractTestClass isAbstract],
+                 @"For the purposes of this test, this SLTest must be abstract.");
+
+    id testMock = [OCMockObject partialMockForClass:abstractTestClass];
     [[testMock reject] run:[OCMArg anyPointer]];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithoutTestCasesClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:abstractTestClass], nil);
     STAssertNoThrow([testMock verify], @"Test was run despite not having any test cases.");
 }
 
 #pragma mark -Platform support
 
 - (void)testOnlyTestsSupportingCurrentPlatformAreRun {
-    NSSet *tests = [NSSet setWithObjects:
-        [TestWithSomeTestCases class],
-        [TestNotSupportingCurrentPlatform class],
-        nil
-    ];
+    Class testSupportingCurrentPlatformClass = [TestWithSomeTestCases class];
+    STAssertTrue([testSupportingCurrentPlatformClass supportsCurrentPlatform],
+                 @"For the purposes of this test, this SLTest must support the current platform.");
+    id testSupportingCurrentPlatformMock = [OCMockObject partialMockForClass:testSupportingCurrentPlatformClass];
+    [[testSupportingCurrentPlatformMock expect] run:[OCMArg anyPointer]];
 
-    NSMutableArray *testMocks = [NSMutableArray arrayWithCapacity:[tests count]];
-    for (Class testClass in tests) {
-        id testMock = [OCMockObject partialMockForClass:testClass];
+    Class testNotSupportingCurrentPlatformClass = [TestNotSupportingCurrentPlatform class];
+    STAssertFalse([testNotSupportingCurrentPlatformClass supportsCurrentPlatform],
+                  @"For the purposes of this test, this SLTest must not support the current platform.");
+    id testNotSupportingCurrentPlatformMock = [OCMockObject partialMockForClass:testNotSupportingCurrentPlatformClass];
+    [[testNotSupportingCurrentPlatformMock reject] run:[OCMArg anyPointer]];
 
-        // expect test instances to be run only if they're supported on the current platform
-        if ([testClass supportsCurrentPlatform]) {
-            [[testMock expect] run:[OCMArg anyPointer]];
-        } else {
-            [[testMock reject] run:[OCMArg anyPointer]];
-        }
-        
-        [testMocks addObject:testMock];
-    }
-
-    SLRunTestsAndWaitUntilFinished(tests, nil);
-    STAssertNoThrow([testMocks makeObjectsPerformSelector:@selector(verify)], @"Tests were not run as expected.");
-}
-
-- (void)testiPhoneSpecificTestsOnlyRunOnTheiPhone {
-    Class testWhichSupportsAllPlatformsClass = [TestWhichSupportsAllPlatforms class];
-    Class testWhichSupportsOnlyiPadClass = [TestWhichSupportsOnlyiPad_iPad class];
-    Class testWhichSupportsOnlyiPhoneClass = [TestWhichSupportsOnlyiPhone_iPhone class];
-    NSSet *testSet = [NSSet setWithObjects:
-        testWhichSupportsAllPlatformsClass,
-        testWhichSupportsOnlyiPadClass,
-        testWhichSupportsOnlyiPhoneClass,
-        nil
-    ];
-
-    // we mock the current device to dynamically configure the current user interface idiom
-    id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
-    UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
-    [[[deviceMock stub] andReturnValue:OCMOCK_VALUE(currentUserInterfaceIdiom)] userInterfaceIdiom];
-
-    id testWhichSupportsAllPlatformsClassMock = [OCMockObject partialMockForClass:testWhichSupportsAllPlatformsClass];
-    [[testWhichSupportsAllPlatformsClassMock expect] run:[OCMArg anyPointer]];
-
-    id testWhichSupportsOnlyiPhoneClassMock = [OCMockObject partialMockForClass:testWhichSupportsOnlyiPhoneClass];
-    [[testWhichSupportsOnlyiPhoneClassMock expect] run:[OCMArg anyPointer]];
-
-    id testWhichSupportsOnlyiPadClassMock = [OCMockObject partialMockForClass:testWhichSupportsOnlyiPadClass];
-    [[testWhichSupportsOnlyiPadClassMock reject] run:[OCMArg anyPointer]];
-
-    SLRunTestsAndWaitUntilFinished(testSet, nil);
-    STAssertNoThrow([testWhichSupportsOnlyiPadClassMock verify], @"Tests did not run as expected on the iPhone.");
-}
-
-- (void)testiPadSpecificTestsOnlyRunOnTheiPad {
-    Class testWhichSupportsAllPlatformsClass = [TestWhichSupportsAllPlatforms class];
-    Class testWhichSupportsOnlyiPadClass = [TestWhichSupportsOnlyiPad_iPad class];
-    Class testWhichSupportsOnlyiPhoneClass = [TestWhichSupportsOnlyiPhone_iPhone class];
-    NSSet *testSet = [NSSet setWithObjects:
-                      testWhichSupportsAllPlatformsClass,
-                      testWhichSupportsOnlyiPadClass,
-                      testWhichSupportsOnlyiPhoneClass,
-                      nil
-                      ];
-
-    // we mock the current device to dynamically configure the current user interface idiom
-    id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
-    UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPad;
-    [[[deviceMock stub] andReturnValue:OCMOCK_VALUE(currentUserInterfaceIdiom)] userInterfaceIdiom];
-
-    id testWhichSupportsAllPlatformsClassMock = [OCMockObject partialMockForClass:testWhichSupportsAllPlatformsClass];
-    [[testWhichSupportsAllPlatformsClassMock expect] run:[OCMArg anyPointer]];
-
-    id testWhichSupportsOnlyiPadClassMock = [OCMockObject partialMockForClass:testWhichSupportsOnlyiPadClass];
-    [[testWhichSupportsOnlyiPadClassMock expect] run:[OCMArg anyPointer]];
-
-    id testWhichSupportsOnlyiPhoneClassMock = [OCMockObject partialMockForClass:testWhichSupportsOnlyiPhoneClass];
-    [[testWhichSupportsOnlyiPhoneClassMock reject] run:[OCMArg anyPointer]];
-
-    SLRunTestsAndWaitUntilFinished(testSet, nil);
-    STAssertNoThrow([testWhichSupportsOnlyiPadClassMock verify], @"Tests did not run as expected on the iPad.");
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObjects:testSupportingCurrentPlatformClass, testNotSupportingCurrentPlatformClass, nil], nil);
+    STAssertNoThrow([testSupportingCurrentPlatformMock verify], @"Test supporting current platform was not run as expected.");
+    STAssertNoThrow([testNotSupportingCurrentPlatformMock verify], @"Test not supporting current platform was unexpectedly run.");
 }
 
 #pragma mark -Startup test
@@ -137,7 +76,6 @@
     Class startupTestClass = [StartupTest class];
     NSSet *tests = [NSSet setWithObjects:
         [TestWithSomeTestCases class],
-        [TestWithNoTestCases class],
         [TestWithPlatformSpecificTestCases class],
         startupTestClass,
         nil

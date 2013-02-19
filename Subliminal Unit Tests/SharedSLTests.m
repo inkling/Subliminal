@@ -19,7 +19,7 @@
 @end
 
 
-@implementation TestWithNoTestCases
+@implementation AbstractTest
 @end
 
 
@@ -65,6 +65,16 @@
 - (void)testBar_iPad {}
 - (void)testBaz_iPhone {}
 - (void)testCaseNotSupportingCurrentPlatform {}
+
+@end
+
+
+@implementation AbstractTestWhichSupportsOnly_iPad
+@end
+
+@implementation ConcreteTestWhichSupportsOnlyiPad
+
+- (void)testFoo {}
 
 @end
 
@@ -127,5 +137,15 @@
 }
 
 - (void)testOne {}
+
+@end
+
+
+@implementation Focus_AbstractTestThatIsFocused
+@end
+
+@implementation ConcreteTestThatIsFocused
+
+- (void)testFoo {}
 
 @end

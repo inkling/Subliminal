@@ -27,7 +27,7 @@
 @end
 
 
-@interface TestWithNoTestCases : SLTest
+@interface AbstractTest : SLTest
 @end
 
 
@@ -62,6 +62,16 @@
 - (void)testBar_iPad;
 - (void)testBaz_iPhone;
 - (void)testCaseNotSupportingCurrentPlatform;
+
+@end
+
+
+@interface AbstractTestWhichSupportsOnly_iPad : SLTest
+@end
+
+@interface ConcreteTestWhichSupportsOnlyiPad : AbstractTestWhichSupportsOnly_iPad
+
+- (void)testFoo;
 
 @end
 
@@ -116,5 +126,15 @@
 @interface Focus_TestThatIsFocusedButDoesntSupportCurrentPlatform : SLTest
 
 - (void)testOne;
+
+@end
+
+
+@interface Focus_AbstractTestThatIsFocused : SLTest
+@end
+
+@interface ConcreteTestThatIsFocused : Focus_AbstractTestThatIsFocused
+
+- (void)testFoo;
 
 @end
