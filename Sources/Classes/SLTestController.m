@@ -7,6 +7,7 @@
 //
 
 #import "SLTestController.h"
+#import "SLTestController+Internal.h"
 
 #import "SLLogger.h"
 #import "SLTest.h"
@@ -31,7 +32,7 @@ static void SLUncaughtExceptionHandler(NSException *exception)
 
 @implementation SLTestController {
     BOOL _runningWithFocus;
-    NSMutableArray *_testsToRun;
+    NSArray *_testsToRun;
     void(^_completionBlock)(void);
 }
 
@@ -61,6 +62,34 @@ static SLTestController *__sharedController = nil;
         __runQueue = dispatch_queue_create("com.inkling.subliminal.SLTest.runQueue", DISPATCH_QUEUE_SERIAL);
     });
     return __runQueue;
+}
+
++ (NSArray *)testsToRun:(NSSet *)tests withFocus:(BOOL *)withFocus {
+    // only run tests that are concrete...
+    NSMutableArray *testsToRun = [NSMutableArray arrayWithArray:[tests allObjects]];
+    [testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"isAbstract == NO"]];
+
+    // ...that support the current platform...
+    [testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"supportsCurrentPlatform == YES"]];
+
+    // ...and that are focused (if any remaining are focused)
+    BOOL runningWithFocus = ([testsToRun indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+        return [obj isFocused];
+    }] != NSNotFound);
+    if (runningWithFocus) {
+        [testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"isFocused == YES"]];
+    }
+    if (withFocus) *withFocus = runningWithFocus;
+
+    // ensure we'll execute startup test first if (still) present
+    NSUInteger startupTestIndex = [testsToRun indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+        return [obj isStartUpTest];
+    }];
+    if (startupTestIndex != NSNotFound) {
+        [testsToRun exchangeObjectAtIndex:startupTestIndex withObjectAtIndex:0];
+    }
+
+    return [testsToRun copy];
 }
 
 - (id)init {
@@ -94,29 +123,7 @@ static SLTestController *__sharedController = nil;
         
         _completionBlock = [completionBlock copy];
 
-        // only run tests that are concrete...
-        _testsToRun = [NSMutableArray arrayWithArray:[tests allObjects]];
-        [_testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"isAbstract == NO"]];
-
-        // ...that support the current platform...
-        [_testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"supportsCurrentPlatform == YES"]];
-
-        // ...and that are focused (if any remaining are focused)
-        _runningWithFocus = ([_testsToRun indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-            return [obj isFocused];
-        }] != NSNotFound);
-        if (_runningWithFocus) {
-            [_testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"isFocused == YES"]];
-        }
-
-        // ensure we'll execute startup test first if (still) present
-        NSUInteger startupTestIndex = [_testsToRun indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-            return [obj isStartUpTest];
-        }];
-        if (startupTestIndex != NSNotFound) {
-            [_testsToRun exchangeObjectAtIndex:startupTestIndex withObjectAtIndex:0];
-        }
-
+        _testsToRun = [[self class] testsToRun:tests withFocus:&_runningWithFocus];
         if (![_testsToRun count]) {
             SLLog(@"%@%@%@", @"There are no tests to run", (_runningWithFocus) ? @": no tests are focused" : @"", @".");
             [self _finishTesting];
