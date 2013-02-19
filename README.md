@@ -54,23 +54,26 @@ FAQ (aka stuff which should eventually go somewhere above)
 	Very much like you would write a unit test using `OCUnit/SenTest`: make a new subclass of `SLTest`, and define some methods on it beginning with "test". Do some work, make some assertions. Note, calls to `UIAutomation` (through `SLElement`) will throw exceptions as appropriate, if their corresponding `UIAElements` are invalid or whatever. All exceptions are caught by the framework and logged.
 	
 2. How do I run the tests?
-
-	On the `shared/subliminal` branch of `ios/inkling-ipad`, I've set up an "Integration Tests" target.
 	
-	1. Switch to this target, and hit "Profile".
-	2. Select the UIAutomation instrument.
-	3. Stop recording.
-	4. Import the "SLRadio.js" script found in the "Integration Tests" directory.
-	5. Go back to Xcode and hit "Profile" again.
+	1. Switch to the "Integration Tests" scheme.
+	2. Select "Profile" from the "Product" menu (`Cmd-I`).
+	3. Choose the `Automation` instrument.
+	4. Wait for the simulator to launch, then stop recording (the button in the top 
+	left of Instruments, or `Cmd-R`).
+	5. Add the [`SLRadio.js`](https://git.inkling.com/ios/Subliminal/blob/master/SLRadio.js) script using the drop-down menu in the middle of `Instruments`' left sidebar.
+	6. Press the record button again.
 	
-	Tests will now run. To re-run the tests when they finish, hit the record button (to stop Instruments, which keeps going even after the script stops), then switch back to Xcode and hit "Profile" again.
+	To re-run the tests when they finish, hit the record button twice (once to stop 
+	"recording" the tests, then again to restart.) If you make changes to the code, 
+	you must hit "Profile" from within Xcode before re-running the tests.
 	
 3. How do I run specific tests?
 
-	By default, Subliminal will run all the methods of all the `SLTest` subclasses which begin with "test". You can restrict testing to particular `SLTest` subclasses by passing an array with just those tests to the `SLTestController` in `-application:didFinishLaunchingWithOptions:`:
-	
-		NSArray *testsToRun = @[[SLTest testNamed:@"OneTest"], [SLTest testNamed:@"TwoTest"]];
-		[testController runTests:testsToRun];
+	By default, Subliminal will run all the test cases (methods beginning with "test") 
+	of all the `SLTest` subclasses. You can restrict testing to particular test 
+	cases by prefixing their names with "focus_". You can "focus" all test cases 
+	of a particular `SLTest` subclass by prefixing its name with "focus_", too. 
+	Don't forget to remove the prefixes before committing your changes!
 	
 4. What's up with the `UIAElement` macro?
 
