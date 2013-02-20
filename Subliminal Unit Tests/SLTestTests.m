@@ -49,6 +49,7 @@
         [TestWhichSupportsOnlyiPad_iPad class],
         [TestWhichSupportsOnlyiPhone_iPhone class],
         [TestWithPlatformSpecificTestCases class],
+        [AbstractTestWhichSupportsOnly_iPad class],
         [ConcreteTestWhichSupportsOnlyiPad class],
         [StartupTest class],
         [TestThatIsNotFocused class],
@@ -57,6 +58,7 @@
         [TestWithAFocusedPlatformSpecificTestCase class],
         [Focus_TestThatIsFocused class],
         [Focus_TestThatIsFocusedButDoesntSupportCurrentPlatform class],
+        [Focus_AbstractTestThatIsFocused class],
         [ConcreteTestThatIsFocused class],
         nil
     ];

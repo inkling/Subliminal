@@ -24,7 +24,8 @@
 }
 
 - (void)testCase {
-	// Implement test case.
+#warning Incomplete method implementation.
+	// Rename and implement test case.
 }
 
 @end

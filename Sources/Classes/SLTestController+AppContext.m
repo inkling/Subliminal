@@ -20,6 +20,8 @@
 @end
 
 
+static const NSTimeInterval kTargetLookupTimeout = 5.0;
+static const NSTimeInterval kTargetLookupRetryDelay = 0.25;
 NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoesNotExistException";
 
 @implementation SLTestController (AppContext)
@@ -133,6 +135,15 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
     return target;
 }
 
+// The target lookup timeout is factored as a method
+// so that the SLTestController+AppContext tests can provide different values
+// for different tests (using OCMock). It is not considered necessary or useful
+// to expose it publicly for other purposes.
+// Don't change the name of this method without updating the tests.
+- (NSTimeInterval)targetLookupTimeout {
+    return kTargetLookupTimeout;
+}
+
 - (id)sendAction:(SEL)action {
     NSAssert(![NSThread isMainThread], @"-sendAction: must not be called from the main thread.");
 
@@ -140,12 +151,18 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
     // An autoreleasepool is used here to explicitely ensure that the target is not retained beyond
     // the message send
     @autoreleasepool {
-        id target = [self targetForAction:action];
+        id target = nil;
+        // wait for a target to be registered, if necessary
+        NSDate *startDate = [NSDate date];
+        do {
+            if ((target = [self targetForAction:action])) break;
+            [NSThread sleepForTimeInterval:kTargetLookupRetryDelay];
+        } while ([[NSDate date] timeIntervalSinceDate:startDate] <= [self targetLookupTimeout]);
         if (!target) {
             [NSException raise:SLAppActionTargetDoesNotExistException
                         format:@"No target is currently registered for action %@. \
-                                (Either no target was ever registered, or a registered target has fallen out of scope.)",
-                                NSStringFromSelector(action)];
+             (Either no target was ever registered, or a registered target has fallen out of scope.)",
+             NSStringFromSelector(action)];
         }
 
         // perform the action on the main thread, for thread safety
@@ -177,12 +194,18 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
     // An autoreleasepool is used here to explicitely ensure that the target is not retained beyond
     // the message send
     @autoreleasepool {
-        id target = [self targetForAction:action];
+        id target = nil;
+        // wait for a target to be registered, if necessary
+        NSDate *startDate = [NSDate date];
+        do {
+            if ((target = [self targetForAction:action])) break;
+            [NSThread sleepForTimeInterval:kTargetLookupRetryDelay];
+        } while ([[NSDate date] timeIntervalSinceDate:startDate] <= [self targetLookupTimeout]);
         if (!target) {
             [NSException raise:SLAppActionTargetDoesNotExistException
                         format:@"No target is currently registered for action %@. \
-                                 (Either no target was ever registered, or a registered target has fallen out of scope.)",
-                                 NSStringFromSelector(action)];
+             (Either no target was ever registered, or a registered target has fallen out of scope.)",
+             NSStringFromSelector(action)];
         }
 
         // pass a copy of the argument, for thread safety

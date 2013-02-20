@@ -82,6 +82,7 @@
     id _loggerMock, _terminalMock;
 
     SLTestController *_controller;
+    id _controllerMock;
     id _targetMock;
     Class _testClass;
     id _testMock;
@@ -103,33 +104,54 @@
 
     _testClass = [TestWithSomeTestCases class];
     _testMock = [OCMockObject partialMockForClass:_testClass];
+
+    // suppress the controller's target lookup timeout except when specifically testing it
+    // to speed the tests
+    if (testMethod != @selector(testWaitsForTargetToBeRegisteredBeforeThrowing)) {
+        _controllerMock = [OCMockObject partialMockForObject:_controller];
+
+        // the targetLookupTimeout method is private because it's only of use to these tests
+        SEL targetLookupTimeoutSel = @selector(targetLookupTimeout);
+        NSAssert([_controller respondsToSelector:targetLookupTimeoutSel],
+                 @"The name of the targetLookupTimeout method has changed and must be updated.");
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        NSTimeInterval immediateTimeout = 0.0;
+        [[[_controllerMock stub] andReturnValue:OCMOCK_VALUE(immediateTimeout)] performSelector:targetLookupTimeoutSel];
+#pragma clang diagnostic pop
+    }
 }
 
 - (void)tearDownTestWithSelector:(SEL)testMethod {
     _terminalMock = nil;
 
     [_controller deregisterTarget:_targetMock];
+    _controllerMock = nil;
     _controller = nil;
     _targetMock = nil;
     _testMock = nil;
 }
 
 - (void)testThrowsOnRegistrationForActionNotHandledByTarget {
+    NSLog(@"*** The assertion failure seen in the test output immediately below is an expected part of the tests.");
     STAssertThrows([_controller registerTarget:_targetMock forAction:_cmd],
                    @"Should have raised an exception because the target does not respond to the action.");
 }
 
 - (void)testThrowsOnRegistrationForActionThatTakesMoreThanOneArgument {
+    NSLog(@"*** The assertion failure seen in the test output immediately below is an expected part of the tests.");
     STAssertThrows([_controller registerTarget:_targetMock forAction:@selector(invalidActionTakingMoreThanOneArgument:two:)],
                    @"Should have raised an exception because the action takes more than one argument.");
 }
 
 - (void)testThrowsOnRegistrationForActionTakingAnArgumentNotOfTypeId {
+    NSLog(@"*** The assertion failure seen in the test output immediately below is an expected part of the tests.");
     STAssertThrows([_controller registerTarget:_targetMock forAction:@selector(invalidActionTakingAnArgumentNotOfTypeId:)],
                    @"Should have raised an exception because the action takes an argument not of type id.");
 }
 
 - (void)testThrowsOnRegistrationForActionThatReturnsNeitherVoidNorIdType {
+    NSLog(@"*** The assertion failure seen in the test output immediately below is an expected part of the tests.");
     STAssertThrows([_controller registerTarget:_targetMock forAction:@selector(invalidActionReturningNeitherVoidNorIdType)],
                    @"Should have raised an exception because the action returns neither void nor id type.");
 }
@@ -251,6 +273,30 @@
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
+}
+
+- (void)testWaitsForTargetToBeRegisteredBeforeThrowing {
+    // have testOne call the action
+    SEL action = @selector(actionTakingNoArgumentReturningVoid);
+    [[[_testMock expect] andDo:^(NSInvocation *invocation) {
+        // we register a target after we send the action but before sendAction: times out (5 sec, at present)
+        double registrationDelayInSeconds = 2.0;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(registrationDelayInSeconds * NSEC_PER_SEC));
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            STAssertNoThrow([_controller registerTarget:_targetMock forAction:action],
+                            @"Should not have thrown an exception.");
+        });
+
+        // and so sendAction: does not throw
+        STAssertNoThrow([_controller sendAction:action],
+                       @"Should have thrown an exception because no target was registered for the action.");
+    }] testOne];
+
+    [[_targetMock expect] actionTakingNoArgumentReturningVoid];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    STAssertNoThrow([_testMock verify], @"Should have executed test.");
+    STAssertNoThrow([_targetMock verify], @"Should have received action.");
 }
 
 - (void)testSuccessfulDeregistrationForASingleAction {
