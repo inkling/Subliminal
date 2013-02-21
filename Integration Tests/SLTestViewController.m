@@ -37,6 +37,12 @@ NSString *const SLTestCaseViewControllerClassNameKey = @"SLTestCaseViewControlle
     return NSStringFromClass(_test);
 }
 
+static NSString *TestCaseCellIdentifier = @"SLTestCaseCell";
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:TestCaseCellIdentifier];
+}
+
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
@@ -63,13 +69,7 @@ NSString *const SLTestCaseViewControllerClassNameKey = @"SLTestCaseViewControlle
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *testCaseName = [_testCases objectAtIndex:indexPath.row];
-
-    static NSString *TestCaseCellIdentifier = @"SLTestCaseCell";
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:TestCaseCellIdentifier];
-    });
+    NSString *testCaseName = [_testCases objectAtIndex:indexPath.row];    
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:TestCaseCellIdentifier forIndexPath:indexPath];
 
     cell.textLabel.text = testCaseName;
