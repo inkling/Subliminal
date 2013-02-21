@@ -56,6 +56,7 @@
 		F0AC80C416BC355D00C5D5C0 /* SLTerminalTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AC80C316BC355D00C5D5C0 /* SLTerminalTest.m */; };
 		F0AC80C816BC367E00C5D5C0 /* SLTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AC80C716BC367E00C5D5C0 /* SLTestViewController.m */; };
 		F0AC80E616BCF91800C5D5C0 /* SLTestCaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AC80E516BCF91800C5D5C0 /* SLTestCaseViewController.m */; };
+		F0CE9FFD16D60E2C008A3B4A /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F08B86DB16859C4000C4FE44 /* libOCMock.a */; };
 		F0CEDA3116BF5FA5005FE8B9 /* SLTest+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = F0CEDA2F16BF5FA5005FE8B9 /* SLTest+Internal.h */; };
 		F0D240541683F7130031B67C /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0D240531683F7130031B67C /* SenTestingKit.framework */; };
 		F0D240551683F7130031B67C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695E0C16013D77000B05D0 /* UIKit.framework */; };
@@ -107,6 +108,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = F0695D8A16011515000B05D0;
 			remoteInfo = Subliminal;
+		};
+		F0CE9FF816D60E22008A3B4A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 030EF0DB14632FF700B04273;
+			remoteInfo = OCMockLib;
 		};
 		F0D240681683F97A0031B67C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -199,6 +207,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0CE9FFD16D60E2C008A3B4A /* libOCMock.a in Frameworks */,
 				F0AC80B316BB29B700C5D5C0 /* libSubliminal.a in Frameworks */,
 				F0AC809516BB299500C5D5C0 /* UIKit.framework in Frameworks */,
 				F0AC809616BB299500C5D5C0 /* Foundation.framework in Frameworks */,
@@ -487,6 +496,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				F0CE9FF916D60E22008A3B4A /* PBXTargetDependency */,
 				F0AC80B216BB29AB00C5D5C0 /* PBXTargetDependency */,
 			);
 			name = "Integration Tests";
@@ -678,6 +688,11 @@
 			target = F0695D8A16011515000B05D0 /* Subliminal */;
 			targetProxy = F0AC80B116BB29AB00C5D5C0 /* PBXContainerItemProxy */;
 		};
+		F0CE9FF916D60E22008A3B4A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = OCMockLib;
+			targetProxy = F0CE9FF816D60E22008A3B4A /* PBXContainerItemProxy */;
+		};
 		F0D240691683F97A0031B67C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F0695D8A16011515000B05D0 /* Subliminal */;
@@ -796,6 +811,10 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Integration Tests/Integration Tests-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"\"$(BUILT_PRODUCTS_DIR)\"",
+					"$(inherited)",
+				);
 				INFOPLIST_FILE = "Integration Tests/Integration Tests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				ONLY_ACTIVE_ARCH = YES;
@@ -816,6 +835,10 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Integration Tests/Integration Tests-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"\"$(BUILT_PRODUCTS_DIR)\"",
+					"$(inherited)",
+				);
 				INFOPLIST_FILE = "Integration Tests/Integration Tests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
