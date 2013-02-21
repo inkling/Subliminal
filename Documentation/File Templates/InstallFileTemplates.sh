@@ -7,7 +7,7 @@ while getopts d OPTION
 do
     case ${OPTION} in
         d) COPY_SLINTEGRATIONTEST_TEMPLATE=true;;
-      [?]) echo >&2 "Usage: ./${PROG_NAME} [ -d ]"
+      [?]) echo >&2 "Usage: ${PROG_NAME} [ -d ]"
            exit 2;;
     esac
 done
@@ -15,7 +15,8 @@ done
 TEMPLATE_DIR="${HOME}/Library/Developer/Xcode/Templates/File Templates/Subliminal"
 mkdir -p "${TEMPLATE_DIR}"
 
-cp -r "./Subliminal/Integration test class.xctemplate" "${TEMPLATE_DIR}"
+SCRIPTPATH=$(cd "$(dirname "$0")"; pwd)
+cp -r "$SCRIPTPATH/Subliminal/Integration test class.xctemplate" "${TEMPLATE_DIR}"
 if $COPY_SLINTEGRATIONTEST_TEMPLATE; then
-	cp -r "./Subliminal/Subliminal Integration test class.xctemplate" "${TEMPLATE_DIR}"
+	cp -r "$SCRIPTPATH/Subliminal/Subliminal Integration test class.xctemplate" "${TEMPLATE_DIR}"
 fi
