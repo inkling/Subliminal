@@ -70,53 +70,6 @@
     STAssertNoThrow([testNotSupportingCurrentPlatformMock verify], @"Test not supporting current platform was unexpectedly run.");
 }
 
-#pragma mark -Startup test
-
-- (void)testStartupTestIsRunFirst {
-    Class startupTestClass = [StartupTest class];
-    NSSet *tests = [NSSet setWithObjects:
-        [TestWithSomeTestCases class],
-        [TestWithPlatformSpecificTestCases class],
-        startupTestClass,
-        nil
-    ];
-    STAssertTrue([startupTestClass isStartUpTest], @"For the purposes of this test, this SLTest must be the start-up test.");
-
-    NSMutableArray *orderedTests = [NSMutableArray arrayWithCapacity:[tests count]];
-    NSMutableArray *testMocks = [NSMutableArray arrayWithCapacity:[tests count]];
-    for (Class testClass in tests) {
-        id testMock = [OCMockObject partialMockForClass:testClass];
-
-        // cause tests to be recorded in order of execution
-        [[[testMock stub] andDo:^(NSInvocation *invocation) {
-            [orderedTests addObject:testClass];
-        }] run:[OCMArg anyPointer]];
-
-        [testMocks addObject:testMock];
-    }
-
-    SLRunTestsAndWaitUntilFinished(tests, nil);
-    STAssertEqualObjects([orderedTests objectAtIndex:0], [StartupTest class],
-                         @"The startup test was not run first.");
-}
-
-- (void)testStartupTestIsNotAutomaticallyAddedToTheSetOfTestsToRun {
-    Class testWithSomeTestCasesClass = [TestWithSomeTestCases class];
-    Class startupTestClass = [StartupTest class];
-    STAssertTrue([startupTestClass isStartUpTest], @"For the purposes of this test, this SLTest must be the start-up test.");
-
-    id testWithSomeTestCasesClassMock = [OCMockObject partialMockForClass:testWithSomeTestCasesClass];
-    [[testWithSomeTestCasesClassMock expect] run:[OCMArg anyPointer]];
-
-    id startupTestClassMock = [OCMockObject partialMockForClass:startupTestClass];
-    [[startupTestClassMock reject] run:[OCMArg anyPointer]];
-
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeTestCasesClass], nil);
-    STAssertNoThrow([testWithSomeTestCasesClassMock verify], @"Test was not run as expected.");
-    STAssertNoThrow([startupTestClassMock verify],
-                    @"Start-up test was run even though the SLTestController wasn't told to run it.");
-}
-
 #pragma mark -Focusing
 
 - (void)testWhenSomeTestsAreFocusedOnlyThoseTestsAreRun {
@@ -232,34 +185,6 @@
     STAssertNoThrow([testWithSomeFocusedTestCasesClassMock verify],
                     @"Focused test was run even though the SLTestController wasn't told to run it.");
     STAssertNoThrow([testWithSomeTestCasesClassMock verify], @"Other test was not run.");
-}
-
-- (void)testStartupTestIsNotRunIfItIsNotFocused {
-    Class startupTestClass = [StartupTest class];
-    STAssertTrue([startupTestClass isStartUpTest],
-                 @"For the purposes of this test, this SLTest must be start-up test.");
-    STAssertFalse([startupTestClass isFocused],
-                  @"For the purposes of this test, this SLTest must not be focused.");
-    Class testWithSomeFocusedTestCasesClass = [TestWithSomeFocusedTestCases class];
-    STAssertTrue([testWithSomeFocusedTestCasesClass isFocused],
-                 @"For the purposes of this test, this SLTest must be focused.");
-
-    NSSet *tests = [NSSet setWithObjects:
-        startupTestClass,
-        testWithSomeFocusedTestCasesClass,
-        nil
-    ];
-
-    // only the focused test should run
-    id startupTestClassMock = [OCMockObject partialMockForClass:startupTestClass];
-    [[startupTestClassMock reject] run:[OCMArg anyPointer]];
-
-    id testWithSomeFocusedTestCasesClassMock = [OCMockObject partialMockForClass:testWithSomeFocusedTestCasesClass];
-    [[testWithSomeFocusedTestCasesClassMock expect] run:[OCMArg anyPointer]];
-
-    SLRunTestsAndWaitUntilFinished(tests, nil);
-    STAssertNoThrow([startupTestClassMock verify], @"Un-focused tests was still run.");
-    STAssertNoThrow([testWithSomeFocusedTestCasesClassMock verify], @"Focused test was not run.");
 }
 
 - (void)testTheUserIsWarnedWhenRunningFocusedTests {

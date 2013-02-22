@@ -76,13 +76,6 @@
 @end
 
 
-@interface StartupTest : SLTest
-
-- (void)testFoo;
-
-@end
-
-
 @interface TestThatIsNotFocused : SLTest
 
 - (void)testFoo;
