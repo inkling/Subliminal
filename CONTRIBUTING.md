@@ -11,7 +11,7 @@ add `SenTest` unit tests to the "Subliminal Unit Tests" group.
 
 * If you need `UIAutomation` to test your changes (i.e. if you modified `SLElement`), 
 add integration tests to the "Subliminal Integration Tests -> Tests" group. 
-See `SLIntegrationTests.h` for further instructions.
+See `SLIntegrationTest.h` for further instructions.
 
 	* Protip: install the "Subliminal integration test class" file template 
 	to make writing Subliminal integration tests easier. To do so, 
