@@ -197,7 +197,11 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
 }
 
 + (NSArray *)testCasesToRun {
-    return (([[self class] isFocused]) ? [[self class] focusedTestCases] : [[self class] testCases]);
+    NSArray *baseTestCases = (([[self class] isFocused]) ? [[self class] focusedTestCases] : [[self class] testCases]);
+    return [baseTestCases filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+        SEL testCaseSelector = NSSelectorFromString(evaluatedObject);
+        return [[self class] testCaseWithSelectorSupportsCurrentPlatform:testCaseSelector];
+    }]];
 }
 
 + (BOOL)testCaseWithSelectorSupportsCurrentPlatform:(SEL)testCaseSelector {
@@ -226,14 +230,9 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
         NSString *test = NSStringFromClass([self class]);
         for (NSString *testCaseName in [[self class] testCasesToRun]) {
             @autoreleasepool {
-                // only run test case if it's appropriate for the current platform
-                SEL testCaseSelector = NSSelectorFromString(testCaseName);
-                if (![[self class] testCaseWithSelectorSupportsCurrentPlatform:testCaseSelector]) {
-                    continue;
-                }
-
                 [[SLLogger sharedLogger] logTest:test caseStart:testCaseName];
 
+                SEL testCaseSelector = NSSelectorFromString(testCaseName);
                 BOOL caseFailed = NO;
                 @try {            
                     [self setUpTestCaseWithSelector:testCaseSelector];

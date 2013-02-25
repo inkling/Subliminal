@@ -35,8 +35,8 @@ static NSString *const SLTestFocusPrefix = @"focus_";
 /**
  The test cases that will be run when this test is [run](run:).
 
- @return testCases, unless this test is [focused](isFocused),
- in which case this method returns focusedTestCases.
+ @return testCases, or focusedTestCases (if this test is [focused](isFocused)),
+ filtered to those test cases that support the current platform.
  The test cases are represented as strings.
  */
 + (NSArray *)testCasesToRun;
