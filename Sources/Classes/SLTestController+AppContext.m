@@ -107,18 +107,31 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
 }
 
 - (void)deregisterTarget:(id)target forAction:(SEL)action {
+    // take care not to retain the target in the block
+    // (this method may be called from the target's dealloc,
+    // and our reference cannot at that point keep it alive,
+    // but the release of that reference at block's close will cause a segfault)
+    id __unsafe_unretained blockTarget = target;
     id mapKey = [[self class] actionTargetMapKeyForAction:action];
     dispatch_async([self actionTargetMapQueue], ^{
-        [[self actionTargetMap] removeObjectForKey:mapKey];
+        // if the target is registered for the action, deregister it
+        if (((SLWeakRef *)[self actionTargetMap][mapKey]).value == blockTarget) {
+            [[self actionTargetMap] removeObjectForKey:mapKey];
+        }
     });
 }
 
 - (void)deregisterTarget:(id)target {
+    // take care not to retain the target in the block
+    // (this method may be called from the target's dealloc,
+    // and our reference cannot at that point keep it alive,
+    // but the release of that reference at block's close will cause a segfault)
+    id __unsafe_unretained blockTarget = target;
     dispatch_async([self actionTargetMapQueue], ^{
         // first pass to find the objects
         NSMutableArray *actionsForTarget = [NSMutableArray array];
         [[self actionTargetMap] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-            if (((SLWeakRef *)obj).value == target) {
+            if (((SLWeakRef *)obj).value == blockTarget) {
                 [actionsForTarget addObject:key];
             }
         }];
