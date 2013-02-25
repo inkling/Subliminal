@@ -417,6 +417,36 @@
     STAssertNoThrow([_targetMock verify], @"First target should not have received action.");
 }
 
+- (void)testDeregisteringTargetForActionDoesNotDeregisterOtherTargets {
+    // register the first target
+    SEL action = @selector(actionTakingNoArgumentReturningVoid);
+    STAssertNoThrow([_controller registerTarget:_targetMock forAction:action],
+                    @"Should not have thrown an exception.");
+
+    // now register a second target
+    id secondTargetMock = [OCMockObject mockForClass:[SLAppTarget class]];
+    STAssertNoThrow([_controller registerTarget:secondTargetMock forAction:action],
+                    @"Should not have thrown an exception.");
+
+    // have the first target "deregister" for the action--this should be a no-op
+    STAssertNoThrow([_controller deregisterTarget:_targetMock forAction:action],
+                    @"Should not have thrown an exception.");
+
+    // have testOne call the action
+    [[[_testMock expect] andDo:^(NSInvocation *invocation) {
+        STAssertNoThrow([_controller sendAction:action],
+                        @"Should not have thrown an exception.");
+    }] testOne];
+
+    // expect the action to be received by the second target,
+    // i.e it should not have been deregistered by the above call
+    [[secondTargetMock expect] actionTakingNoArgumentReturningVoid];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    STAssertNoThrow([_testMock verify], @"Should have executed test.");
+    STAssertNoThrow([secondTargetMock verify], @"Second target should have received action.");
+}
+
 - (void)testTargetsAreNotRetained {
     // Use a local target, not another mock,
     // because we're going to nil it out partway through the test
