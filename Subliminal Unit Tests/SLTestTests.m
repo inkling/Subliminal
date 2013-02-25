@@ -1045,7 +1045,7 @@
 #pragma mark - Internal
 
 - (void)testTestCasesAreDiscoveredAsExpected {
-    NSArray *testCases = @[ @"testOne", @"testTwo", @"testThree" ];
+    NSSet *testCases = [NSSet setWithObjects:@"testOne", @"testTwo", @"testThree", nil];
     STAssertEqualObjects(testCases, [TestWithSomeTestCases testCases],
                          @"Test cases were not discovered as expected.");
 }
