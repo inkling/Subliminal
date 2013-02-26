@@ -39,34 +39,6 @@ extern NSString *const SLTestExceptionLineNumberKey;
 + (BOOL)isAbstract;
 
 /**
- Returns YES if this test exercises the application's start-up state,
- and thus should be run first.
-
- Tests should be independent, and thus can be (and are) run in no particular order.
- But designating one test to be run first may be useful:
- 
-     *  the state exercised might occur only once, upon launch;
-        and reproducing it later might be difficult or unnatural
-     *  the test can clear that state (i.e. in its tearDown), 
-        so that other tests' set-up phases might be more concise
-
- Only one test can be the start-up test. (Remember, however, that a test can have 
- multiple test cases.) If multiple tests return YES from this method, the 
- test framework's behavior is undefined.
- 
- @warning If this test throws an exception during set-up or tear-down, 
- testing will abort, on the assumption that the app was not able to start-up.
- 
- @warning The start-up test will not be run first if it is not run at all.
-
- @return YES if this state is the one-and-only start-up test, and should be run first;
-         NO otherwise.
- 
- @see -[SLTestController runTests:withCompletionBlock:]
- */
-+ (BOOL)isStartUpTest;
-
-/**
  Returns YES if this test has at least one test case which can be run
  given the current device, screen, etc.
  

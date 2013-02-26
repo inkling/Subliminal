@@ -32,7 +32,7 @@ static void SLUncaughtExceptionHandler(NSException *exception)
 
 @implementation SLTestController {
     BOOL _runningWithFocus;
-    NSArray *_testsToRun;
+    NSSet *_testsToRun;
     void(^_completionBlock)(void);
 }
 
@@ -64,30 +64,23 @@ static SLTestController *__sharedController = nil;
     return __runQueue;
 }
 
-+ (NSArray *)testsToRun:(NSSet *)tests withFocus:(BOOL *)withFocus {
++ (NSSet *)testsToRun:(NSSet *)tests withFocus:(BOOL *)withFocus {
     // only run tests that are concrete...
-    NSMutableArray *testsToRun = [NSMutableArray arrayWithArray:[tests allObjects]];
+    NSMutableSet *testsToRun = [NSMutableSet setWithSet:tests];
     [testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"isAbstract == NO"]];
 
     // ...that support the current platform...
     [testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"supportsCurrentPlatform == YES"]];
 
     // ...and that are focused (if any remaining are focused)
-    BOOL runningWithFocus = ([testsToRun indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+    NSSet *focusedTests = [testsToRun objectsPassingTest:^BOOL(id obj, BOOL *stop) {
         return [obj isFocused];
-    }] != NSNotFound);
+    }];
+    BOOL runningWithFocus = ([focusedTests count] > 0);
     if (runningWithFocus) {
-        [testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"isFocused == YES"]];
+        testsToRun = [NSMutableSet setWithSet:focusedTests];
     }
     if (withFocus) *withFocus = runningWithFocus;
-
-    // ensure we'll execute startup test first if (still) present
-    NSUInteger startupTestIndex = [testsToRun indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-        return [obj isStartUpTest];
-    }];
-    if (startupTestIndex != NSNotFound) {
-        [testsToRun exchangeObjectAtIndex:startupTestIndex withObjectAtIndex:0];
-    }
 
     return [testsToRun copy];
 }
@@ -112,7 +105,7 @@ static SLTestController *__sharedController = nil;
     [SLElement setDefaultTimeout:_defaultTimeout];
     
     if (_runningWithFocus) {
-        SLLog(@"Focusing on test cases in specific tests: %@.", [_testsToRun componentsJoinedByString:@","]);
+        SLLog(@"Focusing on test cases in specific tests: %@.", [[_testsToRun allObjects] componentsJoinedByString:@","]);
     }
     [[SLLogger sharedLogger] logTestingStart];
 }
@@ -162,11 +155,6 @@ static SLTestController *__sharedController = nil;
                     }
                     [[SLLogger sharedLogger] logError:message];
                     [[SLLogger sharedLogger] logTestAbort:testName];
-
-                    if ([[test class] isStartUpTest]) {
-                        // we abort testing, on the assumption that the app failed to start up
-                        break;
-                    }
                 }
             }
         }

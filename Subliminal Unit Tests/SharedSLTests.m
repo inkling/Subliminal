@@ -79,17 +79,6 @@
 @end
 
 
-@implementation StartupTest
-
-+ (BOOL)isStartUpTest {
-    return YES;
-}
-
-- (void)testFoo {}
-
-@end
-
-
 @implementation TestThatIsNotFocused
 
 - (void)testFoo {}

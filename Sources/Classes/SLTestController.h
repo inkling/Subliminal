@@ -19,8 +19,7 @@
 /**
  Run the specified tests.
  
- Tests are run on a background queue, in indeterminate order
- (except for the startup test, if it is included in the test set--it will be run first). 
+ Tests are run on a background queue, in indeterminate order.
  Tests must support the current platform in order to be run.
  If any tests are focused, only those tests will be run.
  
@@ -31,7 +30,6 @@
  @param tests The set of tests to run.
  @param block The block to execute once testing has finished.
  
- @see +[SLTest isStartupTest]
  @see +[SLTest supportsCurrentPlatform]
  @see +[SLTest isFocused]
  */

@@ -74,10 +74,6 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     return NO;
 }
 
-+ (BOOL)isStartUpTest {
-    return NO;
-}
-
 + (BOOL)supportsCurrentPlatform {
     // examine whether this test or any of its superclasses are annotated
     // the "nearest" annotation determines support ("nearest" like with method overrides)
