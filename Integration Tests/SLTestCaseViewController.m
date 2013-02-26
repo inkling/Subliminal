@@ -14,8 +14,7 @@
     return nil;
 }
 
-+ (UIView *)viewForTestCase:(SEL)testCase {
-    return nil;
+- (void)loadViewForTestCase:(SEL)testCase {
 }
 
 - (instancetype)initWithTestCaseWithSelector:(SEL)testCase {
@@ -36,11 +35,10 @@
         [super loadView];
     } else {
         // otherwise load the view programmatically
-        UIView *view = [[self class] viewForTestCase:self.testCase];
-        NSAssert(view, @"Concrete subclasses of %@ must override %@ if they do not override %@.",
-                        NSStringFromClass([SLTestCaseViewController class]),
-                        NSStringFromSelector(@selector(viewForTestCase:)), NSStringFromSelector(@selector(nibNameForTestCase:)));
-        self.view = view;
+        [self loadViewForTestCase:self.testCase];
+        NSAssert([self isViewLoaded], @"Concrete subclasses of %@ must override -%@ if they do not override +%@.",
+                NSStringFromClass([SLTestCaseViewController class]),
+                 NSStringFromSelector(@selector(loadViewForTestCase:)), NSStringFromSelector(@selector(nibNameForTestCase:)));
     }
 }
 

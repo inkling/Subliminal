@@ -20,7 +20,7 @@
  
  For each case of the corresponding test, a SLTestCaseViewController subclass 
  must either define a view [in a nib](+nibNameForTestCase:) or
- [programmatically](+viewForTestCase:).
+ [programmatically](-loadViewForTestCase:).
  */
 @interface SLTestCaseViewController : UIViewController
 
@@ -37,8 +37,10 @@
 
  The value returned by this method will be used to initialize the view controller 
  (i.e. using -[UIView initWithNibName:bundle:]). For a given test case, 
- this method may return nil, so long as viewForTestCase: returns non-nil 
- for that test case. The default implementation of this method returns nil.
+ this method may return nil, so long as -loadViewForTestCase: loads a view
+ for the test case.
+ 
+ The default implementation of this method returns nil.
 
  @param testCase A case of the SLIntegrationTest corresponding to this class.
  @return The name of the nib file to associate with a view controller initialized 
@@ -48,23 +50,21 @@
 + (NSString *)nibNameForTestCase:(SEL)testCase;
 
 /**
- Creates the view that instances of this class, initialized with the specified 
- test case, will manage.
+ Creates the view that the controller, initialized with the specified
+ test case, manages.
  
- For an instance initialized with a given test case, this method will be called, 
- and the value returned assigned to the instance's [view](-[UIView view]) property, 
- if and only if this class returns nil from +nibNameForTestCase: for that test case.
- That is, if this class specifies that a nib should be used to present the user 
- interface for a given test case, SLTestCaseViewController will use that nib 
- and will not attempt to programmatically create the view. The default implementation 
- of this method returns nil.
+ The view controller calls this method when its [view](-[UIView view]) property
+ is requested but is currently nil, if and only if this class returns `nil` from
+ +nibNameForTestCase: for the specified test case.
+ 
+ This method should create a view hierarchy and then assign the root view 
+ of the hierarchy to the [view](-[UIView view]) property.
+
+ The default implementation of this method is a no-op.
  
  @param testCase A case of the SLIntegrationTest corresponding to this class.
- @return The view for a view controller initialized with the specified test case, 
- or nil, if instances of this class use a nib to present the user interface 
- for that test case.
  */
-+ (UIView *)viewForTestCase:(SEL)testCase;
+- (void)loadViewForTestCase:(SEL)testCase;
 
 /**
  Returns a newly initialized view controller with the specified test case.
