@@ -229,44 +229,46 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     if (!setUpOrTearDownException) {
         NSString *test = NSStringFromClass([self class]);
         for (NSString *testCaseName in [[self class] testCasesToRun]) {
-            // only run test case if it's appropriate for the current platform
-            SEL testCaseSelector = NSSelectorFromString(testCaseName);
-            if (![[self class] testCaseWithSelectorSupportsCurrentPlatform:testCaseSelector]) {
-                continue;
-            }
+            @autoreleasepool {
+                // only run test case if it's appropriate for the current platform
+                SEL testCaseSelector = NSSelectorFromString(testCaseName);
+                if (![[self class] testCaseWithSelectorSupportsCurrentPlatform:testCaseSelector]) {
+                    continue;
+                }
 
-            [[SLLogger sharedLogger] logTest:test caseStart:testCaseName];
+                [[SLLogger sharedLogger] logTest:test caseStart:testCaseName];
 
-            BOOL caseFailed = NO;
-            @try {            
-                [self setUpTestCaseWithSelector:testCaseSelector];
-                
-                // We use objc_msgSend so that Clang won't complain about performSelector leaks
-                ((void(*)(id, SEL))objc_msgSend)(self, testCaseSelector);
-            }
-            @catch (NSException *e) {
-                // Catch all exceptions in test cases. If the app is in an inconsistent state then -tearDown: should abort completely.
-                [self logException:e inTestCase:testCaseName];
-                caseFailed = YES;
-            }
-            @finally {
-                // tear-down test case last so that it always executes, regardless of earlier failures
-                @try {
-                    [self tearDownTestCaseWithSelector:testCaseSelector];
+                BOOL caseFailed = NO;
+                @try {            
+                    [self setUpTestCaseWithSelector:testCaseSelector];
+                    
+                    // We use objc_msgSend so that Clang won't complain about performSelector leaks
+                    ((void(*)(id, SEL))objc_msgSend)(self, testCaseSelector);
                 }
                 @catch (NSException *e) {
+                    // Catch all exceptions in test cases. If the app is in an inconsistent state then -tearDown: should abort completely.
                     [self logException:e inTestCase:testCaseName];
                     caseFailed = YES;
                 }
+                @finally {
+                    // tear-down test case last so that it always executes, regardless of earlier failures
+                    @try {
+                        [self tearDownTestCaseWithSelector:testCaseSelector];
+                    }
+                    @catch (NSException *e) {
+                        [self logException:e inTestCase:testCaseName];
+                        caseFailed = YES;
+                    }
 
-                if (caseFailed) {
-                    [[SLLogger sharedLogger] logTest:test caseFail:testCaseName];
-                    numberOfCasesFailed++;
-                } else {
-                    [[SLLogger sharedLogger] logTest:test casePass:testCaseName];
+                    if (caseFailed) {
+                        [[SLLogger sharedLogger] logTest:test caseFail:testCaseName];
+                        numberOfCasesFailed++;
+                    } else {
+                        [[SLLogger sharedLogger] logTest:test casePass:testCaseName];
+                    }
+
+                    numberOfCasesExecuted++;
                 }
-
-                numberOfCasesExecuted++;
             }
         }
     }

@@ -133,38 +133,40 @@ static SLTestController *__sharedController = nil;
         [self _beginTesting];
 
         for (Class testClass in _testsToRun) {
-            SLTest *test = (SLTest *)[[testClass alloc] initWithTestController:self];
-            
-            NSString *testName = NSStringFromClass(testClass);
-            [[SLLogger sharedLogger] logTestStart:testName];
-            
-            @try {
-                NSUInteger numCasesExecuted = 0;
-                NSUInteger numCasesFailed = [test run:&numCasesExecuted];
+            @autoreleasepool {
+                SLTest *test = (SLTest *)[[testClass alloc] initWithTestController:self];
 
-                [[SLLogger sharedLogger] logTestFinish:testName
-                                  withNumCasesExecuted:numCasesExecuted
-                                        numCasesFailed:numCasesFailed];
-            }
-            @catch (NSException *e) {
-                // If an assertion carries call site info, that suggests it was "expected",
-                // and we log it more tersely than other exceptions.
-                NSString *fileName = [[e userInfo] objectForKey:SLTestExceptionFilenameKey];
-                int lineNumber = [[[e userInfo] objectForKey:SLTestExceptionLineNumberKey] intValue];
-                NSString *message = nil;
-                if (fileName) {
-                    message = [NSString stringWithFormat:@"%@:%d: %@",
-                               fileName, lineNumber, [e reason]];
-                } else {
-                    message = [NSString stringWithFormat:@"Unexpected exception occurred ***%@*** for reason: %@",
-                                [e name], [e reason]];
+                NSString *testName = NSStringFromClass(testClass);
+                [[SLLogger sharedLogger] logTestStart:testName];
+
+                @try {
+                    NSUInteger numCasesExecuted = 0;
+                    NSUInteger numCasesFailed = [test run:&numCasesExecuted];
+
+                    [[SLLogger sharedLogger] logTestFinish:testName
+                                      withNumCasesExecuted:numCasesExecuted
+                                            numCasesFailed:numCasesFailed];
                 }
-                [[SLLogger sharedLogger] logError:message];
-                [[SLLogger sharedLogger] logTestAbort:testName];
+                @catch (NSException *e) {
+                    // If an assertion carries call site info, that suggests it was "expected",
+                    // and we log it more tersely than other exceptions.
+                    NSString *fileName = [[e userInfo] objectForKey:SLTestExceptionFilenameKey];
+                    int lineNumber = [[[e userInfo] objectForKey:SLTestExceptionLineNumberKey] intValue];
+                    NSString *message = nil;
+                    if (fileName) {
+                        message = [NSString stringWithFormat:@"%@:%d: %@",
+                                   fileName, lineNumber, [e reason]];
+                    } else {
+                        message = [NSString stringWithFormat:@"Unexpected exception occurred ***%@*** for reason: %@",
+                                   [e name], [e reason]];
+                    }
+                    [[SLLogger sharedLogger] logError:message];
+                    [[SLLogger sharedLogger] logTestAbort:testName];
 
-                if ([[test class] isStartUpTest]) {
-                    // we abort testing, on the assumption that the app failed to start up
-                    break;
+                    if ([[test class] isStartUpTest]) {
+                        // we abort testing, on the assumption that the app failed to start up
+                        break;
+                    }
                 }
             }
         }
