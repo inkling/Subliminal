@@ -199,8 +199,9 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     });
 }
 
-
-- (NSDictionary *)waitForAccessibilityChains {
+// We force waitForAccessibilityChains to return a retained dictionary here to prevent the returned
+// dictionary from being added to an autorelease pool on Subliminal's (non-main) thread.
+- (NSDictionary *)waitForAccessibilityChains NS_RETURNS_RETAINED {
     __block NSDictionary *accessibilityChains = nil;
     NSDate *startDate = [NSDate date];
     while ([[NSDate date] timeIntervalSinceDate:startDate] < [[self class] defaultTimeout]) {
