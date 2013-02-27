@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		068D3E4D16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 068D3E4C16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib */; };
 		0F21788816AE08F700C46068 /* SLMultiLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F21788616AE08F700C46068 /* SLMultiLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0F21788916AE08F700C46068 /* SLMultiLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F21788716AE08F700C46068 /* SLMultiLogger.m */; };
 		CA75E78216697A1200D57E92 /* SLDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = CA75E78016697A1200D57E92 /* SLDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -129,6 +130,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		068D3E4C16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLTableViewChildElementMatchingTestViewController.xib; sourceTree = "<group>"; };
 		0F21788616AE08F700C46068 /* SLMultiLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLMultiLogger.h; sourceTree = "<group>"; };
 		0F21788716AE08F700C46068 /* SLMultiLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLMultiLogger.m; sourceTree = "<group>"; };
 		CA75E78016697A1200D57E92 /* SLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLDevice.h; sourceTree = "<group>"; };
@@ -270,6 +272,7 @@
 				F01B2B6A16D2C55900DBA391 /* SLElementMatchingTest.m */,
 				F01B2B6B16D2C55900DBA391 /* SLElementMatchingTestViewController.m */,
 				F01B2B6C16D2C55900DBA391 /* SLElementMatchingTestViewController.xib */,
+				068D3E4C16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib */,
 			);
 			name = "SLElement Matching Tests";
 			sourceTree = "<group>";
@@ -617,6 +620,7 @@
 				F0AC80AA16BB299500C5D5C0 /* Default-568h@2x.png in Resources */,
 				F01B2B6F16D2C55900DBA391 /* SLElementMatchingTestViewController.xib in Resources */,
 				F0CEA00416D60EAD008A3B4A /* SLDeviceTestViewController.xib in Resources */,
+				068D3E4D16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

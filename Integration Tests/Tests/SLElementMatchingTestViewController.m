@@ -8,8 +8,8 @@
 
 #import "SLTestCaseViewController.h"
 
-@interface SLElementMatchingTestViewController : SLTestCaseViewController
-
+@interface SLElementMatchingTestViewController : SLTestCaseViewController <UITableViewDataSource>
+@property (nonatomic, retain) IBOutlet UITableView *tableView;
 @end
 
 @interface SLElementMatchingTestViewController ()
@@ -19,7 +19,13 @@
 @implementation SLElementMatchingTestViewController
 
 + (NSString *)nibNameForTestCase:(SEL)testCase {
-    return @"SLElementMatchingTestViewController";
+    if (testCase == @selector(testElementWithAccessibilityLabel)) {
+        return @"SLElementMatchingTestViewController";
+    } else if (testCase == @selector(testMatchingTableViewChildElement) || testCase == @selector(testTappingTableViewChildElement)) {
+        return @"SLTableViewChildElementMatchingTestViewController";
+    } else {
+        return nil;
+    }
 }
 
 - (instancetype)initWithTestCaseWithSelector:(SEL)testCase {
@@ -35,6 +41,18 @@
 
     self.fooButton.accessibilityLabel = @"foo";
     self.fooButton.accessibilityValue = @"fooValue";
+}
+
+#pragma mark UITableViewDataSource
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 1;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+    cell.textLabel.text = @"foo";
+    return cell;
 }
 
 @end

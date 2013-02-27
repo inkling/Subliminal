@@ -23,4 +23,14 @@
     SLAssertTrue([[fooButton value] isEqualToString:@"fooValue"], @"SLElement should have matched fooButton.");
 }
 
+- (void)testMatchingTableViewChildElement {
+    SLElement *fooCell = [SLElement elementWithAccessibilityLabel:@"foo"];
+    SLAssertTrue([fooCell isValid], @"Matching of UITableViewCell by label with SLElement failed.");
+}
+
+- (void)testTappingTableViewChildElement {
+    SLElement *fooCell = [SLElement elementWithAccessibilityLabel:@"foo"];
+    SLAssertNoThrow([UIAElement(fooCell) tap], @"An exception should not have been thrown tapping on the table view cell.");
+}
+
 @end
