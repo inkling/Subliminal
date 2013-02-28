@@ -281,7 +281,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 - (void)dragWithStartPoint:(CGPoint)startPoint endPoint:(CGPoint)endPoint
 {
-    [self sendMessage:@"dragInsideWithOptions({startOffset:{x:%f, y:%f}, endOffset:{x:%f, y:%f}, duration:0.2})", startPoint.x, startPoint.y, endPoint.x, endPoint.y];
+    [self sendMessage:@"dragInsideWithOptions({startOffset:{x:%f, y:%f}, endOffset:{x:%f, y:%f}, duration:1.0})", startPoint.x, startPoint.y, endPoint.x, endPoint.y];
 }
 
 - (NSString *)value {
