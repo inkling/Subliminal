@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		068D3E4D16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 068D3E4C16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib */; };
+		0696BA5816E013D600DD70CF /* SLElementDraggingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0696BA5516E013D600DD70CF /* SLElementDraggingTest.m */; };
+		0696BA5916E013D600DD70CF /* SLElementDraggingTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0696BA5616E013D600DD70CF /* SLElementDraggingTestViewController.m */; };
+		0696BA5A16E013D600DD70CF /* SLElementDraggingTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0696BA5716E013D600DD70CF /* SLElementDraggingTestViewController.xib */; };
 		0F21788816AE08F700C46068 /* SLMultiLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F21788616AE08F700C46068 /* SLMultiLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0F21788916AE08F700C46068 /* SLMultiLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F21788716AE08F700C46068 /* SLMultiLogger.m */; };
 		CA75E78216697A1200D57E92 /* SLDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = CA75E78016697A1200D57E92 /* SLDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -131,6 +134,9 @@
 
 /* Begin PBXFileReference section */
 		068D3E4C16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLTableViewChildElementMatchingTestViewController.xib; sourceTree = "<group>"; };
+		0696BA5516E013D600DD70CF /* SLElementDraggingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementDraggingTest.m; sourceTree = "<group>"; };
+		0696BA5616E013D600DD70CF /* SLElementDraggingTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementDraggingTestViewController.m; sourceTree = "<group>"; };
+		0696BA5716E013D600DD70CF /* SLElementDraggingTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementDraggingTestViewController.xib; sourceTree = "<group>"; };
 		0F21788616AE08F700C46068 /* SLMultiLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLMultiLogger.h; sourceTree = "<group>"; };
 		0F21788716AE08F700C46068 /* SLMultiLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLMultiLogger.m; sourceTree = "<group>"; };
 		CA75E78016697A1200D57E92 /* SLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLDevice.h; sourceTree = "<group>"; };
@@ -238,6 +244,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0696BA5E16E013DF00DD70CF /* SLElement Dragging Tests */ = {
+			isa = PBXGroup;
+			children = (
+				0696BA5516E013D600DD70CF /* SLElementDraggingTest.m */,
+				0696BA5616E013D600DD70CF /* SLElementDraggingTestViewController.m */,
+				0696BA5716E013D600DD70CF /* SLElementDraggingTestViewController.xib */,
+			);
+			name = "SLElement Dragging Tests";
+			sourceTree = "<group>";
+		};
 		CAC388011641CD4800F995F9 /* Categories */ = {
 			isa = PBXGroup;
 			children = (
@@ -422,6 +438,7 @@
 			isa = PBXGroup;
 			children = (
 				F0CE9FFE16D60E61008A3B4A /* SLDevice Tests */,
+				0696BA5E16E013DF00DD70CF /* SLElement Dragging Tests */,
 				F05263C316D2C2CF0090174F /* SLElement Matching Tests */,
 				F013798E16D0843B009BAF22 /* SLTerminal Tests */,
 			);
@@ -621,6 +638,7 @@
 				F01B2B6F16D2C55900DBA391 /* SLElementMatchingTestViewController.xib in Resources */,
 				F0CEA00416D60EAD008A3B4A /* SLDeviceTestViewController.xib in Resources */,
 				068D3E4D16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib in Resources */,
+				0696BA5A16E013D600DD70CF /* SLElementDraggingTestViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -684,6 +702,8 @@
 				F01B2B6E16D2C55900DBA391 /* SLElementMatchingTestViewController.m in Sources */,
 				F0CEA00216D60EAD008A3B4A /* SLDeviceTest.m in Sources */,
 				F0CEA00316D60EAD008A3B4A /* SLDeviceTestViewController.m in Sources */,
+				0696BA5816E013D600DD70CF /* SLElementDraggingTest.m in Sources */,
+				0696BA5916E013D600DD70CF /* SLElementDraggingTestViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
