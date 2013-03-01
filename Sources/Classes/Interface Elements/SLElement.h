@@ -51,6 +51,9 @@ extern NSString *const SLElementVisibleException;
 // This causes the automation JavaScript system to interpret the points in the normalized coordinates of the target
 // SLElement's view.  That is, a start or end point of {0.5, 0.5} is interpretted to be at the center of the target
 // element's view.
+//
+// Uses a drag duration of 1.0 seconds because this is the documented default duration for touch-and-hold gestures
+// according to Apple's UIAElement class reference.
 - (void)dragWithStartPoint:(CGPoint)startPoint endPoint:(CGPoint)endPoint;
 
 - (NSString *)value;
