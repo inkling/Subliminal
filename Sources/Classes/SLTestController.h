@@ -14,6 +14,16 @@
 
 @property (nonatomic) NSTimeInterval defaultTimeout;
 
+/**
+ If YES, UIAutomation will attempt to dismiss any alert encountered during
+ the execution of the tests by tapping the cancel button, if the button exists,
+ then tapping the default button, if one is identifiable. If the alert is
+ still not dismissed, the tests will abort.
+
+ If NO (the default) it is the responsibility of the tests to dismiss alerts.
+ */
+@property (nonatomic) BOOL automaticallyDismissAlerts;
+
 + (id)sharedTestController;
 
 /**

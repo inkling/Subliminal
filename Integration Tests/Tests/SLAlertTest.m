@@ -24,6 +24,24 @@
     [super tearDownTestCaseWithSelector:testSelector];
 }
 
+- (void)testAutomaticDismissalOfAlerts {
+    SLAssertFalse([[SLTestController sharedTestController] automaticallyDismissAlerts],
+                  @"By default/for the purposes of this test, UIAutomation should not automatically dismiss alerts.");
+
+    SLAskApp1(showAlertWithTitle:, @"Auto-dismiss off");
+    [self wait:2.0];
+    SLAssertTrue([UIAElement([SLAlert anyElement]) isValid],
+                 @"The alert should still be valid.");
+    SLAskApp(dismissActiveAlert);
+
+    [[SLTestController sharedTestController] setAutomaticallyDismissAlerts:YES];
+    SLAskApp1(showAlertWithTitle:, @"Auto-dismiss on");
+    [self wait:2.0];
+    SLAssertFalse([UIAElement([SLAlert anyElement]) isValid],
+                  @"The alert should have been dismissed.");
+    [[SLTestController sharedTestController] setAutomaticallyDismissAlerts:NO];
+}
+
 - (void)testCanMatchAlertWithTitle {
     NSString *validAlertTitle = @"Foo", *invalidAlertTitle = @"Bar";
 

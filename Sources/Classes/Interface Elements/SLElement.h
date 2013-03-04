@@ -107,6 +107,9 @@ extern NSString *const SLElementVisibleException;
  
  @warning By default, UIAlertViews do not have an accessibility label. You should 
  use the +alertWithTitle: or +anyElement constructors.
+ @warning If [[SLTestController sharedTestController] automaticallyDismissAlerts]
+ is YES, alerts will be dismissed as soon as they are shown, with no opportunity 
+ to examine or otherwise manipulate them.
  */
 @interface SLAlert : SLElement
 

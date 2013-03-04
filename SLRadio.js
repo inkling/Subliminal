@@ -1,9 +1,13 @@
 
 var _target = UIATarget.localTarget();
 
+// We return true to let the tests handle alerts 
+// rather than have UIAutomation automatically dismiss them.
+// The variable is defined outside the function 
+// so that it can be manipulated by the test controller.
+var _testsHandleAlerts = true;
 UIATarget.onAlert = function(alert) {
-	// tests will handle alerts
-	return true;
+	return _testsHandleAlerts;
 }
 
 

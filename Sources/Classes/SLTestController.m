@@ -109,6 +109,19 @@ static SLTestController *__sharedController = nil;
     return self;
 }
 
+- (void)setAutomaticallyDismissAlerts:(BOOL)automaticallyDismissAlerts {
+    if (automaticallyDismissAlerts != _automaticallyDismissAlerts) {
+        _automaticallyDismissAlerts = automaticallyDismissAlerts;
+        // if we're on a background thread (==are testing),
+        // we can & should update UIAutomation immediately
+        // otherwise we'll set this value when we begin testing
+        if (![NSThread isMainThread]) {
+            [[SLTerminal sharedTerminal] evalWithFormat:@"_testsHandleAlerts = %@;",
+                 (_automaticallyDismissAlerts ? @"false" : @"true")];
+        }
+    }
+}
+
 - (void)_beginTesting {
     appsUncaughtExceptionHandler = NSGetUncaughtExceptionHandler();
     NSSetUncaughtExceptionHandler(&SLUncaughtExceptionHandler);
@@ -117,7 +130,9 @@ static SLTestController *__sharedController = nil;
     SLLog(@"Tests are starting up... ");
 
     [SLElement setDefaultTimeout:_defaultTimeout];
-    
+    [[SLTerminal sharedTerminal] evalWithFormat:@"_testsHandleAlerts = %@;",
+         (_automaticallyDismissAlerts ? @"false" : @"true")];
+
     if (_runningWithFocus) {
         SLLog(@"Focusing on test cases in specific tests: %@.", [[_testsToRun allObjects] componentsJoinedByString:@","]);
     }
