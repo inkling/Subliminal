@@ -14,6 +14,7 @@
 @interface SLElementMatchingTestViewController () <UITableViewDataSource>
 
 @property (weak, nonatomic) IBOutlet UIButton *fooButton;
+@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @end
@@ -21,7 +22,8 @@
 @implementation SLElementMatchingTestViewController
 
 + (NSString *)nibNameForTestCase:(SEL)testCase {
-    if (testCase == @selector(testElementWithAccessibilityLabel)) {
+    if (testCase == @selector(testAnyElement) ||
+        testCase == @selector(testElementWithAccessibilityLabel)) {
         return @"SLElementMatchingTestViewController";
     } else if (testCase == @selector(testMatchingTableViewChildElement) || testCase == @selector(testTappingTableViewChildElement)) {
         return @"SLTableViewChildElementMatchingTestViewController";
@@ -40,6 +42,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    self.searchBar.text = @"barText";
 
     self.fooButton.accessibilityLabel = @"foo";
     self.fooButton.accessibilityValue = @"fooValue";

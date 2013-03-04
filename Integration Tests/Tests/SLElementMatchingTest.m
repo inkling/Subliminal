@@ -18,9 +18,14 @@
     return @"SLElementMatchingTestViewController";
 }
 
+- (void)testAnyElement {
+    SLSearchBar *anySearchBar = [SLSearchBar anyElement];
+    SLAssertTrue([[anySearchBar text] isEqualToString:@"barText"], @"SLSearchBar should have matched the search bar onscreen.");
+}
+
 - (void)testElementWithAccessibilityLabel {
     SLElement *fooButton = [SLElement elementWithAccessibilityLabel:@"foo"];
-    SLAssertTrue([[fooButton value] isEqualToString:@"fooValue"], @"SLElement should have matched fooButton.");
+    SLAssertTrue([[fooButton value] isEqualToString:@"fooValue"], @"SLElement should have matched the button onscreen.");
 }
 
 - (void)testMatchingTableViewChildElement {

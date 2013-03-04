@@ -64,6 +64,12 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return [[self alloc] initWithPredicate:predicate description:[predicate description]];
 }
 
++ (instancetype)anyElement {
+    return [[self alloc] initWithPredicate:^BOOL(NSObject *obj) {
+        return YES;
+    } description:@"any element"];
+}
+
 + (id)elementWithAccessibilityLabel:(NSString *)label {
     return [[self alloc] initWithPredicate:^BOOL(NSObject *obj) {
         return [obj.slAccessibilityName isEqualToString:label] || ([obj.accessibilityLabel length] > 0 && [obj.accessibilityLabel isEqualToString:label]);
@@ -401,6 +407,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 @end
 
 
+#pragma mark - SLSearchBar
 
 @implementation SLSearchBar
 

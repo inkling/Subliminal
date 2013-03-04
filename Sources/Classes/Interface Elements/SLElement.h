@@ -30,6 +30,20 @@ extern NSString *const SLElementVisibleException;
 // Returns an element for an NSObject in the accessibility hierarchy that matches predicate.
 + (id)elementMatching:(BOOL (^)(NSObject *obj))predicate;
 
+/**
+ Returns an element which matches any object in the accessibility hierarchy.
+
+ SLElement defines this constructor primarily for the benefit of subclasses
+ that match a certain kind of object by default, such that a match is likely 
+ unique even without the developer specifying additional information. For instance, 
+ if your application only has one webview onscreen at a time, you could match
+ that webview (using SLWebView) by matching "any" webview, without having to 
+ give that webview an accessibility label or identifier.
+
+ @return An element which matches any object in the accessibility hierarchy.
+ */
++ (instancetype)anyElement;
+
 // Returns an element for an NSObject in the accessibility hierarchy with the given slAccessibilityName.
 + (id)elementWithAccessibilityLabel:(NSString *)label;
 
@@ -105,6 +119,15 @@ extern NSString *const SLElementVisibleException;
 @property (nonatomic, strong) NSString *text;
 @end
 
+/**
+ SLSearchBar will match any object, and only objects, with the UIAccessibilityTraitSearchField 
+ accessibility trait.
+ 
+ @warning By default, the text field inside a UISearchBar is the accessible element, 
+ not the search bar itself. You should not attempt to set and match accessibility 
+ properties of the search bar itself, but rather match the search text field by its 
+ accessibility value (its text), or use the +anyElement constructor.
+ */
 @interface SLSearchBar : SLTextField
 @end
 
