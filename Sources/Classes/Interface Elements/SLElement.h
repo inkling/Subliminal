@@ -102,9 +102,25 @@ extern NSString *const SLElementVisibleException;
 
 #pragma mark - SLElement Subclasses
 
+/**
+ The SLAlert class allows access to, and control of, alerts within your application.
+ 
+ @warning By default, UIAlertViews do not have an accessibility label. You should 
+ use the +alertWithTitle: or +anyElement constructors.
+ */
 @interface SLAlert : SLElement
+
+/**
+ Returns an element that matches an alert with the specified title.
+ 
+ @param title The title of the alert.
+ */
++ (instancetype)alertWithTitle:(NSString *)title;
+
 - (void)dismiss;
+
 - (void)dismissWithButtonTitled:(NSString *)buttonTitle;
+
 @end
 
 @interface SLControl : SLElement

@@ -337,16 +337,15 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 @implementation SLAlert
 
-
-+ (id)elementWithAccessibilityLabel:(NSString *)label {
++ (instancetype)alertWithTitle:(NSString *)title {
     return [[self alloc] initWithPredicate:^BOOL(NSObject *obj) {
         if ([obj isKindOfClass:[UIAlertView class]]) {
             UIAlertView *alert = (UIAlertView *)obj;
-            return ([alert.accessibilityLabel isEqualToString:label] || [alert.title isEqualToString:label]);
+            return [alert.title isEqualToString:title];
         } else {
             return NO;
         }
-    } description:label];
+    } description:title];
 }
 
 // only one alert shows at a time, and it doesn't have an accessibility label
