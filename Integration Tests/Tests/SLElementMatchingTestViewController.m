@@ -8,12 +8,14 @@
 
 #import "SLTestCaseViewController.h"
 
-@interface SLElementMatchingTestViewController : SLTestCaseViewController <UITableViewDataSource>
-@property (nonatomic, retain) IBOutlet UITableView *tableView;
+@interface SLElementMatchingTestViewController : SLTestCaseViewController
 @end
 
-@interface SLElementMatchingTestViewController ()
+@interface SLElementMatchingTestViewController () <UITableViewDataSource>
+
 @property (weak, nonatomic) IBOutlet UIButton *fooButton;
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+
 @end
 
 @implementation SLElementMatchingTestViewController
