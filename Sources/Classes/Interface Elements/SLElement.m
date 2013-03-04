@@ -348,12 +348,8 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     } description:title];
 }
 
-// only one alert shows at a time, and it doesn't have an accessibility label
-// -- we match the title of the alert instead
-- (NSString *)staticUIASelf {
-    return [NSString stringWithFormat:
-                            @"((UIATarget.localTarget().frontMostApp().alert().staticTexts()[0].label() == \"%@\") \
-                            ? UIATarget.localTarget().frontMostApp().alert() : null)", [_description slStringByEscapingForJavaScriptLiteral]];
+- (BOOL)matchesObject:(NSObject *)object {
+    return [object isKindOfClass:[UIAlertView class]] && [super matchesObject:object];
 }
 
 - (void)dismiss {
