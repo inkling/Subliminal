@@ -29,10 +29,10 @@ extern NSString *const SLTestCaseViewControllerClassNameKey;
  This is the designated initializer for this class.
  
  @param test An SLTest subclass.
- @param testCases A list of SLTest test cases, represented as strings.
+ @param testCases A set of SLTest test cases, represented as strings.
  @return A newly initialized SLTestViewController object.
  */
-- (instancetype)initWithTest:(Class)test testCases:(NSArray *)testCases;
+- (instancetype)initWithTest:(Class)test testCases:(NSSet *)testCases;
 
 ///
 /// @name SLIntegrationTest app hooks

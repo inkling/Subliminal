@@ -24,11 +24,11 @@ NSString *const SLTestCaseViewControllerClassNameKey = @"SLTestCaseViewControlle
     NSDictionary *_currentTestCaseInfo;
 }
 
-- (instancetype)initWithTest:(Class)test testCases:(NSArray *)testCases {
+- (instancetype)initWithTest:(Class)test testCases:(NSSet *)testCases {
     self = [super initWithStyle:UITableViewStylePlain];
     if (self) {
         _test = test;
-        _testCases = [testCases copy];
+        _testCases = [testCases allObjects];
     }
     return self;
 }

@@ -17,8 +17,8 @@
 @implementation ___FILEBASENAMEASIDENTIFIER___ViewController
 
 /**
- For every test case, return a non-nil value from EITHER nibNameForTestCase: 
- OR viewForTestCase:.
+ For every test case, EITHER return a non-nil value from nibNameForTestCase: 
+ OR set self.view in loadViewForTestCase:.
  */
 
 + (NSString *)nibNameForTestCase:(SEL)testCase {
@@ -28,10 +28,10 @@
     return nil;
 }
 
-+ (UIView *)viewForTestCase:(SEL)testCase {
+- (void)loadViewForTestCase:(SEL)testCase {
 #warning Potentially incomplete method implementation.
-    // Return the view to be exercised by testCase.
-    return nil;
+    // Create the view hierarchy to be exercised by testCase 
+    // and assign the root view of the hierarchy to self.view.
 }
 
 - (instancetype)initWithTestCaseWithSelector:(SEL)testCase {

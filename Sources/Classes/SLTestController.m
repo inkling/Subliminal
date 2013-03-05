@@ -20,10 +20,24 @@
 static NSUncaughtExceptionHandler *appsUncaughtExceptionHandler = NULL;
 static const NSTimeInterval kDefaultTimeout = 5.0;
 
+/// Uncaught exceptions are logged to Subliminal for visibility.
 static void SLUncaughtExceptionHandler(NSException *exception)
 {
     NSString *exceptionMessage = [NSString stringWithFormat:@"Exception occurred: **%@** for reason: %@", [exception name], [exception reason]];
-    NSLog(@"%@", exceptionMessage);
+    if ([NSThread isMainThread]) {
+        // We need to wait for UIAutomation, but we can't block the main thread,
+        // so we spin the run loop instead.
+        __block BOOL hasLogged = NO;
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            SLLog(@"%@", exceptionMessage);
+            hasLogged = YES;
+        });
+        while (!hasLogged) {
+            [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.25]];
+        }
+    } else {
+        SLLog(@"%@", exceptionMessage);
+    }
 
     if (appsUncaughtExceptionHandler) {
         appsUncaughtExceptionHandler(exception);

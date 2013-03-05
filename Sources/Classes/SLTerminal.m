@@ -20,6 +20,7 @@ static NSString *const SLTerminalPreferencesKeyException    = @"exception";
 
 
 @implementation SLTerminal {
+    dispatch_queue_t _evalQueue;
     NSUInteger _commandIndex;
 }
 
@@ -47,8 +48,14 @@ static SLTerminal *__sharedTerminal = nil;
     
     self = [super init];
     if (self) {
+        NSString *evalQueueName = [NSString stringWithFormat:@"com.inkling.subliminal.SLTerminal-%p.evalQueue", self];
+        _evalQueue = dispatch_queue_create([evalQueueName UTF8String], DISPATCH_QUEUE_SERIAL);
     }
     return self;
+}
+
+- (void)dealloc {
+    dispatch_release(_evalQueue);
 }
 
 #if TARGET_IPHONE_SIMULATOR
@@ -108,53 +115,59 @@ static SLTerminal *__sharedTerminal = nil;
  */
 - (NSString *)eval:(NSString *)javascript {
     NSAssert(![NSThread isMainThread], @"-eval: must not be called from the main thread.");
-    
-    // Step 1: Write the command to UIAutomation
+
+    __block NSString *exceptionMessage;
+    __block NSString *result;
+    dispatch_sync(_evalQueue, ^{
+        // Step 1: Write the command to UIAutomation
 #if TARGET_IPHONE_SIMULATOR
-    NSMutableDictionary *prefs = [NSMutableDictionary dictionaryWithContentsOfFile:[self simulatorPreferencesPath]];
-    if (!prefs) {
-        prefs = [NSMutableDictionary dictionary];
-    }
-    [prefs setObject:@( _commandIndex ) forKey:SLTerminalPreferencesKeyCommandIndex];
-    [prefs setObject:javascript forKey:SLTerminalPreferencesKeyCommand];
-    [prefs removeObjectForKey:SLTerminalPreferencesKeyResultIndex];
-    [prefs removeObjectForKey:SLTerminalPreferencesKeyResult];
-    [prefs removeObjectForKey:SLTerminalPreferencesKeyException];
-    [prefs writeToFile:[self simulatorPreferencesPath] atomically:YES];
-#else
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:@( _commandIndex ) forKey:SLTerminalPreferencesKeyCommandIndex];
-    [defaults setObject:javascript forKey:SLTerminalPreferencesKeyCommand];
-    [defaults removeObjectForKey:SLTerminalPreferencesKeyResultIndex];
-    [defaults removeObjectForKey:SLTerminalPreferencesKeyResult];
-    [defaults removeObjectForKey:SLTerminalPreferencesKeyException];
-    [defaults synchronize];
-#endif
-    
-    // Step 2: Wait for the result
-    NSDictionary *resultPrefs = nil;
-    while (1) {
-#if TARGET_IPHONE_SIMULATOR
-        resultPrefs = [NSDictionary dictionaryWithContentsOfFile:[self simulatorPreferencesPath]];
-#else
-        [defaults synchronize];
-        resultPrefs = [defaults dictionaryRepresentation];
-#endif
-        
-        if (resultPrefs[SLTerminalPreferencesKeyResultIndex]) {
-            NSAssert([resultPrefs[SLTerminalPreferencesKeyResultIndex] intValue] == _commandIndex, @"Result index is out of sync with command index");
-            break;
+        NSMutableDictionary *prefs = [NSMutableDictionary dictionaryWithContentsOfFile:[self simulatorPreferencesPath]];
+        if (!prefs) {
+            prefs = [NSMutableDictionary dictionary];
         }
-        [NSThread sleepForTimeInterval:0.1];
-    }
-    _commandIndex++;
+        [prefs setObject:@( _commandIndex ) forKey:SLTerminalPreferencesKeyCommandIndex];
+        [prefs setObject:javascript forKey:SLTerminalPreferencesKeyCommand];
+        [prefs removeObjectForKey:SLTerminalPreferencesKeyResultIndex];
+        [prefs removeObjectForKey:SLTerminalPreferencesKeyResult];
+        [prefs removeObjectForKey:SLTerminalPreferencesKeyException];
+        [prefs writeToFile:[self simulatorPreferencesPath] atomically:YES];
+#else
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setObject:@( _commandIndex ) forKey:SLTerminalPreferencesKeyCommandIndex];
+        [defaults setObject:javascript forKey:SLTerminalPreferencesKeyCommand];
+        [defaults removeObjectForKey:SLTerminalPreferencesKeyResultIndex];
+        [defaults removeObjectForKey:SLTerminalPreferencesKeyResult];
+        [defaults removeObjectForKey:SLTerminalPreferencesKeyException];
+        [defaults synchronize];
+#endif
+
+        // Step 2: Wait for the result
+        NSDictionary *resultPrefs = nil;
+        while (1) {
+#if TARGET_IPHONE_SIMULATOR
+            resultPrefs = [NSDictionary dictionaryWithContentsOfFile:[self simulatorPreferencesPath]];
+#else
+            [defaults synchronize];
+            resultPrefs = [defaults dictionaryRepresentation];
+#endif
+
+            if (resultPrefs[SLTerminalPreferencesKeyResultIndex]) {
+                NSAssert([resultPrefs[SLTerminalPreferencesKeyResultIndex] intValue] == _commandIndex, @"Result index is out of sync with command index");
+                break;
+            }
+            [NSThread sleepForTimeInterval:0.1];
+        }
+        _commandIndex++;
+
+        // Step 3: Rethrow the javascript exception or return the result
+        exceptionMessage = resultPrefs[SLTerminalPreferencesKeyException];
+        result = resultPrefs[SLTerminalPreferencesKeyResult];
+    });
     
-    // Step 3: Rethrow the javascript exception or return the result
-    NSString *exceptionMessage = resultPrefs[SLTerminalPreferencesKeyException];
     if (exceptionMessage) {
         @throw [NSException exceptionWithName:SLTerminalJavaScriptException reason:exceptionMessage userInfo:nil];
     } else {
-        return resultPrefs[SLTerminalPreferencesKeyResult];
+        return result;
     }
 }
 

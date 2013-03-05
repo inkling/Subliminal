@@ -10,7 +10,8 @@
 
 /// The name of an SLTest subclass to present.
 extern NSString *const SLTestNameKey;
-/// The test cases of the above subclass that will be executed by Subliminal.
+/// An NSSet * containing the NSString * test cases of the above subclass
+/// that will be executed by Subliminal.
 extern NSString *const SLTestCasesKey;
 
 /**

@@ -119,13 +119,13 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     // nothing to do here
 }
 
-+ (NSArray *)testCases {
++ (NSSet *)testCases {
     static const void *const kTestCasesKey = &kTestCasesKey;
-    NSArray *testCases = objc_getAssociatedObject(self, kTestCasesKey);
+    NSSet *testCases = objc_getAssociatedObject(self, kTestCasesKey);
     if (!testCases) {
         static NSString *const kTestCaseNamePrefix = @"test";
 
-        NSMutableArray *selectorStrings = [NSMutableArray array];
+        NSMutableSet *selectorStrings = [NSMutableSet set];
         Class testClass = self;
         while (testClass != [SLTest class]) {
             unsigned int methodCount;
@@ -162,11 +162,11 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     return testCases;
 }
 
-+ (NSArray *)focusedTestCases {
++ (NSSet *)focusedTestCases {
     static const void *const kFocusedTestCasesKey = &kFocusedTestCasesKey;
-    NSArray *focusedTestCases = objc_getAssociatedObject(self, kFocusedTestCasesKey);
+    NSSet *focusedTestCases = objc_getAssociatedObject(self, kFocusedTestCasesKey);
     if (!focusedTestCases) {
-        NSArray *testCases = [self testCases];
+        NSSet *testCases = [self testCases];
         
         // if our class' name (or the name of any superclass) is prefixed, all test cases are focused
         BOOL classIsFocused = NO;
@@ -183,7 +183,7 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
 
         // otherwise, only prefixed test cases are focused
         } else {
-            NSMutableArray *filteredTestCases = [NSMutableArray arrayWithCapacity:[testCases count]];
+            NSMutableSet *filteredTestCases = [NSMutableSet setWithCapacity:[testCases count]];
             for (NSString *name in testCases) {
                 if ([[name lowercaseString] hasPrefix:SLTestFocusPrefix]) {
                     [filteredTestCases addObject:name];
@@ -196,8 +196,12 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     return focusedTestCases;
 }
 
-+ (NSArray *)testCasesToRun {
-    return (([[self class] isFocused]) ? [[self class] focusedTestCases] : [[self class] testCases]);
++ (NSSet *)testCasesToRun {
+    NSSet *baseTestCases = (([[self class] isFocused]) ? [[self class] focusedTestCases] : [[self class] testCases]);
+    return [baseTestCases filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+        SEL testCaseSelector = NSSelectorFromString(evaluatedObject);
+        return [[self class] testCaseWithSelectorSupportsCurrentPlatform:testCaseSelector];
+    }]];
 }
 
 + (BOOL)testCaseWithSelectorSupportsCurrentPlatform:(SEL)testCaseSelector {
@@ -226,14 +230,9 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
         NSString *test = NSStringFromClass([self class]);
         for (NSString *testCaseName in [[self class] testCasesToRun]) {
             @autoreleasepool {
-                // only run test case if it's appropriate for the current platform
-                SEL testCaseSelector = NSSelectorFromString(testCaseName);
-                if (![[self class] testCaseWithSelectorSupportsCurrentPlatform:testCaseSelector]) {
-                    continue;
-                }
-
                 [[SLLogger sharedLogger] logTest:test caseStart:testCaseName];
 
+                SEL testCaseSelector = NSSelectorFromString(testCaseName);
                 BOOL caseFailed = NO;
                 @try {            
                     [self setUpTestCaseWithSelector:testCaseSelector];

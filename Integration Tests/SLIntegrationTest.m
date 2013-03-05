@@ -21,10 +21,19 @@
 
 - (void)setUpTest {
     NSString *test = NSStringFromClass([self class]);
+    // strip focus prefixes from test cases if necessary,
+    // to match the presentation in setUpTestCaseWithSelector:
+    NSMutableSet *testCases = [NSMutableSet set];
+    for (NSString *__strong testCase in [[self class] testCasesToRun]) {
+        if ([testCase hasPrefix:SLTestFocusPrefix]) {
+            testCase = [testCase substringFromIndex:[SLTestFocusPrefix length]];
+        }
+        [testCases addObject:testCase];
+    }
     SLAskApp1(presentTestWithInfo:,
               (@{
                    SLTestNameKey:   test,
-                   SLTestCasesKey:  [[self class] testCasesToRun]
+                   SLTestCasesKey:  testCases
                }));
     SLWaitUntilTrue([SLAskApp(currentTest) isEqualToString:test], 5.0,
                     @"App failed to present test %@.", test);
@@ -32,6 +41,11 @@
 
 - (void)setUpTestCaseWithSelector:(SEL)testSelector {
     NSString *testCase = NSStringFromSelector(testSelector);
+    // strip focus prefix if necessary,
+    // so that test case view controller doesn't have to handle the variant form
+    if ([testCase hasPrefix:SLTestFocusPrefix]) {
+        testCase = [testCase substringFromIndex:[SLTestFocusPrefix length]];
+    }
     SLAskApp1(presentTestCaseWithInfo:,
               (@{
                    SLTestCaseKey: testCase,

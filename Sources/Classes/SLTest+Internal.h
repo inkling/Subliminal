@@ -20,7 +20,7 @@ static NSString *const SLTestFocusPrefix = @"focus_";
 
  @return All test cases defined on this test, represented as strings.
  */
-+ (NSArray *)testCases;
++ (NSSet *)testCases;
 
 /**
  All focused test cases defined on this test.
@@ -30,15 +30,15 @@ static NSString *const SLTestFocusPrefix = @"focus_";
  
  @return All focused test cases defined on this test, represented as strings.
  */
-+ (NSArray *)focusedTestCases;
++ (NSSet *)focusedTestCases;
 
 /**
  The test cases that will be run when this test is [run](run:).
 
- @return testCases, unless this test is [focused](isFocused),
- in which case this method returns focusedTestCases.
+ @return testCases, or focusedTestCases (if this test is [focused](isFocused)),
+ filtered to those test cases that support the current platform.
  The test cases are represented as strings.
  */
-+ (NSArray *)testCasesToRun;
++ (NSSet *)testCasesToRun;
 
 @end
