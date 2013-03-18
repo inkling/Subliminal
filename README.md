@@ -107,7 +107,7 @@ FAQ (aka stuff which should eventually go somewhere above)
 	
 	to reset:
 	
-	`defaults delete com.apple.Instruments3 UIAVerboseLogging`
+	`defaults delete com.apple.dt.Instruments UIAVerboseLogging`
 
 	You will need to restart Instruments after either change to see an effect. (Reproduced from [this Stack Overflow answer](http://stackoverflow.com/a/8760768)).
 	
