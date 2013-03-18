@@ -107,9 +107,10 @@ extern NSString *const SLElementVisibleException;
  
  @warning By default, UIAlertViews do not have an accessibility label. You should 
  use the +alertWithTitle: or +anyElement constructors.
- @warning If [[SLTestController sharedTestController] automaticallyDismissAlerts]
- is YES, alerts will be dismissed as soon as they are shown, with no opportunity 
- to examine or otherwise manipulate them.
+ @warning By default, alerts are automatically dismissed immediately after showing. 
+ To interact with alerts, tests can override the default handler either 
+ [globally](-[SLTestController setAutomaticallyDismissAlerts:])or on a 
+ [per-alert basis](-[SLTestController pushHandlerForAlert:]).
  */
 @interface SLAlert : SLElement
 
@@ -123,6 +124,23 @@ extern NSString *const SLElementVisibleException;
 - (void)dismiss;
 
 - (void)dismissWithButtonTitled:(NSString *)buttonTitle;
+
+/**
+ Returns the body of a JS function which 
+ evaluates a UIAAlert to see if it matches the receiver.
+
+ The JS function will take one argument, "alert" (a UIAAlert), as argument,
+ and should return true if alert is equivalent to the receiver, false otherwise.
+ This method should return the _body_ of that function: one or more statements, 
+ with no function closure.
+ 
+ The default implementation simply compares the titles of the receiving SLAlert 
+ and provided UIAAlert.
+
+ @return The body of a JS function which evaluates a UIAAlert "alert" 
+ to see if it matches a particular SLAlert.
+ */
+- (NSString *)isEqualToUIAAlertPredicate;
 
 @end
 

@@ -8,38 +8,92 @@
 
 #import "SLIntegrationTest.h"
 
+
+// delay for the UIAutomation to dismiss alerts (if appropriate)
+static const NSTimeInterval kUIAAlertHandlerDelay = 2.0;
+// delay for alert to disappear once dismissed by the tests
+static const NSTimeInterval kAlertDisappearDelay = 0.2;
+
+
 @interface SLAlertTest : SLIntegrationTest
 
 @end
 
-@implementation SLAlertTest
+@implementation SLAlertTest {
+    BOOL _defaultAutomaticallyDismissAlerts;
+}
 
 + (NSString *)testCaseViewControllerClassName {
     return @"SLAlertTestViewController";
 }
 
+- (void)setUpTest {
+    [super setUpTest];
+    
+    _defaultAutomaticallyDismissAlerts = [[SLTestController sharedTestController] automaticallyDismissAlerts];
+}
+
+- (void)setUpTestCaseWithSelector:(SEL)testSelector {
+    [super setUpTestCaseWithSelector:testSelector];
+    
+    if ((testSelector != @selector(testAutomaticDismissalOfAlerts)) &&
+        (testSelector != @selector(testManuallyHandlingParticularAlerts))) {
+        [[SLTestController sharedTestController] setAutomaticallyDismissAlerts:NO];
+    }
+}
+
 - (void)tearDownTestCaseWithSelector:(SEL)testSelector {
     SLAskApp(dismissActiveAlert);
+    [[SLTestController sharedTestController] setAutomaticallyDismissAlerts:_defaultAutomaticallyDismissAlerts];
 
     [super tearDownTestCaseWithSelector:testSelector];
 }
 
 - (void)testAutomaticDismissalOfAlerts {
-    SLAssertFalse([[SLTestController sharedTestController] automaticallyDismissAlerts],
-                  @"By default/for the purposes of this test, UIAutomation should not automatically dismiss alerts.");
+    SLAssertTrue(_defaultAutomaticallyDismissAlerts &&
+                 [[SLTestController sharedTestController] automaticallyDismissAlerts],
+                  @"By default/for the purposes of this test, UIAutomation should automatically dismiss alerts.");
 
-    SLAskApp1(showAlertWithTitle:, @"Auto-dismiss off");
-    [self wait:2.0];
-    SLAssertTrue([UIAElement([SLAlert anyElement]) isValid],
-                 @"The alert should still be valid.");
-    SLAskApp(dismissActiveAlert);
-
-    [[SLTestController sharedTestController] setAutomaticallyDismissAlerts:YES];
     SLAskApp1(showAlertWithTitle:, @"Auto-dismiss on");
-    [self wait:2.0];
+    [self wait:kUIAAlertHandlerDelay];
+    SLAssertFalse([UIAElement([SLAlert anyElement]) isValid],
+                 @"The alert should have been dismissed.");
+
+    [[SLTestController sharedTestController] setAutomaticallyDismissAlerts:NO];
+    SLAskApp1(showAlertWithTitle:, @"Auto-dismiss off");
+    [self wait:kUIAAlertHandlerDelay];
+    SLAssertTrue([UIAElement([SLAlert anyElement]) isValid],
+                  @"The alert should still be valid.");
+    SLAskApp(dismissActiveAlert);
+}
+
+- (void)testManuallyHandlingParticularAlerts {
+    // we can manually handle particular alerts
+    NSString *alertTitle = @"Test Alert";
+    SLAlert *alert = [SLAlert alertWithTitle:alertTitle];
+    [[SLTestController sharedTestController] pushHandlerForAlert:alert];
+
+    // --some random alert will still be automatically dismissed (the default)
+    SLAssertTrue(_defaultAutomaticallyDismissAlerts &&
+                 [[SLTestController sharedTestController] automaticallyDismissAlerts],
+                 @"By default/for the purposes of this test, UIAutomation should automatically dismiss alerts.");
+    SLAskApp1(showAlertWithTitle:, @"Random Alert");
+    [self wait:kUIAAlertHandlerDelay];
     SLAssertFalse([UIAElement([SLAlert anyElement]) isValid],
                   @"The alert should have been dismissed.");
-    [[SLTestController sharedTestController] setAutomaticallyDismissAlerts:NO];
+
+    // --but the handled alert will not
+    SLAskApp1(showAlertWithTitle:, alertTitle);
+    [self wait:kUIAAlertHandlerDelay];
+    SLAssertTrue([UIAElement(alert) isValid],
+                 @"The alert should still be valid.");
+    [alert dismiss];
+
+    // each handler is only good for one alert
+    SLAskApp1(showAlertWithTitle:, alertTitle);
+    [self wait:kUIAAlertHandlerDelay];
+    SLAssertFalse([UIAElement(alert) isValid],
+                  @"The alert should have been dismissed.");
 }
 
 - (void)testCanMatchAlertWithTitle {
@@ -60,7 +114,7 @@
                  @"The alert should be valid.");
 
     [alert dismiss];
-    [self wait:0.2];    // for the alert to be dismissed
+    [self wait:kAlertDisappearDelay];
     SLAssertFalse([UIAElement(alert) isValid],
                  @"The alert should have been dismissed.");
 }
@@ -74,7 +128,7 @@
 
     NSString *dismissButtonTitle = @"Ok";
     [alert dismissWithButtonTitled:dismissButtonTitle];
-    [self wait:0.2];    // for the alert to be dismissed
+    [self wait:kAlertDisappearDelay];
     SLAssertFalse([UIAElement(alert) isValid],
                   @"The alert should have been dismissed.");
     SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:dismissButtonTitle],

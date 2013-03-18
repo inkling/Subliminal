@@ -14,6 +14,8 @@
 #import "SLTerminal.h"
 #import "SLElement.h"
 
+#import "NSString+SLJavaScript.h"
+
 #import <objc/runtime.h>
 
 
@@ -105,6 +107,7 @@ static SLTestController *__sharedController = nil;
     self = [super init];
     if (self) {
         _defaultTimeout = kDefaultTimeout;
+        _automaticallyDismissAlerts = YES;
     }
     return self;
 }
@@ -120,6 +123,12 @@ static SLTestController *__sharedController = nil;
                  (_automaticallyDismissAlerts ? @"false" : @"true")];
         }
     }
+}
+
+- (void)pushHandlerForAlert:(SLAlert *)alert {
+    NSString *alertHandler = [NSString stringWithFormat:@"new Function('alert', '%@')",
+                              [[alert isEqualToUIAAlertPredicate] slStringByEscapingForJavaScriptLiteral]];
+    [[SLTerminal sharedTerminal] evalWithFormat:@"_alertHandlers.push(%@);", alertHandler];
 }
 
 - (void)_beginTesting {

@@ -335,10 +335,12 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 #pragma mark - SLAlert
 
-@implementation SLAlert
+@implementation SLAlert {
+    NSString *_title;
+}
 
 + (instancetype)alertWithTitle:(NSString *)title {
-    return [[self alloc] initWithPredicate:^BOOL(NSObject *obj) {
+    SLAlert *alert = [[self alloc] initWithPredicate:^BOOL(NSObject *obj) {
         if ([obj isKindOfClass:[UIAlertView class]]) {
             UIAlertView *alert = (UIAlertView *)obj;
             return [alert.title isEqualToString:title];
@@ -346,6 +348,8 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
             return NO;
         }
     } description:title];
+    alert->_title = title;
+    return alert;
 }
 
 - (BOOL)matchesObject:(NSObject *)object {
@@ -358,6 +362,20 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 - (void)dismissWithButtonTitled:(NSString *)buttonTitle {
     [self sendMessage:@"buttons()['%@'].tap()", [buttonTitle slStringByEscapingForJavaScriptLiteral]];
+}
+
+- (NSString *)isEqualToUIAAlertPredicate {
+    static NSString *const kIsEqualToUIAAlertPredicateFormatString = @"\
+        var title = \"%@\";\
+        if (title.length > 0) {\
+            return alert.staticTexts()[0].label() === title;\
+        } else {\
+            return true;\
+        }\
+    ";
+    NSString *isEqualToUIAAlertPredicate = [NSString stringWithFormat:kIsEqualToUIAAlertPredicateFormatString,
+                                            (_title ? [_title slStringByEscapingForJavaScriptLiteral] : @"")];
+    return isEqualToUIAAlertPredicate;
 }
 
 @end
