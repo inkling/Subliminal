@@ -60,6 +60,8 @@
 		F0AC80C416BC355D00C5D5C0 /* SLTerminalTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AC80C316BC355D00C5D5C0 /* SLTerminalTest.m */; };
 		F0AC80C816BC367E00C5D5C0 /* SLTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AC80C716BC367E00C5D5C0 /* SLTestViewController.m */; };
 		F0AC80E616BCF91800C5D5C0 /* SLTestCaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AC80E516BCF91800C5D5C0 /* SLTestCaseViewController.m */; };
+		F0AE4C8D16F7F92D00B2BB2B /* SLElementStateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AE4C8B16F7F92D00B2BB2B /* SLElementStateTest.m */; };
+		F0AE4C8E16F7F92D00B2BB2B /* SLElementStateTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AE4C8C16F7F92D00B2BB2B /* SLElementStateTestViewController.m */; };
 		F0CE9FFD16D60E2C008A3B4A /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F08B86DB16859C4000C4FE44 /* libOCMock.a */; };
 		F0CEA00216D60EAD008A3B4A /* SLDeviceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CE9FFF16D60EAD008A3B4A /* SLDeviceTest.m */; };
 		F0CEA00316D60EAD008A3B4A /* SLDeviceTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CEA00016D60EAD008A3B4A /* SLDeviceTestViewController.m */; };
@@ -195,6 +197,8 @@
 		F0AC80C716BC367E00C5D5C0 /* SLTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestViewController.m; sourceTree = "<group>"; };
 		F0AC80E416BCF91800C5D5C0 /* SLTestCaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTestCaseViewController.h; sourceTree = "<group>"; };
 		F0AC80E516BCF91800C5D5C0 /* SLTestCaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestCaseViewController.m; sourceTree = "<group>"; };
+		F0AE4C8B16F7F92D00B2BB2B /* SLElementStateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementStateTest.m; sourceTree = "<group>"; };
+		F0AE4C8C16F7F92D00B2BB2B /* SLElementStateTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementStateTestViewController.m; sourceTree = "<group>"; };
 		F0CE9FFF16D60EAD008A3B4A /* SLDeviceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDeviceTest.m; sourceTree = "<group>"; };
 		F0CEA00016D60EAD008A3B4A /* SLDeviceTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDeviceTestViewController.m; sourceTree = "<group>"; };
 		F0CEA00116D60EAD008A3B4A /* SLDeviceTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLDeviceTestViewController.xib; sourceTree = "<group>"; };
@@ -438,11 +442,21 @@
 			isa = PBXGroup;
 			children = (
 				F0CE9FFE16D60E61008A3B4A /* SLDevice Tests */,
+				F0AE4C8716F7F8ED00B2BB2B /* SLElement State Tests */,
 				0696BA5E16E013DF00DD70CF /* SLElement Dragging Tests */,
 				F05263C316D2C2CF0090174F /* SLElement Matching Tests */,
 				F013798E16D0843B009BAF22 /* SLTerminal Tests */,
 			);
 			path = Tests;
+			sourceTree = "<group>";
+		};
+		F0AE4C8716F7F8ED00B2BB2B /* SLElement State Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F0AE4C8B16F7F92D00B2BB2B /* SLElementStateTest.m */,
+				F0AE4C8C16F7F92D00B2BB2B /* SLElementStateTestViewController.m */,
+			);
+			name = "SLElement State Tests";
 			sourceTree = "<group>";
 		};
 		F0CE9FFE16D60E61008A3B4A /* SLDevice Tests */ = {
@@ -704,6 +718,8 @@
 				F0CEA00316D60EAD008A3B4A /* SLDeviceTestViewController.m in Sources */,
 				0696BA5816E013D600DD70CF /* SLElementDraggingTest.m in Sources */,
 				0696BA5916E013D600DD70CF /* SLElementDraggingTestViewController.m in Sources */,
+				F0AE4C8D16F7F92D00B2BB2B /* SLElementStateTest.m in Sources */,
+				F0AE4C8E16F7F92D00B2BB2B /* SLElementStateTestViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
