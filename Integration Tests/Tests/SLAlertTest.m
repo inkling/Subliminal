@@ -106,27 +106,64 @@ static const NSTimeInterval kAlertDisappearDelay = 0.2;
                   @"No other alert should be valid.");
 }
 
-- (void)testDismiss {
+- (void)testDismissTapsTheCancelButtonFirst {
     NSString *alertTitle = @"Foo";
-	SLAskApp1(showAlertWithTitle:, alertTitle);
+    NSString *cancelButtonTitle = @"Ok";
+	SLAskApp1(showAlertWithInfo:, (@{   @"title": alertTitle,
+                                        @"cancel": cancelButtonTitle,
+                                        @"other": @"Ok" }));
     SLAlert *alert = [SLAlert alertWithTitle:alertTitle];
     SLAssertTrue([UIAElement(alert) isValid],
                  @"The alert should be valid.");
 
-    [alert dismiss];
+    SLAssertNoThrow([alert dismiss], @"Should not have thrown.");
     [self wait:kAlertDisappearDelay];
     SLAssertFalse([UIAElement(alert) isValid],
-                 @"The alert should have been dismissed.");
+                  @"The alert should have been dismissed.");
+    SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:cancelButtonTitle],
+                 @"The alert should have been dismissed using the cancel button.");
+}
+
+- (void)testDismissTapsTheDefaultButtonAbsentACancelButton {
+    NSString *alertTitle = @"Foo";
+    NSString *defaultButtonTitle = @"Ok";
+	SLAskApp1(showAlertWithInfo:, (@{  @"title": alertTitle,
+                                       @"other": defaultButtonTitle }));
+    SLAlert *alert = [SLAlert alertWithTitle:alertTitle];
+    SLAssertTrue([UIAElement(alert) isValid],
+                 @"The alert should be valid.");
+
+    SLAssertNoThrow([alert dismiss], @"Should not have thrown.");
+    [self wait:kAlertDisappearDelay];
+    SLAssertFalse([UIAElement(alert) isValid],
+                  @"The alert should have been dismissed.");
+    SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:defaultButtonTitle],
+                 @"The alert should have been dismissed using the default button.");
+}
+
+- (void)testDismissThrowsAbsentBothCancelAndDefaultButtons {
+    NSString *alertTitle = @"Foo";
+	SLAskApp1(showAlertWithInfo:, (@{  @"title": alertTitle }));
+    SLAlert *alert = [SLAlert alertWithTitle:alertTitle];
+    SLAssertTrue([UIAElement(alert) isValid],
+                 @"The alert should be valid.");
+
+    SLAssertThrowsNamed([alert dismiss], SLAlertCouldNotDismissException,
+                        @"Should have thrown, because the alert has no buttons.");
+    // sanity check
+    SLAssertTrue([UIAElement(alert) isValid],
+                  @"The alert should not have been dismissed.");
 }
 
 - (void)testDismissWithButtonTitled {
     NSString *alertTitle = @"Foo";
-	SLAskApp1(showAlertWithTitle:, alertTitle);
+    NSString *dismissButtonTitle = @"Ok";
+	SLAskApp1(showAlertWithInfo:, (@{  @"title": alertTitle,
+                                       @"other": dismissButtonTitle }));
     SLAlert *alert = [SLAlert alertWithTitle:alertTitle];
     SLAssertTrue([UIAElement(alert) isValid],
                  @"The alert should be valid.");
 
-    NSString *dismissButtonTitle = @"Ok";
     [alert dismissWithButtonTitled:dismissButtonTitle];
     [self wait:kAlertDisappearDelay];
     SLAssertFalse([UIAElement(alert) isValid],

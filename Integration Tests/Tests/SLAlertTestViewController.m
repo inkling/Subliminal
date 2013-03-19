@@ -46,6 +46,7 @@
     self = [super initWithTestCaseWithSelector:testCase];
     if (self) {
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showAlertWithTitle:)];
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showAlertWithInfo:)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(dismissActiveAlert)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(titleOfLastButtonClicked)];
     }
@@ -59,11 +60,25 @@
 #pragma mark - App hooks
 
 - (void)showAlertWithTitle:(NSString *)title {
-    _activeAlertView = [[UIAlertView alloc] initWithTitle:title message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Ok", nil];
+    [self showAlertWithInfo:@{ @"title": title, @"cancel": @"Ok" }];
+}
+
+- (void)showAlertWithInfo:(NSDictionary *)info {
+    _activeAlertView = [[UIAlertView alloc] initWithTitle:info[@"title"]
+                                                  message:nil
+                                                 delegate:self
+                                        cancelButtonTitle:info[@"cancel"]
+                                        otherButtonTitles:info[@"other"], nil];
     [_activeAlertView show];
 }
 
 - (void)dismissActiveAlert {
+    if (_activeAlertView.numberOfButtons == 0) {
+        // the alert shown by testDismissThrowsAbsentBothCancelAndDefaultButtons has no buttons
+        // it appears that it can be dismissed with dismissWithClickedButtonIndex:0 even so,
+        // but just to be safe...
+        [_activeAlertView addButtonWithTitle:@"Dismiss"];
+    }
     [_activeAlertView dismissWithClickedButtonIndex:0 animated:YES];
     _activeAlertView = nil;
 }

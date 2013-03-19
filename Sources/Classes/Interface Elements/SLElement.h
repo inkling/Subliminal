@@ -102,6 +102,8 @@ extern NSString *const SLElementVisibleException;
 
 #pragma mark - SLElement Subclasses
 
+extern NSString *const SLAlertCouldNotDismissException;
+
 /**
  The SLAlert class allows access to, and control of, alerts within your application.
  
@@ -121,8 +123,19 @@ extern NSString *const SLElementVisibleException;
  */
 + (instancetype)alertWithTitle:(NSString *)title;
 
+/**
+ Dismisses the alert by tapping the cancel button, if the button exists,
+ else tapping the default button, if one is identifiable.
+
+ @exception SLAlertCouldNotDismissException If the alert has no buttons.
+ */
 - (void)dismiss;
 
+/**
+ Dismisses the alert by tapping the button with the specified name.
+ 
+ @param buttonTitle The title of the button to tap to dismiss the alert.
+ */
 - (void)dismissWithButtonTitled:(NSString *)buttonTitle;
 
 /**

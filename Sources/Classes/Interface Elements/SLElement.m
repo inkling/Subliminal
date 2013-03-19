@@ -335,6 +335,8 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 #pragma mark - SLAlert
 
+NSString *const SLAlertCouldNotDismissException = @"SLAlertCouldNotDismissException";
+
 @implementation SLAlert {
     NSString *_title;
 }
@@ -357,7 +359,34 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (void)dismiss {
-    [self sendMessage:@"defaultButton().tap()"];
+    static NSString *const SLUIAAlertDismissFunctionName = @"SLUIAAlertDismiss";
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSString *SLUIAAlertDismissFunction = @"\
+            function %@(alert) {\
+                var didDismissAlert = false;\
+                if (alert.cancelButton().isValid()) {\
+                    alert.cancelButton().tap();\
+                    didDismissAlert = true;\
+                } else if (alert.defaultButton().isValid()) {\
+                    alert.defaultButton().tap();\
+                    didDismissAlert = true;\
+                }\
+                return (didDismissAlert ? 'YES' : 'NO');\
+            }\
+        ";
+        [[SLTerminal sharedTerminal] evalWithFormat:SLUIAAlertDismissFunction,
+             SLUIAAlertDismissFunctionName];
+    });
+    
+    [self performActionWithUIASelf:^(NSString *uiaSelf) {
+        BOOL didDismissAlert = [[[SLTerminal sharedTerminal] evalWithFormat:@"%@(%@)",
+                                 SLUIAAlertDismissFunctionName, uiaSelf] boolValue];
+        if (!didDismissAlert) {
+            [NSException raise:SLAlertCouldNotDismissException
+                        format:@"%@ appears to have no buttons to tap.", self];
+        }
+    }];
 }
 
 - (void)dismissWithButtonTitled:(NSString *)buttonTitle {
