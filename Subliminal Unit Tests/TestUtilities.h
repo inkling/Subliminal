@@ -31,6 +31,7 @@ extern void SLRunTestsAndWaitUntilFinished(NSSet *tests, void (^completionBlock)
 - (void)sLWaitUntilTrue:(BOOL (^)(void))condition withTimeout:(NSTimeInterval)timeout;
 
 - (void)slAssertThrows:(void (^)(void))expression;
+- (void)slAssertThrows:(void (^)(void))expression named:(NSString *)exceptionName;
 - (void)slAssertNoThrow:(void (^)(void))expression;
 
 @end

@@ -58,6 +58,12 @@ void SLRunTestsAndWaitUntilFinished(NSSet *tests, void (^completionBlock)()) {
     SLAssertThrows(expression(), @"");
 }
 
+- (void)slAssertThrows:(void (^)(void))expression named:(NSString *)exceptionName {
+    NSParameterAssert(expression);
+    NSParameterAssert(exceptionName);
+    SLAssertThrowsNamed(expression(), exceptionName, @"");
+}
+
 - (void)slAssertNoThrow:(void (^)(void))expression {
     NSParameterAssert(expression);
     SLAssertNoThrow(expression(), @"");
