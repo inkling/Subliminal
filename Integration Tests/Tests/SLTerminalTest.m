@@ -41,15 +41,9 @@
 // has been verified by the app delegate at startup time.
 
 - (void)testRethrowsJavascriptExceptions {
-    BOOL rethrewJavascriptException = NO;
-    @try {
-        (void)[[SLTerminal sharedTerminal] eval:@"throw 'test'"];
-    }
-    @catch (NSException *exception) {
-        rethrewJavascriptException = [[exception name] isEqualToString:SLTerminalJavaScriptException];
-    }
-
-    SLAssertTrue(rethrewJavascriptException, @"Terminal should have rethrown Javascript exception.");
+    SLAssertThrowsNamed([[SLTerminal sharedTerminal] eval:@"throw 'test'"],
+                        SLTerminalJavaScriptException,
+                        @"Terminal should have rethrown Javascript exception.");
 }
 
 @end
