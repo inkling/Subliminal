@@ -42,6 +42,7 @@
     if (self) {
         SLTestController *testController = [SLTestController sharedTestController];
         [testController registerTarget:self forAction:@selector(elementValue)];
+        [testController registerTarget:self forAction:@selector(elementRect)];
     }
     return self;
 }
@@ -50,6 +51,10 @@
 
 - (NSString *)elementValue {
     return _button.accessibilityValue;
+}
+
+- (NSValue *)elementRect {
+    return [NSValue valueWithCGRect:_button.accessibilityFrame];
 }
 
 @end

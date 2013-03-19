@@ -31,4 +31,10 @@
     SLAssertTrue([value isEqualToString:expectedValue], @"-value did not return expected.");
 }
 
+- (void)testRect {
+    CGRect expectedRect = [SLAskApp(elementRect) CGRectValue];
+    CGRect rect = [_testElement rect];
+    SLAssertTrue(CGRectEqualToRect(expectedRect, rect), @"-rect did not return expected.");
+}
+
 @end

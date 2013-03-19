@@ -288,6 +288,28 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return [self sendMessage:@"value()"];
 }
 
+- (CGRect)rect {
+    static NSString *const CGRectStringFromJSRectFunctionName = @"SLCGRectStringFromJSRect";
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSString *CGRectStringFromJSRectFunction = @"\
+            function %@(rect) {\
+                return '{{' + rect.origin.x + ',' + rect.origin.y + '},{'\
+                            + rect.size.width + ',' + rect.size.height + '}}';\
+            }\
+        ";
+        [[SLTerminal sharedTerminal] evalWithFormat:CGRectStringFromJSRectFunction,
+             CGRectStringFromJSRectFunctionName];
+    });
+
+    NSString *__block rectString = nil;
+    [self performActionWithUIASelf:^(NSString *uiaSelf) {
+        rectString = [[SLTerminal sharedTerminal] evalWithFormat:@"%@(%@.rect())",
+                          CGRectStringFromJSRectFunctionName, uiaSelf];
+    }];
+    return ([rectString length] ? CGRectFromString(rectString) : CGRectNull);
+}
+
 - (void)logElement {
     [self sendMessage:@"logElement()"];
 }
