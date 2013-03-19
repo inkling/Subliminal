@@ -443,8 +443,8 @@
 			children = (
 				F0CE9FFE16D60E61008A3B4A /* SLDevice Tests */,
 				F0AE4C8716F7F8ED00B2BB2B /* SLElement State Tests */,
-				0696BA5E16E013DF00DD70CF /* SLElement Dragging Tests */,
 				F05263C316D2C2CF0090174F /* SLElement Matching Tests */,
+				0696BA5E16E013DF00DD70CF /* SLElement Dragging Tests */,
 				F013798E16D0843B009BAF22 /* SLTerminal Tests */,
 			);
 			path = Tests;
