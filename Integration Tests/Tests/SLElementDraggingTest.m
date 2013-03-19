@@ -31,7 +31,7 @@
     SLAssertTrue([UIAElement(topLabel) isVisible], @"Top label should be visible at this point in the test.");
     SLAssertFalse([UIAElement(bottomLabel) isVisible], @"Bottom label should not be visible at this point in the test.");
 
-    const CGFloat kPixelTollerance = 5.0;
+    const CGFloat kPixelTollerance = 12.0;
 
     SLTestController *sharedTestController = [SLTestController sharedTestController];
     [sharedTestController sendAction:@selector(resetScrollingState)];
