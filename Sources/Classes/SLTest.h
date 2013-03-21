@@ -204,9 +204,14 @@ extern NSString *const SLTestExceptionLineNumberKey;
      - (void)focus_testFoo;
 
  It is also possible to implicitly focus all test cases by prefixing
- their test's name with "Focus_".
+ their test's name with "Focus_". But if some test cases are explicitly focused 
+ (as above), only those test cases will run--the narrowest focus applies.
+ 
+ If a test is focused, that focus will apply to any tests which descend from it.
 
- @warning Focused test cases will not be run if their test is not run.
+ @warning Focused test cases will not be run if their test is not run (e.g. if
+ it is not included in the set of tests to be run, or if it does not support 
+ the current platform).
 
  @return YES if any test cases are focused and can be run on the current platform.
 

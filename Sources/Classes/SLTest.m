@@ -167,30 +167,29 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     NSSet *focusedTestCases = objc_getAssociatedObject(self, kFocusedTestCasesKey);
     if (!focusedTestCases) {
         NSSet *testCases = [self testCases];
-        
-        // if our class' name (or the name of any superclass) is prefixed, all test cases are focused
-        BOOL classIsFocused = NO;
-        Class testClass = self;
-        while (testClass != [SLTest class]) {
-            if ([[NSStringFromClass(testClass) lowercaseString] hasPrefix:SLTestFocusPrefix]) {
-                classIsFocused = YES;
-                break;
-            }
-            testClass = [testClass superclass];
-        }
-        if (classIsFocused) {
-            focusedTestCases = [testCases copy];
 
-        // otherwise, only prefixed test cases are focused
-        } else {
-            NSMutableSet *filteredTestCases = [NSMutableSet setWithCapacity:[testCases count]];
-            for (NSString *name in testCases) {
-                if ([[name lowercaseString] hasPrefix:SLTestFocusPrefix]) {
-                    [filteredTestCases addObject:name];
+        // if any test cases are prefixed, only those test cases are focused
+        focusedTestCases = [testCases filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(NSString *testCase, NSDictionary *bindings) {
+            return [[testCase lowercaseString] hasPrefix:SLTestFocusPrefix];
+        }]];
+
+        // otherwise, if our class' name (or the name of any superclass) is prefixed,
+        // all test cases are focused
+        if (![focusedTestCases count]) {
+            BOOL classIsFocused = NO;
+            Class testClass = self;
+            while (testClass != [SLTest class]) {
+                if ([[NSStringFromClass(testClass) lowercaseString] hasPrefix:SLTestFocusPrefix]) {
+                    classIsFocused = YES;
+                    break;
                 }
+                testClass = [testClass superclass];
             }
-            focusedTestCases = [filteredTestCases copy];
+            if (classIsFocused) {
+                focusedTestCases = [testCases copy];
+            }
         }
+        
         objc_setAssociatedObject(self, kFocusedTestCasesKey, focusedTestCases, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     return focusedTestCases;

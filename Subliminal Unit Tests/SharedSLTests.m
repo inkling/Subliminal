@@ -113,6 +113,13 @@
 
 @implementation Focus_TestThatIsFocused
 
+- (void)testFoo {}
+
+@end
+
+
+@implementation Focus_TestWhereNarrowestFocusApplies
+
 - (void)testOne {}
 - (void)focus_testTwo {}
 

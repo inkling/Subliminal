@@ -56,6 +56,7 @@
         [TestWithSomeFocusedTestCases class],
         [TestWithAFocusedPlatformSpecificTestCase class],
         [Focus_TestThatIsFocused class],
+        [Focus_TestWhereNarrowestFocusApplies class],
         [Focus_TestThatIsFocusedButDoesntSupportCurrentPlatform class],
         [Focus_AbstractTestThatIsFocused class],
         [ConcreteTestThatIsFocused class],
@@ -298,14 +299,28 @@
     STAssertTrue([[NSStringFromClass(testThatIsFocusedClass) lowercaseString] hasPrefix:SLTestFocusPrefix],
                  @"For the purposes of this test, this SLTest itself must be focused.");
 
-    // note that testTwo itself is focused, while testOne, itself, is not
-    // but because the test itself is focused, *all* test cases are run: they are implicitly focused
+    // note that testFoo itself is not focused
+    // but because the test itself is focused, testFoo will still run
     id testThatIsFocusedClassMock = [OCMockObject partialMockForClass:testThatIsFocusedClass];
-    [[testThatIsFocusedClassMock expect] testOne];
-    [[testThatIsFocusedClassMock expect] focus_testTwo];
+    [[testThatIsFocusedClassMock expect] testFoo];
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testThatIsFocusedClass], nil);
     STAssertNoThrow([testThatIsFocusedClassMock verify], @"Test cases did not execute as expected.");
+}
+
+- (void)testNarrowestFocusApplies {
+    Class testWhereNarrowestFocusAppliesClass = [Focus_TestWhereNarrowestFocusApplies class];
+    STAssertTrue([[NSStringFromClass(testWhereNarrowestFocusAppliesClass) lowercaseString] hasPrefix:SLTestFocusPrefix],
+                 @"For the purposes of this test, this SLTest itself must be focused.");
+
+    // note that testTwo itself is focused, while testOne, itself, is not
+    // because the narrowest focus applies, only testTwo is run, even though the test is focused
+    id testWhereNarrowestFocusAppliesClassMock = [OCMockObject partialMockForClass:testWhereNarrowestFocusAppliesClass];
+    [[testWhereNarrowestFocusAppliesClassMock reject] testOne];
+    [[testWhereNarrowestFocusAppliesClassMock expect] focus_testTwo];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWhereNarrowestFocusAppliesClass], nil);
+    STAssertNoThrow([testWhereNarrowestFocusAppliesClassMock verify], @"Test cases did not execute as expected.");
 }
 
 - (void)testFocusedTestCasesMustSupportTheCurrentPlatformInOrderToRun {
