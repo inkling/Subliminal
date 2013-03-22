@@ -10,9 +10,8 @@
 
 #import <Subliminal/SLTestController+AppContext.h>
 
-@interface SLElementDraggingTestViewController : SLTestCaseViewController {
-    CGFloat _totalScrollViewDidEndDraggingOffset;
-    NSUInteger _didEndDraggingCount;
+@interface SLElementDraggingTestViewController : SLTestCaseViewController <UIScrollViewDelegate> {
+    CGFloat _scrollViewWillBeginDraggingOffset, _dragDistance;
 }
 
 @property (nonatomic, strong) IBOutlet UIScrollView *scrollView;
@@ -24,9 +23,8 @@
     self = [super initWithNibName:[[self class] nibNameForTestCase:testCase] bundle:nil];
     if (self) {
         SLTestController *testController = [SLTestController sharedTestController];
-        [testController registerTarget:self forAction:@selector(setScrollOffset:)];
         [testController registerTarget:self forAction:@selector(resetScrollingState)];
-        [testController registerTarget:self forAction:@selector(averageScrollViewDidEndDraggingOffset)];
+        [testController registerTarget:self forAction:@selector(dragDistance)];
     }
     return self;
 }
@@ -35,18 +33,17 @@
     [[SLTestController sharedTestController] deregisterTarget:self];
 }
 
-- (void)setScrollOffset:(NSNumber *)offset {
-    [self.scrollView setContentOffset:CGPointMake(0.0, [offset floatValue]) animated:NO];
+- (void)viewDidLoad {
+    self.scrollView.accessibilityIdentifier = @"drag scrollview";
 }
 
 - (void)resetScrollingState {
     [self.scrollView setContentOffset:CGPointZero animated:NO];
-    _totalScrollViewDidEndDraggingOffset = 0.0;
-    _didEndDraggingCount = 0;
+    _dragDistance = 0.0;
 }
 
-- (NSNumber *)averageScrollViewDidEndDraggingOffset {
-    return @(_totalScrollViewDidEndDraggingOffset / _didEndDraggingCount);
+- (NSNumber *)dragDistance {
+    return @(_dragDistance);
 }
 
 + (NSString *)nibNameForTestCase:(SEL)testCase {
@@ -59,9 +56,13 @@
 
 #pragma mark UIScrollViewDelegate
 
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    _scrollViewWillBeginDraggingOffset = scrollView.contentOffset.y;
+}
+
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    _totalScrollViewDidEndDraggingOffset += scrollView.contentOffset.y;
-    _didEndDraggingCount++;
+    CGFloat scrollViewDidEndDraggingOffset = scrollView.contentOffset.y;
+    _dragDistance = ABS(scrollViewDidEndDraggingOffset - _scrollViewWillBeginDraggingOffset);
 }
 
 @end

@@ -58,6 +58,19 @@ extern NSString *const SLElementVisibleException;
 
 - (NSString *)value;
 
+/**
+ Returns the position of the object on the main screen.
+
+ The relevant coordinates are screen-relative
+ and are adjusted to account for device orientation.
+
+ This is the same value as is returned by -[NSObject accessibilityFrame], 
+ for the object which matches this element.
+ 
+ @return The frame of the accessibility element, in screen coordinates.
+ */
+- (CGRect)rect;
+
 - (void)logElement;
 - (void)logElementTree;
 
