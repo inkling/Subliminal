@@ -26,7 +26,11 @@ static NSString *const SLTestFocusPrefix = @"focus_";
  All focused test cases defined on this test.
  
  A focused test case is a [test case](testCases) whose name is prefixed with 
- SLTestFocusPrefix.
+ SLTestFocusPrefix. If no test cases are thus "explicitly" focused, 
+ all test cases may be "implicitly" focused if the test itself (or any superclass) 
+ is focused (by its name being prefixed with SLTestFocusPrefix). If the test itself
+ is focused *and* some test cases are explicitly focused, only the explicitly 
+ focused test cases will be considered focused.
  
  @return All focused test cases defined on this test, represented as strings.
  */

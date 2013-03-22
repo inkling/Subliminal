@@ -110,6 +110,13 @@
 
 @interface Focus_TestThatIsFocused : SLTest
 
+- (void)testFoo;
+
+@end
+
+
+@interface Focus_TestWhereNarrowestFocusApplies : SLTest
+
 - (void)testOne;
 - (void)focus_testTwo;
 
