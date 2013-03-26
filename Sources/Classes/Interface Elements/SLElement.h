@@ -170,13 +170,16 @@ extern NSString *const SLAlertCouldNotDismissException;
 @end
 
 /**
- SLSearchBar will match any object, and only objects, with the UIAccessibilityTraitSearchField 
- accessibility trait.
- 
- @warning By default, the text field inside a UISearchBar is the accessible element, 
- not the search bar itself. You should not attempt to set and match accessibility 
- properties of the search bar itself, but rather match the search text field by its 
- accessibility value (its text), or use the +anyElement constructor.
+ SLSearchBarTextField allows access to, and control of, search bar elements in your app.
+  
+ @warning For reasons out of Subliminal's control, it is not possible to match 
+ accessibility properties on search bars. Search bars can only be matched 
+ using +anyElement.
+
+ (The text field inside a UISearchBar is the accessible element, not the
+ search bar itself. This means that the accessibility properties of the search bar 
+ don't matter--and unfortunately, you can't set accessibility properties on the 
+ text field because it's private.)
  */
 @interface SLSearchBar : SLTextField
 @end

@@ -453,6 +453,18 @@ NSString *const SLAlertCouldNotDismissException = @"SLAlertCouldNotDismissExcept
 
 @implementation SLSearchBar
 
++ (instancetype)elementWithAccessibilityLabel:(NSString *)label {
+    SLLog(@"An %@ can't be matched by accessibility properties--see the comments on its @interface. \
+          Returning +anyElement.", NSStringFromClass(self));
+    return [self anyElement];
+}
+
++ (instancetype)elementWithAccessibilityLabel:(NSString *)label value:(NSString *)value traits:(UIAccessibilityTraits)traits {
+    SLLog(@"An %@ can't be matched by accessibility properties--see the comments on its @interface. \
+          Returning +anyElement.", NSStringFromClass(self));
+    return [self anyElement];
+}
+
 - (BOOL)matchesObject:(NSObject *)object {
     return ([super matchesObject:object] && ([object accessibilityTraits] & UIAccessibilityTraitSearchField));
 }

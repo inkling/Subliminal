@@ -20,10 +20,18 @@
     return @"SLTextFieldTestViewController";
 }
 
-- (void)setUpTest {
-    [super setUpTest];
-    
-    _textField = [SLTextField elementWithAccessibilityLabel:@"test element"];
+- (void)setUpTestCaseWithSelector:(SEL)testSelector {
+    [super setUpTestCaseWithSelector:testSelector];
+
+    if (testSelector == @selector(testSetText) ||
+        testSelector == @selector(testGetText)) {
+        _textField = [SLTextField elementWithAccessibilityLabel:@"test element"];
+    } else if (testSelector == @selector(testMatchesSearchBarTextField) ||
+               testSelector == @selector(testSetSearchBarText) ||
+               testSelector == @selector(testGetSearchBarText)) {
+        _textField = [SLSearchBar anyElement];
+    }
+
 }
 
 #pragma mark - SLTextField test cases
@@ -37,7 +45,26 @@
 - (void)testGetText {
     NSString *text;
     SLAssertNoThrow(text = [UIAElement(_textField) text], @"Should not have thrown.");
-    SLAssertTrue([text isEqualToString:@"foo"], @"Retrieved unexpected text.");
+    SLAssertTrue([text isEqualToString:@"foo"], @"Retrieved unexpected text: %@.", text);
+}
+
+#pragma mark - SLSearchBar test cases
+
+- (void)testMatchesSearchBarTextField {
+    SLAssertTrue([UIAElement(_textField) isValid], @"Search bar should be valid.");
+    SLAssertTrue([[UIAElement(_textField) value] isEqualToString:@"bar"], @"Did not match expected element.");
+}
+
+- (void)testSetSearchBarText {
+    NSString *const expectedText = @"bar";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
+}
+
+- (void)testGetSearchBarText {
+    NSString *text;
+    SLAssertNoThrow(text = [UIAElement(_textField) text], @"Should not have thrown.");
+    SLAssertTrue([text isEqualToString:@"bar"], @"Retrieved unexpected text: %@.", text);
 }
 
 @end
