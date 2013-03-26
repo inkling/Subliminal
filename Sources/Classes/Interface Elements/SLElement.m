@@ -35,6 +35,17 @@ static const NSTimeInterval kWebviewTextfieldDelay = 1;
 - (NSString *)sendMessage:(NSString *)action, ... NS_FORMAT_FUNCTION(1, 2);
 - (NSString *)staticUIASelf;
 
+/**
+ Allows the caller to interact with the actual object matched by the receiving SLElement.
+
+ The block will be executed synchronously on the main thread.
+
+ @param block A block which takes the matching object as an argument and returns void.
+ @exception SLElementInvalidException If no matching object has been found
+ after the defaultTimeout has elapsed.
+ */
+- (void)examineMatchingObject:(void (^)(NSObject *object))block;
+
 @end
 
 
@@ -222,6 +233,19 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return accessibilityChains;
 }
 
+- (void)examineMatchingObject:(void (^)(NSObject *object))block {
+    NSDictionary *accessibilityChains = [self waitForAccessibilityChains];
+    NSArray *uiAccessibilityElementFirstAccessorChain = accessibilityChains[SLMockViewAccessibilityChainKey];
+
+    if ([uiAccessibilityElementFirstAccessorChain count] == 0) {
+        @throw [NSException exceptionWithName:SLElementInvalidException reason:[NSString stringWithFormat:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]] userInfo:nil];
+    }
+
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        NSObject *matchingObject = [uiAccessibilityElementFirstAccessorChain lastObject];
+        block(matchingObject);
+    });
+}
 
 - (NSString *)sendMessage:(NSString *)action, ... {
     va_list(args);
@@ -443,6 +467,18 @@ NSString *const SLAlertCouldNotDismissException = @"SLAlertCouldNotDismissExcept
 }
 
 - (void)setText:(NSString *)text {
+    // If this matches a UITextField with clearsOnBeginEditing set to YES,
+    // we must tap the field before attempting to set the text to avoid a race condition
+    // between UIKit trying to clear the text and UIAutomation trying to set the text
+    __block BOOL waitBeforeSettingText = NO;
+    [self examineMatchingObject:^(NSObject *object) {
+        if ([object isKindOfClass:[UITextField class]]) {
+            waitBeforeSettingText = ((UITextField *)object).clearsOnBeginEditing;
+        }
+    }];
+    if (waitBeforeSettingText) {
+        [self tap];
+    }
     [self sendMessage:@"setValue('%@')", [text slStringByEscapingForJavaScriptLiteral]];
 }
 

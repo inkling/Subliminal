@@ -24,6 +24,7 @@
     [super setUpTestCaseWithSelector:testSelector];
 
     if (testSelector == @selector(testSetText) ||
+        testSelector == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
         testSelector == @selector(testGetText)) {
         _textField = [SLTextField elementWithAccessibilityLabel:@"test element"];
     } else if (testSelector == @selector(testMatchesSearchBarTextField) ||
@@ -41,6 +42,12 @@
 #pragma mark - SLTextField test cases
 
 - (void)testSetText {
+    NSString *const expectedText = @"foo";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
+}
+
+- (void)testSetTextWhenFieldClearsOnBeginEditing {
     NSString *const expectedText = @"foo";
     SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
     SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");

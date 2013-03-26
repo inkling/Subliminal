@@ -25,6 +25,7 @@
     UIView *view = [[UIView alloc] initWithFrame:CGRectZero];
     const CGRect kTextFieldFrame = (CGRect){CGPointZero, CGSizeMake(100.0f, 30.0f)};
     if (testCase == @selector(testSetText) ||
+        testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
         testCase == @selector(testGetText) ||
         // we'll test that we match the searchBar *and not* the textField
         testCase == @selector(testMatchesSearchBarTextField)) {
@@ -69,13 +70,17 @@
 
     _textField.accessibilityLabel = @"test element";
     _textField.borderStyle = UITextBorderStyleRoundedRect;
+    if (self.testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing)) {
+        _textField.clearsOnBeginEditing = YES;
+    }
+
+    if (self.testCase != @selector(testSetText) &&
+        self.testCase != @selector(testSetTextWhenFieldClearsOnBeginEditing)) {
+        _textField.text = @"foo";
+    }
 
     // note that it's not useful to set the accessibility label of the search bar,
     // as we actually match the (private) textfield inside the search bar
-
-    if (self.testCase != @selector(testSetText)) {
-        _textField.text = @"foo";
-    }
 
     if (self.testCase != @selector(testSetSearchBarText)) {
         _searchBar.text = @"bar";
@@ -109,7 +114,9 @@
 
 - (NSString *)text {
     NSString *text;
-    if (self.testCase == @selector(testSetText) || self.testCase == @selector(testGetText)) {
+    if (self.testCase == @selector(testSetText) ||
+        self.testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
+        self.testCase == @selector(testGetText)) {
         text = _textField.text;
     } else if (self.testCase == @selector(testMatchesSearchBarTextField) ||
                self.testCase == @selector(testSetSearchBarText) ||
