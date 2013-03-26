@@ -327,7 +327,7 @@ extern NSString *const SLTestExceptionLineNumberKey;
     @catch (id anException) { \
         if (![anException isKindOfClass:[NSException class]] ||\
             ![[(NSException *)anException name] isEqualToString:exceptionName]) {\
-            NSString *reason = [NSString stringWithFormat:@"\"%@\" threw an exception (%@), but not an exception named \"%@\". %@", \
+            NSString *reason = [NSString stringWithFormat:@"\"%@\" threw an exception (\"%@\"), but not an exception named \"%@\". %@", \
                                     @(#expr), anException, exceptionName, [NSString stringWithFormat:description, ##__VA_ARGS__]]; \
             @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
         } else {\
@@ -347,7 +347,7 @@ extern NSString *const SLTestExceptionLineNumberKey;
         (expr); \
     } \
     @catch (id anException) { \
-        NSString *reason = [NSString stringWithFormat:@"\"%@\" should not have thrown an exception: %@. %@", \
+        NSString *reason = [NSString stringWithFormat:@"\"%@\" should not have thrown an exception: \"%@\". %@", \
                                 @(#expr), anException, [NSString stringWithFormat:description, ##__VA_ARGS__]]; \
         @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
     } \
