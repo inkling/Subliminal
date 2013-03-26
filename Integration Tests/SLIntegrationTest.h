@@ -15,9 +15,12 @@
  Each concrete SLIntegrationTest subclass is accompanied by a SLTestCaseViewController
  subclass that defines the interface to be exercised by the test's cases.
  SLIntegrationTest presents an instance of that view controller class before 
- each test case and dismisses it after that case executes. Subclasses must make 
- sure to call super from their implementations of -setUpTest, 
- -setUpTestCaseWithSelector:, -tearDownTest, and -tearDownTestCaseWithSelector:.
+ each test case and dismisses it after that case executes.
+ 
+ Subclasses must make sure to call super at the start of their implementations 
+ of -setUpTest and -setUpTestCaseWithSelector:. Subclasses must make sure to 
+ call super at the _end_ of their implementations of -tearDownTest and
+ -tearDownTestCaseWithSelector:.
 
  To write a new integration test against Subliminal:
 

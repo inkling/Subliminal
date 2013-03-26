@@ -988,7 +988,7 @@
 
 #pragma mark -SLAssertThrows
 
-- (void)testSLAssertThrowsThrowsIffExceptionDoesNotThrow {
+- (void)testSLAssertThrowsThrowsIffDoesNotThrowException {
     Class testClass = [TestWithSomeTestCases class];
     id testMock = [OCMockObject partialMockForClass:testClass];
 
@@ -1007,7 +1007,51 @@
     }] testTwo];
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    STAssertNoThrow([testMock verify], @"Test cases did not execute as expected.");
+}
+
+#pragma mark -SLAssertThrowsNamed
+
+// SLAssertThrowsNamed is useful when you want to check
+// not just that an expression throws an exception...
+- (void)testSLAssertThrowsNamedThrowsIfDoesNotThrowException {
+    Class testClass = [TestWithSomeTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testClass];
+
+    // have "testTwo" not throw and fail
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        STAssertThrows([test slAssertThrows:^{} named:@"TestException"], @"Assertion should have failed.");
+    }] testTwo];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
+}
+
+// ...but that an expression throws an exception with a specific name.
+- (void)testSLAssertThrowsNamedThrowsIfDoesNotThrowNamedException {
+    Class testClass = [TestWithSomeTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testClass];
+
+    // have "testOne" throw named exception and succeed
+    NSString *exceptionName = @"TestException";
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        STAssertNoThrow([test slAssertThrows:^{
+            [NSException raise:exceptionName format:nil];
+        } named:exceptionName], @"Assertion should not have failed.");
+    }] testOne];
+
+    // have "testTwo" throw a different exception and fail
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        STAssertThrows([test slAssertThrows:^{
+            [NSException raise:NSInternalInconsistencyException format:nil];
+        } named:exceptionName], @"Assertion should have failed.");
+    }] testTwo];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    STAssertNoThrow([testMock verify], @"Test cases did not execute as expected.");
 }
 
 #pragma mark -SLAssertNoThrow

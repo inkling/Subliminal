@@ -41,6 +41,8 @@
 		F0695E2016014491000B05D0 /* SLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DD7160138DF000B05D0 /* SLElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0695E2116014491000B05D0 /* SLLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDA160138DF000B05D0 /* SLLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0695E2216014491000B05D0 /* SLUIALogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDC160138DF000B05D0 /* SLUIALogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F07DA32D16E43AD3004C2282 /* SLAlertTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DA32B16E43AD3004C2282 /* SLAlertTest.m */; };
+		F07DA32E16E43AD3004C2282 /* SLAlertTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DA32C16E43AD3004C2282 /* SLAlertTestViewController.m */; };
 		F08B86EB16859C8D00C4FE44 /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F08B86DB16859C4000C4FE44 /* libOCMock.a */; };
 		F08B87F21685A00400C4FE44 /* SharedSLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F08B87F11685A00400C4FE44 /* SharedSLTests.m */; };
 		F08B87F51685A07B00C4FE44 /* SLTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F08B87F41685A07B00C4FE44 /* SLTestTests.m */; };
@@ -172,6 +174,8 @@
 		F0695DEA16013908000B05D0 /* Subliminal-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Subliminal-Prefix.pch"; sourceTree = "<group>"; };
 		F0695DEB1601391C000B05D0 /* Subliminal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Subliminal.h; sourceTree = "<group>"; };
 		F0695E0C16013D77000B05D0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		F07DA32B16E43AD3004C2282 /* SLAlertTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAlertTest.m; sourceTree = "<group>"; };
+		F07DA32C16E43AD3004C2282 /* SLAlertTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAlertTestViewController.m; sourceTree = "<group>"; };
 		F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OCMock.xcodeproj; path = OCMock/Source/OCMock.xcodeproj; sourceTree = "<group>"; };
 		F08B87F01685A00400C4FE44 /* SharedSLTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedSLTests.h; sourceTree = "<group>"; };
 		F08B87F11685A00400C4FE44 /* SharedSLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharedSLTests.m; sourceTree = "<group>"; };
@@ -386,6 +390,15 @@
 			path = Logging;
 			sourceTree = "<group>";
 		};
+		F07DA31F16E439B7004C2282 /* SLAlert Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F07DA32B16E43AD3004C2282 /* SLAlertTest.m */,
+				F07DA32C16E43AD3004C2282 /* SLAlertTestViewController.m */,
+			);
+			name = "SLAlert Tests";
+			sourceTree = "<group>";
+		};
 		F08B86CA16859B1A00C4FE44 /* OCMock */ = {
 			isa = PBXGroup;
 			children = (
@@ -441,6 +454,7 @@
 		F0AC80BE16BB542400C5D5C0 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				F07DA31F16E439B7004C2282 /* SLAlert Tests */,
 				F0CE9FFE16D60E61008A3B4A /* SLDevice Tests */,
 				F0AE4C8716F7F8ED00B2BB2B /* SLElement State Tests */,
 				F05263C316D2C2CF0090174F /* SLElement Matching Tests */,
@@ -720,6 +734,8 @@
 				0696BA5916E013D600DD70CF /* SLElementDraggingTestViewController.m in Sources */,
 				F0AE4C8D16F7F92D00B2BB2B /* SLElementStateTest.m in Sources */,
 				F0AE4C8E16F7F92D00B2BB2B /* SLElementStateTestViewController.m in Sources */,
+				F07DA32D16E43AD3004C2282 /* SLAlertTest.m in Sources */,
+				F07DA32E16E43AD3004C2282 /* SLAlertTestViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

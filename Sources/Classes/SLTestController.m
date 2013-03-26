@@ -14,6 +14,8 @@
 #import "SLTerminal.h"
 #import "SLElement.h"
 
+#import "NSString+SLJavaScript.h"
+
 #import <objc/runtime.h>
 
 
@@ -105,8 +107,28 @@ static SLTestController *__sharedController = nil;
     self = [super init];
     if (self) {
         _defaultTimeout = kDefaultTimeout;
+        _automaticallyDismissAlerts = YES;
     }
     return self;
+}
+
+- (void)setAutomaticallyDismissAlerts:(BOOL)automaticallyDismissAlerts {
+    if (automaticallyDismissAlerts != _automaticallyDismissAlerts) {
+        _automaticallyDismissAlerts = automaticallyDismissAlerts;
+        // if we're on a background thread (==are testing),
+        // we can & should update UIAutomation immediately
+        // otherwise we'll set this value when we begin testing
+        if (![NSThread isMainThread]) {
+            [[SLTerminal sharedTerminal] evalWithFormat:@"_testsHandleAlerts = %@;",
+                 (_automaticallyDismissAlerts ? @"false" : @"true")];
+        }
+    }
+}
+
+- (void)pushHandlerForAlert:(SLAlert *)alert {
+    NSString *alertHandler = [NSString stringWithFormat:@"new Function('alert', '%@')",
+                              [[alert isEqualToUIAAlertPredicate] slStringByEscapingForJavaScriptLiteral]];
+    [[SLTerminal sharedTerminal] evalWithFormat:@"_alertHandlers.push(%@);", alertHandler];
 }
 
 - (void)_beginTesting {
@@ -117,7 +139,9 @@ static SLTestController *__sharedController = nil;
     SLLog(@"Tests are starting up... ");
 
     [SLElement setDefaultTimeout:_defaultTimeout];
-    
+    [[SLTerminal sharedTerminal] evalWithFormat:@"_testsHandleAlerts = %@;",
+         (_automaticallyDismissAlerts ? @"false" : @"true")];
+
     if (_runningWithFocus) {
         SLLog(@"Focusing on test cases in specific tests: %@.", [[_testsToRun allObjects] componentsJoinedByString:@","]);
     }

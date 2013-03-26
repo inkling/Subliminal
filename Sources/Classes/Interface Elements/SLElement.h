@@ -30,6 +30,20 @@ extern NSString *const SLElementVisibleException;
 // Returns an element for an NSObject in the accessibility hierarchy that matches predicate.
 + (id)elementMatching:(BOOL (^)(NSObject *obj))predicate;
 
+/**
+ Returns an element which matches any object in the accessibility hierarchy.
+
+ SLElement defines this constructor primarily for the benefit of subclasses
+ that match a certain kind of object by default, such that a match is likely 
+ unique even without the developer specifying additional information. For instance, 
+ if your application only has one webview onscreen at a time, you could match
+ that webview (using SLWebView) by matching "any" webview, without having to 
+ give that webview an accessibility label or identifier.
+
+ @return An element which matches any object in the accessibility hierarchy.
+ */
++ (instancetype)anyElement;
+
 // Returns an element for an NSObject in the accessibility hierarchy with the given slAccessibilityName.
 + (id)elementWithAccessibilityLabel:(NSString *)label;
 
@@ -88,9 +102,59 @@ extern NSString *const SLElementVisibleException;
 
 #pragma mark - SLElement Subclasses
 
+extern NSString *const SLAlertCouldNotDismissException;
+
+/**
+ The SLAlert class allows access to, and control of, alerts within your application.
+ 
+ @warning By default, UIAlertViews do not have an accessibility label. You should 
+ use the +alertWithTitle: or +anyElement constructors.
+ @warning By default, alerts are automatically dismissed immediately after showing. 
+ To interact with alerts, tests can override the default handler either 
+ [globally](-[SLTestController setAutomaticallyDismissAlerts:])or on a 
+ [per-alert basis](-[SLTestController pushHandlerForAlert:]).
+ */
 @interface SLAlert : SLElement
+
+/**
+ Returns an element that matches an alert with the specified title.
+ 
+ @param title The title of the alert.
+ */
++ (instancetype)alertWithTitle:(NSString *)title;
+
+/**
+ Dismisses the alert by tapping the cancel button, if the button exists,
+ else tapping the default button, if one is identifiable.
+
+ @exception SLAlertCouldNotDismissException If the alert has no buttons.
+ */
 - (void)dismiss;
+
+/**
+ Dismisses the alert by tapping the button with the specified name.
+ 
+ @param buttonTitle The title of the button to tap to dismiss the alert.
+ */
 - (void)dismissWithButtonTitled:(NSString *)buttonTitle;
+
+/**
+ Returns the body of a JS function which 
+ evaluates a UIAAlert to see if it matches the receiver.
+
+ The JS function will take one argument, "alert" (a UIAAlert), as argument,
+ and should return true if alert is equivalent to the receiver, false otherwise.
+ This method should return the _body_ of that function: one or more statements, 
+ with no function closure.
+ 
+ The default implementation simply compares the titles of the receiving SLAlert 
+ and provided UIAAlert.
+
+ @return The body of a JS function which evaluates a UIAAlert "alert" 
+ to see if it matches a particular SLAlert.
+ */
+- (NSString *)isEqualToUIAAlertPredicate;
+
 @end
 
 @interface SLControl : SLElement
@@ -105,6 +169,15 @@ extern NSString *const SLElementVisibleException;
 @property (nonatomic, strong) NSString *text;
 @end
 
+/**
+ SLSearchBar will match any object, and only objects, with the UIAccessibilityTraitSearchField 
+ accessibility trait.
+ 
+ @warning By default, the text field inside a UISearchBar is the accessible element, 
+ not the search bar itself. You should not attempt to set and match accessibility 
+ properties of the search bar itself, but rather match the search text field by its 
+ accessibility value (its text), or use the +anyElement constructor.
+ */
 @interface SLSearchBar : SLTextField
 @end
 
