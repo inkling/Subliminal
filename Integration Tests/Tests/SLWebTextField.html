@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script type="text/javascript">
+			function setTestCase (selector) {
+				if (selector != "testSetWebTextFieldText") {
+					document.getElementById("testField").value = "baz";
+				}
+			}
+
+			function getText() {
+				return document.getElementById("testField").value;
+			}
+        </script>
+	</head>
+	<body>
+		<form name="testForm">
+            <!-- 
+             See http://alxgbsn.co.uk/2011/06/06/making-web-content-more-accessible-with-ios-voiceover/
+             for a description of the "aria-labelledby" attribute.
+
+             Note that by whatever criteria you're trying to match the field, 
+             the field must be unique. For example, the label element below 
+             is hidden using "display:none" so that the field will be the only
+             visible element labelled "Test".
+             -->
+			<label id="testField-label" style="display:none">Test</label>
+			<input type="text" id="testField" aria-labelledby="testField-label" style="display:inline" value="">
+        </form>
+	</body>
+</html>

@@ -446,6 +446,10 @@ NSString *const SLAlertCouldNotDismissException = @"SLAlertCouldNotDismissExcept
     [self sendMessage:@"setValue('%@')", [text slStringByEscapingForJavaScriptLiteral]];
 }
 
+- (BOOL)matchesObject:(NSObject *)object {
+    return [super matchesObject:object] && [object isKindOfClass:[UITextField class]];
+}
+
 @end
 
 
@@ -473,6 +477,13 @@ NSString *const SLAlertCouldNotDismissException = @"SLAlertCouldNotDismissExcept
 
 
 @implementation SLWebTextField
+// SLWebTextField does not inherit from SLTextField
+// because the elements it matches, web text fields, are not instances of UITextField
+// but rather a private type of accessibility element.
+
+- (NSString *)text {
+    return [self value];
+}
 
 // Experimentation has shown that SLTextFields within a webview must be tapped, and
 // a waiting period is necessary, before setValue() will have any effect. A wait period
@@ -482,7 +493,7 @@ NSString *const SLAlertCouldNotDismissException = @"SLAlertCouldNotDismissExcept
 - (void)setText:(NSString *)text {
     [self tap];
     [NSThread sleepForTimeInterval:kWebviewTextfieldDelay];
-    [super setText:text];
+    [self sendMessage:@"setValue('%@')", [text slStringByEscapingForJavaScriptLiteral]];
     [NSThread sleepForTimeInterval:kWebviewTextfieldDelay];
 }
 

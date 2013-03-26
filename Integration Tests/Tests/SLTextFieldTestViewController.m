@@ -11,12 +11,14 @@
 #import <Subliminal/SLTestController+AppContext.h>
 #import <QuartzCore/QuartzCore.h>
 
-@interface SLTextFieldTestViewController : SLTestCaseViewController
+@interface SLTextFieldTestViewController : SLTestCaseViewController <UIWebViewDelegate>
 @end
 
 @implementation SLTextFieldTestViewController {
     UITextField *_textField;
     UISearchBar *_searchBar;
+    UIWebView *_webView;
+    BOOL _webViewDidFinishLoad;
 }
 
 - (void)loadViewForTestCase:(SEL)testCase {
@@ -38,6 +40,12 @@
                testCase == @selector(testGetSearchBarText)) {
         _searchBar = [[UISearchBar alloc] initWithFrame:kTextFieldFrame];
         [view addSubview:_searchBar];
+    } else if (testCase == @selector(testMatchesWebTextField) ||
+               testCase == @selector(testSetWebTextFieldText) ||
+               testCase == @selector(testGetWebTextFieldText)) {
+        _webView = [[UIWebView alloc] initWithFrame:view.bounds];
+        _webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        [view addSubview:_webView];
     }
     self.view = view;
 }
@@ -45,7 +53,9 @@
 - (instancetype)initWithTestCaseWithSelector:(SEL)testCase {
     self = [super initWithTestCaseWithSelector:testCase];
     if (self) {
-        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(text)];
+        SLTestController *testController = [SLTestController sharedTestController];
+        [testController registerTarget:self forAction:@selector(text)];
+        [testController registerTarget:self forAction:@selector(webViewDidFinishLoad)];
     }
     return self;
 }
@@ -70,6 +80,18 @@
     if (self.testCase != @selector(testSetSearchBarText)) {
         _searchBar.text = @"bar";
     }
+
+    NSString *webViewHTMLPath = [[NSBundle mainBundle] pathForResource:@"SLWebTextField" ofType:@"html"];
+    NSURL *webViewHTMLURL = [NSURL fileURLWithPath:webViewHTMLPath];
+    NSURLRequest *webViewRequest = [NSURLRequest requestWithURL:webViewHTMLURL];
+    _webView.delegate = self;
+    [_webView loadRequest:webViewRequest];
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+    NSString *setTestCaseJS = [NSString stringWithFormat:@"setTestCase(\"%@\")", NSStringFromSelector(self.testCase)];
+    [_webView stringByEvaluatingJavaScriptFromString:setTestCaseJS];
+    _webViewDidFinishLoad = YES;
 }
 
 - (void)viewWillLayoutSubviews {
@@ -93,8 +115,16 @@
                self.testCase == @selector(testSetSearchBarText) ||
                self.testCase == @selector(testGetSearchBarText)) {
         text = _searchBar.text;
+    } else if (self.testCase == @selector(testMatchesWebTextField) ||
+               self.testCase == @selector(testSetWebTextFieldText) ||
+               self.testCase == @selector(testGetWebTextFieldText)) {
+        text = [_webView stringByEvaluatingJavaScriptFromString:@"getText()"];
     }
     return text;
+}
+
+- (NSNumber *)webViewDidFinishLoad {
+    return @(_webViewDidFinishLoad);
 }
 
 @end

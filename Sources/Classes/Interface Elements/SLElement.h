@@ -165,8 +165,14 @@ extern NSString *const SLAlertCouldNotDismissException;
 @interface SLButton : SLControl
 @end
 
+/**
+ SLTextField allows access to, and control of, text field elements in your app. 
+ */
 @interface SLTextField : SLElement
+
+/** The text displayed by the text field. */
 @property (nonatomic, strong) NSString *text;
+
 @end
 
 /**
@@ -184,10 +190,21 @@ extern NSString *const SLAlertCouldNotDismissException;
 @interface SLSearchBar : SLTextField
 @end
 
-// SLWebTextField should be used to match any textfields displayed in UIWebviews.
-// It is necessary to match these objects with SLWebTextField instead of SLTextField
-// in order to be able to set the element's value successfully.
-@interface SLWebTextField : SLTextField
+/**
+ SLWebTextField matches text fields displayed in UIWebViews.
+ 
+ Such as form inputs.
+ 
+ A web text field's value is its text (i.e. the value of a form input's "value" 
+ attribute). A web text field's label is the text of an element specified by the 
+ "aria-labelled-by" attribute, if present. See SLWebTextField.html and the 
+ SLWebTextField test cases of SLTextFieldTest.
+ */
+@interface SLWebTextField : SLElement
+
+/** The text displayed by the text field. */
+@property (nonatomic, strong) NSString *text;
+
 @end
 
 // Instances always refer to mainWindow()

@@ -25,6 +25,7 @@
 		F01B2B6F16D2C55900DBA391 /* SLElementMatchingTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F01B2B6C16D2C55900DBA391 /* SLElementMatchingTestViewController.xib */; };
 		F01EBC9B170115B100FF6A7C /* SLTextFieldTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F01EBC99170115B100FF6A7C /* SLTextFieldTest.m */; };
 		F01EBC9C170115B100FF6A7C /* SLTextFieldTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F01EBC9A170115B100FF6A7C /* SLTextFieldTestViewController.m */; };
+		F01EBC9E1701429400FF6A7C /* SLWebTextField.html in Resources */ = {isa = PBXBuildFile; fileRef = F01EBC9D1701429400FF6A7C /* SLWebTextField.html */; };
 		F024BE33168BD70900708350 /* TestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = F024BE32168BD70900708350 /* TestUtilities.m */; };
 		F0271AFF162E0B950098F5F2 /* SLTestController+AppContext.h in Headers */ = {isa = PBXBuildFile; fileRef = F0271AFD162E0B950098F5F2 /* SLTestController+AppContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0271B00162E0B950098F5F2 /* SLTestController+AppContext.m in Sources */ = {isa = PBXBuildFile; fileRef = F0271AFE162E0B950098F5F2 /* SLTestController+AppContext.m */; };
@@ -157,6 +158,7 @@
 		F01B2B6C16D2C55900DBA391 /* SLElementMatchingTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementMatchingTestViewController.xib; sourceTree = "<group>"; };
 		F01EBC99170115B100FF6A7C /* SLTextFieldTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTextFieldTest.m; sourceTree = "<group>"; };
 		F01EBC9A170115B100FF6A7C /* SLTextFieldTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTextFieldTestViewController.m; sourceTree = "<group>"; };
+		F01EBC9D1701429400FF6A7C /* SLWebTextField.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = SLWebTextField.html; sourceTree = "<group>"; };
 		F024BE31168BD70900708350 /* TestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestUtilities.h; sourceTree = "<group>"; };
 		F024BE32168BD70900708350 /* TestUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestUtilities.m; sourceTree = "<group>"; };
 		F0271AFD162E0B950098F5F2 /* SLTestController+AppContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLTestController+AppContext.h"; sourceTree = "<group>"; };
@@ -297,6 +299,7 @@
 		F01EBC951701150E00FF6A7C /* SLTextField Tests */ = {
 			isa = PBXGroup;
 			children = (
+				F01EBC9D1701429400FF6A7C /* SLWebTextField.html */,
 				F01EBC99170115B100FF6A7C /* SLTextFieldTest.m */,
 				F01EBC9A170115B100FF6A7C /* SLTextFieldTestViewController.m */,
 			);
@@ -681,6 +684,7 @@
 				F0CEA00416D60EAD008A3B4A /* SLDeviceTestViewController.xib in Resources */,
 				068D3E4D16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib in Resources */,
 				0696BA5A16E013D600DD70CF /* SLElementDraggingTestViewController.xib in Resources */,
+				F01EBC9E1701429400FF6A7C /* SLWebTextField.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
