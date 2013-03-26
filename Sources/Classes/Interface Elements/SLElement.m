@@ -275,16 +275,18 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 - (BOOL)waitFor:(NSTimeInterval)timeout untilCondition:(NSString *)condition {
     NSString *javascript = [NSString stringWithFormat:
-      @"var cond = function() { return (%@); };"
-      @"var timeout = %g;"
-      @"var retryDelay = %g;"
+      @"(function () {"
+      @"    var cond = function() { return (%@); };"
+      @"    var timeout = %g;"
+      @"    var retryDelay = %g;"
       @""
-      @"var startTime = Math.round(Date.now() / 1000);"
-      @"var condTrue = false;"
-      @"while (!(condTrue = cond()) && ((Math.round(Date.now() / 1000) - startTime) < timeout)) {"
-      @"    UIATarget.localTarget().delay(retryDelay);"
-      @"};"
-      @"(condTrue ? 'YES' : 'NO')", condition, timeout, kDefaultRetryDelay];
+      @"    var startTime = Math.round(Date.now() / 1000);"
+      @"    var condTrue = false;"
+      @"    while (!(condTrue = cond()) && ((Math.round(Date.now() / 1000) - startTime) < timeout)) {"
+      @"        UIATarget.localTarget().delay(retryDelay);"
+      @"    };"
+      @"    return (condTrue ? 'YES' : 'NO')"
+      @"})()", condition, timeout, SLElementWaitRetryDelay];
     
     return [[[SLTerminal sharedTerminal] eval:javascript] boolValue];
 }
