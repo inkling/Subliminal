@@ -12,6 +12,8 @@
 
 extern NSString *const SLTerminalJavaScriptException;
 
+extern const NSTimeInterval SLTerminalReadRetryDelay;
+
 
 @interface SLTerminal : NSObject
 

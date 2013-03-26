@@ -23,7 +23,7 @@ NSString *const SLElementInvalidException       = @"SLElementInvalidException";
 NSString *const SLElementNotVisibleException    = @"SLElementNotVisibleException";
 NSString *const SLElementVisibleException       = @"SLElementVisibleException";
 
-static const NSTimeInterval kDefaultRetryDelay = 0.25;
+const NSTimeInterval SLElementWaitRetryDelay = 0.25;
 static const NSTimeInterval kWebviewTextfieldDelay = 1;
 
 
@@ -228,7 +228,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         if ([accessibilityChains[SLUIViewAccessibilityChainKey] count] > 0) {
             break;
         }
-        [NSThread sleepForTimeInterval:kDefaultRetryDelay];
+        [NSThread sleepForTimeInterval:SLElementWaitRetryDelay];
     }
     return accessibilityChains;
 }
@@ -280,9 +280,9 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
       @"    var timeout = %g;"
       @"    var retryDelay = %g;"
       @""
-      @"    var startTime = Math.round(Date.now() / 1000);"
+      @"    var startTime = (Date.now() / 1000);"
       @"    var condTrue = false;"
-      @"    while (!(condTrue = cond()) && ((Math.round(Date.now() / 1000) - startTime) < timeout)) {"
+      @"    while (!(condTrue = cond()) && (((Date.now() / 1000) - startTime) < timeout)) {"
       @"        UIATarget.localTarget().delay(retryDelay);"
       @"    };"
       @"    return (condTrue ? 'YES' : 'NO')"

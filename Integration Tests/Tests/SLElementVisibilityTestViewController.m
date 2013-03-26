@@ -109,8 +109,16 @@
         nibName = @"SLElementVisibilityTestElementContainerHidden";
     } else if (testCase == @selector(testAccessibilityElementIsNotVisibleIfItIsOffscreen)) {
         nibName = @"SLElementVisibilityTestElementOffscreen";
-    } else if ((testCase == @selector(testAccessibilityElementIsNotVisibleIfItsCenterIsCoveredByView)) || (testCase == @selector(testAccessibilityElementIsNotVisibleIfItsCenterIsCoveredByElement)))  {
+    } else if ((testCase == @selector(testAccessibilityElementIsNotVisibleIfItsCenterIsCoveredByView)) ||
+               (testCase == @selector(testAccessibilityElementIsNotVisibleIfItsCenterIsCoveredByElement)))  {
         nibName = @"SLElementVisibilityTestElementCovered";
+    } else if ((testCase == @selector(testWaitUntilVisibleDoesNotThrowAndReturnsImmediatelyWhenConditionIsTrueUponWait)) ||
+               (testCase == @selector(testWaitUntilVisibleDoesNotThrowAndReturnsImmediatelyAfterConditionBecomesTrue)) ||
+               (testCase == @selector(testWaitUntilVisibleThrowsIfConditionIsStillFalseAtEndOfTimeout)) ||
+               (testCase == @selector(testWaitUntilInvisibleDoesNotThrowAndReturnsImmediatelyWhenConditionIsTrueUponWait)) ||
+               (testCase == @selector(testWaitUntilInvisibleDoesNotThrowAndReturnsImmediatelyAfterConditionBecomesTrue)) ||
+               (testCase == @selector(testWaitUntilInvisibleThrowsIfConditionIsStillFalseAtEndOfTimeout))) {
+        nibName = @"SLElementVisibilityTestHidden";
     }
     return nibName;
 }
@@ -125,6 +133,8 @@
         [testController registerTarget:self forAction:@selector(moveTestViewOnscreen)];
         [testController registerTarget:self forAction:@selector(uncoverTestView)];
         [testController registerTarget:self forAction:@selector(uncoverTestElement)];
+        [testController registerTarget:self forAction:@selector(showTestViewAfterInterval:)];
+        [testController registerTarget:self forAction:@selector(hideTestViewAfterInterval:)];
     }
     return self;
 }
@@ -137,9 +147,16 @@
     [super viewDidLoad];
 
     NSString *testCaseName = NSStringFromSelector(self.testCase);
-    if ([testCaseName hasPrefix:@"testView"]) {
+    if ([testCaseName hasPrefix:@"testView"] ||
+        [testCaseName hasPrefix:@"testWait"]) {
         self.testView.isAccessibilityElement = YES;
         self.testView.accessibilityLabel = @"test";
+
+        if ([testCaseName isEqualToString:@"testWaitUntilVisibleDoesNotThrowAndReturnsImmediatelyWhenConditionIsTrueUponWait"] ||
+            [testCaseName isEqualToString:@"testWaitUntilInvisibleDoesNotThrowAndReturnsImmediatelyAfterConditionBecomesTrue"] ||
+            [testCaseName isEqualToString:@"testWaitUntilInvisibleThrowsIfConditionIsStillFalseAtEndOfTimeout"]) {
+            self.testView.hidden = NO;
+        }
     } else if ([testCaseName hasPrefix:@"testAccessibilityElement"]) {
         NSAssert([self.testView isKindOfClass:[SLElementVisibilityTestElementContainerView class]],
                  @"For the purposes of 'testElement...' test cases, self.testView must be an SLElementVisibilityTestElementContainerView");
@@ -175,6 +192,18 @@
 
 - (void)uncoverTestElement {
     ((SLElementVisibilityTestElementContainerView *)self.testView).coverTestElement = NO;
+}
+
+- (void)showTestViewAfterInterval:(NSNumber *)interval {
+    [self performSelector:@selector(showTestView) withObject:nil afterDelay:[interval doubleValue]];
+}
+
+- (void)hideTestView {
+    self.testView.hidden = YES;
+}
+
+- (void)hideTestViewAfterInterval:(NSNumber *)interval {
+    [self performSelector:@selector(hideTestView) withObject:nil afterDelay:[interval doubleValue]];
 }
 
 @end

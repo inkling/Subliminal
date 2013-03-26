@@ -21,6 +21,7 @@ extern NSString *const SLElementInvalidException;
 extern NSString *const SLElementNotVisibleException;
 extern NSString *const SLElementVisibleException;
 
+extern const NSTimeInterval SLElementWaitRetryDelay;
 
 @interface SLElement : NSObject
 
