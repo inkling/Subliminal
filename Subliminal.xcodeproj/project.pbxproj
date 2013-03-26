@@ -23,6 +23,8 @@
 		F01B2B6D16D2C55900DBA391 /* SLElementMatchingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F01B2B6A16D2C55900DBA391 /* SLElementMatchingTest.m */; };
 		F01B2B6E16D2C55900DBA391 /* SLElementMatchingTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F01B2B6B16D2C55900DBA391 /* SLElementMatchingTestViewController.m */; };
 		F01B2B6F16D2C55900DBA391 /* SLElementMatchingTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F01B2B6C16D2C55900DBA391 /* SLElementMatchingTestViewController.xib */; };
+		F01EBC9B170115B100FF6A7C /* SLTextFieldTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F01EBC99170115B100FF6A7C /* SLTextFieldTest.m */; };
+		F01EBC9C170115B100FF6A7C /* SLTextFieldTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F01EBC9A170115B100FF6A7C /* SLTextFieldTestViewController.m */; };
 		F024BE33168BD70900708350 /* TestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = F024BE32168BD70900708350 /* TestUtilities.m */; };
 		F0271AFF162E0B950098F5F2 /* SLTestController+AppContext.h in Headers */ = {isa = PBXBuildFile; fileRef = F0271AFD162E0B950098F5F2 /* SLTestController+AppContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0271B00162E0B950098F5F2 /* SLTestController+AppContext.m in Sources */ = {isa = PBXBuildFile; fileRef = F0271AFE162E0B950098F5F2 /* SLTestController+AppContext.m */; };
@@ -153,6 +155,8 @@
 		F01B2B6A16D2C55900DBA391 /* SLElementMatchingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementMatchingTest.m; sourceTree = "<group>"; };
 		F01B2B6B16D2C55900DBA391 /* SLElementMatchingTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementMatchingTestViewController.m; sourceTree = "<group>"; };
 		F01B2B6C16D2C55900DBA391 /* SLElementMatchingTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementMatchingTestViewController.xib; sourceTree = "<group>"; };
+		F01EBC99170115B100FF6A7C /* SLTextFieldTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTextFieldTest.m; sourceTree = "<group>"; };
+		F01EBC9A170115B100FF6A7C /* SLTextFieldTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTextFieldTestViewController.m; sourceTree = "<group>"; };
 		F024BE31168BD70900708350 /* TestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestUtilities.h; sourceTree = "<group>"; };
 		F024BE32168BD70900708350 /* TestUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestUtilities.m; sourceTree = "<group>"; };
 		F0271AFD162E0B950098F5F2 /* SLTestController+AppContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLTestController+AppContext.h"; sourceTree = "<group>"; };
@@ -288,6 +292,15 @@
 				F0AC80C316BC355D00C5D5C0 /* SLTerminalTest.m */,
 			);
 			name = "SLTerminal Tests";
+			sourceTree = "<group>";
+		};
+		F01EBC951701150E00FF6A7C /* SLTextField Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F01EBC99170115B100FF6A7C /* SLTextFieldTest.m */,
+				F01EBC9A170115B100FF6A7C /* SLTextFieldTestViewController.m */,
+			);
+			name = "SLTextField Tests";
 			sourceTree = "<group>";
 		};
 		F05263C316D2C2CF0090174F /* SLElement Matching Tests */ = {
@@ -459,6 +472,7 @@
 				F0AE4C8716F7F8ED00B2BB2B /* SLElement State Tests */,
 				F05263C316D2C2CF0090174F /* SLElement Matching Tests */,
 				0696BA5E16E013DF00DD70CF /* SLElement Dragging Tests */,
+				F01EBC951701150E00FF6A7C /* SLTextField Tests */,
 				F013798E16D0843B009BAF22 /* SLTerminal Tests */,
 			);
 			path = Tests;
@@ -736,6 +750,8 @@
 				F0AE4C8E16F7F92D00B2BB2B /* SLElementStateTestViewController.m in Sources */,
 				F07DA32D16E43AD3004C2282 /* SLAlertTest.m in Sources */,
 				F07DA32E16E43AD3004C2282 /* SLAlertTestViewController.m in Sources */,
+				F01EBC9B170115B100FF6A7C /* SLTextFieldTest.m in Sources */,
+				F01EBC9C170115B100FF6A7C /* SLTextFieldTestViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
