@@ -84,8 +84,6 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         // note that we explicitly associate with SLElement
         // so that subclasses can reference the timeout too
         objc_setAssociatedObject([SLElement class], kDefaultTimeoutKey, @(defaultTimeout), OBJC_ASSOCIATION_RETAIN);
-
-        [[SLTerminal sharedTerminal] evalWithFormat:@"UIATarget.localTarget().setTimeout(%g);", defaultTimeout];
     }
 }
 

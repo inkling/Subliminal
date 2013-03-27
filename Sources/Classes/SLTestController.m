@@ -138,7 +138,11 @@ static SLTestController *__sharedController = nil;
     // register defaults
     SLLog(@"Tests are starting up... ");
 
+    // we use a local element resolution timeout
+    // and suppress UIAutomation's timeout, to better control the timing of the tests
     [SLElement setDefaultTimeout:_defaultTimeout];
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIATarget.localTarget().setTimeout(0);"];
+
     [[SLTerminal sharedTerminal] evalWithFormat:@"_testsHandleAlerts = %@;",
          (_automaticallyDismissAlerts ? @"false" : @"true")];
 
