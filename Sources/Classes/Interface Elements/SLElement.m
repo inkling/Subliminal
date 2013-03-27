@@ -38,6 +38,9 @@ static const NSTimeInterval kWebviewTextfieldDelay = 1;
 /**
  Allows the caller to interact with the actual object matched by the receiving SLElement.
 
+ If a matching object cannot be found, the search will be retried 
+ until the defaultTimeout expires.
+ 
  The block will be executed synchronously on the main thread.
 
  @param block A block which takes the matching object as an argument and returns void.
@@ -153,7 +156,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         return;
     }
     
-    NSDictionary *accessibilityChains = [self waitForAccessibilityChains];
+    NSDictionary *accessibilityChains = [self accessibilityChainsWaitingIfNecessary:YES];
     NSArray *uiAccessibilityElementFirstAccessorChain = accessibilityChains[SLMockViewAccessibilityChainKey];
     NSArray *viewFirstAccessorChain = accessibilityChains[SLUIViewAccessibilityChainKey];
     
@@ -237,25 +240,26 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     });
 }
 
-// We force waitForAccessibilityChains to return a retained dictionary here to prevent the returned
-// dictionary from being added to an autorelease pool on Subliminal's (non-main) thread.
-- (NSDictionary *)waitForAccessibilityChains NS_RETURNS_RETAINED {
+// We force accessibilityChainsWaitingIfNecessary: to return a retained dictionary
+// to prevent that dictionary from being added to an autorelease pool on Subliminal's (non-main) thread.
+- (NSDictionary *)accessibilityChainsWaitingIfNecessary:(BOOL)waitIfNecessary NS_RETURNS_RETAINED {
     __block NSDictionary *accessibilityChains = nil;
     NSDate *startDate = [NSDate date];
-    while ([[NSDate date] timeIntervalSinceDate:startDate] < [[self class] defaultTimeout]) {
+    do {
         dispatch_sync(dispatch_get_main_queue(), ^{
             accessibilityChains = [[[UIApplication sharedApplication] keyWindow] slAccessibilityChainsToElement:self];
         });
-        if ([accessibilityChains[SLUIViewAccessibilityChainKey] count] > 0) {
+        if ([accessibilityChains[SLUIViewAccessibilityChainKey] count] > 0 ||
+            !waitIfNecessary) {
             break;
         }
         [NSThread sleepForTimeInterval:SLElementWaitRetryDelay];
-    }
+    } while ([[NSDate date] timeIntervalSinceDate:startDate] < [[self class] defaultTimeout]);
     return accessibilityChains;
 }
 
 - (void)examineMatchingObject:(void (^)(NSObject *object))block {
-    NSDictionary *accessibilityChains = [self waitForAccessibilityChains];
+    NSDictionary *accessibilityChains = [self accessibilityChainsWaitingIfNecessary:YES];
     NSArray *uiAccessibilityElementFirstAccessorChain = accessibilityChains[SLMockViewAccessibilityChainKey];
 
     if ([uiAccessibilityElementFirstAccessorChain count] == 0) {
@@ -283,7 +287,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (BOOL)isValid {
-    return ([[self waitForAccessibilityChains][SLMockViewAccessibilityChainKey] count] > 0);
+    return ([[self accessibilityChainsWaitingIfNecessary:NO][SLMockViewAccessibilityChainKey] count] > 0);
 }
 
 - (BOOL)isVisible {
