@@ -319,15 +319,29 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 - (void)waitUntilVisible:(NSTimeInterval)timeout {
     [self performActionWithUIASelf:^(NSString *uiaSelf) {
-        if (![self waitFor:timeout untilTrue:[NSString stringWithFormat:@"%@.isVisible()", uiaSelf]]) {
+        // We allow for the the element to be invalid upon waiting,
+        // so long as it is ultimately visible.
+        // (Note that isVisible() actually returns NO, given an invalid element,
+        // but this is safest (and matches Subliminal's semantics).)
+        NSString *isValidAndVisible = [NSString stringWithFormat:@"%@.isValid() && %@.isVisible()", uiaSelf, uiaSelf];
+        if (![self waitFor:timeout untilTrue:isValidAndVisible]) {
             [NSException raise:SLElementNotVisibleException format:@"Element %@ did not become visible within %g seconds.", self, timeout];
         }
     }];
 }
 
-- (void)waitUntilInvisible:(NSTimeInterval)timeout {
+- (void)waitUntilInvisibleOrInvalid:(NSTimeInterval)timeout {
+    // succeed immediately if we're not valid (otherwise performAction... will throw)
+    if (![self isValid]) return;
+
     [self performActionWithUIASelf:^(NSString *uiaSelf) {
-        if (![self waitFor:timeout untilTrue:[NSString stringWithFormat:@"!%@.isVisible()", uiaSelf]]) {
+        // The method lists "invisible" before "invalid" because the element not being visible
+        // is what the user really cares about.
+        // But we check validity first in case isVisible() might throw.
+        // (It doesn't--it returns NO, given an invalid element--but this is safest
+        // (and matches Subliminal's semantics).)
+        NSString *isInvalidOrInvisible = [NSString stringWithFormat:@"!%@.isValid() || !%@.isVisible()", uiaSelf, uiaSelf];
+        if (![self waitFor:timeout untilTrue:isInvalidOrInvisible]) {
             [NSException raise:SLElementVisibleException format:@"Element %@ was still visible after %g seconds.", self, timeout];
         }
     }];

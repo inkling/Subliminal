@@ -58,7 +58,7 @@ extern const NSTimeInterval SLElementWaitRetryDelay;
 - (BOOL)isValid;
 - (BOOL)isVisible;
 - (void)waitUntilVisible:(NSTimeInterval)timeout;
-- (void)waitUntilInvisible:(NSTimeInterval)timeout;
+- (void)waitUntilInvisibleOrInvalid:(NSTimeInterval)timeout;
 
 - (void)tap;
 
