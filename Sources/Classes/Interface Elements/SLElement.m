@@ -46,6 +46,29 @@ static const NSTimeInterval kWebviewTextfieldDelay = 1;
  */
 - (void)examineMatchingObject:(void (^)(NSObject *object))block;
 
+/**
+ Waits for an arbitrary Javascript expression to evaluate to true 
+ within a specified timeout.
+
+ The expression will be re-evaluated at small intervals.
+ If and when the expression evaluates to true, the method will immediately return 
+ YES; if the expression is still false at the end of the timeout, this method 
+ will return NO.
+ 
+ This method is designed to wait efficiently by performing the waiting/re-evaluation 
+ entirely within UIAutomation's (Javascript) context.
+
+ @warning This method does not itself throw an exception if the condition fails 
+ to become true within the timeout. Rather, the caller should throw a suitably 
+ specific exception if this method returns NO.
+
+ @param timeout The interval for which to wait.
+ @param expr A boolean expression in Javascript, on whose truth the method should wait.
+ @return YES if and when the expression evaluates to true within the timeout;
+ otherwise, NO.
+ */
+- (BOOL)waitFor:(NSTimeInterval)timeout untilTrue:(NSString *)condition;
+
 @end
 
 
@@ -273,7 +296,8 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return isVisible;
 }
 
-- (BOOL)waitFor:(NSTimeInterval)timeout untilCondition:(NSString *)condition {
+
+- (BOOL)waitFor:(NSTimeInterval)timeout untilTrue:(NSString *)condition {
     NSString *javascript = [NSString stringWithFormat:
       @"(function () {"
       @"    var cond = function() { return (%@); };"
@@ -293,7 +317,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 - (void)waitUntilVisible:(NSTimeInterval)timeout {
     [self performActionWithUIASelf:^(NSString *uiaSelf) {
-        if (![self waitFor:timeout untilCondition:[NSString stringWithFormat:@"%@.isVisible()", uiaSelf]]) {
+        if (![self waitFor:timeout untilTrue:[NSString stringWithFormat:@"%@.isVisible()", uiaSelf]]) {
             [NSException raise:SLElementNotVisibleException format:@"Element %@ did not become visible within %g seconds.", self, timeout];
         }
     }];
@@ -301,7 +325,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 - (void)waitUntilInvisible:(NSTimeInterval)timeout {
     [self performActionWithUIASelf:^(NSString *uiaSelf) {
-        if (![self waitFor:timeout untilCondition:[NSString stringWithFormat:@"!%@.isVisible()", uiaSelf]]) {
+        if (![self waitFor:timeout untilTrue:[NSString stringWithFormat:@"!%@.isVisible()", uiaSelf]]) {
             [NSException raise:SLElementVisibleException format:@"Element %@ was still visible after %g seconds.", self, timeout];
         }
     }];
