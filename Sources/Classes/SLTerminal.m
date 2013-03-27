@@ -18,6 +18,8 @@ static NSString *const SLTerminalPreferencesKeyResultIndex  = @"resultIndex";
 static NSString *const SLTerminalPreferencesKeyResult       = @"result";
 static NSString *const SLTerminalPreferencesKeyException    = @"exception";
 
+const NSTimeInterval SLTerminalReadRetryDelay = 0.1;
+
 
 @implementation SLTerminal {
     dispatch_queue_t _evalQueue;
@@ -155,7 +157,7 @@ static SLTerminal *__sharedTerminal = nil;
                 NSAssert([resultPrefs[SLTerminalPreferencesKeyResultIndex] intValue] == _commandIndex, @"Result index is out of sync with command index");
                 break;
             }
-            [NSThread sleepForTimeInterval:0.1];
+            [NSThread sleepForTimeInterval:SLTerminalReadRetryDelay];
         }
         _commandIndex++;
 

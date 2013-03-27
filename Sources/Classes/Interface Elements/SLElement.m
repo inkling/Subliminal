@@ -23,7 +23,7 @@ NSString *const SLElementInvalidException       = @"SLElementInvalidException";
 NSString *const SLElementNotVisibleException    = @"SLElementNotVisibleException";
 NSString *const SLElementVisibleException       = @"SLElementVisibleException";
 
-static const NSTimeInterval kDefaultRetryDelay = 0.25;
+const NSTimeInterval SLElementWaitRetryDelay = 0.25;
 static const NSTimeInterval kWebviewTextfieldDelay = 1;
 
 
@@ -38,6 +38,9 @@ static const NSTimeInterval kWebviewTextfieldDelay = 1;
 /**
  Allows the caller to interact with the actual object matched by the receiving SLElement.
 
+ If a matching object cannot be found, the search will be retried 
+ until the defaultTimeout expires.
+ 
  The block will be executed synchronously on the main thread.
 
  @param block A block which takes the matching object as an argument and returns void.
@@ -45,6 +48,29 @@ static const NSTimeInterval kWebviewTextfieldDelay = 1;
  after the defaultTimeout has elapsed.
  */
 - (void)examineMatchingObject:(void (^)(NSObject *object))block;
+
+/**
+ Waits for an arbitrary Javascript expression to evaluate to true 
+ within a specified timeout.
+
+ The expression will be re-evaluated at small intervals.
+ If and when the expression evaluates to true, the method will immediately return 
+ YES; if the expression is still false at the end of the timeout, this method 
+ will return NO.
+ 
+ This method is designed to wait efficiently by performing the waiting/re-evaluation 
+ entirely within UIAutomation's (Javascript) context.
+
+ @warning This method does not itself throw an exception if the condition fails 
+ to become true within the timeout. Rather, the caller should throw a suitably 
+ specific exception if this method returns NO.
+
+ @param timeout The interval for which to wait.
+ @param expr A boolean expression in Javascript, on whose truth the method should wait.
+ @return YES if and when the expression evaluates to true within the timeout;
+ otherwise, NO.
+ */
+- (BOOL)waitFor:(NSTimeInterval)timeout untilTrue:(NSString *)condition;
 
 @end
 
@@ -61,8 +87,6 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         // note that we explicitly associate with SLElement
         // so that subclasses can reference the timeout too
         objc_setAssociatedObject([SLElement class], kDefaultTimeoutKey, @(defaultTimeout), OBJC_ASSOCIATION_RETAIN);
-
-        [[SLTerminal sharedTerminal] evalWithFormat:@"UIATarget.localTarget().setTimeout(%g);", defaultTimeout];
     }
 }
 
@@ -132,7 +156,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         return;
     }
     
-    NSDictionary *accessibilityChains = [self waitForAccessibilityChains];
+    NSDictionary *accessibilityChains = [self accessibilityChainsWaitingIfNecessary:YES];
     NSArray *uiAccessibilityElementFirstAccessorChain = accessibilityChains[SLMockViewAccessibilityChainKey];
     NSArray *viewFirstAccessorChain = accessibilityChains[SLUIViewAccessibilityChainKey];
     
@@ -216,25 +240,26 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     });
 }
 
-// We force waitForAccessibilityChains to return a retained dictionary here to prevent the returned
-// dictionary from being added to an autorelease pool on Subliminal's (non-main) thread.
-- (NSDictionary *)waitForAccessibilityChains NS_RETURNS_RETAINED {
+// We force accessibilityChainsWaitingIfNecessary: to return a retained dictionary
+// to prevent that dictionary from being added to an autorelease pool on Subliminal's (non-main) thread.
+- (NSDictionary *)accessibilityChainsWaitingIfNecessary:(BOOL)waitIfNecessary NS_RETURNS_RETAINED {
     __block NSDictionary *accessibilityChains = nil;
     NSDate *startDate = [NSDate date];
-    while ([[NSDate date] timeIntervalSinceDate:startDate] < [[self class] defaultTimeout]) {
+    do {
         dispatch_sync(dispatch_get_main_queue(), ^{
             accessibilityChains = [[[UIApplication sharedApplication] keyWindow] slAccessibilityChainsToElement:self];
         });
-        if ([accessibilityChains[SLUIViewAccessibilityChainKey] count] > 0) {
+        if ([accessibilityChains[SLUIViewAccessibilityChainKey] count] > 0 ||
+            !waitIfNecessary) {
             break;
         }
-        [NSThread sleepForTimeInterval:kDefaultRetryDelay];
-    }
+        [NSThread sleepForTimeInterval:SLElementWaitRetryDelay];
+    } while ([[NSDate date] timeIntervalSinceDate:startDate] < [[self class] defaultTimeout]);
     return accessibilityChains;
 }
 
 - (void)examineMatchingObject:(void (^)(NSObject *object))block {
-    NSDictionary *accessibilityChains = [self waitForAccessibilityChains];
+    NSDictionary *accessibilityChains = [self accessibilityChainsWaitingIfNecessary:YES];
     NSArray *uiAccessibilityElementFirstAccessorChain = accessibilityChains[SLMockViewAccessibilityChainKey];
 
     if ([uiAccessibilityElementFirstAccessorChain count] == 0) {
@@ -262,7 +287,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (BOOL)isValid {
-    return ([[self waitForAccessibilityChains][SLMockViewAccessibilityChainKey] count] > 0);
+    return ([[self accessibilityChainsWaitingIfNecessary:NO][SLMockViewAccessibilityChainKey] count] > 0);
 }
 
 - (BOOL)isVisible {
@@ -273,33 +298,50 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return isVisible;
 }
 
-- (BOOL)waitFor:(NSTimeInterval)timeout untilCondition:(NSString *)condition {
+
+- (BOOL)waitFor:(NSTimeInterval)timeout untilTrue:(NSString *)condition {
     NSString *javascript = [NSString stringWithFormat:
-      @"var cond = function() { return (%@); };"
-      @"var timeout = %g;"
-      @"var retryDelay = %g;"
+      @"(function () {"
+      @"    var cond = function() { return (%@); };"
+      @"    var timeout = %g;"
+      @"    var retryDelay = %g;"
       @""
-      @"var startTime = Math.round(Date.now() / 1000);"
-      @"var condTrue = false;"
-      @"while (!(condTrue = cond()) && ((Math.round(Date.now() / 1000) - startTime) < timeout)) {"
-      @"    UIATarget.localTarget().delay(retryDelay);"
-      @"};"
-      @"(condTrue ? 'YES' : 'NO')", condition, timeout, kDefaultRetryDelay];
+      @"    var startTime = (Date.now() / 1000);"
+      @"    var condTrue = false;"
+      @"    while (!(condTrue = cond()) && (((Date.now() / 1000) - startTime) < timeout)) {"
+      @"        UIATarget.localTarget().delay(retryDelay);"
+      @"    };"
+      @"    return (condTrue ? 'YES' : 'NO')"
+      @"})()", condition, timeout, SLElementWaitRetryDelay];
     
     return [[[SLTerminal sharedTerminal] eval:javascript] boolValue];
 }
 
 - (void)waitUntilVisible:(NSTimeInterval)timeout {
     [self performActionWithUIASelf:^(NSString *uiaSelf) {
-        if (![self waitFor:timeout untilCondition:[NSString stringWithFormat:@"%@.isVisible()", uiaSelf]]) {
+        // We allow for the the element to be invalid upon waiting,
+        // so long as it is ultimately visible.
+        // (Note that isVisible() actually returns NO, given an invalid element,
+        // but this is safest (and matches Subliminal's semantics).)
+        NSString *isValidAndVisible = [NSString stringWithFormat:@"%@.isValid() && %@.isVisible()", uiaSelf, uiaSelf];
+        if (![self waitFor:timeout untilTrue:isValidAndVisible]) {
             [NSException raise:SLElementNotVisibleException format:@"Element %@ did not become visible within %g seconds.", self, timeout];
         }
     }];
 }
 
-- (void)waitUntilInvisible:(NSTimeInterval)timeout {
+- (void)waitUntilInvisibleOrInvalid:(NSTimeInterval)timeout {
+    // succeed immediately if we're not valid (otherwise performAction... will throw)
+    if (![self isValid]) return;
+
     [self performActionWithUIASelf:^(NSString *uiaSelf) {
-        if (![self waitFor:timeout untilCondition:[NSString stringWithFormat:@"!%@.isVisible()", uiaSelf]]) {
+        // The method lists "invisible" before "invalid" because the element not being visible
+        // is what the user really cares about.
+        // But we check validity first in case isVisible() might throw.
+        // (It doesn't--it returns NO, given an invalid element--but this is safest
+        // (and matches Subliminal's semantics).)
+        NSString *isInvalidOrInvisible = [NSString stringWithFormat:@"!%@.isValid() || !%@.isVisible()", uiaSelf, uiaSelf];
+        if (![self waitFor:timeout untilTrue:isInvalidOrInvisible]) {
             [NSException raise:SLElementVisibleException format:@"Element %@ was still visible after %g seconds.", self, timeout];
         }
     }];

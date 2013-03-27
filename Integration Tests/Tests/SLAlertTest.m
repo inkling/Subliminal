@@ -108,7 +108,7 @@ static const NSTimeInterval kAlertDisappearDelay = 0.2;
 
 - (void)testDismissTapsTheCancelButtonFirst {
     NSString *alertTitle = @"Foo";
-    NSString *cancelButtonTitle = @"Ok";
+    NSString *cancelButtonTitle = @"Cancel";
 	SLAskApp1(showAlertWithInfo:, (@{   @"title": alertTitle,
                                         @"cancel": cancelButtonTitle,
                                         @"other": @"Ok" }));

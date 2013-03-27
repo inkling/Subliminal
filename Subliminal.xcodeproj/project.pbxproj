@@ -46,9 +46,16 @@
 		F0695E2216014491000B05D0 /* SLUIALogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDC160138DF000B05D0 /* SLUIALogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F07DA32D16E43AD3004C2282 /* SLAlertTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DA32B16E43AD3004C2282 /* SLAlertTest.m */; };
 		F07DA32E16E43AD3004C2282 /* SLAlertTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DA32C16E43AD3004C2282 /* SLAlertTestViewController.m */; };
+		F077D70D16D9D77900908FF5 /* SLElementVisibilityTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F077D70A16D9D77900908FF5 /* SLElementVisibilityTest.m */; };
+		F077D70E16D9D77900908FF5 /* SLElementVisibilityTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F077D70B16D9D77900908FF5 /* SLElementVisibilityTestViewController.m */; };
+		F077D70F16D9D77900908FF5 /* SLElementVisibilityTestCovered.xib in Resources */ = {isa = PBXBuildFile; fileRef = F077D70C16D9D77900908FF5 /* SLElementVisibilityTestCovered.xib */; };
 		F08B86EB16859C8D00C4FE44 /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F08B86DB16859C4000C4FE44 /* libOCMock.a */; };
 		F08B87F21685A00400C4FE44 /* SharedSLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F08B87F11685A00400C4FE44 /* SharedSLTests.m */; };
 		F08B87F51685A07B00C4FE44 /* SLTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F08B87F41685A07B00C4FE44 /* SLTestTests.m */; };
+		F090AE7016D9E01D000F0B6F /* SLElementVisibilityTestHidden.xib in Resources */ = {isa = PBXBuildFile; fileRef = F090AE6D16D9E01D000F0B6F /* SLElementVisibilityTestHidden.xib */; };
+		F090AE7116D9E01D000F0B6F /* SLElementVisibilityTestLowAlpha.xib in Resources */ = {isa = PBXBuildFile; fileRef = F090AE6E16D9E01D000F0B6F /* SLElementVisibilityTestLowAlpha.xib */; };
+		F090AE7216D9E01D000F0B6F /* SLElementVisibilityTestOffscreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = F090AE6F16D9E01D000F0B6F /* SLElementVisibilityTestOffscreen.xib */; };
+		F090AE7416D9E1D1000F0B6F /* SLElementVisibilityTestSuperviewHidden.xib in Resources */ = {isa = PBXBuildFile; fileRef = F090AE7316D9E1D1000F0B6F /* SLElementVisibilityTestSuperviewHidden.xib */; };
 		F0A040131698ECDE009D8157 /* SLTestController+AppContextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A040121698ECDE009D8157 /* SLTestController+AppContextTests.m */; };
 		F0AC809516BB299500C5D5C0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695E0C16013D77000B05D0 /* UIKit.framework */; };
 		F0AC809616BB299500C5D5C0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8E16011515000B05D0 /* Foundation.framework */; };
@@ -78,6 +85,9 @@
 		F0D2405C1683F7130031B67C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F0D2405A1683F7130031B67C /* InfoPlist.strings */; };
 		F0D240671683F8520031B67C /* SLTestControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D240661683F8520031B67C /* SLTestControllerTests.m */; };
 		F0D2406A1683F9800031B67C /* libSubliminal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8B16011515000B05D0 /* libSubliminal.a */; };
+		F0E80D8816DB2CEB00945D25 /* SLElementVisibilityTestElementContainerHidden.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0E80D8516DB2CEB00945D25 /* SLElementVisibilityTestElementContainerHidden.xib */; };
+		F0E80D8916DB2CEB00945D25 /* SLElementVisibilityTestElementCovered.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0E80D8616DB2CEB00945D25 /* SLElementVisibilityTestElementCovered.xib */; };
+		F0E80D8A16DB2CEB00945D25 /* SLElementVisibilityTestElementOffscreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0E80D8716DB2CEB00945D25 /* SLElementVisibilityTestElementOffscreen.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -182,10 +192,17 @@
 		F0695E0C16013D77000B05D0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F07DA32B16E43AD3004C2282 /* SLAlertTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAlertTest.m; sourceTree = "<group>"; };
 		F07DA32C16E43AD3004C2282 /* SLAlertTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAlertTestViewController.m; sourceTree = "<group>"; };
+		F077D70A16D9D77900908FF5 /* SLElementVisibilityTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementVisibilityTest.m; sourceTree = "<group>"; };
+		F077D70B16D9D77900908FF5 /* SLElementVisibilityTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementVisibilityTestViewController.m; sourceTree = "<group>"; };
+		F077D70C16D9D77900908FF5 /* SLElementVisibilityTestCovered.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestCovered.xib; sourceTree = "<group>"; };
 		F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OCMock.xcodeproj; path = OCMock/Source/OCMock.xcodeproj; sourceTree = "<group>"; };
 		F08B87F01685A00400C4FE44 /* SharedSLTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedSLTests.h; sourceTree = "<group>"; };
 		F08B87F11685A00400C4FE44 /* SharedSLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharedSLTests.m; sourceTree = "<group>"; };
 		F08B87F41685A07B00C4FE44 /* SLTestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestTests.m; sourceTree = "<group>"; };
+		F090AE6D16D9E01D000F0B6F /* SLElementVisibilityTestHidden.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestHidden.xib; sourceTree = "<group>"; };
+		F090AE6E16D9E01D000F0B6F /* SLElementVisibilityTestLowAlpha.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestLowAlpha.xib; sourceTree = "<group>"; };
+		F090AE6F16D9E01D000F0B6F /* SLElementVisibilityTestOffscreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestOffscreen.xib; sourceTree = "<group>"; };
+		F090AE7316D9E1D1000F0B6F /* SLElementVisibilityTestSuperviewHidden.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestSuperviewHidden.xib; sourceTree = "<group>"; };
 		F0A040121698ECDE009D8157 /* SLTestController+AppContextTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SLTestController+AppContextTests.m"; sourceTree = "<group>"; };
 		F0AC809416BB299500C5D5C0 /* Integration Tests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Integration Tests.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0AC809716BB299500C5D5C0 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -219,6 +236,9 @@
 		F0D2405B1683F7130031B67C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F0D240601683F7130031B67C /* Subliminal Unit Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Subliminal Unit Tests-Prefix.pch"; sourceTree = "<group>"; };
 		F0D240661683F8520031B67C /* SLTestControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestControllerTests.m; sourceTree = "<group>"; };
+		F0E80D8516DB2CEB00945D25 /* SLElementVisibilityTestElementContainerHidden.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestElementContainerHidden.xib; sourceTree = "<group>"; };
+		F0E80D8616DB2CEB00945D25 /* SLElementVisibilityTestElementCovered.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestElementCovered.xib; sourceTree = "<group>"; };
+		F0E80D8716DB2CEB00945D25 /* SLElementVisibilityTestElementOffscreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestElementOffscreen.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -415,6 +435,23 @@
 			name = "SLAlert Tests";
 			sourceTree = "<group>";
 		};
+		F077D70016D9D71E00908FF5 /* SLElement Visibility Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F077D70A16D9D77900908FF5 /* SLElementVisibilityTest.m */,
+				F077D70B16D9D77900908FF5 /* SLElementVisibilityTestViewController.m */,
+				F090AE6D16D9E01D000F0B6F /* SLElementVisibilityTestHidden.xib */,
+				F090AE7316D9E1D1000F0B6F /* SLElementVisibilityTestSuperviewHidden.xib */,
+				F090AE6E16D9E01D000F0B6F /* SLElementVisibilityTestLowAlpha.xib */,
+				F090AE6F16D9E01D000F0B6F /* SLElementVisibilityTestOffscreen.xib */,
+				F077D70C16D9D77900908FF5 /* SLElementVisibilityTestCovered.xib */,
+				F0E80D8516DB2CEB00945D25 /* SLElementVisibilityTestElementContainerHidden.xib */,
+				F0E80D8716DB2CEB00945D25 /* SLElementVisibilityTestElementOffscreen.xib */,
+				F0E80D8616DB2CEB00945D25 /* SLElementVisibilityTestElementCovered.xib */,
+			);
+			name = "SLElement Visibility Tests";
+			sourceTree = "<group>";
+		};
 		F08B86CA16859B1A00C4FE44 /* OCMock */ = {
 			isa = PBXGroup;
 			children = (
@@ -473,6 +510,7 @@
 				F07DA31F16E439B7004C2282 /* SLAlert Tests */,
 				F0CE9FFE16D60E61008A3B4A /* SLDevice Tests */,
 				F0AE4C8716F7F8ED00B2BB2B /* SLElement State Tests */,
+				F077D70016D9D71E00908FF5 /* SLElement Visibility Tests */,
 				F05263C316D2C2CF0090174F /* SLElement Matching Tests */,
 				0696BA5E16E013DF00DD70CF /* SLElement Dragging Tests */,
 				F01EBC951701150E00FF6A7C /* SLTextField Tests */,
@@ -685,6 +723,14 @@
 				068D3E4D16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib in Resources */,
 				0696BA5A16E013D600DD70CF /* SLElementDraggingTestViewController.xib in Resources */,
 				F01EBC9E1701429400FF6A7C /* SLWebTextField.html in Resources */,
+				F077D70F16D9D77900908FF5 /* SLElementVisibilityTestCovered.xib in Resources */,
+				F090AE7016D9E01D000F0B6F /* SLElementVisibilityTestHidden.xib in Resources */,
+				F090AE7116D9E01D000F0B6F /* SLElementVisibilityTestLowAlpha.xib in Resources */,
+				F090AE7216D9E01D000F0B6F /* SLElementVisibilityTestOffscreen.xib in Resources */,
+				F090AE7416D9E1D1000F0B6F /* SLElementVisibilityTestSuperviewHidden.xib in Resources */,
+				F0E80D8816DB2CEB00945D25 /* SLElementVisibilityTestElementContainerHidden.xib in Resources */,
+				F0E80D8916DB2CEB00945D25 /* SLElementVisibilityTestElementCovered.xib in Resources */,
+				F0E80D8A16DB2CEB00945D25 /* SLElementVisibilityTestElementOffscreen.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -756,6 +802,8 @@
 				F07DA32E16E43AD3004C2282 /* SLAlertTestViewController.m in Sources */,
 				F01EBC9B170115B100FF6A7C /* SLTextFieldTest.m in Sources */,
 				F01EBC9C170115B100FF6A7C /* SLTextFieldTestViewController.m in Sources */,
+				F077D70D16D9D77900908FF5 /* SLElementVisibilityTest.m in Sources */,
+				F077D70E16D9D77900908FF5 /* SLElementVisibilityTestViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

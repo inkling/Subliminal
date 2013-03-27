@@ -21,10 +21,11 @@ extern NSString *const SLElementInvalidException;
 extern NSString *const SLElementNotVisibleException;
 extern NSString *const SLElementVisibleException;
 
+extern const NSTimeInterval SLElementWaitRetryDelay;
 
 @interface SLElement : NSObject
 
-// Defaults - to be set by the test controller, from the testing thread.
+// Defaults - to be set by the test controller
 + (void)setDefaultTimeout:(NSTimeInterval)defaultTimeout;
 
 // Returns an element for an NSObject in the accessibility hierarchy that matches predicate.
@@ -57,7 +58,7 @@ extern NSString *const SLElementVisibleException;
 - (BOOL)isValid;
 - (BOOL)isVisible;
 - (void)waitUntilVisible:(NSTimeInterval)timeout;
-- (void)waitUntilInvisible:(NSTimeInterval)timeout;
+- (void)waitUntilInvisibleOrInvalid:(NSTimeInterval)timeout;
 
 - (void)tap;
 
