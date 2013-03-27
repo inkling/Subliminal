@@ -17,7 +17,7 @@
 // to verify that it is configured properly for testing,
 // set DEBUG_TEST_CASE_VIEW_CONTROLLER to the view controller's class,
 // and DEBUG_TEST_CASE to the test case selector with which to initialize the view controller.
-#define DEBUG_TEST_CASE_VIEW_CONTROLLER_CLASS NSClassFromString(nil)
+#define DEBUG_TEST_CASE_VIEW_CONTROLLER_CLASS NSClassFromString(@"")
 #define DEBUG_TEST_CASE @selector(testCase)
 
 @interface SLIntegrationTestsAppDelegate () <UIAlertViewDelegate>
