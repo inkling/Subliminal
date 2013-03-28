@@ -6,11 +6,17 @@
 //  Copyright (c) 2012 Inkling. All rights reserved.
 //
 
-#import "STLoginTest.h"
 
 #import "STLoginManager.h"
 
+#import <Foundation/Foundation.h>
+#import <Subliminal/Subliminal.h>
 #import <OCMock/OCMock.h>
+
+
+@interface STLoginTest : SLTest
+@end
+
 
 @implementation STLoginTest {
     SLElement *_messageField;

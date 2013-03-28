@@ -103,11 +103,9 @@
 		1F18744016065875000360CA /* STLoginManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STLoginManager.m; sourceTree = "<group>"; };
 		1F18745E1606AEE7000360CA /* OCMock.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OCMock.xcodeproj; path = OCMock/Source/OCMock.xcodeproj; sourceTree = "<group>"; };
 		F0024D2015F5A51100476EF7 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		F0024D9115F5DF6B00476EF7 /* STLoginTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STLoginTest.h; sourceTree = "<group>"; };
 		F0024D9215F5DF6B00476EF7 /* STLoginTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STLoginTest.m; sourceTree = "<group>"; };
 		F0695E0516013C98000B05D0 /* SubliminalTest (Integration Tests).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SubliminalTest (Integration Tests).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0695E0E16014101000B05D0 /* Subliminal.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Subliminal.xcodeproj; path = ../../../../../Subliminal.xcodeproj; sourceTree = "<group>"; };
-		F0E5509C162F45FC00F54F57 /* STSimpleTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STSimpleTest.h; sourceTree = "<group>"; };
 		F0E5509D162F45FC00F54F57 /* STSimpleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STSimpleTest.m; sourceTree = "<group>"; };
 		F0FBC00015F1F3200081C635 /* SubliminalTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SubliminalTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0FBC00415F1F3200081C635 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -165,10 +163,8 @@
 			children = (
 				F0695E0E16014101000B05D0 /* Subliminal.xcodeproj */,
 				1F18745E1606AEE7000360CA /* OCMock.xcodeproj */,
-				F0024D9115F5DF6B00476EF7 /* STLoginTest.h */,
-				F0024D9215F5DF6B00476EF7 /* STLoginTest.m */,
-				F0E5509C162F45FC00F54F57 /* STSimpleTest.h */,
 				F0E5509D162F45FC00F54F57 /* STSimpleTest.m */,
+				F0024D9215F5DF6B00476EF7 /* STLoginTest.m */,
 			);
 			name = "Integration Tests";
 			path = "SubliminalTest/Integration Tests";

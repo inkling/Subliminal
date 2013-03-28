@@ -6,7 +6,13 @@
 //  Copyright (c) 2012 Inkling. All rights reserved.
 //
 
-#import "STSimpleTest.h"
+
+#import <Subliminal/Subliminal.h>
+
+
+@interface STSimpleTest : SLTest
+@end
+
 
 @implementation STSimpleTest {
     SLTextField *_usernameField;
