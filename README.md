@@ -60,7 +60,7 @@ FAQ (aka stuff which should eventually go somewhere above)
 	3. Choose the `Automation` instrument.
 	4. Wait for the simulator to launch, then stop recording (the button in the top 
 	left of Instruments, or `Cmd-R`).
-	5. Add the [`SLRadio.js`](https://git.inkling.com/ios/Subliminal/blob/master/SLRadio.js) script using the drop-down menu in the middle of `Instruments`' left sidebar.
+	5. Add the [`SLTerminal.js`](https://git.inkling.com/ios/Subliminal/blob/master/SLTerminal.js) script using the drop-down menu in the middle of `Instruments`' left sidebar.
 	6. Press the record button again.
 	
 	To re-run the tests when they finish, hit the record button twice (once to stop 

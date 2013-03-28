@@ -96,7 +96,7 @@ static SLTerminal *__sharedTerminal = nil;
 #pragma mark - Communication
 
 /**
- * Performs a round trip to SLRadio.js by eval'ing the javascript and returning the result of eval() or throwing an exception
+ * Performs a round trip to SLTerminal.js by eval'ing the javascript and returning the result of eval() or throwing an exception
  *
  * The app and script execute in lock-step order by waiting for each other to update their respective keys. The scripts polls the "commandIndex" key and
  *  waits for it to increment before eval'ing the "command" key. The app waits for the result by polling for the existence of the "resultIndex" key. The app
