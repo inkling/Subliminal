@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import <UIKit/UIAccessibilityConstants.h>
+#import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 
 
@@ -28,8 +28,17 @@ extern const NSTimeInterval SLElementWaitRetryDelay;
 // Defaults - to be set by the test controller
 + (void)setDefaultTimeout:(NSTimeInterval)defaultTimeout;
 
-// Returns an element for an NSObject in the accessibility hierarchy that matches predicate.
-+ (id)elementMatching:(BOOL (^)(NSObject *obj))predicate;
+/**
+ Creates and returns an element that evaluates the accessibility hierarchy
+ using a specified block object.
+ 
+ @param predicate The block is applied to the object to be evaluated.
+ The block returns YES if the element matches the object, otherwise NO.
+ @param description An optional description of the element, for use in debugging.
+ (The other SLElement constructors derive element descriptions from their arguments.)
+ @return A new element that evaluates objects using predicate.
+ */
++ (id)elementMatching:(BOOL (^)(NSObject *obj))predicate withDescription:(NSString *)description;
 
 /**
  Returns an element which matches any object in the accessibility hierarchy.
@@ -89,140 +98,4 @@ extern const NSTimeInterval SLElementWaitRetryDelay;
 - (void)logElement;
 - (void)logElementTree;
 
-/** Returns YES if the instance of SLElement should 'match' object, no otherwise.
-
-  Subclasses of SLElement can override this method to provide custom matching behavior.
-  Default implementation returns [object.slAccessibilityName isEqualToString:self.label].
-
-  @param object The object to which the instance of SLElement should be compared.
-  @return a BOOL indicating whether or not the instance of SLElement matches object.
-  */
-- (BOOL)matchesObject:(NSObject *)object;
-
-@end
-
-#pragma mark - SLElement Subclasses
-
-extern NSString *const SLAlertCouldNotDismissException;
-
-/**
- The SLAlert class allows access to, and control of, alerts within your application.
- 
- @warning By default, UIAlertViews do not have an accessibility label. You should 
- use the +alertWithTitle: or +anyElement constructors.
- @warning By default, alerts are automatically dismissed immediately after showing. 
- To interact with alerts, tests can override the default handler either 
- [globally](-[SLTestController setAutomaticallyDismissAlerts:])or on a 
- [per-alert basis](-[SLTestController pushHandlerForAlert:]).
- */
-@interface SLAlert : SLElement
-
-/**
- Returns an element that matches an alert with the specified title.
- 
- @param title The title of the alert.
- */
-+ (instancetype)alertWithTitle:(NSString *)title;
-
-/**
- Dismisses the alert by tapping the cancel button, if the button exists,
- else tapping the default button, if one is identifiable.
-
- @exception SLAlertCouldNotDismissException If the alert has no buttons.
- */
-- (void)dismiss;
-
-/**
- Dismisses the alert by tapping the button with the specified name.
- 
- @param buttonTitle The title of the button to tap to dismiss the alert.
- */
-- (void)dismissWithButtonTitled:(NSString *)buttonTitle;
-
-/**
- Returns the body of a JS function which 
- evaluates a UIAAlert to see if it matches the receiver.
-
- The JS function will take one argument, "alert" (a UIAAlert), as argument,
- and should return true if alert is equivalent to the receiver, false otherwise.
- This method should return the _body_ of that function: one or more statements, 
- with no function closure.
- 
- The default implementation simply compares the titles of the receiving SLAlert 
- and provided UIAAlert.
-
- @return The body of a JS function which evaluates a UIAAlert "alert" 
- to see if it matches a particular SLAlert.
- */
-- (NSString *)isEqualToUIAAlertPredicate;
-
-@end
-
-@interface SLControl : SLElement
-- (BOOL)isEnabled;
-@end
-
-// SLButton will match any object, and only objects, with the UIAccessibilityTraitButton accessibility trait.
-@interface SLButton : SLControl
-@end
-
-/**
- SLTextField allows access to, and control of, text field elements in your app. 
- */
-@interface SLTextField : SLElement
-
-/** The text displayed by the text field. */
-@property (nonatomic, strong) NSString *text;
-
-@end
-
-/**
- SLSearchBarTextField allows access to, and control of, search bar elements in your app.
-  
- @warning For reasons out of Subliminal's control, it is not possible to match 
- accessibility properties on search bars. Search bars can only be matched 
- using +anyElement.
-
- (The text field inside a UISearchBar is the accessible element, not the
- search bar itself. This means that the accessibility properties of the search bar 
- don't matter--and unfortunately, you can't set accessibility properties on the 
- text field because it's private.)
- */
-@interface SLSearchBar : SLTextField
-@end
-
-/**
- SLWebTextField matches text fields displayed in UIWebViews.
- 
- Such as form inputs.
- 
- A web text field's value is its text (i.e. the value of a form input's "value" 
- attribute). A web text field's label is the text of an element specified by the 
- "aria-labelled-by" attribute, if present. See SLWebTextField.html and the 
- SLWebTextField test cases of SLTextFieldTest.
- */
-@interface SLWebTextField : SLElement
-
-/** The text displayed by the text field. */
-@property (nonatomic, strong) NSString *text;
-
-@end
-
-// Instances always refer to mainWindow()
-@interface SLWindow : SLElement
-+ (SLWindow *)mainWindow;
-@end
-
-// Instances always refer to the keyboard.  Use to check if the keyboard is visible.
-// To use individual keys on the keyboard, use SLKeyboardKey.
-@interface SLKeyboard : SLElement
-+ (SLWindow *)keyboard;
-@end
-
-// Instances refer to individual keys on the keyboard.
-@interface SLKeyboardKey : SLButton
-@end
-
-// Instances refer to the first instance of (a kind of) UIWebView that appears in the view hierarchy.
-@interface SLCurrentWebView : SLElement
 @end

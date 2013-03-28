@@ -16,6 +16,13 @@
 
 #import "SLDevice.h"
 #import "SLElement.h"
+#import "SLAlert.h"
+#import "SLButton.h"
+#import "SLControl.h"
+#import "SLKeyboard.h"
+#import "SLTextField.h"
+#import "SLWebView.h"
+#import "SLWindow.h"
 
 #import "SLLogger.h"
 #import "SLUIALogger.h"
