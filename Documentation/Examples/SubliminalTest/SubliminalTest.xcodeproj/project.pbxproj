@@ -88,6 +88,13 @@
 			remoteGlobalIDString = F0695D8A16011515000B05D0;
 			remoteInfo = Subliminal;
 		};
+		F0C07A211702C0CE00C93F93 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0695E0E16014101000B05D0 /* Subliminal.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0AC809416BB299500C5D5C0;
+			remoteInfo = "Integration Tests";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -172,6 +179,7 @@
 			children = (
 				F0695E1616014101000B05D0 /* libSubliminal.a */,
 				F024BE16168B7BE000708350 /* Subliminal Unit Tests.octest */,
+				F0C07A221702C0CE00C93F93 /* Integration Tests.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -351,6 +359,13 @@
 			fileType = archive.ar;
 			path = libSubliminal.a;
 			remoteRef = F0695E1516014101000B05D0 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0C07A221702C0CE00C93F93 /* Integration Tests.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "Integration Tests.app";
+			remoteRef = F0C07A211702C0CE00C93F93 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
