@@ -9,8 +9,6 @@
 
 #import "STLoginViewController.h"
 
-#import "STLoginManager.h"
-
 #if INTEGRATION_TESTING
 #import <Subliminal/Subliminal.h>
 #endif
@@ -65,37 +63,29 @@
     self.usernameField.backgroundColor = [UIColor lightGrayColor];
     self.passwordField.enabled = NO;
     self.passwordField.backgroundColor = [UIColor lightGrayColor];
-    
+
     self.submitButton.enabled = NO;
-    [self.loginSpinner startAnimating];
-    
-    [[STLoginManager sharedLoginManager] loginWithUsername:username 
-                                                  password:password 
-                                           completionBlock:^(BOOL didLogIn, NSError *error) {
-                                               [self.loginSpinner stopAnimating];
-                                               if (didLogIn) {
-                                                   self.submitButton.hidden = YES;
-                                                   
-                                                   self.messageLabel.text = [NSString stringWithFormat:@"Hello, %@!", username];
-                                               } else {
-                                                   self.usernameField.enabled = YES;
-                                                   self.usernameField.backgroundColor = [UIColor clearColor];
-                                                   self.passwordField.enabled = YES;
-                                                   self.passwordField.backgroundColor = [UIColor clearColor];
-                                                   self.submitButton.enabled = YES;
-                                                   
-                                                   switch ([error code]) {
-                                                       case InvalidLoginErrorCode:
-                                                           self.messageLabel.text = @"Invalid username or password. Please try again.";
-                                                           break;
-                                                        case NetworkErrorCode:
-                                                       {
-                                                           [[[UIAlertView alloc] initWithTitle:@"Network Error" message:@"Something seems to be up with the network. Please try again later." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
-                                                       }
-                                                           break;
-                                                   }
-                                               }
-    }];
+
+    if ([username length] && [password length]) {
+        [self.loginSpinner startAnimating];
+
+        // wait to simulate network delay/so that the spinner will show
+        double delayInSeconds = 2.0;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            [self.loginSpinner stopAnimating];
+            self.submitButton.hidden = YES;
+            self.messageLabel.text = [NSString stringWithFormat:@"Hello, %@!", username];
+        });
+    } else {
+        self.usernameField.enabled = YES;
+        self.usernameField.backgroundColor = [UIColor clearColor];
+        self.passwordField.enabled = YES;
+        self.passwordField.backgroundColor = [UIColor clearColor];
+        self.submitButton.enabled = YES;
+
+        self.messageLabel.text = @"Invalid username or password.";
+    }
 }
 
 - (void)resetLogin {
