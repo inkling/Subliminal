@@ -10,6 +10,7 @@
 #import "SLAccessibility.h"
 
 #import "SLElement.h"
+#import "SLElement+Subclassing.h"
 #import "NSString+SLJavaScript.h"
 
 NSString * const SLMockViewAccessibilityChainKey = @"SLMockViewAccessibilityChainKey";

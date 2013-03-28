@@ -275,6 +275,21 @@ extern NSString *const SLTestExceptionLineNumberKey;
 
 - (void)recordLastKnownFile:(char *)filename line:(int)lineNumber;
 
+/**
+ Wrap an SLElement in the UIAElement macro whenever calling an SLElement method 
+ that might throw an exception.
+
+ The macro records the filename and line number, so that if the call throws, 
+ and the test fails, the test logs will report where the failure occurred.
+ 
+ Use the macro like:
+    
+    SLButton *fooButton = ...
+    [UIAElement(fooButton) tap];
+ 
+ It may help to think that you're preparing to send a message to the 
+ UIAutomation element corresponding to the wrapped SLElement.
+ */
 #define UIAElement(slElement) ({ \
     [self recordLastKnownFile:__FILE__ line:__LINE__]; \
     slElement; \

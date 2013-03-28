@@ -7,10 +7,8 @@
 //
 
 #import "SLElement.h"
-#import "SLLogger.h"
+#import "SLElement+Subclassing.h"
 #import "SLAccessibility.h"
-#import "SLTerminal.h"
-#import "NSString+SLJavaScript.h"
 
 #import <objc/runtime.h>
 
@@ -24,7 +22,6 @@ NSString *const SLElementNotVisibleException    = @"SLElementNotVisibleException
 NSString *const SLElementVisibleException       = @"SLElementVisibleException";
 
 const NSTimeInterval SLElementWaitRetryDelay = 0.25;
-static const NSTimeInterval kWebviewTextfieldDelay = 1;
 
 
 #pragma mark SLElement
@@ -32,45 +29,6 @@ static const NSTimeInterval kWebviewTextfieldDelay = 1;
 @interface SLElement ()
 
 - (id)initWithPredicate:(BOOL (^)(NSObject *obj))predicate description:(NSString *)description;
-- (NSString *)sendMessage:(NSString *)action, ... NS_FORMAT_FUNCTION(1, 2);
-- (NSString *)staticUIASelf;
-
-/**
- Allows the caller to interact with the actual object matched by the receiving SLElement.
-
- If a matching object cannot be found, the search will be retried 
- until the defaultTimeout expires.
- 
- The block will be executed synchronously on the main thread.
-
- @param block A block which takes the matching object as an argument and returns void.
- @exception SLElementInvalidException If no matching object has been found
- after the defaultTimeout has elapsed.
- */
-- (void)examineMatchingObject:(void (^)(NSObject *object))block;
-
-/**
- Waits for an arbitrary Javascript expression to evaluate to true 
- within a specified timeout.
-
- The expression will be re-evaluated at small intervals.
- If and when the expression evaluates to true, the method will immediately return 
- YES; if the expression is still false at the end of the timeout, this method 
- will return NO.
- 
- This method is designed to wait efficiently by performing the waiting/re-evaluation 
- entirely within UIAutomation's (Javascript) context.
-
- @warning This method does not itself throw an exception if the condition fails 
- to become true within the timeout. Rather, the caller should throw a suitably 
- specific exception if this method returns NO.
-
- @param timeout The interval for which to wait.
- @param expr A boolean expression in Javascript, on whose truth the method should wait.
- @return YES if and when the expression evaluates to true within the timeout;
- otherwise, NO.
- */
-- (BOOL)waitFor:(NSTimeInterval)timeout untilTrue:(NSString *)condition;
 
 @end
 
@@ -94,9 +52,9 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return (NSTimeInterval)[objc_getAssociatedObject([SLElement class], kDefaultTimeoutKey) doubleValue];
 }
 
-+ (id)elementMatching:(BOOL (^)(NSObject *obj))predicate
++ (id)elementMatching:(BOOL (^)(NSObject *obj))predicate withDescription:(NSString *)description
 {
-    return [[self alloc] initWithPredicate:predicate description:[predicate description]];
+    return [[self alloc] initWithPredicate:predicate description:description];
 }
 
 + (instancetype)anyElement {
@@ -394,253 +352,6 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 {
     NSAssert(_matchesObject, @"matchesObject called on %@, which has no _matchesObject predicate", self);
     return _matchesObject(object);
-}
-
-@end
-
-
-#pragma mark - SLAlert
-
-NSString *const SLAlertCouldNotDismissException = @"SLAlertCouldNotDismissException";
-
-@implementation SLAlert {
-    NSString *_title;
-}
-
-+ (instancetype)alertWithTitle:(NSString *)title {
-    SLAlert *alert = [[self alloc] initWithPredicate:^BOOL(NSObject *obj) {
-        if ([obj isKindOfClass:[UIAlertView class]]) {
-            UIAlertView *alert = (UIAlertView *)obj;
-            return [alert.title isEqualToString:title];
-        } else {
-            return NO;
-        }
-    } description:title];
-    alert->_title = title;
-    return alert;
-}
-
-- (BOOL)matchesObject:(NSObject *)object {
-    return [object isKindOfClass:[UIAlertView class]] && [super matchesObject:object];
-}
-
-- (void)dismiss {
-    static NSString *const SLUIAAlertDismissFunctionName = @"SLUIAAlertDismiss";
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSString *SLUIAAlertDismissFunction = @"\
-            function %@(alert) {\
-                var didDismissAlert = false;\
-                if (alert.cancelButton().isValid()) {\
-                    alert.cancelButton().tap();\
-                    didDismissAlert = true;\
-                } else if (alert.defaultButton().isValid()) {\
-                    alert.defaultButton().tap();\
-                    didDismissAlert = true;\
-                }\
-                return (didDismissAlert ? 'YES' : 'NO');\
-            }\
-        ";
-        [[SLTerminal sharedTerminal] evalWithFormat:SLUIAAlertDismissFunction,
-             SLUIAAlertDismissFunctionName];
-    });
-    
-    [self performActionWithUIASelf:^(NSString *uiaSelf) {
-        BOOL didDismissAlert = [[[SLTerminal sharedTerminal] evalWithFormat:@"%@(%@)",
-                                 SLUIAAlertDismissFunctionName, uiaSelf] boolValue];
-        if (!didDismissAlert) {
-            [NSException raise:SLAlertCouldNotDismissException
-                        format:@"%@ appears to have no buttons to tap.", self];
-        }
-    }];
-}
-
-- (void)dismissWithButtonTitled:(NSString *)buttonTitle {
-    [self sendMessage:@"buttons()['%@'].tap()", [buttonTitle slStringByEscapingForJavaScriptLiteral]];
-}
-
-- (NSString *)isEqualToUIAAlertPredicate {
-    static NSString *const kIsEqualToUIAAlertPredicateFormatString = @"\
-        var title = \"%@\";\
-        if (title.length > 0) {\
-            return alert.staticTexts()[0].label() === title;\
-        } else {\
-            return true;\
-        }\
-    ";
-    NSString *isEqualToUIAAlertPredicate = [NSString stringWithFormat:kIsEqualToUIAAlertPredicateFormatString,
-                                            (_title ? [_title slStringByEscapingForJavaScriptLiteral] : @"")];
-    return isEqualToUIAAlertPredicate;
-}
-
-@end
-
-#pragma mark - SLControl
-
-@implementation SLControl
-
-- (BOOL)isEnabled {
-    __block BOOL isEnabled = NO;
-    [self performActionWithUIASelf:^(NSString *uiaSelf) {
-        isEnabled = [[[SLTerminal sharedTerminal] evalWithFormat:@"(%@.isEnabled() ? 'YES' : 'NO')", uiaSelf] boolValue];
-    }];
-    return isEnabled;
-}
-
-@end
-
-#pragma mark - SLButton
-
-@implementation SLButton
-
-- (BOOL)matchesObject:(NSObject *)object {
-    return ([super matchesObject:object] && ([object accessibilityTraits] & UIAccessibilityTraitButton));
-}
-
-@end
-
-
-#pragma mark - SLTextField
-
-@implementation SLTextField
-
-- (NSString *)text {
-    return [self value];
-}
-
-- (void)setText:(NSString *)text {
-    // If this matches a UITextField with clearsOnBeginEditing set to YES,
-    // we must tap the field before attempting to set the text to avoid a race condition
-    // between UIKit trying to clear the text and UIAutomation trying to set the text
-    __block BOOL waitBeforeSettingText = NO;
-    [self examineMatchingObject:^(NSObject *object) {
-        if ([object isKindOfClass:[UITextField class]]) {
-            waitBeforeSettingText = ((UITextField *)object).clearsOnBeginEditing;
-        }
-    }];
-    if (waitBeforeSettingText) {
-        [self tap];
-    }
-    [self sendMessage:@"setValue('%@')", [text slStringByEscapingForJavaScriptLiteral]];
-}
-
-- (BOOL)matchesObject:(NSObject *)object {
-    return [super matchesObject:object] && [object isKindOfClass:[UITextField class]];
-}
-
-@end
-
-
-#pragma mark - SLSearchBar
-
-@implementation SLSearchBar
-
-+ (instancetype)elementWithAccessibilityLabel:(NSString *)label {
-    SLLog(@"An %@ can't be matched by accessibility properties--see the comments on its @interface. \
-          Returning +anyElement.", NSStringFromClass(self));
-    return [self anyElement];
-}
-
-+ (instancetype)elementWithAccessibilityLabel:(NSString *)label value:(NSString *)value traits:(UIAccessibilityTraits)traits {
-    SLLog(@"An %@ can't be matched by accessibility properties--see the comments on its @interface. \
-          Returning +anyElement.", NSStringFromClass(self));
-    return [self anyElement];
-}
-
-- (BOOL)matchesObject:(NSObject *)object {
-    return ([super matchesObject:object] && ([object accessibilityTraits] & UIAccessibilityTraitSearchField));
-}
-
-@end
-
-
-@implementation SLWebTextField
-// SLWebTextField does not inherit from SLTextField
-// because the elements it matches, web text fields, are not instances of UITextField
-// but rather a private type of accessibility element.
-
-- (NSString *)text {
-    return [self value];
-}
-
-// Experimentation has shown that SLTextFields within a webview must be tapped, and
-// a waiting period is necessary, before setValue() will have any effect. A wait period
-// after setting the value is also necessary, otherwise it seems as if regardless of
-// correct matching, the next actions sent to UIAutomation will be applied incorrectly
-// to this webview textfield.
-- (void)setText:(NSString *)text {
-    [self tap];
-    [NSThread sleepForTimeInterval:kWebviewTextfieldDelay];
-    [self sendMessage:@"setValue('%@')", [text slStringByEscapingForJavaScriptLiteral]];
-    [NSThread sleepForTimeInterval:kWebviewTextfieldDelay];
-}
-
-@end
-
-
-#pragma mark - SLWindow
-
-@implementation SLWindow
-
-+ (SLWindow *)mainWindow {
-    return [[SLWindow alloc] initWithPredicate:^BOOL(NSObject *obj) {
-        return YES;
-    } description:@"Main Window"];
-}
-
-
-- (NSString *)staticUIASelf {
-    return @"UIATarget.localTarget().frontMostApp().mainWindow()";
-}
-
-@end
-
-#pragma mark - SLKeyboard
-
-@implementation SLKeyboard
-
-+ (SLKeyboard *)keyboard {
-    return [[SLKeyboard alloc] initWithPredicate:^(NSObject *obj) {
-        return YES;
-    } description:@"Keyboard"];
-}
-
-
-- (NSString *)staticUIASelf {
-    return @"UIATarget.localTarget().frontMostApp().keyboard()";
-}
-
-@end
-
-@interface SLKeyboardKey ()
-@property (nonatomic, retain) NSString *keyLabel;
-@end
-
-@implementation SLKeyboardKey
-
-+ (id)elementWithAccessibilityLabel:(NSString *)label
-{
-    SLKeyboardKey *key = [[SLKeyboardKey alloc] initWithPredicate:^(NSObject *obj) {
-        return YES;
-    } description:[NSString stringWithFormat:@"Keyboard Key: %@", label]];
-    key.keyLabel = label;
-    return key;
-}
-
-- (NSString *)staticUIASelf {
-    return [NSString stringWithFormat:@"UIATarget.localTarget().frontMostApp().keyboard().elements()['%@']", self.keyLabel];
-}
-
-@end
-
-#pragma mark - SLCurrentWebView
-
-@implementation SLCurrentWebView
-
-+ (SLCurrentWebView *)currentWebView {
-    return [[SLCurrentWebView alloc] initWithPredicate:^BOOL(NSObject *obj) {
-        return [obj isKindOfClass:[UIWebView class]];
-    } description:@"Current WebView"];
 }
 
 @end

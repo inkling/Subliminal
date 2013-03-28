@@ -9,9 +9,6 @@
 /* Begin PBXBuildFile section */
 		1F18743D1606533F000360CA /* STLoginViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F18743C1606533F000360CA /* STLoginViewController.xib */; };
 		1F18743E1606533F000360CA /* STLoginViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F18743C1606533F000360CA /* STLoginViewController.xib */; };
-		1F18744116065875000360CA /* STLoginManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F18744016065875000360CA /* STLoginManager.m */; };
-		1F18744216065875000360CA /* STLoginManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F18744016065875000360CA /* STLoginManager.m */; };
-		1F1874721606AF2E000360CA /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F18746D1606AEE7000360CA /* libOCMock.a */; };
 		F0695DF716013C98000B05D0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F0FBC01015F1F3200081C635 /* main.m */; };
 		F0695DF816013C98000B05D0 /* STAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F0FBC01415F1F3200081C635 /* STAppDelegate.m */; };
 		F0695DF916013C98000B05D0 /* STLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0FBC01715F1F3200081C635 /* STLoginViewController.m */; };
@@ -32,41 +29,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		1F1874681606AEE7000360CA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1F18745E1606AEE7000360CA /* OCMock.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 030EF0A814632FD000B04273;
-			remoteInfo = OCMock;
-		};
-		1F18746A1606AEE7000360CA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1F18745E1606AEE7000360CA /* OCMock.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 030EF0C014632FD000B04273;
-			remoteInfo = OCMockTests;
-		};
-		1F18746C1606AEE7000360CA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1F18745E1606AEE7000360CA /* OCMock.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 030EF0DC14632FF700B04273;
-			remoteInfo = OCMockLib;
-		};
-		1F18746E1606AEE7000360CA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1F18745E1606AEE7000360CA /* OCMock.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F04D5FDD1547E14D009D1CBF;
-			remoteInfo = OCMockTestsTouch;
-		};
-		1F1874701606AF26000360CA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1F18745E1606AEE7000360CA /* OCMock.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 030EF0DB14632FF700B04273;
-			remoteInfo = OCMockLib;
-		};
 		F024BE15168B7BE000708350 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F0695E0E16014101000B05D0 /* Subliminal.xcodeproj */;
@@ -88,19 +50,21 @@
 			remoteGlobalIDString = F0695D8A16011515000B05D0;
 			remoteInfo = Subliminal;
 		};
+		F0C07A211702C0CE00C93F93 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0695E0E16014101000B05D0 /* Subliminal.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0AC809416BB299500C5D5C0;
+			remoteInfo = "Integration Tests";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		1F18743C1606533F000360CA /* STLoginViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = STLoginViewController.xib; sourceTree = "<group>"; };
-		1F18743F16065875000360CA /* STLoginManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STLoginManager.h; sourceTree = "<group>"; };
-		1F18744016065875000360CA /* STLoginManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STLoginManager.m; sourceTree = "<group>"; };
-		1F18745E1606AEE7000360CA /* OCMock.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OCMock.xcodeproj; path = OCMock/Source/OCMock.xcodeproj; sourceTree = "<group>"; };
 		F0024D2015F5A51100476EF7 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		F0024D9115F5DF6B00476EF7 /* STLoginTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STLoginTest.h; sourceTree = "<group>"; };
 		F0024D9215F5DF6B00476EF7 /* STLoginTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STLoginTest.m; sourceTree = "<group>"; };
 		F0695E0516013C98000B05D0 /* SubliminalTest (Integration Tests).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SubliminalTest (Integration Tests).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0695E0E16014101000B05D0 /* Subliminal.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Subliminal.xcodeproj; path = ../../../../../Subliminal.xcodeproj; sourceTree = "<group>"; };
-		F0E5509C162F45FC00F54F57 /* STSimpleTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STSimpleTest.h; sourceTree = "<group>"; };
 		F0E5509D162F45FC00F54F57 /* STSimpleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STSimpleTest.m; sourceTree = "<group>"; };
 		F0FBC00015F1F3200081C635 /* SubliminalTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SubliminalTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0FBC00415F1F3200081C635 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -121,7 +85,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1F1874721606AF2E000360CA /* libOCMock.a in Frameworks */,
 				F0695E19160143A3000B05D0 /* libSubliminal.a in Frameworks */,
 				F0695DFC16013C98000B05D0 /* UIKit.framework in Frameworks */,
 				F0695DFD16013C98000B05D0 /* Foundation.framework in Frameworks */,
@@ -142,26 +105,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1F18745F1606AEE7000360CA /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				1F1874691606AEE7000360CA /* OCMock.framework */,
-				1F18746B1606AEE7000360CA /* OCMockTests.octest */,
-				1F18746D1606AEE7000360CA /* libOCMock.a */,
-				1F18746F1606AEE7000360CA /* OCMockTestsTouch.octest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		F0024D2415F5A51100476EF7 /* Integration Tests */ = {
 			isa = PBXGroup;
 			children = (
 				F0695E0E16014101000B05D0 /* Subliminal.xcodeproj */,
-				1F18745E1606AEE7000360CA /* OCMock.xcodeproj */,
-				F0024D9115F5DF6B00476EF7 /* STLoginTest.h */,
-				F0024D9215F5DF6B00476EF7 /* STLoginTest.m */,
-				F0E5509C162F45FC00F54F57 /* STSimpleTest.h */,
 				F0E5509D162F45FC00F54F57 /* STSimpleTest.m */,
+				F0024D9215F5DF6B00476EF7 /* STLoginTest.m */,
 			);
 			name = "Integration Tests";
 			path = "SubliminalTest/Integration Tests";
@@ -172,6 +121,7 @@
 			children = (
 				F0695E1616014101000B05D0 /* libSubliminal.a */,
 				F024BE16168B7BE000708350 /* Subliminal Unit Tests.octest */,
+				F0C07A221702C0CE00C93F93 /* Integration Tests.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -215,8 +165,6 @@
 				F0FBC01615F1F3200081C635 /* STLoginViewController.h */,
 				F0FBC01715F1F3200081C635 /* STLoginViewController.m */,
 				1F18743C1606533F000360CA /* STLoginViewController.xib */,
-				1F18743F16065875000360CA /* STLoginManager.h */,
-				1F18744016065875000360CA /* STLoginManager.m */,
 				F0FBC00B15F1F3200081C635 /* Supporting Files */,
 			);
 			path = SubliminalTest;
@@ -247,7 +195,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				1F1874711606AF26000360CA /* PBXTargetDependency */,
 				F0695E181601439F000B05D0 /* PBXTargetDependency */,
 			);
 			name = "SubliminalTest Integration Tests";
@@ -294,10 +241,6 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 1F18745F1606AEE7000360CA /* Products */;
-					ProjectRef = 1F18745E1606AEE7000360CA /* OCMock.xcodeproj */;
-				},
-				{
 					ProductGroup = F0695E0F16014101000B05D0 /* Products */;
 					ProjectRef = F0695E0E16014101000B05D0 /* Subliminal.xcodeproj */;
 				},
@@ -311,34 +254,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		1F1874691606AEE7000360CA /* OCMock.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = OCMock.framework;
-			remoteRef = 1F1874681606AEE7000360CA /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		1F18746B1606AEE7000360CA /* OCMockTests.octest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = OCMockTests.octest;
-			remoteRef = 1F18746A1606AEE7000360CA /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		1F18746D1606AEE7000360CA /* libOCMock.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libOCMock.a;
-			remoteRef = 1F18746C1606AEE7000360CA /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		1F18746F1606AEE7000360CA /* OCMockTestsTouch.octest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = OCMockTestsTouch.octest;
-			remoteRef = 1F18746E1606AEE7000360CA /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		F024BE16168B7BE000708350 /* Subliminal Unit Tests.octest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -351,6 +266,13 @@
 			fileType = archive.ar;
 			path = libSubliminal.a;
 			remoteRef = F0695E1516014101000B05D0 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F0C07A221702C0CE00C93F93 /* Integration Tests.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "Integration Tests.app";
+			remoteRef = F0C07A211702C0CE00C93F93 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -385,7 +307,6 @@
 				F0695DF816013C98000B05D0 /* STAppDelegate.m in Sources */,
 				F0695DF916013C98000B05D0 /* STLoginViewController.m in Sources */,
 				F0695DFA16013C98000B05D0 /* STLoginTest.m in Sources */,
-				1F18744216065875000360CA /* STLoginManager.m in Sources */,
 				F0E5509F162F45FC00F54F57 /* STSimpleTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -397,18 +318,12 @@
 				F0FBC01115F1F3200081C635 /* main.m in Sources */,
 				F0FBC01515F1F3200081C635 /* STAppDelegate.m in Sources */,
 				F0FBC01815F1F3200081C635 /* STLoginViewController.m in Sources */,
-				1F18744116065875000360CA /* STLoginManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		1F1874711606AF26000360CA /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = OCMockLib;
-			targetProxy = 1F1874701606AF26000360CA /* PBXContainerItemProxy */;
-		};
 		F0695E181601439F000B05D0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Subliminal;
