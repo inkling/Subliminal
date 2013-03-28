@@ -18,22 +18,26 @@
     SLTextField *_usernameField;
 }
 
-- (void)setUpTestCaseWithSelector:(SEL)testSelector {
+- (void)setUpTest {
     _usernameField = [SLTextField elementWithAccessibilityLabel:@"username field"];
 }
 
 - (void)testThatWeCanEnterSomeText {
-    NSString *username = @"Jeff";
-    // this shouldn't throw an exception
-    [UIAElement(_usernameField) setText:username];
-    // and this should be true
-    SLAssertTrue([[UIAElement(_usernameField) text] isEqualToString:username], @"Username was not set to %@", username);
+    NSString *const kUsername = @"Jeff";
+
+    [UIAElement(_usernameField) setText:kUsername];
+
+    SLAssertTrue([[UIAElement(_usernameField) text] isEqualToString:kUsername],
+                 @"Username was not set to %@", kUsername);
+
+    // wait just so the user can see that the text was entered,
+    // before tear-down clears it
+    [self wait:1.0];
 }
 
-- (void)tearDownTestCaseWithSelector:(SEL)testSelector {
-    if (testSelector == @selector(testThatWeCanEnterSomeText)) {
-        [self.testController sendAction:@selector(resetLogin)];
-    }
+- (void)tearDownTest {
+    // ask the STLoginViewController to clear the login UI
+    [[SLTestController sharedTestController] sendAction:@selector(resetLogin)];
 }
 
 @end
