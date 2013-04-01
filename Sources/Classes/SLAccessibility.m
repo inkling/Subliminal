@@ -13,8 +13,59 @@
 #import "SLElement+Subclassing.h"
 #import "NSString+SLJavaScript.h"
 
-NSString * const SLMockViewAccessibilityChainKey = @"SLMockViewAccessibilityChainKey";
-NSString * const SLUIViewAccessibilityChainKey = @"SLUIViewAccessibilityChainKey";
+
+@interface SLAccessibilityPath ()
+
+/**
+ Initializes and returns a newly allocated accessibility path 
+ with the specified component paths.
+ 
+ The accessibility path sanitizes the component paths in the process of initialization.
+ If, after sanitization, either path is empty, the accessibility path will be released
+ and this method will return nil.
+ 
+ @param mockViewPath A path that predominantly traverses UIAccessibilityElements.
+ @param viewPath A path that predominantly traverse UIViews.
+ @return An initialized accessibility path or nil if the object couldn't be created.
+ */
+- (instancetype)initWithMockViewPath:(NSArray *)mockViewPath viewPath:(NSArray *)viewPath;
+
+@end
+
+
+@interface NSObject (SLAccessibility_Internal)
+
+/**
+ Returns an array of objects that are child accessibility elements of this object.
+
+ This method is mostly a wrapper around the UIAccessibilityContainer protocol but
+ also includes subviews if the object is a UIView. It attempts to represent the
+ accessibility hierarchy used by the system.
+
+ @param favoringUISubViews Whether subviews should be placed before or after
+ UIAccessibilityElements in the returned array
+
+ @return An array of objects that are child accessibility elements of this object.
+ */
+- (NSArray *)slChildAccessibilityElementsFavoringUISubviews:(BOOL)favoringUISubviews;
+
+// If an object fulfills these requirements it will appear in the accessibility hierarchy,
+// regardless of any other factors.
+- (BOOL)shouldAppearInAccessibilityHierarchy;
+
+// This method defines the conditions a UIView must meet in order to appear directly
+// in the accessibility hierarchy
+- (BOOL)shouldAppearInUIViewAccessibilityHierarchy;
+
+// This method defines the conditions a UIView must meet in order for an object mocking
+// it to appear directly in the accessibility hierarchy
+- (BOOL)elementMockingSelfShouldAppearInAccessibilityHierarchy;
+
+// Determines whether or not the potentialMockElement is mocking the viewPathObject
+- (BOOL)element:(id)potentialMockElement isMockingViewPathObject:(id)viewPathObject;
+
+@end
+
 
 @implementation NSObject (SLAccessibility)
 
@@ -29,9 +80,30 @@ NSString * const SLUIViewAccessibilityChainKey = @"SLUIViewAccessibilityChainKey
     return self.accessibilityLabel;
 }
 
+- (SLAccessibilityPath *)slAccessibilityPathToElement:(SLElement *)element {
+    NSArray *mockViewAccessibilityPath = [self accessibilityPathToElement:element favoringUISubviews:NO];
+    NSArray *uiViewAccessibilityPath = [self accessibilityPathToElement:element favoringUISubviews:YES];
 
-// If an object fulfills these requirements it will appear in the accessibility hierarchy,
-// regardless of any other factors.
+    return [[SLAccessibilityPath alloc] initWithMockViewPath:mockViewAccessibilityPath
+                                                    viewPath:uiViewAccessibilityPath];
+}
+
+- (NSArray *)accessibilityPathToElement:(SLElement *)element favoringUISubviews:(BOOL)favoringUISubviews {
+    if ([element matchesObject:self]) {
+        return [NSArray arrayWithObject:self];
+    }
+
+    for (NSObject *child in [self slChildAccessibilityElementsFavoringUISubviews:favoringUISubviews]) {
+        NSArray *path = [child accessibilityPathToElement:element favoringUISubviews:favoringUISubviews];
+        if (path) {
+            NSMutableArray *pathWithSelf = [path mutableCopy];
+            [pathWithSelf insertObject:self atIndex:0];
+            return pathWithSelf;
+        }
+    }
+    return nil;
+}
+
 - (BOOL)shouldAppearInAccessibilityHierarchy {
     NSObject *parent = [self accessibilityParent];
     if ([parent isAccessibilityElement]) {
@@ -58,8 +130,6 @@ NSString * const SLUIViewAccessibilityChainKey = @"SLUIViewAccessibilityChainKey
 }
 
 
-// This method defines the conditions a UIView must meet in order to appear directly
-// in the accessibility hierarchy
 - (BOOL)shouldAppearInUIViewAccessibilityHierarchy {
     BOOL shouldAppear = [self shouldAppearInAccessibilityHierarchy];
     if (shouldAppear) {
@@ -74,8 +144,6 @@ NSString * const SLUIViewAccessibilityChainKey = @"SLUIViewAccessibilityChainKey
 }
 
 
-// This method defines the conditions a UIView must meet in order for an object mocking
-// it to appear directly in the accessibility hierarchy
 - (BOOL)elementMockingSelfShouldAppearInAccessibilityHierarchy {
     BOOL shouldAppear = [self shouldAppearInAccessibilityHierarchy];
     if (shouldAppear) {
@@ -163,105 +231,11 @@ NSString * const SLUIViewAccessibilityChainKey = @"SLUIViewAccessibilityChainKey
     }
 }
 
-
-- (NSArray *)fullSLAccessibilityChainToElement:(SLElement *)element favoringUISubviews:(BOOL)favoringUISubviews {
-    if ([element matchesObject:self]) {
-        return [NSArray arrayWithObject:self];
-    }
-    
-    for (NSObject *child in [self slChildAccessibilityElementsFavoringUISubviews:favoringUISubviews]) {
-        NSArray *chain = [child fullSLAccessibilityChainToElement:element favoringUISubviews:favoringUISubviews];
-        if (chain) {
-            NSMutableArray *chainWithSelf = [chain mutableCopy];
-            [chainWithSelf insertObject:self atIndex:0];
-            return chainWithSelf;
-        }
-    }
-    return nil;
-}
-
-
-- (NSDictionary *)slAccessibilityChainsToElement:(SLElement *)element {
-    NSArray *uiViewAccessibilityChain = [self fullSLAccessibilityChainToElement:element favoringUISubviews:YES];
-    
-    NSArray *mockViewAccessibilityChain = [self fullSLAccessibilityChainToElement:element favoringUISubviews:NO];
-    mockViewAccessibilityChain = [self sanitizeMockViewAccessibilityChain:mockViewAccessibilityChain usingUIViewAccessibilityChain:uiViewAccessibilityChain];
-
-    uiViewAccessibilityChain = [self sanitizeUIViewAccessibilityChain:uiViewAccessibilityChain];
-    
-    if (!mockViewAccessibilityChain || !uiViewAccessibilityChain) {
-        return nil;
-    } else {
-        return @{SLMockViewAccessibilityChainKey:mockViewAccessibilityChain, SLUIViewAccessibilityChainKey:uiViewAccessibilityChain};
-    }
-}
-
-
-- (NSArray *)sanitizeUIViewAccessibilityChain:(NSArray *)accessibilityChain {
-    NSMutableArray *trimmedAccessibilityChain = [[NSMutableArray alloc] init];
-    [accessibilityChain enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        // We will need the UIView accessibility chain to contain any views that will
-        // be directly in the accessibility hierarchy, as well as any elements that are
-        // mocked by elements that will be directly in the accessibility hierarchy
-        if ([obj shouldAppearInUIViewAccessibilityHierarchy] || [obj elementMockingSelfShouldAppearInAccessibilityHierarchy]) {
-            [trimmedAccessibilityChain addObject:obj];
-        }
-    }];
-    return trimmedAccessibilityChain;
-}
-
-
-- (NSArray *)sanitizeMockViewAccessibilityChain:(NSArray *)mockAccessibilityChain usingUIViewAccessibilityChain:(NSArray *)viewAccessibilityChain {
-    NSMutableArray *sanitizedArray = [[NSMutableArray alloc] init];
-    
-    // Iterate through the elements of the mockAccessibilityChain. Each view in the chain will
-    // be included in the accessibility hierarchy if it returns YES from shouldAppearInUIViewAccessibilityHierarchy.
-    // Each UIAccessibilityElement that mocks a view will be included in the accessibility hierachy if the view
-    // that it mocks returns YES from elementMockingSelfShouldAppearInAccessibilityHierarchy. Each UIAccessibility
-    // element that does not mock a view will be included in the accessibility hierarchy if it returns YES from
-    // shouldAppearInAccessibilityHierarchy.
-    
-    __block int viewAccessibilityChainIndex = 0;
-    [mockAccessibilityChain enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        id objectFromMockChain = obj;
-        id currentViewChainObject =  ([viewAccessibilityChain count] > viewAccessibilityChainIndex ? [viewAccessibilityChain objectAtIndex:viewAccessibilityChainIndex] : nil);
-        
-        // For each objectFromMockChain, if it mocks a view, that view will be in viewAccessibilityChain. Elements from the mockAccessibilityChain that do not mock views will
-        // exist at the end of the mockAccessibilityChain, and will also exist at the end of the viewAccessibilityChain.
-        if (![objectFromMockChain isKindOfClass:[UIView class]]) {
-            while (![self element:objectFromMockChain isMockingViewChainObject:currentViewChainObject] && currentViewChainObject) {
-                viewAccessibilityChainIndex++;
-                currentViewChainObject = ([viewAccessibilityChain count] > viewAccessibilityChainIndex ? [viewAccessibilityChain objectAtIndex:viewAccessibilityChainIndex] : nil);
-            }
-        }
-
-        if ([objectFromMockChain isKindOfClass:[UIView class]]) {
-            viewAccessibilityChainIndex++;
-            if ([objectFromMockChain shouldAppearInUIViewAccessibilityHierarchy]) {
-                [sanitizedArray addObject:obj];
-            }
-            
-        } else if ([self element:objectFromMockChain isMockingViewChainObject:currentViewChainObject]) {
-            viewAccessibilityChainIndex++;
-            if ([currentViewChainObject elementMockingSelfShouldAppearInAccessibilityHierarchy]) {
-                [sanitizedArray addObject:objectFromMockChain];
-            }
-
-        // If the currentViewChainObject is nil or a UIAccessibilityElement, then objectFromMockChain does not mock a view
-        } else if ((![currentViewChainObject isKindOfClass:[UIView class]] && [objectFromMockChain shouldAppearInAccessibilityHierarchy])){
-            [sanitizedArray addObject:objectFromMockChain];
-        }
-    }];
-    return sanitizedArray;
-}
-
-
-// Determines whether or not the potentialMockElement is mocking the viewChainObject
-- (BOOL)element:(id)potentialMockElement isMockingViewChainObject:(id)viewChainObject {
-    if (![viewChainObject isKindOfClass:[UIView class]]) {
+- (BOOL)element:(id)potentialMockElement isMockingViewPathObject:(id)viewPathObject {
+    if (![viewPathObject isKindOfClass:[UIView class]]) {
         return NO;
     }
-    UIView *view = (UIView *)viewChainObject;
+    UIView *view = (UIView *)viewPathObject;
     NSString *previousIdentifier = view.accessibilityIdentifier;
     [view setAccessibilityIdentifierWithStandardReplacement];
     
@@ -493,6 +467,88 @@ NSString * const SLUIViewAccessibilityChainKey = @"SLUIViewAccessibilityChainKey
     } else {
         return accessibilityName;
     }
+}
+
+@end
+
+
+#pragma mark - SLAccessibilityPath Implementation
+
+@implementation SLAccessibilityPath
+@synthesize mockViewPath=_mockViewPath, viewPath=_viewPath;
+
++ (NSArray *)sanitizeUIViewAccessibilityPath:(NSArray *)accessibilityPath {
+    NSMutableArray *trimmedAccessibilityPath = [[NSMutableArray alloc] init];
+    [accessibilityPath enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        // We will need the UIView accessibility path to contain any views that will
+        // be directly in the accessibility hierarchy, as well as any elements that are
+        // mocked by elements that will be directly in the accessibility hierarchy
+        if ([obj shouldAppearInUIViewAccessibilityHierarchy] || [obj elementMockingSelfShouldAppearInAccessibilityHierarchy]) {
+            [trimmedAccessibilityPath addObject:obj];
+        }
+    }];
+    return trimmedAccessibilityPath;
+}
+
+
++ (NSArray *)sanitizeMockViewAccessibilityPath:(NSArray *)mockAccessibilityPath
+                  usingUIViewAccessibilityPath:(NSArray *)viewAccessibilityPath {
+    NSMutableArray *sanitizedArray = [[NSMutableArray alloc] init];
+
+    // Iterate through the elements of the mockAccessibilityPath. Each view in the path will
+    // be included in the accessibility hierarchy if it returns YES from shouldAppearInUIViewAccessibilityHierarchy.
+    // Each UIAccessibilityElement that mocks a view will be included in the accessibility hierachy if the view
+    // that it mocks returns YES from elementMockingSelfShouldAppearInAccessibilityHierarchy. Each UIAccessibility
+    // element that does not mock a view will be included in the accessibility hierarchy if it returns YES from
+    // shouldAppearInAccessibilityHierarchy.
+
+    __block int viewAccessibilityPathIndex = 0;
+    [mockAccessibilityPath enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        id objectFromMockPath = obj;
+        id currentViewPathObject =  ([viewAccessibilityPath count] > viewAccessibilityPathIndex ? [viewAccessibilityPath objectAtIndex:viewAccessibilityPathIndex] : nil);
+
+        // For each objectFromMockPath, if it mocks a view, that view will be in viewAccessibilityPath. Elements from the mockAccessibilityPath that do not mock views will
+        // exist at the end of the mockAccessibilityPath, and will also exist at the end of the viewAccessibilityPath.
+        if (![objectFromMockPath isKindOfClass:[UIView class]]) {
+            while (![self element:objectFromMockPath isMockingViewPathObject:currentViewPathObject] && currentViewPathObject) {
+                viewAccessibilityPathIndex++;
+                currentViewPathObject = ([viewAccessibilityPath count] > viewAccessibilityPathIndex ? [viewAccessibilityPath objectAtIndex:viewAccessibilityPathIndex] : nil);
+            }
+        }
+
+        if ([objectFromMockPath isKindOfClass:[UIView class]]) {
+            viewAccessibilityPathIndex++;
+            if ([objectFromMockPath shouldAppearInUIViewAccessibilityHierarchy]) {
+                [sanitizedArray addObject:obj];
+            }
+
+        } else if ([self element:objectFromMockPath isMockingViewPathObject:currentViewPathObject]) {
+            viewAccessibilityPathIndex++;
+            if ([currentViewPathObject elementMockingSelfShouldAppearInAccessibilityHierarchy]) {
+                [sanitizedArray addObject:objectFromMockPath];
+            }
+
+            // If the currentViewPathObject is nil or a UIAccessibilityElement, then objectFromMockPath does not mock a view
+        } else if ((![currentViewPathObject isKindOfClass:[UIView class]] && [objectFromMockPath shouldAppearInAccessibilityHierarchy])){
+            [sanitizedArray addObject:objectFromMockPath];
+        }
+    }];
+    return sanitizedArray;
+}
+
+- (instancetype)initWithMockViewPath:(NSArray *)mockViewPath viewPath:(NSArray *)viewPath {
+    self = [super init];
+    if (self) {
+        _mockViewPath = [[self class] sanitizeMockViewAccessibilityPath:mockViewPath
+                                           usingUIViewAccessibilityPath:viewPath];
+        _viewPath = [[self class] sanitizeUIViewAccessibilityPath:viewPath];
+
+        if (![_mockViewPath count] || ![_viewPath count]) {
+            self = nil;
+            return self;
+        }
+    }
+    return self;
 }
 
 @end

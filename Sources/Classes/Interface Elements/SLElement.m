@@ -114,13 +114,13 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         return;
     }
     
-    NSDictionary *accessibilityChains = [self accessibilityChainsWaitingIfNecessary:YES];
-    NSArray *uiAccessibilityElementFirstAccessorChain = accessibilityChains[SLMockViewAccessibilityChainKey];
-    NSArray *viewFirstAccessorChain = accessibilityChains[SLUIViewAccessibilityChainKey];
-    
-    if ([uiAccessibilityElementFirstAccessorChain count] == 0) {
+    SLAccessibilityPath *accessibilityPath = [self accessibilityPathWaitingIfNecessary:YES];
+    if (!accessibilityPath) {
         @throw [NSException exceptionWithName:SLElementInvalidException reason:[NSString stringWithFormat:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]] userInfo:nil];
     }
+
+    NSArray *uiAccessibilityElementFirstAccessorChain = [accessibilityPath mockViewPath];
+    NSArray *viewFirstAccessorChain = [accessibilityPath viewPath];
 
     // Previous accessibility chains and labels are stored in a separate loop, before they are reassigned. This is because
     // some subclasses' accessibility identification values depend on their parent view's, and will change when they are
@@ -198,34 +198,31 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     });
 }
 
-// We force accessibilityChainsWaitingIfNecessary: to return a retained dictionary
-// to prevent that dictionary from being added to an autorelease pool on Subliminal's (non-main) thread.
-- (NSDictionary *)accessibilityChainsWaitingIfNecessary:(BOOL)waitIfNecessary NS_RETURNS_RETAINED {
-    __block NSDictionary *accessibilityChains = nil;
+// We force accessibilityPathWaitingIfNecessary: to return a retained path
+// to prevent that path from being added to an autorelease pool on Subliminal's (non-main) thread.
+- (SLAccessibilityPath *)accessibilityPathWaitingIfNecessary:(BOOL)waitIfNecessary NS_RETURNS_RETAINED {
+    __block SLAccessibilityPath *accessibilityPath = nil;
     NSDate *startDate = [NSDate date];
     do {
         dispatch_sync(dispatch_get_main_queue(), ^{
-            accessibilityChains = [[[UIApplication sharedApplication] keyWindow] slAccessibilityChainsToElement:self];
+            accessibilityPath = [[[UIApplication sharedApplication] keyWindow] slAccessibilityPathToElement:self];
         });
-        if ([accessibilityChains[SLUIViewAccessibilityChainKey] count] > 0 ||
-            !waitIfNecessary) {
+        if (accessibilityPath || !waitIfNecessary) {
             break;
         }
         [NSThread sleepForTimeInterval:SLElementWaitRetryDelay];
     } while ([[NSDate date] timeIntervalSinceDate:startDate] < [[self class] defaultTimeout]);
-    return accessibilityChains;
+    return accessibilityPath;
 }
 
 - (void)examineMatchingObject:(void (^)(NSObject *object))block {
-    NSDictionary *accessibilityChains = [self accessibilityChainsWaitingIfNecessary:YES];
-    NSArray *uiAccessibilityElementFirstAccessorChain = accessibilityChains[SLMockViewAccessibilityChainKey];
-
-    if ([uiAccessibilityElementFirstAccessorChain count] == 0) {
+    SLAccessibilityPath *accessibilityPath = [self accessibilityPathWaitingIfNecessary:YES];
+    if (!accessibilityPath) {
         @throw [NSException exceptionWithName:SLElementInvalidException reason:[NSString stringWithFormat:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]] userInfo:nil];
     }
 
     dispatch_sync(dispatch_get_main_queue(), ^{
-        NSObject *matchingObject = [uiAccessibilityElementFirstAccessorChain lastObject];
+        NSObject *matchingObject = [[accessibilityPath mockViewPath] lastObject];
         block(matchingObject);
     });
 }
@@ -245,7 +242,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (BOOL)isValid {
-    return ([[self accessibilityChainsWaitingIfNecessary:NO][SLMockViewAccessibilityChainKey] count] > 0);
+    return ([self accessibilityPathWaitingIfNecessary:NO] != nil);
 }
 
 - (BOOL)isVisible {

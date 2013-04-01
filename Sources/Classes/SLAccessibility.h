@@ -9,11 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @class SLElement;
-
-extern NSString * const SLMockViewAccessibilityChainKey;
-extern NSString * const SLUIViewAccessibilityChainKey;
-
-
+@class SLAccessibilityPath;
 @interface NSObject (SLAccessibility)
 
 /** 
@@ -25,39 +21,16 @@ extern NSString * const SLUIViewAccessibilityChainKey;
  */
 @property (nonatomic, readonly) NSString *slAccessibilityName;
 
-/** Returns an array of objects that are child accessibility elements of this object.
- 
- This method is mostly a wrapper around the UIAccessibilityContainer protocol but
- also includes subviews if the object is a UIView. It attempts to represent the 
- accessibilty hierarchy used by the system.
- 
- @param favoringUISubViews Whether subviews should be placed before or after 
-                        UIAccessibilityElements in the returned array
- 
- @return An array of objects that are child accessibility elements of this object.
- */
-- (NSArray *)slChildAccessibilityElementsFavoringUISubviews:(BOOL)favoringUISubviews;
+/**
+ Returns the accessibility path from this object to the specified element.
 
-/** Returns a dictionary containing two chains of objects that can be used to identify
- the accessibility chain that will be used by UIAutomation.
- 
- Each chain starts at index 0 with this object and ends with the target element.
- The returned chains can be accessed with the keys SLMockViewAccessibilityChainKey and
- SLUIViewAccessibilityChainKey. The mock view accessibility chain will prioritize
- paths along UIAccessibilityElements to a matching element, while the uiview accessibility
- chain will prioritize chains made up of UIViews. Every view in the mock object accessibility
- chain will exist in the uiview accessibility chain, and each mock object in the mock 
- accessibility chain that mocks a view, will mock a view from the view accesisbility chain.
- It is the mock view chain that will match the chain created by UIAutomation, the 
- uiview accessibility chain is returned as well because it can be used to set the
- accessibility identifiers of mock views in the mock accessibility chain.
+ The path starts with this object and ends with an object matching the target element.
 
  @param element The element to be matched.
- @return A dictionary containing chains of objects that can used by UIAutomation to access the element
- or `nil` if the element is not found within this object's accessibility hierarchy.
+ @return A path that can used by UIAutomation to access the element or `nil`
+ if the element is not found within this object's accessibility hierarchy.
  */
-
-- (NSDictionary *)slAccessibilityChainsToElement:(SLElement *)element;
+- (SLAccessibilityPath *)slAccessibilityPathToElement:(SLElement *)element;
 
 /** Sets a unique identifier as the accessibilityIdentifier **/
 - (void)setAccessibilityIdentifierWithStandardReplacement;
@@ -83,5 +56,26 @@ extern NSString * const SLUIViewAccessibilityChainKey;
 /// ----------------------------------------
 - (NSString *)slAccessibilityDescription;
 - (NSString *)slRecursiveAccessibilityDescription;
+
+@end
+
+
+/**
+ SLAccessibilityPath contains two sequences of objects ("paths") that can be used to identify
+ the accessibility path that will be used by UIAutomation.
+
+ The mock view accessibility path will prioritize paths along UIAccessibilityElements
+ to a matching element, while the uiview accessibility path will prioritize paths
+ made up of UIViews. Every view in the mock object accessibility path will exist
+ in the uiview accessibility path, and each mock object in the mock accessibility
+ path that mocks a view, will mock a view from the view accessibility path.
+
+ It is the mock view path that will match the path created by UIAutomation.
+ The view accessibility path can be used to set the
+ accessibility identifiers of mock views in the mock view accessibility path.
+ */
+@interface SLAccessibilityPath : NSObject
+
+@property (nonatomic, readonly) NSArray *mockViewPath, *viewPath;
 
 @end
