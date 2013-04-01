@@ -85,19 +85,3 @@ extern NSString * const SLUIViewAccessibilityChainKey;
 - (NSString *)slRecursiveAccessibilityDescription;
 
 @end
-
-
-@interface UIAccessibilityElement (SLAccessibility)
-@end
-
-
-@interface UIView (SLAccessibility)
-@end
-
-
-@interface UIControl (SLAccessibility)
-@end
-
-
-@interface UIScrollView (SLAccessibility)
-@end
