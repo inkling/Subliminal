@@ -410,11 +410,11 @@ NSString * const SLUIViewAccessibilityChainKey = @"SLUIViewAccessibilityChainKey
 - (NSString *)slAccessibilityName {
     // Prioritize identifiers over labels because some UIKit objects have transient labels.
     // For example: UIActivityIndicatorViews have label 'In progress' only while spinning.
-    if (self.accessibilityIdentifier) {
+    if ([self.accessibilityIdentifier length] > 0) {
         return self.accessibilityIdentifier;
-    } else {
-        return self.accessibilityLabel;
     }
+
+    return self.accessibilityLabel;
 }
 
 - (NSArray *)slChildAccessibilityElementsFavoringUISubviews:(BOOL)favoringUISubViews {
@@ -496,22 +496,3 @@ NSString * const SLUIViewAccessibilityChainKey = @"SLUIViewAccessibilityChainKey
 }
 
 @end
-
-
-#pragma mark -
-#pragma mark UIButton custom slAccessibilityName
-
-@implementation UIButton (SLAccessibility)
-
-- (NSString *)slAccessibilityName {
-    if (self.accessibilityIdentifier) {
-        return self.accessibilityIdentifier;
-    }
-    
-    return self.accessibilityLabel;
-}
-
-
-@end
-
-

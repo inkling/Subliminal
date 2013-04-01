@@ -16,15 +16,12 @@ extern NSString * const SLUIViewAccessibilityChainKey;
 
 @interface NSObject (SLAccessibility)
 
-/** A string Subliminal will use to match this object with an SLElement.
+/** 
+ A string Subliminal will use to match this object with an SLElement.
  
- The default implementation returns the object's accessibility label. Subclasses
- of UIView and UIAccessibilityElement return the object's accessibility identifier
- or accessibility label. UIButton's return the accessibility identifier or label,
- or the button's title if the identifier and label are `nil`.
- 
- UIScrollViews and UIImageViews that would not otherwise have a name generate an
- accessibility identifier to use as the accessibility name.
+ The default implementation returns the object's accessibility identifier, 
+ if the object responds to -accessibilityIdentifier and the identifier is non-empty,
+ otherwise the object's accessibility label.
  */
 @property (nonatomic, readonly) NSString *slAccessibilityName;
 
