@@ -13,8 +13,8 @@
 
 - (BOOL)isEnabled {
     __block BOOL isEnabled = NO;
-    [self performActionWithUIASelf:^(NSString *uiaSelf) {
-        isEnabled = [[[SLTerminal sharedTerminal] evalWithFormat:@"(%@.isEnabled() ? 'YES' : 'NO')", uiaSelf] boolValue];
+    [self performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+        isEnabled = [[[SLTerminal sharedTerminal] evalWithFormat:@"(%@.isEnabled() ? 'YES' : 'NO')", uiaRepresentation] boolValue];
     }];
     return isEnabled;
 }

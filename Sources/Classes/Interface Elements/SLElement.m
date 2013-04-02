@@ -91,26 +91,20 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return [NSString stringWithFormat:@"<%@ description:\"%@\">", NSStringFromClass([self class]), _description];
 }
 
-- (NSString *)staticUIASelf {
+- (NSString *)staticUIARepresentation {
     return nil;
 }
 
 #pragma mark Sending Actions
 
 
-- (void)performActionWithUIASelf:(void(^)(NSString *uiaSelf))block {
+- (void)performActionWithUIARepresentation:(void(^)(NSString *uiaRepresentation))block {
 
-    // A uiaSelf is created, unless a staticUIASelf is provided, and is passed to the action block. uiaSelf is created
-    // by creating one chain from the main window to a matching element that prefers to match on a UIView, and another
-    // chain that prefers to match to UIAccessibilityElements. Unique identifiers are set on the objects in the first
-    // chain, and then the elements in the second chain are serialized to create the uiaSelf which is passed to the
-    // action. This ensures that the identifiers are set successfully, and that the chain does not contain any extra
-    // elements. After the action has been performed the accessibilityLabels and accessibilityIdentifiers on each
-    // element in the view matching chain are reset.
+    // A uiaRepresentation is created, unless a staticUIARepresentation is provided, and is passed to the action block.
     
-    NSString *staticUIASelf = [self staticUIASelf];
-    if (staticUIASelf) {
-        block(staticUIASelf);
+    NSString *staticUIARepresentation = [self staticUIARepresentation];
+    if (staticUIARepresentation) {
+        block(staticUIARepresentation);
         return;
     }
     
@@ -119,87 +113,14 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         @throw [NSException exceptionWithName:SLElementInvalidException reason:[NSString stringWithFormat:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]] userInfo:nil];
     }
 
-    NSArray *uiAccessibilityElementFirstAccessorChain = [accessibilityPath mockViewPath];
-    NSArray *viewFirstAccessorChain = [accessibilityPath viewPath];
-
-    // Previous accessibility chains and labels are stored in a separate loop, before they are reassigned. This is because
-    // some subclasses' accessibility identification values depend on their parent view's, and will change when they are
-    // updated.
-    __block NSMutableArray *previousAccessorChainIdentifiers = [[NSMutableArray alloc] init];
-    __block NSMutableArray *previousAccessorChainLabels = [[NSMutableArray alloc] init];
-    __block NSMutableString *targettedUIAPrefix = [@"UIATarget.localTarget().frontMostApp().mainWindow()" mutableCopy];
-    
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        for (NSObject *obj in viewFirstAccessorChain) {
-            NSAssert([obj respondsToSelector:@selector(accessibilityIdentifier)], @"elements in the accessibility chain must conform to UIAccessibilityIdentification");
-            
-            NSObject *previousIdentifier = [obj performSelector:@selector(accessibilityIdentifier)];
-            if (previousIdentifier == nil) {
-                previousIdentifier = [NSNull null];
-            }
-            [previousAccessorChainIdentifiers addObject:previousIdentifier];
-
-            NSObject *previousLabel = [obj accessibilityLabel];
-            if (previousLabel == nil) {
-                previousLabel = [NSNull null];
-            }
-            [previousAccessorChainLabels addObject:previousLabel];
-        }
-    
-        // viewFirstAccessorChain was created putting a priority on matching UIViews. We set the unique identifiers
-        // on the members of this chain, instead of uiAccessibilityElementFirstAccessorChain, because the new
-        // identifiers will be mirrored on all the objects in uiAccessibilityElementFirstAccessorChain
-        
-        // The chain's elements' accessibility information is updated in reverse order, because of the issue listed in the
-        // above note
-        for (NSObject *obj in [viewFirstAccessorChain reverseObjectEnumerator]) {
-            NSAssert([obj respondsToSelector:@selector(accessibilityIdentifier)], @"elements in the accessibility chain must conform to UIAccessibilityIdentification");
-            [obj setAccessibilityIdentifierWithStandardReplacement];
-
-            // Some objects will not allow their accessibilityIdentifier to be modified. In these cases, if the accessibilityIdentifer
-            // is empty, we can uniquely identify the object with its label.
-            if ([[obj performSelector:@selector(accessibilityIdentifier)] length] == 0) {
-                obj.accessibilityLabel = [obj standardAccessibilityIdentifierReplacement];
-            }
-        }
-        
-        // The prefix must be generated from the accessibility information on the elements of uiAccessibilityElementFirstAccessorChain
-        // instead of viewFirstAccessorChain because uiAccessibilityElementFirstAccessorChain contains the actual elements
-        // UIAutomation will interact with, and its chain may be shorter than that in viewFirstAccessorChain.
-        
-        for (NSObject *obj in uiAccessibilityElementFirstAccessorChain) {
-            NSAssert([obj respondsToSelector:@selector(accessibilityIdentifier)], @"elements in the accessibility chain must conform to UIAccessibilityIdentification");
-            
-            // Elements must be identified by their accessibility identifier as long as one exists. The accessiblity identifier may be nil
-            // for some classes on which you cannot set an accessibility identifer ex UISegmentedControl. In these cases the element can
-            // be identified by its label.
-            NSString *currentIdentifier = [obj performSelector:@selector(accessibilityIdentifier)];
-            if ([currentIdentifier length] > 0) {
-                [targettedUIAPrefix appendFormat:@".elements()['%@']",  [currentIdentifier slStringByEscapingForJavaScriptLiteral]];
-                
-            } else  {
-                [targettedUIAPrefix appendFormat:@".elements()['%@']",  [obj.accessibilityLabel slStringByEscapingForJavaScriptLiteral]];
-            }
-        }
-    });
-        
-    block(targettedUIAPrefix);
-    
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        // The chain's elements' accessibility information is updated in reverse order, because of the issue listed in the
-        // above note
-        [viewFirstAccessorChain enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            NSObject *identifierObj = [previousAccessorChainIdentifiers objectAtIndex:idx];
-            NSString *identifier = ([identifierObj isEqual:[NSNull null]] ? nil : (NSString *)identifierObj);
-            NSObject *labelObj = [previousAccessorChainLabels objectAtIndex:idx];
-            NSString *label = ([labelObj isEqual:[NSNull null]] ? nil : (NSString *)labelObj);
-            [obj resetAccessibilityInfoIfNecessaryWithPreviousIdentifier:identifier previousLabel:label];
-        }];
-    });
+    [accessibilityPath bindPath:^(SLAccessibilityPath *boundPath) {
+        block([boundPath UIARepresentation]);
+    }];
 }
 
 // We force accessibilityPathWaitingIfNecessary: to return a retained path
 // to prevent that path from being added to an autorelease pool on Subliminal's (non-main) thread.
+// See the note on SLAccessibilityPath's @interface.
 - (SLAccessibilityPath *)accessibilityPathWaitingIfNecessary:(BOOL)waitIfNecessary NS_RETURNS_RETAINED {
     __block SLAccessibilityPath *accessibilityPath = nil;
     NSDate *startDate = [NSDate date];
@@ -221,10 +142,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         @throw [NSException exceptionWithName:SLElementInvalidException reason:[NSString stringWithFormat:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]] userInfo:nil];
     }
 
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        NSObject *matchingObject = [[accessibilityPath mockViewPath] lastObject];
-        block(matchingObject);
-    });
+    [accessibilityPath examineLastPathComponent:block];
 }
 
 - (NSString *)sendMessage:(NSString *)action, ... {
@@ -234,8 +152,8 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     va_end(args);
     
     __block NSString *returnValue = nil;
-    [self performActionWithUIASelf:^(NSString *uiaSelf) {
-            returnValue = [[SLTerminal sharedTerminal] evalWithFormat:@"%@.%@", uiaSelf, formattedAction];
+    [self performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+            returnValue = [[SLTerminal sharedTerminal] evalWithFormat:@"%@.%@", uiaRepresentation, formattedAction];
     }];
     
     return returnValue;
@@ -247,19 +165,19 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 - (BOOL)isVisible {
     __block BOOL isVisible = NO;
-    [self performActionWithUIASelf:^(NSString *uiaSelf) {
-        isVisible = [[[SLTerminal sharedTerminal] evalWithFormat:@"(%@.isVisible() ? 'YES' : 'NO')", uiaSelf] boolValue];
+    [self performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+        isVisible = [[[SLTerminal sharedTerminal] evalWithFormat:@"(%@.isVisible() ? 'YES' : 'NO')", uiaRepresentation] boolValue];
     }];
     return isVisible;
 }
 
 - (void)waitUntilVisible:(NSTimeInterval)timeout {
-    [self performActionWithUIASelf:^(NSString *uiaSelf) {
+    [self performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         // We allow for the the element to be invalid upon waiting,
         // so long as it is ultimately visible.
         // (Note that isVisible() actually returns NO, given an invalid element,
         // but this is safest (and matches Subliminal's semantics).)
-        NSString *isValidAndVisible = [NSString stringWithFormat:@"%@.isValid() && %@.isVisible()", uiaSelf, uiaSelf];
+        NSString *isValidAndVisible = [NSString stringWithFormat:@"%@.isValid() && %@.isVisible()", uiaRepresentation, uiaRepresentation];
         if (![[SLTerminal sharedTerminal] waitUntilTrue:isValidAndVisible
                                              retryDelay:SLElementWaitRetryDelay
                                                 timeout:timeout]) {
@@ -272,13 +190,13 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     // succeed immediately if we're not valid (otherwise performAction... will throw)
     if (![self isValid]) return;
 
-    [self performActionWithUIASelf:^(NSString *uiaSelf) {
+    [self performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         // The method lists "invisible" before "invalid" because the element not being visible
         // is what the user really cares about.
         // But we check validity first in case isVisible() might throw.
         // (It doesn't--it returns NO, given an invalid element--but this is safest
         // (and matches Subliminal's semantics).)
-        NSString *isInvalidOrInvisible = [NSString stringWithFormat:@"!%@.isValid() || !%@.isVisible()", uiaSelf, uiaSelf];
+        NSString *isInvalidOrInvisible = [NSString stringWithFormat:@"!%@.isValid() || !%@.isVisible()", uiaRepresentation, uiaRepresentation];
         if (![[SLTerminal sharedTerminal] waitUntilTrue:isInvalidOrInvisible
                                              retryDelay:SLElementWaitRetryDelay
                                                 timeout:timeout]) {
@@ -315,9 +233,9 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     });
 
     NSString *__block rectString = nil;
-    [self performActionWithUIASelf:^(NSString *uiaSelf) {
+    [self performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         rectString = [[SLTerminal sharedTerminal] evalWithFormat:@"%@(%@.rect())",
-                          CGRectStringFromJSRectFunctionName, uiaSelf];
+                          CGRectStringFromJSRectFunctionName, uiaRepresentation];
     }];
     return ([rectString length] ? CGRectFromString(rectString) : CGRectNull);
 }

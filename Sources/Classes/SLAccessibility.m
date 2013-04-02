@@ -16,11 +16,23 @@
 
 @interface SLAccessibilityPath ()
 
+@property (nonatomic, readonly) NSArray *mockViewPath, *viewPath;
+
 /**
  Initializes and returns a newly allocated accessibility path 
  with the specified component paths.
  
- The accessibility path sanitizes the component paths in the process of initialization.
+ The mock view accessibility path should prioritize paths along UIAccessibilityElements
+ to a matching element, while the view accessibility path should prioritize paths
+ made up of UIViews. If this is done, every view in the mock view accessibility path
+ will exist in the view accessibility path, and each object in the mock view accessibility
+ path that mocks a view, will mock a view from the view accessibility path.
+
+ It is the mock view path that (when serialized, in -UIARepresentation) will match the path created by UIAutomation.
+ The view accessibility path can be used to set the
+ accessibility identifiers of mock views in the mock view accessibility path.
+
+ @warning The accessibility path sanitizes the component paths in the process of initialization.
  If, after sanitization, either path is empty, the accessibility path will be released
  and this method will return nil.
  
@@ -63,6 +75,23 @@
 
 // Determines whether or not the potentialMockElement is mocking the viewPathObject
 - (BOOL)element:(id)potentialMockElement isMockingViewPathObject:(id)viewPathObject;
+
+/** Sets a unique identifier as the accessibilityIdentifier **/
+- (void)setAccessibilityIdentifierWithStandardReplacement;
+
+/** The string that should be used to uniquely identify this object to UIAutomation **/
+- (NSString *)standardAccessibilityIdentifierReplacement;
+
+/** Resets the accessibilityIndentifier and accessibilityLabel to their appropriate
+ values, unless their values have been changed again since they were replaced with
+ the standardAccessibilityIdentifierReplacement.
+
+ @param previousIdentifer The accessibilityIdentifer's value before it was set to
+ standardAccessibilityIdentifierReplacement
+ @param previousLabel The accessibilityIdentifier's value before it was set to
+ standardAccessibilityIdentifierReplacement
+ **/
+- (void)resetAccessibilityInfoIfNecessaryWithPreviousIdentifier:(NSString *)previousIdentifier previousLabel:(NSString *)previousLabel;
 
 @end
 
@@ -549,6 +578,108 @@
         }
     }
     return self;
+}
+
+- (void)examineLastPathComponent:(void (^)(NSObject *lastPathComponent))block {
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        block([self.mockViewPath lastObject]);
+    });
+}
+
+// To bind the path to a unique destination, unique identifiers are set on
+// the objects in the view path. This ensures that the identifiers are set
+// successfully (because some mock views' identifiers cannot be set directly,
+// but rather track the identifiers on their corresponding views)
+// and that the path does not contain any extra elements.
+//
+// After the block has been executed, the accessibilityLabels and
+// accessibilityIdentifiers on each element in the view matching chain are reset.
+
+- (void)bindPath:(void (^)(SLAccessibilityPath *boundPath))block {
+    __block NSMutableArray *previousAccessorPathIdentifiers = [[NSMutableArray alloc] init];
+    __block NSMutableArray *previousAccessorPathLabels = [[NSMutableArray alloc] init];
+
+    // Unique the elements' identifiers
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        // Previous accessibility identifiers and labels are stored in a separate loop,
+        // before they are reassigned. This is because for some elements, these
+        // values depend on their parent elements' values, and will change
+        // when the parent elements' values are updated.
+        for (NSObject *obj in self.viewPath) {
+            NSAssert([obj respondsToSelector:@selector(accessibilityIdentifier)],
+                     @"elements in the view path must conform to UIAccessibilityIdentification");
+
+            NSObject *previousIdentifier = [obj performSelector:@selector(accessibilityIdentifier)];
+            if (previousIdentifier == nil) {
+                previousIdentifier = [NSNull null];
+            }
+            [previousAccessorPathIdentifiers addObject:previousIdentifier];
+
+            NSObject *previousLabel = [obj accessibilityLabel];
+            if (previousLabel == nil) {
+                previousLabel = [NSNull null];
+            }
+            [previousAccessorPathLabels addObject:previousLabel];
+        }
+
+        // The path's elements' accessibility information is updated in reverse order,
+        // because of the issue described in the above note.
+        for (NSObject *obj in [self.viewPath reverseObjectEnumerator]) {
+            NSAssert([obj respondsToSelector:@selector(accessibilityIdentifier)],
+                     @"elements in the view path must conform to UIAccessibilityIdentification");
+            [obj setAccessibilityIdentifierWithStandardReplacement];
+
+            // Even some view objects will not allow their accessibilityIdentifier to be modified.
+            // In these cases, if the accessibilityIdentifer is empty,
+            // we can uniquely identify the object with its label.
+            if ([[obj performSelector:@selector(accessibilityIdentifier)] length] == 0) {
+                obj.accessibilityLabel = [obj standardAccessibilityIdentifierReplacement];
+            }
+        }
+    });
+
+    block(self);
+
+    // Reset the elements' identifiers
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        // The path's elements' accessibility information is updated in reverse order,
+        // because of the issue listed in the above note.
+        [self.viewPath enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            NSObject *identifierObj = [previousAccessorPathIdentifiers objectAtIndex:idx];
+            NSString *identifier = ([identifierObj isEqual:[NSNull null]] ? nil : (NSString *)identifierObj);
+            NSObject *labelObj = [previousAccessorPathLabels objectAtIndex:idx];
+            NSString *label = ([labelObj isEqual:[NSNull null]] ? nil : (NSString *)labelObj);
+            
+            [obj resetAccessibilityInfoIfNecessaryWithPreviousIdentifier:identifier previousLabel:label];
+        }];
+    });
+}
+
+- (NSString *)UIARepresentation {
+    __block NSMutableString *uiaRepresentation = [@"UIATarget.localTarget().frontMostApp().mainWindow()" mutableCopy];
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        // The representation must be generated from the accessibility information
+        // on the elements of the mock view path instead of the view path because
+        // the mock view path contains the actual elements UIAutomation will
+        // interact with, and it may be shorter than the view path.
+        for (NSObject *obj in self.mockViewPath) {
+            NSAssert([obj respondsToSelector:@selector(accessibilityIdentifier)],
+                     @"elements in the mock view path must conform to UIAccessibilityIdentification");
+
+            // Elements must be identified by their accessibility identifier
+            // as long as one exists. The accessibility identifier may be nil
+            // for some classes on which you cannot set an accessibility identifer
+            // e.g. UISegmentedControl. In these cases the element can
+            // be identified by its label.
+            NSString *currentIdentifier = [obj performSelector:@selector(accessibilityIdentifier)];
+            if (![currentIdentifier length]) {
+                currentIdentifier = obj.accessibilityLabel;
+            }
+            [uiaRepresentation appendFormat:@".elements()['%@']",
+             [currentIdentifier slStringByEscapingForJavaScriptLiteral]];
+        }
+    });
+    return uiaRepresentation;
 }
 
 @end

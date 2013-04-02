@@ -18,7 +18,7 @@
 }
 
 
-- (NSString *)staticUIASelf {
+- (NSString *)staticUIARepresentation {
     return @"UIATarget.localTarget().frontMostApp().mainWindow()";
 }
 

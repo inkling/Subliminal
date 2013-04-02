@@ -15,7 +15,7 @@
     return [SLKeyboard anyElement];
 }
 
-- (NSString *)staticUIASelf {
+- (NSString *)staticUIARepresentation {
     return @"UIATarget.localTarget().frontMostApp().keyboard()";
 }
 
@@ -34,7 +34,7 @@
     return key;
 }
 
-- (NSString *)staticUIASelf {
+- (NSString *)staticUIARepresentation {
     return [NSString stringWithFormat:@"UIATarget.localTarget().frontMostApp().keyboard().elements()['%@']", _keyLabel];
 }
 
