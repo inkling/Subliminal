@@ -6,10 +6,17 @@
 //  Copyright (c) 2012 Inkling. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 
 @class SLElement;
 @class SLAccessibilityPath;
+
+/**
+ The methods in the NSObject (SLAccessibility) category 
+ allow Subliminal to access and manipulate the accessibility hierarchy 
+ for the purposes of describing the hierarchy to the user, for debugging, 
+ and to UIAutomation, in order to evaluate expressions involving the `UIAElement`s 
+ corresponding to SLElements.
+ */
 @interface NSObject (SLAccessibility)
 
 /** 
@@ -22,21 +29,23 @@
 @property (nonatomic, readonly) NSString *slAccessibilityName;
 
 /**
- Returns the accessibility path from this object to the specified element.
+ Returns the accessibility path from this object to the object [matching](-[SLElement matchesObject:]) 
+ the specified element.
 
- The path starts with this object and ends with an object [matching](-[SLElement matchesObject:]) 
- the target element (i.e. that object is the path's 
- [last component](-[SLAccessibilityPath examineLastPathComponent:])).
+ The first component in the path is the receiver, and the last component 
+ is an object matching the specified element.
 
  @param element The element to be matched.
- @return A path that can used by UIAutomation to access the element or `nil`
- if the element is not found within this object's accessibility hierarchy.
+ @return A path that can used by UIAutomation to access element or `nil`
+ if an object matching element is not found within the accessibility hierarchy 
+ rooted in the receiver.
  */
 - (SLAccessibilityPath *)slAccessibilityPathToElement:(SLElement *)element;
 
 /// ----------------------------------------
 /// @name Debug methods
 /// ----------------------------------------
+
 - (NSString *)slAccessibilityDescription;
 - (NSString *)slRecursiveAccessibilityDescription;
 

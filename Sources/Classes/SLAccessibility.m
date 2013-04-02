@@ -13,42 +13,108 @@
 #import "SLElement+Subclassing.h"
 #import "NSString+SLJavaScript.h"
 
+#import <UIKit/UIKit.h>
+
+
+#pragma mark SLAccessibilityPath Interface
 
 @interface SLAccessibilityPath ()
 
-@property (nonatomic, readonly) NSArray *mockViewPath, *viewPath;
+/**
+ Creates and returns an array containing only those objects from
+ the specified view path that appear in the accessibility hierarchy
+ as understood by UIAutomation.
+
+ These do not comprise only those views that are accessibility elements
+ according to -[NSObject isAccessibilityElement].
+
+ @param viewPath The predominantly-UIView path to sanitize.
+ @return A path containing only those views that appear in
+ the accessibility hierarchy as understood by UIAutomation.
+ */
++ (NSArray *)sanitizeViewPath:(NSArray *)viewPath;
 
 /**
- Initializes and returns a newly allocated accessibility path 
+Creates and returns an array containing only those objects from
+the specified accessibility element path that should appear in the accessibility
+hierarchy as understood by UIAutomation.
+
+These objects corresponds closely, but not entirely, to the views that should appear
+in the accessibility hierarchy.
+
+@param accessibilityElementPath The predominantly-UIAccessibilityElement path to sanitize.
+@param viewPath A predominantly-UIView path corresponding to accessibilityElementPath,
+to be used to sanitize accessibilityElementPath.
+*/
++ (NSArray *)sanitizeAccessibilityElementPath:(NSArray *)accessibilityElementPath
+                                usingViewPath:(NSArray *)viewPath;
+
+/**
+ Initializes and returns a newly allocated accessibility path
  with the specified component paths.
  
- The mock view accessibility path should prioritize paths along UIAccessibilityElements
- to a matching element, while the view accessibility path should prioritize paths
- made up of UIViews. If this is done, every view in the mock view accessibility path
- will exist in the view accessibility path, and each object in the mock view accessibility
- path that mocks a view, will mock a view from the view accessibility path.
+ The accessibility element path should prioritize paths along UIAccessibilityElements
+ to a matching object, while the view path should prioritize paths comprising 
+ UIViews. If this is done, every view in the accessibility element path will exist 
+ in the view path, and each object in the accessibility element path that mocks 
+ a view, will mock a view from the view path.
 
- It is the mock view path that (when serialized, in -UIARepresentation) will match the path created by UIAutomation.
- The view accessibility path can be used to set the
- accessibility identifiers of mock views in the mock view accessibility path.
+ It is the accessibility element path that (when [serialized](-UIARepresentation))
+ matches the path that UIAutomation would use to identify the accessibility
+ path's referent. The view path is be used to set the accessibility identifiers 
+ of mock views in the accessibility element accessibility path, during 
+ [binding](-bindPath:).
 
- @warning The accessibility path sanitizes the component paths in the process of initialization.
- If, after sanitization, either path is empty, the accessibility path will be released
- and this method will return nil.
+ @warning The accessibility path sanitizes the component paths in the process of 
+ initialization. If, after sanitization, either path is empty, the accessibility 
+ path will be released and this method will return nil.
  
- @param mockViewPath A path that predominantly traverses UIAccessibilityElements.
+ @param accessibilityElementPath A path that predominantly traverses 
+ UIAccessibilityElements.
  @param viewPath A path that predominantly traverse UIViews.
- @return An initialized accessibility path or nil if the object couldn't be created.
+ @return An initialized accessibility path, or `nil` if the object couldn't be created.
  */
-- (instancetype)initWithMockViewPath:(NSArray *)mockViewPath viewPath:(NSArray *)viewPath;
+- (instancetype)initWithAccessibilityElementPath:(NSArray *)accessibilityElementPath
+                                        viewPath:(NSArray *)viewPath;
 
 @end
 
 
-@interface NSObject (SLAccessibility_Internal)
+#pragma mark - NSObject (SLAccessibility_Internal)
 
 /**
- Returns an array of objects that are child accessibility elements of this object.
+ The methods in the NSObject (SLAccessibility_Internal) category are used 
+ by SLAccessibilityPath in the process of constructing, sanitizing, binding, 
+ and serializing paths.
+ */
+@interface NSObject (SLAccessibility_Internal)
+
+/// ----------------------------------------
+/// @name Constructing paths
+/// ----------------------------------------
+
+/**
+ Creates and returns an array of objects that form a path through an accessibility 
+ hierarchy between the receiver and the object [matching](-[SLElement matchesObject:]) 
+ the specified element.
+
+ If favoringUISubviews is YES, the method will construct a path that is, as much 
+ as is possible, comprised of UIViews; otherwise, it will construct a path that is,
+ as much as is possible, comprised of UIAccessibilityElements. These paths 
+ correspond to the view and accessibility element paths used to initialize an SLAccessibilityPath.
+ 
+ @param element The element to which corresponds the object that is to be
+ the terminus of the path.
+ @param favoringUISubviews YES if the search for a path should favor UIViews;
+ otherwise, the search should favor UIAccessibilityElements.
+ @return A path between the receiver and the object matching element,
+ or `nil` if an object matching element is not found within the accessibility hierarchy
+ rooted in the receiver.
+ */
+- (NSArray *)accessibilityPathToElement:(SLElement *)element favoringUISubviews:(BOOL)favoringUISubviews;
+
+/**
+ Creates and returns an array of objects that are child accessibility elements of this object.
 
  This method is mostly a wrapper around the UIAccessibilityContainer protocol but
  also includes subviews if the object is a UIView. It attempts to represent the
@@ -60,6 +126,16 @@
  @return An array of objects that are child accessibility elements of this object.
  */
 - (NSArray *)slChildAccessibilityElementsFavoringUISubviews:(BOOL)favoringUISubviews;
+
+/// ----------------------------------------
+/// @name Sanitizing paths
+/// ----------------------------------------
+
+// This method is meant to provide an inverse to slChildAccessibilityElementsFavoringUISubviews:
+// not as an inverse of UIAutomation's accessibility hierarchy. Objects returned from this method
+// come with no guarantee regarding their accessibility identification or existence in the
+// accessibility hierarchy.
+- (NSObject *)accessibilityParent;
 
 // If an object fulfills these requirements it will appear in the accessibility hierarchy,
 // regardless of any other factors.
@@ -73,8 +149,26 @@
 // it to appear directly in the accessibility hierarchy
 - (BOOL)elementMockingSelfShouldAppearInAccessibilityHierarchy;
 
-// Determines whether or not the potentialMockElement is mocking the viewPathObject
+// Elements matching these accessibility traits have been shown to exist in
+// UIAutomation's accessibility hierarchy by trial and error.
+- (BOOL)accessibilityTraitsForcePresenceInAccessibilityHierarchy;
+
+// This method determines whether or not the object is descendent from any class within
+// a set of classes that will always appear in the accessibility hierarchy, regardless of
+// their accessibility identification.
+- (BOOL)classForcesPresenceInAccessibilityHierarchy;
+
+// This method determines whether or not the object is descendent from any class within
+// a set of classes whose mock views will always appear in the accessibility hierarchy
+// regardless of their accessibility identification
+- (BOOL)classForcesPresenceOfMockingViewsInAccessibilityHierarchy;
+
+// Determines whether or not potentialMockElement is mocking viewPathObject
 - (BOOL)element:(id)potentialMockElement isMockingViewPathObject:(id)viewPathObject;
+
+/// ----------------------------------------
+/// @name Binding and serializing paths
+/// ----------------------------------------
 
 /** Sets a unique identifier as the accessibilityIdentifier **/
 - (void)setAccessibilityIdentifierWithStandardReplacement;
@@ -82,21 +176,25 @@
 /** The string that should be used to uniquely identify this object to UIAutomation **/
 - (NSString *)standardAccessibilityIdentifierReplacement;
 
-/** Resets the accessibilityIndentifier and accessibilityLabel to their appropriate
- values, unless their values have been changed again since they were replaced with
- the standardAccessibilityIdentifierReplacement.
+/** 
+ Resets the receiver's accessibilityIdentifier and accessibilityLabel to their 
+ appropriate values, unless their values have been changed again since they were 
+ replaced with the standardAccessibilityIdentifierReplacement.
 
- @param previousIdentifer The accessibilityIdentifer's value before it was set to
- standardAccessibilityIdentifierReplacement
- @param previousLabel The accessibilityIdentifier's value before it was set to
- standardAccessibilityIdentifierReplacement
+ @param previousIdentifier The accessibilityIdentifier's value before it was set to
+ standardAccessibilityIdentifierReplacement.
+ @param previousLabel The accessibilityLabel's value before it was set to
+ standardAccessibilityIdentifierReplacement.
  **/
-- (void)resetAccessibilityInfoIfNecessaryWithPreviousIdentifier:(NSString *)previousIdentifier previousLabel:(NSString *)previousLabel;
+- (void)resetAccessibilityInfoIfNecessaryWithPreviousIdentifier:(NSString *)previousIdentifier
+                                                  previousLabel:(NSString *)previousLabel;
 
 @end
 
 
 @implementation NSObject (SLAccessibility)
+
+#pragma mark - Public NSObject (SLAccessibility) methods
 
 - (NSString *)slAccessibilityName {
     if ([self respondsToSelector:@selector(accessibilityIdentifier)]) {
@@ -110,12 +208,94 @@
 }
 
 - (SLAccessibilityPath *)slAccessibilityPathToElement:(SLElement *)element {
-    NSArray *mockViewAccessibilityPath = [self accessibilityPathToElement:element favoringUISubviews:NO];
-    NSArray *uiViewAccessibilityPath = [self accessibilityPathToElement:element favoringUISubviews:YES];
+    NSArray *accessibilityElementPath = [self accessibilityPathToElement:element favoringUISubviews:NO];
+    NSArray *viewPath = [self accessibilityPathToElement:element favoringUISubviews:YES];
 
-    return [[SLAccessibilityPath alloc] initWithMockViewPath:mockViewAccessibilityPath
-                                                    viewPath:uiViewAccessibilityPath];
+    return [[SLAccessibilityPath alloc] initWithAccessibilityElementPath:accessibilityElementPath
+                                                                viewPath:viewPath];
 }
+
+- (NSString *)slAccessibilityDescription {
+    NSInteger count = [self accessibilityElementCount];
+    if (![self isAccessibilityElement] && (count == NSNotFound || count == 0) && ![self respondsToSelector:@selector(accessibilityIdentifier)]) {
+        return [NSString stringWithFormat:@"<%@: %p; (not accessible)>", NSStringFromClass([self class]), self];
+    }
+
+    // Build a semicolon separated list of properties
+    NSMutableArray *properties = [NSMutableArray array];
+
+    [properties addObject:[NSString stringWithFormat:@"%@: %p", NSStringFromClass([self class]), self]];
+    CGRect frame = [self accessibilityFrame];
+    [properties addObject:[NSString stringWithFormat:@"frame = (%g %g; %g %g)", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height]];
+    if ([self.accessibilityLabel length]) {
+        [properties addObject:[NSString stringWithFormat:@"label = '%@'", [self.accessibilityLabel slStringByEscapingForJavaScriptLiteral]]];
+    }
+    if ([self respondsToSelector:@selector(accessibilityIdentifier)]) {
+        NSString *identifier = [(id)self accessibilityIdentifier];
+        if ([identifier length]) {
+            [properties addObject:[NSString stringWithFormat:@"id = '%@'", [identifier slStringByEscapingForJavaScriptLiteral]]];
+        }
+    }
+    if ([self.accessibilityValue length]) {
+        [properties addObject:[NSString stringWithFormat:@"value = '%@'", [self.accessibilityValue slStringByEscapingForJavaScriptLiteral]]];
+    }
+
+    UIAccessibilityTraits traits = self.accessibilityTraits;
+    NSMutableArray *traitNames = [NSMutableArray array];
+    if (traits & UIAccessibilityTraitButton)                  [traitNames addObject:@"Button"];
+    if (traits & UIAccessibilityTraitLink)                    [traitNames addObject:@"Link"];
+    if (traits & UIAccessibilityTraitHeader)                  [traitNames addObject:@"Header"];
+    if (traits & UIAccessibilityTraitSearchField)             [traitNames addObject:@"Search Field"];
+    if (traits & UIAccessibilityTraitImage)                   [traitNames addObject:@"Image"];
+    if (traits & UIAccessibilityTraitSelected)                [traitNames addObject:@"Selected"];
+    if (traits & UIAccessibilityTraitPlaysSound)              [traitNames addObject:@"Plays Sound"];
+    if (traits & UIAccessibilityTraitKeyboardKey)             [traitNames addObject:@"Keyboard Key"];
+    if (traits & UIAccessibilityTraitStaticText)              [traitNames addObject:@"Static Text"];
+    if (traits & UIAccessibilityTraitSummaryElement)          [traitNames addObject:@"Summary Element"];
+    if (traits & UIAccessibilityTraitNotEnabled)              [traitNames addObject:@"Not Enabled"];
+    if (traits & UIAccessibilityTraitUpdatesFrequently)       [traitNames addObject:@"Updates Frequently"];
+    if (traits & UIAccessibilityTraitStartsMediaSession)      [traitNames addObject:@"Starts Media Session"];
+    if (traits & UIAccessibilityTraitAdjustable)              [traitNames addObject:@"Adjustable"];
+    if (traits & UIAccessibilityTraitAllowsDirectInteraction) [traitNames addObject:@"Allows Direct Interaction"];
+    if (traits & UIAccessibilityTraitCausesPageTurn)          [traitNames addObject:@"Causes Page Turn"];
+
+    if ([traitNames count]) {
+        [properties addObject:[NSString stringWithFormat:@"traits = (%@)", [traitNames componentsJoinedByString:@", "]]];
+    }
+    if (self.isAccessibilityElement) {
+        [properties addObject:@"accessibilityElement = YES"];
+    }
+    return [NSString stringWithFormat:@"<%@>", [properties componentsJoinedByString:@"; "]];
+}
+
+/**
+ This method does not use [NSObject slChildAccessibilityElements] because it needs to visually
+ differentiate between UIViews and UIAccessibilityContainers. However, it should display elements
+ in the same order.
+ */
+- (NSString *)slRecursiveAccessibilityDescription {
+    NSMutableString *recursiveDescription = [[self slAccessibilityDescription] mutableCopy];
+
+    NSInteger count = [self accessibilityElementCount];
+    if (count != NSNotFound && count > 0) {
+        for (NSInteger i = 0; i < count; i++) {
+            id element = [self accessibilityElementAtIndex:i];
+            NSString *description = [element slRecursiveAccessibilityDescription];
+            [recursiveDescription appendFormat:@"\n  + %@", [description stringByReplacingOccurrencesOfString:@"\n" withString:@"\n  + "]];
+        }
+    }
+
+    if ([self isKindOfClass:[UIView class]]) {
+        for (UIView *view in [(UIView *)self subviews]) {
+            NSString *description = [view slRecursiveAccessibilityDescription];
+            [recursiveDescription appendFormat:@"\n  | %@", [description stringByReplacingOccurrencesOfString:@"\n" withString:@"\n  | "]];
+        }
+    }
+
+    return recursiveDescription;
+}
+
+#pragma mark - Private NSObject (SLAccessibility) methods
 
 - (NSArray *)accessibilityPathToElement:(SLElement *)element favoringUISubviews:(BOOL)favoringUISubviews {
     if ([element matchesObject:self]) {
@@ -131,6 +311,27 @@
         }
     }
     return nil;
+}
+
+- (NSArray *)slChildAccessibilityElementsFavoringUISubviews:(BOOL)favoringUISubviews {
+    NSMutableArray *children = [NSMutableArray array];
+    NSInteger count = [self accessibilityElementCount];
+    if (count != NSNotFound && count > 0) {
+        for (NSInteger i = 0; i < count; i++) {
+            [children addObject:[self accessibilityElementAtIndex:i]];
+        }
+    }
+    return children;
+}
+
+- (NSObject *)accessibilityParent {
+    if ([self isKindOfClass:[UIView class]]) {
+        return [(UIView *)self superview];
+    } else if ([self isKindOfClass:[UIAccessibilityElement class]]) {
+        return [(UIAccessibilityElement *)self accessibilityContainer];
+    } else {
+        return nil;
+    }
 }
 
 - (BOOL)shouldAppearInAccessibilityHierarchy {
@@ -158,7 +359,6 @@
     return NO;
 }
 
-
 - (BOOL)shouldAppearInUIViewAccessibilityHierarchy {
     BOOL shouldAppear = [self shouldAppearInAccessibilityHierarchy];
     if (shouldAppear) {
@@ -171,7 +371,6 @@
     
     return NO;
 }
-
 
 - (BOOL)elementMockingSelfShouldAppearInAccessibilityHierarchy {
     BOOL shouldAppear = [self shouldAppearInAccessibilityHierarchy];
@@ -186,9 +385,6 @@
     return NO;
 }
 
-
-// Elements matching these accessibility traits have been shown to exist in
-// UIAutomation's accessibility hierarchy by trial and error.
 - (BOOL)accessibilityTraitsForcePresenceInAccessibilityHierarchy {
     UIAccessibilityTraits traits = self.accessibilityTraits;
     return ((traits & UIAccessibilityTraitButton) ||
@@ -198,10 +394,6 @@
             (traits & UIAccessibilityTraitStaticText));
 }
 
-
-// This method determines whether or not the object is descendent from any class within
-// a set of classes that will always appear in the accessibility hierarchy, regardless of
-// their accessibility identification.
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
     // UIWebBrowserView is a private api class that appears to be a special case, they will
     // always exist in the accessibility hierarchy. We identify them by their superviews and
@@ -225,39 +417,8 @@
     return (isWebBrowserView || isPopover);
 }
 
-
-// This method determines whether or not the object is descendent from any class within
-// a set of classes whose mock objects will always appear in the accessibility hierarchy
-// regardless of their accessibility identification
 - (BOOL)classForcesPresenceOfMockingViewsInAccessibilityHierarchy {
     return NO;
-}
-
-             
-- (NSArray *)slChildAccessibilityElementsFavoringUISubviews:(BOOL)favoringUISubviews {
-    NSMutableArray *children = [NSMutableArray array];
-    NSInteger count = [self accessibilityElementCount];
-    if (count != NSNotFound && count > 0) {
-        for (NSInteger i = 0; i < count; i++) {
-            [children addObject:[self accessibilityElementAtIndex:i]];
-        }
-    }
-    return children;
-}
-
-
-// This method is meant to provide an inverse to slChildAccessibilityElementsFavoringUISubviews:
-// not as an inverse of UIAutomation's accessibility hierarchy. Objects returned from this method
-// come with no guarantee regarding their accessibility identification or existence in the
-// accessibility hierarchy.
-- (NSObject *)accessibilityParent {
-    if ([self isKindOfClass:[UIView class]]) {
-        return [(UIView *)self superview];
-    } else if ([self isKindOfClass:[UIAccessibilityElement class]]) {
-        return [(UIAccessibilityElement *)self accessibilityContainer];
-    } else {
-        return nil;
-    }
 }
 
 - (BOOL)element:(id)potentialMockElement isMockingViewPathObject:(id)viewPathObject {
@@ -279,99 +440,15 @@
     return isMocking;
 }
 
-
-- (NSString *)slAccessibilityDescription {
-    NSInteger count = [self accessibilityElementCount];
-    if (![self isAccessibilityElement] && (count == NSNotFound || count == 0) && ![self respondsToSelector:@selector(accessibilityIdentifier)]) {
-        return [NSString stringWithFormat:@"<%@: %p; (not accessible)>", NSStringFromClass([self class]), self];
-    }
-    
-    // Build a semicolon separated list of properties
-    NSMutableArray *properties = [NSMutableArray array];
-    
-    [properties addObject:[NSString stringWithFormat:@"%@: %p", NSStringFromClass([self class]), self]];
-    CGRect frame = [self accessibilityFrame];
-    [properties addObject:[NSString stringWithFormat:@"frame = (%g %g; %g %g)", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height]];
-    if ([self.accessibilityLabel length]) {
-        [properties addObject:[NSString stringWithFormat:@"label = '%@'", [self.accessibilityLabel slStringByEscapingForJavaScriptLiteral]]];
-    }
-    if ([self respondsToSelector:@selector(accessibilityIdentifier)]) {
-        NSString *identifier = [(id)self accessibilityIdentifier];
-        if ([identifier length]) {
-            [properties addObject:[NSString stringWithFormat:@"id = '%@'", [identifier slStringByEscapingForJavaScriptLiteral]]];
-        }
-    }
-    if ([self.accessibilityValue length]) {
-        [properties addObject:[NSString stringWithFormat:@"value = '%@'", [self.accessibilityValue slStringByEscapingForJavaScriptLiteral]]];
-    }
-    
-    UIAccessibilityTraits traits = self.accessibilityTraits;
-    NSMutableArray *traitNames = [NSMutableArray array];
-    if (traits & UIAccessibilityTraitButton)                  [traitNames addObject:@"Button"];
-    if (traits & UIAccessibilityTraitLink)                    [traitNames addObject:@"Link"];
-    if (traits & UIAccessibilityTraitHeader)                  [traitNames addObject:@"Header"];
-    if (traits & UIAccessibilityTraitSearchField)             [traitNames addObject:@"Search Field"];
-    if (traits & UIAccessibilityTraitImage)                   [traitNames addObject:@"Image"];
-    if (traits & UIAccessibilityTraitSelected)                [traitNames addObject:@"Selected"];
-    if (traits & UIAccessibilityTraitPlaysSound)              [traitNames addObject:@"Plays Sound"];
-    if (traits & UIAccessibilityTraitKeyboardKey)             [traitNames addObject:@"Keyboard Key"];
-    if (traits & UIAccessibilityTraitStaticText)              [traitNames addObject:@"Static Text"];
-    if (traits & UIAccessibilityTraitSummaryElement)          [traitNames addObject:@"Summary Element"];
-    if (traits & UIAccessibilityTraitNotEnabled)              [traitNames addObject:@"Not Enabled"];
-    if (traits & UIAccessibilityTraitUpdatesFrequently)       [traitNames addObject:@"Updates Frequently"];
-    if (traits & UIAccessibilityTraitStartsMediaSession)      [traitNames addObject:@"Starts Media Session"];
-    if (traits & UIAccessibilityTraitAdjustable)              [traitNames addObject:@"Adjustable"];
-    if (traits & UIAccessibilityTraitAllowsDirectInteraction) [traitNames addObject:@"Allows Direct Interaction"];
-    if (traits & UIAccessibilityTraitCausesPageTurn)          [traitNames addObject:@"Causes Page Turn"];
-    
-    if ([traitNames count]) {
-        [properties addObject:[NSString stringWithFormat:@"traits = (%@)", [traitNames componentsJoinedByString:@", "]]];
-    }
-    if (self.isAccessibilityElement) {
-        [properties addObject:@"accessibilityElement = YES"];
-    }
-    return [NSString stringWithFormat:@"<%@>", [properties componentsJoinedByString:@"; "]];
-}
-
-/**
- This method does not use [NSObject slChildAccessibilityElements] because it needs to visually
- differentiate between UIViews and UIAccessibilityContainers. However, it should display elements
- in the same order.
- */
-- (NSString *)slRecursiveAccessibilityDescription {
-    NSMutableString *recursiveDescription = [[self slAccessibilityDescription] mutableCopy];
-    
-    NSInteger count = [self accessibilityElementCount];
-    if (count != NSNotFound && count > 0) {
-        for (NSInteger i = 0; i < count; i++) {
-            id element = [self accessibilityElementAtIndex:i];
-            NSString *description = [element slRecursiveAccessibilityDescription];
-            [recursiveDescription appendFormat:@"\n  + %@", [description stringByReplacingOccurrencesOfString:@"\n" withString:@"\n  + "]];
-        }
-    }
-    
-    if ([self isKindOfClass:[UIView class]]) {
-        for (UIView *view in [(UIView *)self subviews]) {
-            NSString *description = [view slRecursiveAccessibilityDescription];
-            [recursiveDescription appendFormat:@"\n  | %@", [description stringByReplacingOccurrencesOfString:@"\n" withString:@"\n  | "]];
-        }
-    }
-    
-    return recursiveDescription;
-}
-
-
 - (void)setAccessibilityIdentifierWithStandardReplacement {
     if ([self respondsToSelector:@selector(setAccessibilityIdentifier:)]) {
         [self performSelector:@selector(setAccessibilityIdentifier:) withObject:[self standardAccessibilityIdentifierReplacement]];
     }
 }
 
-
 - (NSString *)standardAccessibilityIdentifierReplacement {
     return [NSString stringWithFormat:@"%@: %p", [self class], self];
 }
-
 
 - (void)resetAccessibilityInfoIfNecessaryWithPreviousIdentifier:(NSString *)previousIdentifier previousLabel:(NSString *)previousLabel {
     
@@ -387,11 +464,10 @@
     }
 }
 
-
 @end
 
 
-#pragma mark -
+#pragma mark - NSObject (SLAccessibility) Overrides
 
 @implementation UIAccessibilityElement (SLAccessibility)
 
@@ -440,9 +516,7 @@
 @end
 
 
-
 #pragma mark -
-
 
 @implementation UITableViewCell (SLAccessibility)
 - (BOOL)classForcesPresenceOfMockingViewsInAccessibilityHierarchy {
@@ -482,7 +556,6 @@
 
 
 #pragma mark -
-#pragma mark UITableView custom slAccessibilityName
 
 @implementation UITableView (SLAccessibility)
 
@@ -503,12 +576,13 @@
 
 #pragma mark - SLAccessibilityPath Implementation
 
-@implementation SLAccessibilityPath
-@synthesize mockViewPath=_mockViewPath, viewPath=_viewPath;
+@implementation SLAccessibilityPath {
+    NSArray *_accessibilityElementPath, *_viewPath;
+}
 
-+ (NSArray *)sanitizeUIViewAccessibilityPath:(NSArray *)accessibilityPath {
++ (NSArray *)sanitizeViewPath:(NSArray *)viewPath {
     NSMutableArray *trimmedAccessibilityPath = [[NSMutableArray alloc] init];
-    [accessibilityPath enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+    [viewPath enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         // We will need the UIView accessibility path to contain any views that will
         // be directly in the accessibility hierarchy, as well as any elements that are
         // mocked by elements that will be directly in the accessibility hierarchy
@@ -519,60 +593,76 @@
     return trimmedAccessibilityPath;
 }
 
-
-+ (NSArray *)sanitizeMockViewAccessibilityPath:(NSArray *)mockAccessibilityPath
-                  usingUIViewAccessibilityPath:(NSArray *)viewAccessibilityPath {
++ (NSArray *)sanitizeAccessibilityElementPath:(NSArray *)accessibilityElementPath
+                                usingViewPath:(NSArray *)viewPath {
     NSMutableArray *sanitizedArray = [[NSMutableArray alloc] init];
 
-    // Iterate through the elements of the mockAccessibilityPath. Each view in the path will
-    // be included in the accessibility hierarchy if it returns YES from shouldAppearInUIViewAccessibilityHierarchy.
-    // Each UIAccessibilityElement that mocks a view will be included in the accessibility hierachy if the view
-    // that it mocks returns YES from elementMockingSelfShouldAppearInAccessibilityHierarchy. Each UIAccessibility
-    // element that does not mock a view will be included in the accessibility hierarchy if it returns YES from
-    // shouldAppearInAccessibilityHierarchy.
+    /* 
+     Iterate through the objects of the accessibilityElementPath
+     to determine if they should be included in the accessibility hierarchy:
 
-    __block int viewAccessibilityPathIndex = 0;
-    [mockAccessibilityPath enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        id objectFromMockPath = obj;
-        id currentViewPathObject =  ([viewAccessibilityPath count] > viewAccessibilityPathIndex ? [viewAccessibilityPath objectAtIndex:viewAccessibilityPathIndex] : nil);
+         * Each view in the path will be included in the accessibility hierarchy
+         if it returns YES from shouldAppearInUIViewAccessibilityHierarchy.
 
-        // For each objectFromMockPath, if it mocks a view, that view will be in viewAccessibilityPath. Elements from the mockAccessibilityPath that do not mock views will
-        // exist at the end of the mockAccessibilityPath, and will also exist at the end of the viewAccessibilityPath.
-        if (![objectFromMockPath isKindOfClass:[UIView class]]) {
-            while (![self element:objectFromMockPath isMockingViewPathObject:currentViewPathObject] && currentViewPathObject) {
-                viewAccessibilityPathIndex++;
-                currentViewPathObject = ([viewAccessibilityPath count] > viewAccessibilityPathIndex ? [viewAccessibilityPath objectAtIndex:viewAccessibilityPathIndex] : nil);
+         * Each UIAccessibilityElement that mocks a view will be included in the
+         accessibility hierachy if the view that it mocks returns YES from
+         elementMockingSelfShouldAppearInAccessibilityHierarchy.
+
+         * Each UIAccessibilityElement that does not mock a view may yet be
+         included in the accessibility hierarchy if it returns YES from
+         shouldAppearInAccessibilityHierarchy.
+
+     */
+
+    __block int viewPathIndex = 0;
+    [accessibilityElementPath enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        id objectFromAccessibilityElementPath = obj;
+        id currentViewPathObject =  ([viewPath count] > viewPathIndex ?
+                                        [viewPath objectAtIndex:viewPathIndex] : nil);
+
+        // For each objectFromAccessibilityElementPath, if it mocks a view,
+        // that view will be in viewAccessibilityPath. Elements from the
+        // accessibilityElementPath that do not mock views (i.e. user-created
+        // accessibility elements) will exist at the end of accessibilityElementPath,
+        // and will also exist at the end of viewAccessibilityPath.
+        if (![objectFromAccessibilityElementPath isKindOfClass:[UIView class]]) {
+            while (![self element:objectFromAccessibilityElementPath isMockingViewPathObject:currentViewPathObject] && currentViewPathObject) {
+                viewPathIndex++;
+                currentViewPathObject = ([viewPath count] > viewPathIndex ?
+                                            [viewPath objectAtIndex:viewPathIndex] : nil);
             }
         }
 
-        if ([objectFromMockPath isKindOfClass:[UIView class]]) {
-            viewAccessibilityPathIndex++;
-            if ([objectFromMockPath shouldAppearInUIViewAccessibilityHierarchy]) {
+        if ([objectFromAccessibilityElementPath isKindOfClass:[UIView class]]) {
+            viewPathIndex++;
+            if ([objectFromAccessibilityElementPath shouldAppearInUIViewAccessibilityHierarchy]) {
                 [sanitizedArray addObject:obj];
             }
-
-        } else if ([self element:objectFromMockPath isMockingViewPathObject:currentViewPathObject]) {
-            viewAccessibilityPathIndex++;
+            
+        } else if ([self element:objectFromAccessibilityElementPath isMockingViewPathObject:currentViewPathObject]) {
+            viewPathIndex++;
             if ([currentViewPathObject elementMockingSelfShouldAppearInAccessibilityHierarchy]) {
-                [sanitizedArray addObject:objectFromMockPath];
+                [sanitizedArray addObject:objectFromAccessibilityElementPath];
             }
 
-            // If the currentViewPathObject is nil or a UIAccessibilityElement, then objectFromMockPath does not mock a view
-        } else if ((![currentViewPathObject isKindOfClass:[UIView class]] && [objectFromMockPath shouldAppearInAccessibilityHierarchy])){
-            [sanitizedArray addObject:objectFromMockPath];
+            // If the currentViewPathObject is nil or a UIAccessibilityElement,
+            // then objectFromAccessibilityElementPath does not mock a view
+        } else if ((![currentViewPathObject isKindOfClass:[UIView class]] &&
+                    [objectFromAccessibilityElementPath shouldAppearInAccessibilityHierarchy])){
+            [sanitizedArray addObject:objectFromAccessibilityElementPath];
         }
     }];
     return sanitizedArray;
 }
 
-- (instancetype)initWithMockViewPath:(NSArray *)mockViewPath viewPath:(NSArray *)viewPath {
+- (instancetype)initWithAccessibilityElementPath:(NSArray *)accessibilityElementPath viewPath:(NSArray *)viewPath {
     self = [super init];
     if (self) {
-        _mockViewPath = [[self class] sanitizeMockViewAccessibilityPath:mockViewPath
-                                           usingUIViewAccessibilityPath:viewPath];
-        _viewPath = [[self class] sanitizeUIViewAccessibilityPath:viewPath];
+        _accessibilityElementPath = [[self class] sanitizeAccessibilityElementPath:accessibilityElementPath
+                                                                     usingViewPath:viewPath];
+        _viewPath = [[self class] sanitizeViewPath:viewPath];
 
-        if (![_mockViewPath count] || ![_viewPath count]) {
+        if (![_accessibilityElementPath count] || ![_viewPath count]) {
             self = nil;
             return self;
         }
@@ -581,8 +671,10 @@
 }
 
 - (void)examineLastPathComponent:(void (^)(NSObject *lastPathComponent))block {
+    // examine the last object in the mock view path because that's the path
+    // actually used by UIAutomation
     dispatch_sync(dispatch_get_main_queue(), ^{
-        block([self.mockViewPath lastObject]);
+        block([_accessibilityElementPath lastObject]);
     });
 }
 
@@ -605,7 +697,7 @@
         // before they are reassigned. This is because for some elements, these
         // values depend on their parent elements' values, and will change
         // when the parent elements' values are updated.
-        for (NSObject *obj in self.viewPath) {
+        for (NSObject *obj in _viewPath) {
             NSAssert([obj respondsToSelector:@selector(accessibilityIdentifier)],
                      @"elements in the view path must conform to UIAccessibilityIdentification");
 
@@ -624,7 +716,7 @@
 
         // The path's elements' accessibility information is updated in reverse order,
         // because of the issue described in the above note.
-        for (NSObject *obj in [self.viewPath reverseObjectEnumerator]) {
+        for (NSObject *obj in [_viewPath reverseObjectEnumerator]) {
             NSAssert([obj respondsToSelector:@selector(accessibilityIdentifier)],
                      @"elements in the view path must conform to UIAccessibilityIdentification");
             [obj setAccessibilityIdentifierWithStandardReplacement];
@@ -644,7 +736,7 @@
     dispatch_sync(dispatch_get_main_queue(), ^{
         // The path's elements' accessibility information is updated in reverse order,
         // because of the issue listed in the above note.
-        [self.viewPath enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [_viewPath enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             NSObject *identifierObj = [previousAccessorPathIdentifiers objectAtIndex:idx];
             NSString *identifier = ([identifierObj isEqual:[NSNull null]] ? nil : (NSString *)identifierObj);
             NSObject *labelObj = [previousAccessorPathLabels objectAtIndex:idx];
@@ -662,7 +754,7 @@
         // on the elements of the mock view path instead of the view path because
         // the mock view path contains the actual elements UIAutomation will
         // interact with, and it may be shorter than the view path.
-        for (NSObject *obj in self.mockViewPath) {
+        for (NSObject *obj in _accessibilityElementPath) {
             NSAssert([obj respondsToSelector:@selector(accessibilityIdentifier)],
                      @"elements in the mock view path must conform to UIAccessibilityIdentification");
 
