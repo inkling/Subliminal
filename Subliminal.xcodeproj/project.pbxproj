@@ -31,6 +31,7 @@
 		F0271B00162E0B950098F5F2 /* SLTestController+AppContext.m in Sources */ = {isa = PBXBuildFile; fileRef = F0271AFE162E0B950098F5F2 /* SLTestController+AppContext.m */; };
 		F05C4F90171406EF00A381BC /* SLTerminal+ConvenienceMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = F05C4F8E171406EF00A381BC /* SLTerminal+ConvenienceMethods.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F05C4F91171406EF00A381BC /* SLTerminal+ConvenienceMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = F05C4F8F171406EF00A381BC /* SLTerminal+ConvenienceMethods.m */; };
+		F03C55E4170C32BE00079021 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0AC809716BB299500C5D5C0 /* CoreGraphics.framework */; };
 		F0695D8F16011515000B05D0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8E16011515000B05D0 /* Foundation.framework */; };
 		F0695DE4160138DF000B05D0 /* SLElement.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DD8160138DF000B05D0 /* SLElement.m */; };
 		F0695DE5160138DF000B05D0 /* SLLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DDB160138DF000B05D0 /* SLLogger.m */; };
@@ -304,6 +305,7 @@
 				F0D2406A1683F9800031B67C /* libSubliminal.a in Frameworks */,
 				F08B86EB16859C8D00C4FE44 /* libOCMock.a in Frameworks */,
 				F0D240541683F7130031B67C /* SenTestingKit.framework in Frameworks */,
+				F03C55E4170C32BE00079021 /* CoreGraphics.framework in Frameworks */,
 				F0D240551683F7130031B67C /* UIKit.framework in Frameworks */,
 				F0D240561683F7130031B67C /* Foundation.framework in Frameworks */,
 			);
