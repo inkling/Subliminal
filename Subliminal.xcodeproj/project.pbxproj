@@ -215,6 +215,7 @@
 		F077D70C16D9D77900908FF5 /* SLElementVisibilityTestCovered.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestCovered.xib; sourceTree = "<group>"; };
 		F07DA32B16E43AD3004C2282 /* SLAlertTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAlertTest.m; sourceTree = "<group>"; };
 		F07DA32C16E43AD3004C2282 /* SLAlertTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAlertTestViewController.m; sourceTree = "<group>"; };
+		F081539D170CBF550053B536 /* Integration Tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Integration Tests.xcconfig"; sourceTree = "<group>"; };
 		F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OCMock.xcodeproj; path = OCMock/Source/OCMock.xcodeproj; sourceTree = "<group>"; };
 		F08B87F01685A00400C4FE44 /* SharedSLTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedSLTests.h; sourceTree = "<group>"; };
 		F08B87F11685A00400C4FE44 /* SharedSLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharedSLTests.m; sourceTree = "<group>"; };
@@ -376,6 +377,7 @@
 		F0695D8016011515000B05D0 = {
 			isa = PBXGroup;
 			children = (
+				F081539D170CBF550053B536 /* Integration Tests.xcconfig */,
 				F0695DD016013891000B05D0 /* Sources */,
 				F0D240571683F7130031B67C /* Unit Tests */,
 				F0AC809916BB299500C5D5C0 /* Integration Tests */,
@@ -1016,6 +1018,7 @@
 		};
 		F0AC80AB16BB299500C5D5C0 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F081539D170CBF550053B536 /* Integration Tests.xcconfig */;
 			buildSettings = {
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -1026,13 +1029,13 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Integration Tests/Subliminal Integration Tests-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
-					"\"$(BUILT_PRODUCTS_DIR)\"",
 					"$(inherited)",
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
+					"\"$(BUILT_PRODUCTS_DIR)\"",
 				);
-				INFOPLIST_FILE = "Integration Tests/Subliminal Integration Tests-Info.plist";
+				INFOPLIST_FILE = "Integration Tests/$(TARGET_NAME)-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "Subliminal (Integration Tests)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1040,6 +1043,7 @@
 		};
 		F0AC80AC16BB299500C5D5C0 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F081539D170CBF550053B536 /* Integration Tests.xcconfig */;
 			buildSettings = {
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -1050,13 +1054,13 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Integration Tests/Subliminal Integration Tests-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
-					"\"$(BUILT_PRODUCTS_DIR)\"",
 					"$(inherited)",
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
+					"\"$(BUILT_PRODUCTS_DIR)\"",
 				);
-				INFOPLIST_FILE = "Integration Tests/Subliminal Integration Tests-Info.plist";
+				INFOPLIST_FILE = "Integration Tests/$(TARGET_NAME)-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "Subliminal (Integration Tests)";
 				WRAPPER_EXTENSION = app;
 			};

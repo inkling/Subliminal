@@ -1,0 +1,29 @@
+//
+//  Integration Tests.xcconfig
+//  Subliminal
+//
+//  This file is to be the basis of any Xcode build configuration
+//  used to build a Subliminal Integration Tests target.
+//
+//  Created by Jeffrey Wear on 4/3/13.
+//  Copyright (c) 2013 Inkling. All rights reserved.
+//
+
+// Rename the duplicated target's product
+// from the default "<source target name> copy"
+PRODUCT_NAME = $(PROJECT_NAME) ($(TARGET_NAME))
+
+// Rename the duplicated target's info.plist file
+// from the default "<source target name> copy-Info.plist"
+// This assumes that the file has been moved to this path
+INFOPLIST_FILE = $(TARGET_NAME)/$(TARGET_NAME)-Info.plist
+
+// Locate Subliminal's headers
+HEADER_SEARCH_PATHS = $(inherited) $(BUILT_PRODUCTS_DIR)/usr/local/include
+
+// Link Subliminal's categories
+OTHER_LDFLAGS = $(inherited) -ObjC
+
+// Add an "INTEGRATION_TESTING" preprocessor flag
+// so that you can conditionally add testing code throughout your app
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) INTEGRATION_TESTING=1
