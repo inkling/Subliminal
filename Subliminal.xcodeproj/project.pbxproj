@@ -15,7 +15,7 @@
 		0F21788916AE08F700C46068 /* SLMultiLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F21788716AE08F700C46068 /* SLMultiLogger.m */; };
 		CA75E78216697A1200D57E92 /* SLDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = CA75E78016697A1200D57E92 /* SLDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CA75E78516697C0000D57E92 /* SLDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = CA75E78116697A1200D57E92 /* SLDevice.m */; };
-		CAC388051641CD7500F995F9 /* NSString+SLJavaScript.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC388031641CD7500F995F9 /* NSString+SLJavaScript.h */; };
+		CAC388051641CD7500F995F9 /* NSString+SLJavaScript.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC388031641CD7500F995F9 /* NSString+SLJavaScript.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CAC388061641CD7500F995F9 /* NSString+SLJavaScript.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC388041641CD7500F995F9 /* NSString+SLJavaScript.m */; };
 		CAC3883F1643503C00F995F9 /* SLAccessibility.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC3883D1643503C00F995F9 /* SLAccessibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CAC388401643503C00F995F9 /* SLAccessibility.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC3883E1643503C00F995F9 /* SLAccessibility.m */; };
