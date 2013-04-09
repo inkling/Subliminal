@@ -45,10 +45,12 @@
 - (instancetype)initWithTestCaseWithSelector:(SEL)testCase {
     self = [super initWithTestCaseWithSelector:testCase];
     if (self) {
-        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showAlertWithTitle:)];
-        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showAlertWithInfo:)];
-        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(dismissActiveAlert)];
-        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(titleOfLastButtonClicked)];
+        SLTestController *testController = [SLTestController sharedTestController];
+        [testController registerTarget:self forAction:@selector(showAlertWithTitle:)];
+        [testController registerTarget:self forAction:@selector(showAlertWithInfo:)];
+        [testController registerTarget:self forAction:@selector(dismissActiveAlertAndClearTitleOfLastButtonClicked)];
+        [testController registerTarget:self forAction:@selector(isAlertActive)];
+        [testController registerTarget:self forAction:@selector(titleOfLastButtonClicked)];
     }
     return self;
 }
@@ -72,7 +74,7 @@
     [_activeAlertView show];
 }
 
-- (void)dismissActiveAlert {
+- (void)dismissActiveAlertAndClearTitleOfLastButtonClicked {
     if (_activeAlertView.numberOfButtons == 0) {
         // the alert shown by testDismissThrowsAbsentBothCancelAndDefaultButtons has no buttons
         // it appears that it can be dismissed with dismissWithClickedButtonIndex:0 even so,
@@ -81,6 +83,11 @@
     }
     [_activeAlertView dismissWithClickedButtonIndex:0 animated:YES];
     _activeAlertView = nil;
+    _titleOfLastButtonClicked = nil;
+}
+
+- (NSNumber *)isAlertActive {
+    return @(_activeAlertView != nil);
 }
 
 - (NSString *)titleOfLastButtonClicked {
