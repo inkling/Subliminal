@@ -256,25 +256,6 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return isVisible;
 }
 
-
-- (BOOL)waitFor:(NSTimeInterval)timeout untilTrue:(NSString *)condition {
-    NSString *javascript = [NSString stringWithFormat:
-      @"(function () {"
-      @"    var cond = function() { return (%@); };"
-      @"    var timeout = %g;"
-      @"    var retryDelay = %g;"
-      @""
-      @"    var startTime = (Date.now() / 1000);"
-      @"    var condTrue = false;"
-      @"    while (!(condTrue = cond()) && (((Date.now() / 1000) - startTime) < timeout)) {"
-      @"        UIATarget.localTarget().delay(retryDelay);"
-      @"    };"
-      @"    return (condTrue ? 'YES' : 'NO')"
-      @"})()", condition, timeout, SLElementWaitRetryDelay];
-    
-    return [[[SLTerminal sharedTerminal] eval:javascript] boolValue];
-}
-
 - (void)waitUntilVisible:(NSTimeInterval)timeout {
     [self performActionWithUIASelf:^(NSString *uiaSelf) {
         // We allow for the the element to be invalid upon waiting,
@@ -282,7 +263,9 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         // (Note that isVisible() actually returns NO, given an invalid element,
         // but this is safest (and matches Subliminal's semantics).)
         NSString *isValidAndVisible = [NSString stringWithFormat:@"%@.isValid() && %@.isVisible()", uiaSelf, uiaSelf];
-        if (![self waitFor:timeout untilTrue:isValidAndVisible]) {
+        if (![[SLTerminal sharedTerminal] waitUntilTrue:isValidAndVisible
+                                             retryDelay:SLElementWaitRetryDelay
+                                                timeout:timeout]) {
             [NSException raise:SLElementNotVisibleException format:@"Element %@ did not become visible within %g seconds.", self, timeout];
         }
     }];
@@ -299,7 +282,9 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         // (It doesn't--it returns NO, given an invalid element--but this is safest
         // (and matches Subliminal's semantics).)
         NSString *isInvalidOrInvisible = [NSString stringWithFormat:@"!%@.isValid() || !%@.isVisible()", uiaSelf, uiaSelf];
-        if (![self waitFor:timeout untilTrue:isInvalidOrInvisible]) {
+        if (![[SLTerminal sharedTerminal] waitUntilTrue:isInvalidOrInvisible
+                                             retryDelay:SLElementWaitRetryDelay
+                                                timeout:timeout]) {
             [NSException raise:SLElementVisibleException format:@"Element %@ was still visible after %g seconds.", self, timeout];
         }
     }];

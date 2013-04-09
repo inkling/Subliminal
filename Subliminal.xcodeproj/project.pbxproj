@@ -29,6 +29,8 @@
 		F024BE33168BD70900708350 /* TestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = F024BE32168BD70900708350 /* TestUtilities.m */; };
 		F0271AFF162E0B950098F5F2 /* SLTestController+AppContext.h in Headers */ = {isa = PBXBuildFile; fileRef = F0271AFD162E0B950098F5F2 /* SLTestController+AppContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0271B00162E0B950098F5F2 /* SLTestController+AppContext.m in Sources */ = {isa = PBXBuildFile; fileRef = F0271AFE162E0B950098F5F2 /* SLTestController+AppContext.m */; };
+		F05C4F90171406EF00A381BC /* SLTerminal+ConvenienceMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = F05C4F8E171406EF00A381BC /* SLTerminal+ConvenienceMethods.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F05C4F91171406EF00A381BC /* SLTerminal+ConvenienceMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = F05C4F8F171406EF00A381BC /* SLTerminal+ConvenienceMethods.m */; };
 		F0695D8F16011515000B05D0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8E16011515000B05D0 /* Foundation.framework */; };
 		F0695DE4160138DF000B05D0 /* SLElement.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DD8160138DF000B05D0 /* SLElement.m */; };
 		F0695DE5160138DF000B05D0 /* SLLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DDB160138DF000B05D0 /* SLLogger.m */; };
@@ -188,6 +190,8 @@
 		F024BE32168BD70900708350 /* TestUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestUtilities.m; sourceTree = "<group>"; };
 		F0271AFD162E0B950098F5F2 /* SLTestController+AppContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLTestController+AppContext.h"; sourceTree = "<group>"; };
 		F0271AFE162E0B950098F5F2 /* SLTestController+AppContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SLTestController+AppContext.m"; sourceTree = "<group>"; };
+		F05C4F8E171406EF00A381BC /* SLTerminal+ConvenienceMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLTerminal+ConvenienceMethods.h"; sourceTree = "<group>"; };
+		F05C4F8F171406EF00A381BC /* SLTerminal+ConvenienceMethods.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SLTerminal+ConvenienceMethods.m"; sourceTree = "<group>"; };
 		F0695D8B16011515000B05D0 /* libSubliminal.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSubliminal.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0695D8E16011515000B05D0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F0695DD7160138DF000B05D0 /* SLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLElement.h; sourceTree = "<group>"; };
@@ -425,6 +429,8 @@
 				F0695DE1160138DF000B05D0 /* SLTest.m */,
 				F0695DDE160138DF000B05D0 /* SLTerminal.h */,
 				F0695DDF160138DF000B05D0 /* SLTerminal.m */,
+				F05C4F8E171406EF00A381BC /* SLTerminal+ConvenienceMethods.h */,
+				F05C4F8F171406EF00A381BC /* SLTerminal+ConvenienceMethods.m */,
 				F0695DD6160138DF000B05D0 /* Interface Elements */,
 				F0695DD9160138DF000B05D0 /* Logging */,
 				CAC388011641CD4800F995F9 /* Categories */,
@@ -635,6 +641,7 @@
 				F0C07A4F1704009E00C93F93 /* SLWindow.h in Headers */,
 				F0C07A531704011400C93F93 /* SLKeyboard.h in Headers */,
 				F0C07A57170401E500C93F93 /* SLWebView.h in Headers */,
+				F05C4F90171406EF00A381BC /* SLTerminal+ConvenienceMethods.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -836,6 +843,7 @@
 				F0C07A501704009E00C93F93 /* SLWindow.m in Sources */,
 				F0C07A541704011400C93F93 /* SLKeyboard.m in Sources */,
 				F0C07A58170401E500C93F93 /* SLWebView.m in Sources */,
+				F05C4F91171406EF00A381BC /* SLTerminal+ConvenienceMethods.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
