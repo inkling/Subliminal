@@ -11,12 +11,45 @@
 #import "SLTerminal+ConvenienceMethods.h"
 #import "NSString+SLJavaScript.h"
 
+
 NSString *const SLAlertDidNotShowException = @"SLAlertDidNotShowException";
 
 const NSTimeInterval SLAlertHandlerWaitRetryDelay = 0.25;
-const NSTimeInterval SLAlertHandlerDefaultTimeout = 1.5;
+const NSTimeInterval SLAlertHandlerDefaultTimeout = 2.0;
+
 
 #pragma mark - SLAlertHandler
+
+// SLAlertDismissHandler has behavior identical to SLAlertHandler
+// --we just use the class to distinguish certain handlers from others
+@implementation SLAlertDismissHandler
+@end
+
+
+/**
+ SLAlertMultiHandler is an alert handler which handles a corresponding alert 
+ by performing the actions of a series of component handlers in succession.
+ */
+@interface SLAlertMultiHandler : SLAlertHandler
+
+/** The handlers whose actions the receiver will perform, in order. */
+@property (nonatomic, readonly) NSArray *handlers;
+
+/**
+ Initializes and returns a newly allocated multi-handler for the specified alert.
+ 
+ @param alert The alert to handle.
+ @param handlers The array of handlers whose actions to perform, in order, 
+ to handle alert.
+ @return An initialized multi-handler.
+ 
+ @exception NSInternalInconsistencyException if any of handlers do not handle 
+ alert.
+ */
+- (instancetype)initWithSLAlert:(SLAlert *)alert handlers:(NSArray *)handlers;
+
+@end
+
 
 @interface SLAlertHandler ()
 
@@ -53,9 +86,11 @@ const NSTimeInterval SLAlertHandlerDefaultTimeout = 1.5;
 @end
 
 @implementation SLAlertHandler {
+    @protected
     SLAlert *_alert;
     NSString *_UIAAlertHandler;
 
+    @private
     BOOL _hasBeenAdded;
 }
 
@@ -103,10 +138,17 @@ const NSTimeInterval SLAlertHandlerDefaultTimeout = 1.5;
 }
 
 + (void)addHandler:(SLAlertHandler *)handler {
-    // We don't use NSParameterAssert here because if it failed
-    // it'd leak the implementation (in the form of this condition) to the client
+    // We don't use NSParameterAsserts here because if they failed
+    // they'd leak the implementation (in the form of their conditions) to the client
     if (handler->_hasBeenAdded) {
         [NSException raise:NSInternalInconsistencyException format:@"Handler for alert %@ must not be added twice.", handler->_alert];
+    }
+    SLAlertHandler *lastHandler = handler;
+    while ([lastHandler isKindOfClass:[SLAlertMultiHandler class]]) {
+        lastHandler = [((SLAlertMultiHandler *)handler).handlers lastObject];
+    }
+    if (![lastHandler isKindOfClass:[SLAlertDismissHandler class]]) {
+        [NSException raise:NSInternalInconsistencyException format:@"Handler for alert %@ must dismiss alert.", handler->_alert];
     }
 
     NSString *alertHandler = [NSString stringWithFormat:@"{\
@@ -136,6 +178,9 @@ const NSTimeInterval SLAlertHandlerDefaultTimeout = 1.5;
              andUIAAlertHandler:(NSString *)UIAAlertHandler {
     self = [super init];
     if (self) {
+        NSParameterAssert(alert);
+        NSParameterAssert([UIAAlertHandler length]);
+
         _alert = alert;
         _UIAAlertHandler = UIAAlertHandler;
     }
@@ -207,6 +252,35 @@ const NSTimeInterval SLAlertHandlerDefaultTimeout = 1.5;
     }
 }
 
+- (SLAlertHandler *)andThen:(SLAlertHandler *)nextHandler {
+    return [[SLAlertMultiHandler alloc] initWithSLAlert:_alert handlers:@[ self, nextHandler ]];
+}
+
+@end
+
+@implementation SLAlertMultiHandler
+
+- (instancetype)initWithSLAlert:(SLAlert *)alert handlers:(NSArray *)handlers {
+    NSParameterAssert(alert);
+    NSParameterAssert([handlers count]);
+    
+    NSMutableString *UIAAlertHandler = [NSMutableString stringWithString:@"return"];
+    [handlers enumerateObjectsUsingBlock:^(SLAlertHandler *handler, NSUInteger idx, BOOL *stop) {
+        NSParameterAssert(handler->_alert == alert);
+        [UIAAlertHandler appendFormat:@" (function(alert){%@})(alert)", handler->_UIAAlertHandler];
+        if (idx < ([handlers count] - 1)) {
+            [UIAAlertHandler appendString:@" &&"];
+        }
+    }];
+    [UIAAlertHandler appendString:@";"];
+
+    self = [super initWithSLAlert:alert andUIAAlertHandler:UIAAlertHandler];
+    if (self) {
+        _handlers = [handlers copy];
+    }
+    return self;
+}
+
 @end
 
 
@@ -229,7 +303,7 @@ const NSTimeInterval SLAlertHandlerDefaultTimeout = 1.5;
 }
 
 - (SLAlertHandler *)dismiss {
-    return [[SLAlertHandler alloc] initWithSLAlert:self andUIAAlertHandler:[SLAlertHandler defaultUIAAlertHandler]];
+    return [[SLAlertDismissHandler alloc] initWithSLAlert:self andUIAAlertHandler:[SLAlertHandler defaultUIAAlertHandler]];
 }
 
 - (SLAlertHandler *)dismissWithButtonTitled:(NSString *)buttonTitle {
@@ -242,6 +316,35 @@ const NSTimeInterval SLAlertHandlerDefaultTimeout = 1.5;
                                         return false;\
                                      }\
                                  ", [buttonTitle slStringByEscapingForJavaScriptLiteral]];
+    return [[SLAlertDismissHandler alloc] initWithSLAlert:self andUIAAlertHandler:UIAAlertHandler];
+}
+
+- (SLAlertHandler *)setText:(NSString *)text ofFieldOfType:(SLAlertTextFieldType)fieldType {
+    NSString *elementType;
+    switch (fieldType) {
+        case SLAlertTextFieldTypeSecureText:
+        case SLAlertTextFieldTypePassword:
+            elementType = @"secureTextFields";
+            break;
+        case SLAlertTextFieldTypePlainText:
+        case SLAlertTextFieldTypeLogin:
+            elementType = @"textFields";
+            break;
+    }
+
+    // even in the case when two fields, login and password, are displayed,
+    // the password field is at index 0--because it is the only element of its type
+    NSUInteger elementIndex = 0;
+
+    NSString *UIAAlertHandler = [NSString stringWithFormat:@"\
+                                    var textField = alert.%@()[%u];\
+                                    if (textField.isValid()) {\
+                                        textField.setValue('%@');\
+                                        return true;\
+                                    } else {\
+                                        return false;\
+                                    }\
+                                 ", elementType, elementIndex, [text slStringByEscapingForJavaScriptLiteral]];
     return [[SLAlertHandler alloc] initWithSLAlert:self andUIAAlertHandler:UIAAlertHandler];
 }
 

@@ -17,6 +17,7 @@
 @implementation SLAlertTestViewController {
     UIAlertView *_activeAlertView;
     NSString *_titleOfLastButtonClicked;
+    NSString *_textEnteredIntoLastTextFieldAtIndex0, *_textEnteredIntoLastTextFieldAtIndex1;
 }
 
 - (void)loadViewForTestCase:(SEL)testCase {
@@ -51,6 +52,7 @@
         [testController registerTarget:self forAction:@selector(dismissActiveAlertAndClearTitleOfLastButtonClicked)];
         [testController registerTarget:self forAction:@selector(isAlertActive)];
         [testController registerTarget:self forAction:@selector(titleOfLastButtonClicked)];
+        [testController registerTarget:self forAction:@selector(textEnteredIntoLastTextFieldAtIndex:)];
     }
     return self;
 }
@@ -71,6 +73,12 @@
                                                  delegate:self
                                         cancelButtonTitle:info[@"cancel"]
                                         otherButtonTitles:info[@"other"], nil];
+    NSNumber *styleNumber = info[@"style"];
+    if (styleNumber) {
+        UIAlertViewStyle style;
+        [styleNumber getValue:&style];
+        _activeAlertView.alertViewStyle = style;
+    }
     [_activeAlertView show];
 }
 
@@ -94,8 +102,40 @@
     return _titleOfLastButtonClicked;
 }
 
+- (NSString *)textEnteredIntoLastTextFieldAtIndex:(NSNumber *)index {
+    switch ([index unsignedIntegerValue]) {
+        case 0:
+            return _textEnteredIntoLastTextFieldAtIndex0;
+            break;
+        case 1:
+            return _textEnteredIntoLastTextFieldAtIndex1;
+            break;
+        default:
+            [NSException raise:NSRangeException format:@"UIAlertViews have at max 2 text fields!"];
+            return nil;
+            break;
+    }
+}
+
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     _titleOfLastButtonClicked = [alertView buttonTitleAtIndex:buttonIndex];
+
+    switch (alertView.alertViewStyle) {
+        case UIAlertViewStyleSecureTextInput:
+        case UIAlertViewStylePlainTextInput:
+            _textEnteredIntoLastTextFieldAtIndex0 = [[alertView textFieldAtIndex:0] text];
+            _textEnteredIntoLastTextFieldAtIndex1 = nil;
+            break;
+        case UIAlertViewStyleLoginAndPasswordInput:
+            _textEnteredIntoLastTextFieldAtIndex0 = [[alertView textFieldAtIndex:0] text];
+            _textEnteredIntoLastTextFieldAtIndex1 = [[alertView textFieldAtIndex:1] text];
+            break;
+        default:
+            _textEnteredIntoLastTextFieldAtIndex0 = nil;
+            _textEnteredIntoLastTextFieldAtIndex1 = nil;
+            break;
+    }
+
     _activeAlertView = nil;
 }
 

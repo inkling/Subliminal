@@ -278,7 +278,10 @@
 
     // SLAlertHandlerDefaultTimeout is the time it takes
     // for an alert to be dismissed, as measured from the time that alert shows
-    NSTimeInterval expectedWaitTimeInterval = showTimeInterval + SLAlertHandlerDefaultTimeout;
+    // but it's adjusted to accommodate the slowest handlers (those that set text)
+    // --which is a bit longer than required just to dismiss the alert
+    const NSTimeInterval kSLAlertDismissHandlerTimeout = SLAlertHandlerDefaultTimeout - 0.5;
+    NSTimeInterval expectedWaitTimeInterval = showTimeInterval + kSLAlertDismissHandlerTimeout;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(showTimeInterval * NSEC_PER_SEC));
     dispatch_after(popTime, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^(void){
         SLAskApp1(showAlertWithTitle:, alertTitle);
@@ -347,6 +350,42 @@
                         @"Handler should have thrown an exception because it had not been added using +[SLAlertHandler addHandler:].");
 }
 
+- (void)testAndThenChainsTwoHandlers {
+    NSString *alertTitle = @"Foo";
+    NSString *defaultButtonTitle = @"Ok";
+    NSString *textToEnter = @"foo";
+    
+    SLAlert *alert = [SLAlert alertWithTitle:alertTitle];
+    SLAlertHandler *setPlainText = [alert setText:textToEnter ofFieldOfType:SLAlertTextFieldTypePlainText];
+    SLAlertHandler *dismiss = [alert dismissWithButtonTitled:defaultButtonTitle];
+    SLAlertHandler *alertHandler = [setPlainText andThen:dismiss];
+    [SLAlertHandler addHandler:alertHandler];
+
+    SLAskApp1(showAlertWithInfo:, (@{  @"title": alertTitle,
+                                       @"cancel": @"Cancel",
+                                       @"other": defaultButtonTitle,
+                                       @"style": @(UIAlertViewStylePlainTextInput) }));
+    [self wait:SLAlertHandlerDefaultTimeout];
+
+    SLAssertTrue([alertHandler didHandleAlert], @"Handler should have handled alert.");
+    SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:defaultButtonTitle],
+                 @"Alert should have been dismissed using default button.");
+    SLAssertTrue([SLAskApp1(textEnteredIntoLastTextFieldAtIndex:, @0) isEqualToString:textToEnter],
+                 @"Alert text field should have contained the specified value.");
+}
+
+- (void)testAddHandlerThrowsIfHandlerDoesNotDismissAlert {
+    NSString *alertTitle = @"Foo";
+    SLAlert *alert = [SLAlert alertWithTitle:alertTitle];
+    SLAlertHandler *setPlainText = [alert setText:@"foo" ofFieldOfType:SLAlertTextFieldTypePlainText];
+
+    // here, in contrast to the previous test,
+    // the developer forgot to sequence the setText handler
+    // with a dismiss handler of some kind
+    SLAssertThrows([SLAlertHandler addHandler:setPlainText],
+                   @"Should have thrown because handler would not have dismissed the alert.");
+}
+
 #pragma mark -dismiss
 
 - (void)testDismissTapsTheCancelButtonFirst {
@@ -400,6 +439,72 @@
     SLAssertTrue([handler didHandleAlert], @"Handler should have handled alert.");
     SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:dismissButtonTitle],
                  @"The handler should dismissed the alert using the button with the specified title.");
+}
+
+#pragma mark -setText:ofFieldOfType:
+
+- (void)testSetTextOfSecureTextField {
+    NSString *alertTitle = @"Foo";
+    NSString *textToEnter = @"foo";
+
+    SLAlert *alert = [SLAlert alertWithTitle:alertTitle];
+    SLAlertHandler *setSecureText = [alert setText:textToEnter ofFieldOfType:SLAlertTextFieldTypeSecureText];
+    SLAlertHandler *dismiss = [alert dismiss];
+    SLAlertHandler *alertHandler = [setSecureText andThen:dismiss];
+    [SLAlertHandler addHandler:alertHandler];
+
+    SLAskApp1(showAlertWithInfo:, (@{  @"title": alertTitle,
+                                       @"cancel": @"Cancel",
+                                       @"style": @(UIAlertViewStyleSecureTextInput) }));
+    [self wait:SLAlertHandlerDefaultTimeout];
+
+    SLAssertTrue([alertHandler didHandleAlert], @"Handler should have handled alert.");
+    SLAssertTrue([SLAskApp1(textEnteredIntoLastTextFieldAtIndex:, @0) isEqualToString:textToEnter],
+                 @"Alert text field should have contained the specified value.");
+}
+
+- (void)testSetTextOfPlainTextField {
+    NSString *alertTitle = @"Foo";
+    NSString *textToEnter = @"foo";
+    
+    SLAlert *alert = [SLAlert alertWithTitle:alertTitle];
+    SLAlertHandler *setPlainText = [alert setText:@"foo" ofFieldOfType:SLAlertTextFieldTypePlainText];
+    SLAlertHandler *dismiss = [alert dismiss];
+    SLAlertHandler *alertHandler = [setPlainText andThen:dismiss];
+    [SLAlertHandler addHandler:alertHandler];
+
+    SLAskApp1(showAlertWithInfo:, (@{  @"title": alertTitle,
+                                       @"cancel": @"Cancel",
+                                       @"style": @(UIAlertViewStylePlainTextInput) }));
+    [self wait:SLAlertHandlerDefaultTimeout];
+
+    SLAssertTrue([alertHandler didHandleAlert], @"Handler should have handled alert.");
+    SLAssertTrue([SLAskApp1(textEnteredIntoLastTextFieldAtIndex:, @0) isEqualToString:textToEnter],
+                 @"Alert text field should have contained the specified value.");
+}
+
+- (void)testSetTextOfLoginAndPasswordFields {
+    NSString *alertTitle = @"Foo";
+    NSString *username = @"user";
+    NSString *password = @"password";
+
+    SLAlert *alert = [SLAlert alertWithTitle:alertTitle];
+    SLAlertHandler *setUsername = [alert setText:username ofFieldOfType:SLAlertTextFieldTypeLogin];
+    SLAlertHandler *setPassword = [alert setText:password ofFieldOfType:SLAlertTextFieldTypePassword];
+    SLAlertHandler *dismiss = [alert dismiss];
+    SLAlertHandler *alertHandler = [[setUsername andThen:setPassword] andThen:dismiss];
+    [SLAlertHandler addHandler:alertHandler];
+
+    SLAskApp1(showAlertWithInfo:, (@{  @"title": alertTitle,
+                                       @"cancel": @"Cancel",
+                                       @"style": @(UIAlertViewStyleLoginAndPasswordInput) }));
+    [self wait:SLAlertHandlerDefaultTimeout];
+
+    SLAssertTrue([alertHandler didHandleAlert], @"Handler should have handled alert.");
+    SLAssertTrue([SLAskApp1(textEnteredIntoLastTextFieldAtIndex:, @0) isEqualToString:username],
+                 @"Alert text field should have contained the specified value.");
+    SLAssertTrue([SLAskApp1(textEnteredIntoLastTextFieldAtIndex:, @1) isEqualToString:password],
+                 @"Alert text field should have contained the specified value.");
 }
 
 @end

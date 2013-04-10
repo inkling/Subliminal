@@ -6,10 +6,16 @@
 //  Copyright (c) 2013 Inkling. All rights reserved.
 //
 
-/// The amount of time it takes for an alert to be fully dismissed
-/// by manual and automatic alert handlers (including the alert's dismissal animation,
+#import <UIKit/UIKit.h>
+
+
+/// The amount of time it generally takes for an alert to be fully dismissed
+/// by a manual or automatic alert handler (including the alert's dismissal animation,
 /// and the alert's delegate receiving the alertView:didDismissWithButtonIndex: callback),
 /// as measured from the time the alert appears.
+///
+/// This timeout should suffice to dismiss alerts of all alertViewStyles
+/// (using handlers which simply dismiss the alerts, as well as those that enter text).
 extern const NSTimeInterval SLAlertHandlerDefaultTimeout;
 
 /// The interval that elapses between SLAlertHandler checking whether
@@ -20,7 +26,17 @@ extern const NSTimeInterval SLAlertHandlerWaitRetryDelay;
 /// alert was not shown before the wait timed-out.
 extern NSString *const SLAlertDidNotShowException;
 
-@class SLAlertHandler;
+/// Types of textfields contained by UIAlertViews, as determined by the
+/// alert view's alertViewStyle.
+typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
+    SLAlertTextFieldTypeSecureText  = UIAlertViewStyleSecureTextInput,
+    SLAlertTextFieldTypePlainText   = UIAlertViewStylePlainTextInput,
+    SLAlertTextFieldTypeLogin       = UIAlertViewStyleLoginAndPasswordInput,
+    SLAlertTextFieldTypePassword // = UIAlertViewStyleLoginAndPasswordInput
+};
+
+
+@class SLAlertHandler, SLAlertDismissHandler;
 
 /**
  The SLAlert class allows access to, and control of, alerts within your application.
@@ -77,7 +93,7 @@ extern NSString *const SLAlertDidNotShowException;
  @return A handler that dismisses the corresponding alert using 
  UIAutomation's default procedure.
  */
-- (SLAlertHandler *)dismiss;
+- (SLAlertDismissHandler *)dismiss;
 
 /**
  Returns a handler that dismisses a matching alert 
@@ -87,7 +103,17 @@ extern NSString *const SLAlertDidNotShowException;
  @return A handler that dismisses the corresponding alert by tapping 
  the button with the specified title.
  */
-- (SLAlertHandler *)dismissWithButtonTitled:(NSString *)buttonTitle;
+- (SLAlertDismissHandler *)dismissWithButtonTitled:(NSString *)buttonTitle;
+
+/**
+ Returns a handler that sets the text 
+ of the specified text field of a matching alert.
+ 
+ @param fieldType The type of text field, corresponding to the alert's 
+ presentation style.
+ @param text The text to enter into the field.
+ */
+- (SLAlertHandler *)setText:(NSString *)text ofFieldOfType:(SLAlertTextFieldType)fieldType;
 
 @end
 
@@ -106,7 +132,7 @@ extern NSString *const SLAlertDidNotShowException;
  (-[SLAlert isEqualToUIAAlertPredicate]) is given the chance to handle (dismiss) 
  the alert. If the handler succeeds, it is removed; otherwise, the remaining 
  handlers are checked.
- 
+
  If an alert is not handled by any handler, it will be automatically dismissed
  by tapping the cancel button, if the button exists, then tapping the default button,
  if one is identifiable. If the alert is still not dismissed, the tests will hang.
@@ -114,10 +140,14 @@ extern NSString *const SLAlertDidNotShowException;
  Each handler must be added only once.
 
  @warning Handlers must be added _before_ the alerts they handle might appear.
-
+ 
  @param handler An alert handler.
  
  @exception NSInternalInconsistencyException if a handler is added multiple times.
+ @exception NSInternalInconsistencyException If the handler will not ultimately
+ try to dismiss a corresponding alert: handler must either be an SLAlertDismissHandler, 
+ or must be a handler produced using -andThen: where the last "chained" handler 
+ is an SLAlertDismissHandler.
  */
 + (void)addHandler:(SLAlertHandler *)handler;
 
@@ -151,6 +181,29 @@ extern NSString *const SLAlertDidNotShowException;
  */
 - (void)waitUntilAlertHandled:(NSTimeInterval)timeout;
 
+/**
+ Creates and returns an alert handler which handles a corresponding alert 
+ by performing the action of the receiver and then that of the specified handler.
+ 
+ This method allows alert handlers to be "chained", so that (for instance) 
+ text can be entered into an alert's text field, and then the alert dismissed:
+ 
+     SLAlert *alert = [SLAlert alertWithTitle:alertTitle];
+ 
+     SLAlertHandler *setUsername = [alert setText:@"user" ofFieldOfType:SLAlertTextFieldTypeLogin];
+     SLAlertHandler *setPassword = [alert setText:@"password" ofFieldOfType:SLAlertTextFieldTypePassword];
+     SLAlertHandler *dismiss = [alert dismissWithButtonTitled:@"Ok"];
+     SLAlertHandler *alertHandler = [[setUsername andThen:setPassword] andThen:dismiss];
+ 
+     [SLAlertHandler addHandler:alertHandler];
+
+ @param nextHandler A handler whose action should be performed after the action 
+ of the receiver.
+ @return A newly created alert handler that performs the action of the receiver 
+ and then the action of nextHandler.
+ */
+- (SLAlertHandler *)andThen:(SLAlertHandler *)nextHandler;
+
 @end
 
 
@@ -177,6 +230,15 @@ extern NSString *const SLAlertDidNotShowException;
  */
 - (NSString *)isEqualToUIAAlertPredicate;
 
+@end
+
+/**
+ SLAlertDismissHandler is a class used solely to distinguish handlers 
+ that try to dismiss alerts from those that do not.
+ 
+ @see +[SLAlertHandler addHandler:]
+ */
+@interface SLAlertDismissHandler : SLAlertHandler
 @end
 
 
