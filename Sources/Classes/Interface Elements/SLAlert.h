@@ -44,7 +44,13 @@ extern NSString *const SLAlertDidNotShowException;
 
  If an alert is not handled by any handler, it will be automatically dismissed
  by tapping the cancel button, if the button exists, then tapping the default button,
- if one is identifiable. If the alert is still not dismissed, the tests will abort.
+ if one is identifiable.
+ 
+ @warning If the alert has no cancel nor default button, it will not be able
+ to be dismissed and the tests will hang. (If the tests are being run via the command 
+ line, Instruments will eventually time out; if the tests are being run via the 
+ GUI, the developer can abort.)
+
  */
 @interface SLAlert : NSObject
 
@@ -57,12 +63,17 @@ extern NSString *const SLAlertDidNotShowException;
 + (instancetype)alertWithTitle:(NSString *)title;
 
 /**
- Returns a handler that dismisses a matching alert 
- using UIAutomation's default procedure.
+ Returns a handler that dismisses a matching alert using the default 
+ handling behavior.
  
  Which is to tap the cancel button, if the button exists, else tapping the 
  default button, if one is identifiable.
  
+ @warning If the alert has no cancel nor default button, it will not be able
+ to be dismissed and the tests will hang. (If the tests are being run via the command
+ line, Instruments will eventually time out; if the tests are being run via the
+ GUI, the developer can abort.)
+
  @return A handler that dismisses the corresponding alert using 
  UIAutomation's default procedure.
  */
@@ -92,13 +103,13 @@ extern NSString *const SLAlertDidNotShowException;
 
  Tests can add multiple handlers at one time; when an alert is shown,
  they are checked in order of addition, and the first one that [matches the alert]
- (-[SLAlert isEqualToUIAAlertPredicate]) is given the chance to handle the alert. 
- If the handler successfully dismisses the alert, it is considered to have handled 
- the alert and is removed; otherwise, the remaining handlers are checked.
+ (-[SLAlert isEqualToUIAAlertPredicate]) is given the chance to handle (dismiss) 
+ the alert. If the handler succeeds, it is removed; otherwise, the remaining 
+ handlers are checked.
  
  If an alert is not handled by any handler, it will be automatically dismissed
  by tapping the cancel button, if the button exists, then tapping the default button,
- if one is identifiable. If the alert is still not dismissed, the tests will abort.
+ if one is identifiable. If the alert is still not dismissed, the tests will hang.
  
  Each handler must be added only once.
 

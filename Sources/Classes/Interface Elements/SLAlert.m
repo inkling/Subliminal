@@ -63,9 +63,10 @@ const NSTimeInterval SLAlertHandlerDefaultTimeout = 1.5;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         // The onAlert handler returns true for an alert
-        // iff the tests handle and dismiss that alert.
+        // iff Subliminal handles and dismisses that alert.
         // SLAlertHandler manipulates onAlert via _alertHandlers.
-        [[SLTerminal sharedTerminal] eval:@"\
+        [[SLTerminal sharedTerminal] eval:[NSString stringWithFormat:@"\
+            var _previousOnAlert = UIATarget.onAlert;\
             var _alertHandlers = [];\
             UIATarget.onAlert = function(alert) {"
                 // enumerate registered handlers, from first to last
@@ -78,10 +79,26 @@ const NSTimeInterval SLAlertHandlerDefaultTimeout = 1.5;
                     }\
                 }\
                 "
-                // the tests haven't handled this alert, so UIAutomation should dismiss it
-                @"return false;\
+                // The tests haven't handled this alert, so we should attempt to
+                // dismiss it using the default handler. We invoke our default handler
+                // before UIAutomation's, though it has the same behavior,
+                // because in the event that the alert cannot be dismissed
+                // we want to log a message--UIAutomation's handler is supposed
+                // to throw an error, but doesn't; instead, it will just keep retrying.
+                @"if ((function(alert){%@})(alert)) {\
+                      return true;\
+                  } else {"
+                      // All we can do is log a message--if we throw an exception, Instruments will crash >.<
+                      @"UIALogger.logError('Alert was not handled by the tests, and could not be dismissed by the default handler.');"
+                      // Reset the onAlert handler so our handler doesn't get called infinitely
+                      @"UIATarget.onAlert = _previousOnAlert;"
+                      // If our default handler was unable to dismiss this alert,
+                      // it's unlikely that UIAutomation's will be able to either,
+                      // but we might as well invoke it.
+                      @"return false;\
+                  }\
             }\
-         "];
+         ", [self defaultUIAAlertHandler]]];
     });
 }
 
