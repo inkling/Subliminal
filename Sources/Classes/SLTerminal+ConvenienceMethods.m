@@ -24,7 +24,6 @@
                                 while (!(condTrue = cond()) && (((Date.now() / 1000) - startTime) < timeout)) {\
                                     UIATarget.localTarget().delay(retryDelay);\
                                 };\
-                                UIALogger.logMessage('' + ((Date.now() / 1000) - startTime));\
                                 return (condTrue ? 'YES' : 'NO')\
                             })()", condition, retryDelay, timeout];
     
