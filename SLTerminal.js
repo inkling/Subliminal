@@ -1,31 +1,6 @@
 
 var _target = UIATarget.localTarget();
 
-// The below function will return true for an alert 
-// iff the tests should handle and dismiss that alert.
-// SLTestController manipulates the function via the variables below
-// (see -automaticallyDismissAlerts and -pushHandlerForAlert:).
-var _testsHandleAlerts = false;
-var _alertHandlers = [];
-UIATarget.onAlert = function(alert) {
-	// if the tests will handle all alerts return true immediately
-	if (_testsHandleAlerts) return true;
-
-	// otherwise enumerate registered handlers, last first
-	for (var handlerIndex = _alertHandlers.length - 1; handlerIndex >= 0; handlerIndex--) {
-		var handler = _alertHandlers[handlerIndex];
-		// if a handler matches the alert, remove it and return true
-		if (handler(alert) === true) {
-			_alertHandlers.splice(handlerIndex, 1);
-			return true;
-		}
-	};
-
-	// the tests won't handle this alert, so UIAutomation should dismiss it
-	return false;
-}
-
-
 var _scriptIndex = 0;
 var _testingHasFinished = false;
 

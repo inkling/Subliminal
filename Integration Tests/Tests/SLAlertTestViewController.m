@@ -17,6 +17,7 @@
 @implementation SLAlertTestViewController {
     UIAlertView *_activeAlertView;
     NSString *_titleOfLastButtonClicked;
+    NSString *_textEnteredIntoLastTextFieldAtIndex0, *_textEnteredIntoLastTextFieldAtIndex1;
 }
 
 - (void)loadViewForTestCase:(SEL)testCase {
@@ -45,10 +46,13 @@
 - (instancetype)initWithTestCaseWithSelector:(SEL)testCase {
     self = [super initWithTestCaseWithSelector:testCase];
     if (self) {
-        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showAlertWithTitle:)];
-        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showAlertWithInfo:)];
-        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(dismissActiveAlert)];
-        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(titleOfLastButtonClicked)];
+        SLTestController *testController = [SLTestController sharedTestController];
+        [testController registerTarget:self forAction:@selector(showAlertWithTitle:)];
+        [testController registerTarget:self forAction:@selector(showAlertWithInfo:)];
+        [testController registerTarget:self forAction:@selector(dismissActiveAlertAndClearTitleOfLastButtonClicked)];
+        [testController registerTarget:self forAction:@selector(isAlertActive)];
+        [testController registerTarget:self forAction:@selector(titleOfLastButtonClicked)];
+        [testController registerTarget:self forAction:@selector(textEnteredIntoLastTextFieldAtIndex:)];
     }
     return self;
 }
@@ -69,10 +73,16 @@
                                                  delegate:self
                                         cancelButtonTitle:info[@"cancel"]
                                         otherButtonTitles:info[@"other"], nil];
+    NSNumber *styleNumber = info[@"style"];
+    if (styleNumber) {
+        UIAlertViewStyle style;
+        [styleNumber getValue:&style];
+        _activeAlertView.alertViewStyle = style;
+    }
     [_activeAlertView show];
 }
 
-- (void)dismissActiveAlert {
+- (void)dismissActiveAlertAndClearTitleOfLastButtonClicked {
     if (_activeAlertView.numberOfButtons == 0) {
         // the alert shown by testDismissThrowsAbsentBothCancelAndDefaultButtons has no buttons
         // it appears that it can be dismissed with dismissWithClickedButtonIndex:0 even so,
@@ -81,14 +91,51 @@
     }
     [_activeAlertView dismissWithClickedButtonIndex:0 animated:YES];
     _activeAlertView = nil;
+    _titleOfLastButtonClicked = nil;
+}
+
+- (NSNumber *)isAlertActive {
+    return @(_activeAlertView != nil);
 }
 
 - (NSString *)titleOfLastButtonClicked {
     return _titleOfLastButtonClicked;
 }
 
+- (NSString *)textEnteredIntoLastTextFieldAtIndex:(NSNumber *)index {
+    switch ([index unsignedIntegerValue]) {
+        case 0:
+            return _textEnteredIntoLastTextFieldAtIndex0;
+            break;
+        case 1:
+            return _textEnteredIntoLastTextFieldAtIndex1;
+            break;
+        default:
+            [NSException raise:NSRangeException format:@"UIAlertViews have at max 2 text fields!"];
+            return nil;
+            break;
+    }
+}
+
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     _titleOfLastButtonClicked = [alertView buttonTitleAtIndex:buttonIndex];
+
+    switch (alertView.alertViewStyle) {
+        case UIAlertViewStyleSecureTextInput:
+        case UIAlertViewStylePlainTextInput:
+            _textEnteredIntoLastTextFieldAtIndex0 = [[alertView textFieldAtIndex:0] text];
+            _textEnteredIntoLastTextFieldAtIndex1 = nil;
+            break;
+        case UIAlertViewStyleLoginAndPasswordInput:
+            _textEnteredIntoLastTextFieldAtIndex0 = [[alertView textFieldAtIndex:0] text];
+            _textEnteredIntoLastTextFieldAtIndex1 = [[alertView textFieldAtIndex:1] text];
+            break;
+        default:
+            _textEnteredIntoLastTextFieldAtIndex0 = nil;
+            _textEnteredIntoLastTextFieldAtIndex1 = nil;
+            break;
+    }
+
     _activeAlertView = nil;
 }
 
