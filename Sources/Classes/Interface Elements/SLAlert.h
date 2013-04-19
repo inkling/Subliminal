@@ -41,12 +41,15 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
 /**
  The SLAlert class allows access to, and control of, alerts within your application.
 
- Tests do not manipulate alerts directly. Rather than waiting till an alert
- appears to dismiss it, a test calls -dismiss or -dismissWithButtonTitled: 
- to retrieve an SLAlertHandler, and registers that handler with the SLAlertHandler 
- class, _before_ the alert appears. When a matching alert appears, the handler
- will dismiss the alert. The test then asks the handler to see if the alert 
- was dismissed as expected.
+ Alerts do not need to be handled by the tests. If they are not handled,
+ they will be automatically dismissed (by tapping the cancel button,
+ if the button exists, then tapping the default button, if one is identifiable).
+
+ A test may optionally specify an alternate handler for an alert, by constructing
+ an SLAlertHandler from the SLAlert that matches that alert, and registering that 
+ handler with the SLAlertHandler class. When a matching alert appears, the handler 
+ dismisses the alert. The test then asks the handler to see if the alert was 
+ dismissed as expected.
  
     SLAlert *alert = [SLAlert alertWithTitle:@"foo];
 
@@ -58,14 +61,13 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
 
     [handler waitUntilAlertHandled:SLAlertHandlerDefaultTimeout];
 
- If an alert is not handled by any handler, it will be automatically dismissed
- by tapping the cancel button, if the button exists, then tapping the default button,
- if one is identifiable.
- 
+ @warning If a test wishes to manually handle an alert, it must register 
+ a handler _before_ that alert appears.
+
  @warning If the alert has no cancel nor default button, it will not be able
- to be dismissed and the tests will hang. (If the tests are being run via the command 
- line, Instruments will eventually time out; if the tests are being run via the 
- GUI, the developer can abort.)
+ to be dismissed by any handler, and the tests will hang. (If the tests are being 
+ run via the command line, Instruments will eventually time out; if the tests are 
+ being run via the GUI, the developer will need to stop the tests.)
 
  */
 @interface SLAlert : NSObject
