@@ -97,8 +97,11 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 #pragma mark Sending Actions
 
-
 - (void)performActionWithUIARepresentation:(void(^)(NSString *uiaRepresentation))block {
+    [self performActionWithUIARepresentation:block timeout:[[self class] defaultTimeout]];
+}
+
+- (void)performActionWithUIARepresentation:(void(^)(NSString *uiaRepresentation))block timeout:(NSTimeInterval)timeout {
 
     // A uiaRepresentation is created, unless a staticUIARepresentation is provided, and is passed to the action block.
     
@@ -108,7 +111,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         return;
     }
     
-    SLAccessibilityPath *accessibilityPath = [self accessibilityPathWaitingIfNecessary:YES];
+    SLAccessibilityPath *accessibilityPath = [self accessibilityPathWithTimeout:timeout];
     if (!accessibilityPath) {
         @throw [NSException exceptionWithName:SLElementInvalidException reason:[NSString stringWithFormat:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]] userInfo:nil];
     }
@@ -122,25 +125,23 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     }];
 }
 
-- (SLAccessibilityPath *)accessibilityPathWaitingIfNecessary:(BOOL)waitIfNecessary {
+- (SLAccessibilityPath *)accessibilityPathWithTimeout:(NSTimeInterval)timeout {
     __block SLAccessibilityPath *accessibilityPath = nil;
     NSDate *startDate = [NSDate date];
     do {
         dispatch_sync(dispatch_get_main_queue(), ^{
             accessibilityPath = [[[UIApplication sharedApplication] keyWindow] slAccessibilityPathToElement:self];
         });
-        if (accessibilityPath || !waitIfNecessary) {
-            break;
-        }
+        if (accessibilityPath) break;
         [NSThread sleepForTimeInterval:SLElementWaitRetryDelay];
-    } while ([[NSDate date] timeIntervalSinceDate:startDate] < [[self class] defaultTimeout]);
+    } while ([[NSDate date] timeIntervalSinceDate:startDate] < timeout);
     return accessibilityPath;
 }
 
 - (void)examineMatchingObject:(void (^)(NSObject *object))block {
     NSParameterAssert(block);
     
-    SLAccessibilityPath *accessibilityPath = [self accessibilityPathWaitingIfNecessary:YES];
+    SLAccessibilityPath *accessibilityPath = [self accessibilityPathWithTimeout:[[self class] defaultTimeout]];
     if (!accessibilityPath) {
         [NSException raise:SLElementInvalidException
                     format:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]];
@@ -177,7 +178,8 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (BOOL)isValid {
-    return ([self accessibilityPathWaitingIfNecessary:NO] != nil);
+    // isValid evaluates the current state, no waiting to resolve the element
+    return ([self accessibilityPathWithTimeout:0.0] != nil);
 }
 
 - (BOOL)isVisible {
@@ -189,18 +191,37 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (void)waitUntilVisible:(NSTimeInterval)timeout {
+    // We allow for the the element to be invalid upon waiting,
+    // so long as it is ultimately visible, and we don't want to wait more
+    // or less than `timeout`--so we provide `performActionWithUIARepresentation:`
+    // at most `timeout` for element resolution...
+    
+    NSTimeInterval resolutionStart = [NSDate timeIntervalSinceReferenceDate];
     [self performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
-        // We allow for the the element to be invalid upon waiting,
-        // so long as it is ultimately visible.
-        // (Note that isVisible() actually returns NO, given an invalid element,
-        // but this is safest (and matches Subliminal's semantics).)
-        NSString *isValidAndVisible = [NSString stringWithFormat:@"%@.isValid() && %@.isVisible()", uiaRepresentation, uiaRepresentation];
-        if (![[SLTerminal sharedTerminal] waitUntilTrue:isValidAndVisible
-                                             retryDelay:SLElementWaitRetryDelay
-                                                timeout:timeout]) {
-            [NSException raise:SLElementNotVisibleException format:@"Element %@ did not become visible within %g seconds.", self, timeout];
+        NSTimeInterval resolutionEnd = [NSDate timeIntervalSinceReferenceDate];
+        NSTimeInterval resolutionDuration = resolutionEnd - resolutionStart;
+
+        // ...and wait for only that part of `timeout` remaining after resolution
+        // for the element to become visible
+        NSTimeInterval remainingTimeout = timeout - resolutionDuration;
+
+        // `performActionWithUIARepresentation:` could have found the element
+        // right at the end of timeout
+        if (remainingTimeout <= 0.0) {
+            [NSException raise:SLElementNotVisibleException
+                        format:@"Element %@ did not become visible within %g seconds.",
+                                self, timeout];
         }
-    }];
+
+        NSString *isVisible = [NSString stringWithFormat:@"%@.isVisible()", uiaRepresentation];
+        if (![[SLTerminal sharedTerminal] waitUntilTrue:isVisible
+                                             retryDelay:SLElementWaitRetryDelay
+                                                timeout:remainingTimeout]) {
+            [NSException raise:SLElementNotVisibleException
+                        format:@"Element %@ did not become visible within %g seconds.",
+                                self, timeout];
+        }
+    } timeout:timeout];
 }
 
 - (void)waitUntilInvisibleOrInvalid:(NSTimeInterval)timeout {

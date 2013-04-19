@@ -146,7 +146,7 @@
 }
 
 - (void)testWaitUntilVisibleDoesNotThrowIfElementIsInvalidUponWaiting {
-    SLAssertFalse([_testElement isValid], @"Test element should not be visible.");
+    SLAssertFalse([_testElement isValid], @"Test element should not be valid.");
 
     NSTimeInterval waitTimeInterval = 2.0;
     NSTimeInterval expectedWaitTimeInterval = waitTimeInterval - [self waitDelayVariability] - 0.05;
@@ -154,6 +154,25 @@
 
     // we cause the test element to become valid by relabeling the test view
     // to the test element's label
+    SLAskApp1(relabelTestViewToTestAndShowAfterInterval:, @(expectedWaitTimeInterval));
+    SLAssertNoThrow([_testElement waitUntilVisible:waitTimeInterval], @"Should not have thrown.");
+
+    NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+    NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
+    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],
+                 @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
+                 actualWaitTimeInterval, waitTimeInterval);
+}
+
+// the specified timeout is used both to resolve the element
+// and to wait for it to become visible
+- (void)testWaitUntilVisibleWaitsForSpecifiedTimeoutEvenIfElementIsInvalidUponWaiting {
+    SLAssertFalse([_testElement isValid], @"Test element should not be valid.");
+
+    NSTimeInterval waitTimeInterval = [SLElement defaultTimeout] + 5.0;
+    NSTimeInterval expectedWaitTimeInterval = waitTimeInterval - [self waitDelayVariability] - 0.05;
+    NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+
     SLAskApp1(relabelTestViewToTestAndShowAfterInterval:, @(expectedWaitTimeInterval));
     SLAssertNoThrow([_testElement waitUntilVisible:waitTimeInterval], @"Should not have thrown.");
 
@@ -173,6 +192,26 @@
     SLAssertThrowsNamed([_testElement waitUntilVisible:expectedWaitTimeInterval],
                         SLElementNotVisibleException, @"Should have thrown.");
     
+    NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+    NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
+    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],
+                 @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
+                 actualWaitTimeInterval, expectedWaitTimeInterval);
+}
+
+// the specified timeout is used both to resolve the element
+// and to wait for it to become visible
+- (void)testWaitUntilVisibleThrowsAfterSpecifiedTimeoutEvenIfElementIsInvalidUponWaiting {
+    SLAssertFalse([_testElement isValid], @"Test element should not be valid.");
+
+    NSTimeInterval expectedWaitTimeInterval = [SLElement defaultTimeout] - 3.0;
+    // The default timeout is 5.0--guard against it becoming shorter for some reason
+    SLAssertTrue(expectedWaitTimeInterval > 0.0, @"The default timeout is too short for the purposes of this test.");
+    NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+
+    SLAssertThrowsNamed([_testElement waitUntilVisible:expectedWaitTimeInterval],
+                        SLElementInvalidException, @"Should have thrown.");
+
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
     SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],

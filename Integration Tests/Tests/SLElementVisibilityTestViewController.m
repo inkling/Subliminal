@@ -115,7 +115,9 @@
     } else if ((testCase == @selector(testWaitUntilVisibleDoesNotThrowAndReturnsImmediatelyWhenConditionIsTrueUponWait)) ||
                (testCase == @selector(testWaitUntilVisibleDoesNotThrowAndReturnsImmediatelyAfterConditionBecomesTrue)) ||
                (testCase == @selector(testWaitUntilVisibleDoesNotThrowIfElementIsInvalidUponWaiting)) ||
+               (testCase == @selector(testWaitUntilVisibleWaitsForSpecifiedTimeoutEvenIfElementIsInvalidUponWaiting)) ||
                (testCase == @selector(testWaitUntilVisibleThrowsIfConditionIsStillFalseAtEndOfTimeout)) ||
+               (testCase == @selector(testWaitUntilVisibleThrowsAfterSpecifiedTimeoutEvenIfElementIsInvalidUponWaiting)) ||
                (testCase == @selector(testWaitUntilInvisibleOrInvalidDoesNotThrowAndReturnsImmediatelyWhenVisibilityConditionIsTrueUponWait)) ||
                (testCase == @selector(testWaitUntilInvisibleOrInvalidDoesNotThrowAndReturnsImmediatelyWhenValidityConditionIsTrueUponWait)) ||
                (testCase == @selector(testWaitUntilInvisibleOrInvalidDoesNotThrowAndReturnsImmediatelyAfterConditionBecomesTrue)) ||
@@ -156,7 +158,9 @@
         [testCaseName hasPrefix:@"testWait"]) {
         self.testView.isAccessibilityElement = YES;
 
-        if ([testCaseName isEqualToString:@"testWaitUntilVisibleDoesNotThrowIfElementIsInvalidUponWaiting"]) {
+        if ([testCaseName isEqualToString:@"testWaitUntilVisibleDoesNotThrowIfElementIsInvalidUponWaiting"] ||
+            [testCaseName isEqualToString:@"testWaitUntilVisibleWaitsForSpecifiedTimeoutEvenIfElementIsInvalidUponWaiting"] ||
+            [testCaseName isEqualToString:@"testWaitUntilVisibleThrowsAfterSpecifiedTimeoutEvenIfElementIsInvalidUponWaiting"]) {
             // cause the element with label "test" to be invalid
             self.testView.accessibilityLabel = @"not test";
         } else {

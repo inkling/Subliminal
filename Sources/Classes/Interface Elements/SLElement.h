@@ -27,6 +27,7 @@ extern const NSTimeInterval SLElementWaitRetryDelay;
 
 // Defaults - to be set by the test controller
 + (void)setDefaultTimeout:(NSTimeInterval)defaultTimeout;
++ (NSTimeInterval)defaultTimeout;
 
 /**
  Creates and returns an element that evaluates the accessibility hierarchy
