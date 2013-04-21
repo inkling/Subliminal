@@ -8,11 +8,23 @@
 
 #import <Foundation/Foundation.h>
 
-/** Prints some information to the testing environment.
+/**
+ Logs a message to the testing environment.
  
- Equivalent to NSLog() except for the output medium. Implemented using [SLLogger logMessage:].
+ Functionally equivalent to NSLog(), except for the output medium.
+ The message is output using [[SLLogger sharedLogger] logMessage:].
  */
 void SLLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
+
+/**
+ Asynchronously logs a message to the testing environment.
+ 
+ This variant of SLLog is for use by the application.
+ 
+ @warning This may only be used if the [shared logger](+[SLLogger sharedLogger])
+ conforms to the SLThreadSafeLogger protocol.
+ */
+void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 
 
 @interface SLLogger : NSObject
@@ -56,5 +68,20 @@ void SLLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
 - (void)logTest:(NSString *)test caseFail:(NSString *)testCase;
 - (void)logTest:(NSString *)test casePass:(NSString *)testCase;
 - (void)logTest:(NSString *)test caseIssue:(NSString *)testCase;
+
+@end
+
+
+/**
+ Clients may use SLLogAsync if and only if the [shared logger](+[SLLogger sharedLogger]) 
+ conforms to the SLThreadSafeLogger protocol.
+ 
+ Subliminal's suggested logger, the SLUIALogger, conforms to this protocol. 
+ See that class for a reference implementation.
+ */
+@protocol SLThreadSafeLogger <NSObject>
+
+/// Returns a queue on which log messages may be serialized.
+- (dispatch_queue_t)loggingQueue;
 
 @end
