@@ -597,7 +597,8 @@
     // We identify UIWebBrowserViews by their superviews and by
     // the non-UIAccessibilityElement objects they vend from elementAtAccessibilityIndex:.
     BOOL isWebBrowserView = NO;
-    if([[parent slAccessibilityParent] isKindOfClass:[UIWebView class]]) {
+    if([parent isKindOfClass:[UIScrollView class]] &&
+       [[parent slAccessibilityParent] isKindOfClass:[UIWebView class]]) {
         NSInteger elementCount = [self accessibilityElementCount];
         if (elementCount != NSNotFound && elementCount > 0) {
             for (NSUInteger i = 0; i < elementCount; i++) {
