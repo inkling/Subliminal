@@ -113,15 +113,16 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         @throw [NSException exceptionWithName:SLElementInvalidException reason:[NSString stringWithFormat:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]] userInfo:nil];
     }
 
+    // It's possible, if unlikely, that one or more path components could have dropped
+    // out of scope between the path's construction and its binding/serialization
+    // here. If the representation is invalid, UIAutomation will throw an exception,
+    // and it will be caught by Subliminal.
     [accessibilityPath bindPath:^(SLAccessibilityPath *boundPath) {
         block([boundPath UIARepresentation]);
     }];
 }
 
-// We force accessibilityPathWaitingIfNecessary: to return a retained path
-// to prevent that path from being added to an autorelease pool on Subliminal's (non-main) thread.
-// See the note on SLAccessibilityPath's @interface.
-- (SLAccessibilityPath *)accessibilityPathWaitingIfNecessary:(BOOL)waitIfNecessary NS_RETURNS_RETAINED {
+- (SLAccessibilityPath *)accessibilityPathWaitingIfNecessary:(BOOL)waitIfNecessary {
     __block SLAccessibilityPath *accessibilityPath = nil;
     NSDate *startDate = [NSDate date];
     do {
@@ -137,12 +138,28 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (void)examineMatchingObject:(void (^)(NSObject *object))block {
+    NSParameterAssert(block);
+    
     SLAccessibilityPath *accessibilityPath = [self accessibilityPathWaitingIfNecessary:YES];
     if (!accessibilityPath) {
-        @throw [NSException exceptionWithName:SLElementInvalidException reason:[NSString stringWithFormat:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]] userInfo:nil];
+        [NSException raise:SLElementInvalidException
+                    format:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]];
     }
 
-    [accessibilityPath examineLastPathComponent:block];
+    // It's possible, if unlikely, that the matching object could have dropped
+    // out of scope between the path's construction and its examination here
+    __block BOOL matchingObjectWasOutOfScope = NO;
+    [accessibilityPath examineLastPathComponent:^(NSObject *lastPathComponent) {
+        if (!lastPathComponent) {
+            matchingObjectWasOutOfScope = YES;
+            return;
+        }
+        block(lastPathComponent);
+    }];
+    if (matchingObjectWasOutOfScope) {
+        [NSException raise:SLElementInvalidException
+                    format:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]];
+    }
 }
 
 - (NSString *)sendMessage:(NSString *)action, ... {

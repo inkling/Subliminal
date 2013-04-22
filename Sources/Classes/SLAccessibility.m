@@ -12,6 +12,7 @@
 #import "SLElement.h"
 #import "SLElement+Subclassing.h"
 #import "NSString+SLJavaScript.h"
+#import "SLMainThreadRef.h"
 
 #import <UIKit/UIKit.h>
 
@@ -31,6 +32,8 @@
  @param accessibilityElementPath The predominantly-UIAccessibilityElement path to filter.
  @param viewPath A predominantly-UIView path corresponding to accessibilityElementPath,
  to be used to filter accessibilityElementPath.
+ @return A path that contains only those elements that appear in the accessibility 
+ hierarchy as understood by UIAutomation.
  */
 + (NSArray *)filterRawAccessibilityElementPath:(NSArray *)accessibilityElementPath
                               usingRawViewPath:(NSArray *)viewPath;
@@ -48,6 +51,18 @@
  the accessibility hierarchy as understood by UIAutomation.
  */
 + (NSArray *)filterRawViewPath:(NSArray *)viewPath;
+
+/**
+ Creates and returns an array comprised of the components from the specified 
+ path, wrapped in SLMainThreadRefs.
+ 
+ The path returned will weakly reference the original components 
+ and so can be safely retained on a background thread
+ 
+ @param path A path to map using SLMainThreadRefs.
+ @return An array comprised of the components from path, wrapped in SLMainThreadRefs.
+ */
++ (NSArray *)mapPathToBackgroundThread:(NSArray *)path;
 
 /**
  Initializes and returns a newly allocated accessibility path
@@ -710,13 +725,32 @@
     return filteredPath;
 }
 
+// As mentioned in the methods below where references' targets are retrieved:
+// SLAccessibilityPath methods should not throw exceptions if
+// references' targets are found to have fallen out of scope,
+// because an exception thrown inside a dispatched block cannot be caught
+// outside that block.
+//
+// SLAccessibilityPath's approach to error handling is described
+// in the header.
++ (NSArray *)mapPathToBackgroundThread:(NSArray *)path {
+    NSMutableArray *mappedPath = [[NSMutableArray alloc] initWithCapacity:[path count]];
+    for (id obj in path) {
+        [mappedPath addObject:[SLMainThreadRef refWithTarget:obj]];
+    }
+    return mappedPath;
+}
+
 - (instancetype)initWithRawAccessibilityElementPath:(NSArray *)accessibilityElementPath
                                         rawViewPath:(NSArray *)viewPath {
     self = [super init];
     if (self) {
-        _accessibilityElementPath = [[self class] filterRawAccessibilityElementPath:accessibilityElementPath
-                                                                   usingRawViewPath:viewPath];
-        _viewPath = [[self class] filterRawViewPath:viewPath];
+        NSArray *filteredAccessibilityElementPath = [[self class] filterRawAccessibilityElementPath:accessibilityElementPath
+                                                                                   usingRawViewPath:viewPath];
+        _accessibilityElementPath = [[self class] mapPathToBackgroundThread:filteredAccessibilityElementPath];
+        
+        NSArray *filteredViewPath = [[self class] filterRawViewPath:viewPath];
+        _viewPath = [[self class] mapPathToBackgroundThread:filteredViewPath];
 
         if (![_accessibilityElementPath count] || ![_viewPath count]) {
             self = nil;
@@ -730,7 +764,7 @@
     // examine the last object in the mock view path because that's the path
     // actually used by UIAutomation
     dispatch_sync(dispatch_get_main_queue(), ^{
-        block([_accessibilityElementPath lastObject]);
+        block([[_accessibilityElementPath lastObject] target]);
     });
 }
 
@@ -753,8 +787,13 @@
         // before they are reassigned. This is because for some elements, these
         // values depend on their parent elements' values, and will change
         // when the parent elements' values are updated.
-        for (NSObject *obj in _viewPath) {
-            NSAssert([obj respondsToSelector:@selector(accessibilityIdentifier)],
+        for (SLMainThreadRef *objRef in _viewPath) {
+            NSObject *obj = [objRef target];
+
+            // see note on +mapPathToBackgroundThread:;
+            // we only throw a fatal exception if there *are* objects in the path
+            // that differ from our assumptions
+            NSAssert(!obj || [obj respondsToSelector:@selector(accessibilityIdentifier)],
                      @"elements in the view path must conform to UIAccessibilityIdentification");
 
             NSObject *previousIdentifier = [obj performSelector:@selector(accessibilityIdentifier)];
@@ -772,8 +811,13 @@
 
         // The path's elements' accessibility information is updated in reverse order,
         // because of the issue described in the above note.
-        for (NSObject *obj in [_viewPath reverseObjectEnumerator]) {
-            NSAssert([obj respondsToSelector:@selector(accessibilityIdentifier)],
+        for (SLMainThreadRef *objRef in [_viewPath reverseObjectEnumerator]) {
+            NSObject *obj = [objRef target];
+
+            // see note on +mapPathToBackgroundThread:
+            // we only throw a fatal exception if there *are* objects in the path
+            // that differ from our assumptions
+            NSAssert(!obj || [obj respondsToSelector:@selector(accessibilityIdentifier)],
                      @"elements in the view path must conform to UIAccessibilityIdentification");
             [obj setAccessibilityIdentifierWithStandardReplacement];
 
@@ -792,7 +836,8 @@
     dispatch_sync(dispatch_get_main_queue(), ^{
         // The path's elements' accessibility information is updated in reverse order,
         // because of the issue listed in the above note.
-        [_viewPath enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [_viewPath enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(SLMainThreadRef *objRef, NSUInteger idx, BOOL *stop) {
+            NSObject *obj = [objRef target];
             NSObject *identifierObj = [previousAccessorPathIdentifiers objectAtIndex:idx];
             NSString *identifier = ([identifierObj isEqual:[NSNull null]] ? nil : (NSString *)identifierObj);
             NSObject *labelObj = [previousAccessorPathLabels objectAtIndex:idx];
@@ -810,8 +855,13 @@
         // on the elements of the mock view path instead of the view path because
         // the mock view path contains the actual elements UIAutomation will
         // interact with, and it may be shorter than the view path.
-        for (NSObject *obj in _accessibilityElementPath) {
-            NSAssert([obj respondsToSelector:@selector(accessibilityIdentifier)],
+        [_accessibilityElementPath enumerateObjectsUsingBlock:^(SLMainThreadRef *objRef, NSUInteger idx, BOOL *stop) {
+            NSObject *obj = [objRef target];
+
+            // see note on +mapPathToBackgroundThread:
+            // we only throw a fatal exception if there *are* objects in the path
+            // that differ from our assumptions
+            NSAssert(!obj || [obj respondsToSelector:@selector(accessibilityIdentifier)],
                      @"elements in the mock view path must conform to UIAccessibilityIdentification");
 
             // Elements must be identified by their accessibility identifier

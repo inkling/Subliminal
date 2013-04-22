@@ -57,18 +57,15 @@
  from an accessibility container to one of its (potentially distant) children.
 
  Once a path is [found](-[NSObject slAccessibilityPathToElement:]) between a 
- parent and child object, it can then be [serialized into Javascript]](-UIARepresentation) in order
- to identify, access, and manipulate the `UIAElement` corresponding to the child 
- when [evaluated](-[SLTerminal eval:]) as part of a larger expression.
+ parent and child object, it can then be [serialized into Javascript]](-UIARepresentation) 
+ in order to identify, access, and manipulate the `UIAElement` corresponding to 
+ the child when [evaluated](-[SLTerminal eval:]) as part of a larger expression.
  
- @warning Because the path's components are likely UIKit objects, 
- they must not manipulated off the main thread. SLAccessibilityPath's API 
- enforces this as best possible, but the caller must take additional care 
- that the path is not added to an @autoreleasepool on a background thread 
- (or else it, and thus its components, may be released on that thread).
- 
- This should be done by explicitly retaining/releasing paths (if ARC is not used)
- or declaring methods that return paths as NS_RETURNS_RETAINED (if ARC is used).
+ @warning SLAccessibilityPath is designed for use from background threads. 
+ Because its components are likely UIKit objects, SLAccessibilityPath
+ holds weak references to those components. Clients should be prepared
+ to handle nil [path components](-examineLastPathComponent:) or invalid 
+ [UIAutomation representations](-UIARepresentation).
  */
 @interface SLAccessibilityPath : NSObject
 
@@ -82,7 +79,9 @@
  The block will be executed synchronously on the main thread.
 
  @param block A block which takes the last path component of the receiver 
- as an argument and returns void.
+ as an argument and returns void. The block may invoked with a nil argument 
+ if the last path component has dropped out of scope between the receiver being
+ constructed and it receiving this message.
  */
 - (void)examineLastPathComponent:(void (^)(NSObject *lastPathComponent))block;
 
@@ -115,11 +114,15 @@
  The `UIAElementArray` references (within the brackets) are by element name
  (`UIAElement.name()`): for each path component, its accessibility identifier,
  if the identifier exists and is non-empty; otherwise, its accessibility label.
+ 
+ Any components that the receiver was unable to name (e.g. components which have 
+ dropped out of scope between the receiver being constructed and it receiving 
+ this message) will be serialized as elements()["(null)"].
 
  @warning To guarantee that each `UIAElementArray` reference will uniquely identify
  the corresponding component of the receiver, the receiver should be
  [bound](-bindPath:) before serialization.
-
+ 
  @bug This method should not assume that the path identifies elements within
  the main window.
 
