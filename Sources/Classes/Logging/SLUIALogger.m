@@ -125,4 +125,22 @@
     [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logIssue('Test case \"-[%@ %@]\" terminated abnorally.');", test, testCase];
 }
 
+// we don't need to log the test/test case in any of the below
+// because UIAutomation groups the messages by test case
+- (void)logDebug:(NSString *)debug test:(NSString *)test testCase:(NSString *)testCase {
+    [self logDebug:debug];
+}
+
+- (void)logMessage:(NSString *)message test:(NSString *)test testCase:(NSString *)testCase {
+    [self logMessage:message];
+}
+
+- (void)logWarning:(NSString *)warning test:(NSString *)test testCase:(NSString *)testCase {
+    [self logWarning:warning];
+}
+
+- (void)logError:(NSString *)error test:(NSString *)test testCase:(NSString *)testCase {
+    [self logError:error];
+}
+
 @end
