@@ -43,10 +43,6 @@ static SLLogger *__sharedLogger = nil;
     __sharedLogger = logger;
 }
 
-- (dispatch_queue_t)loggingQueue {
-    return NULL;
-}
-
 - (void)logDebug:(NSString *)debug test:(NSString *)test testCase:(NSString *)testCase {
     [self logMessage:[NSString stringWithFormat:@"Debug: %@", debug]];
 }
