@@ -29,8 +29,8 @@
 
 - (NSString *)sendMessage:(NSString *)action, ... NS_FORMAT_FUNCTION(1, 2);
 
-- (void)performActionWithUIASelf:(void(^)(NSString *uiaSelf))block;
-- (NSString *)staticUIASelf;
+- (void)performActionWithUIARepresentation:(void(^)(NSString *uiaRepresentation))block;
+- (NSString *)staticUIARepresentation;
 
 /**
  Allows the caller to interact with the actual object matched by the receiving SLElement.

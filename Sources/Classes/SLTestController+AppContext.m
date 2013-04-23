@@ -7,17 +7,10 @@
 //
 
 #import "SLTestController+AppContext.h"
+#import "SLMainThreadRef.h"
 
 #import <objc/runtime.h>
 #import <objc/message.h>
-
-
-@interface SLWeakRef : NSObject
-@property (nonatomic, weak) id value;
-@end
-
-@implementation SLWeakRef
-@end
 
 
 static const NSTimeInterval kTargetLookupTimeout = 5.0;
@@ -64,6 +57,10 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
             if (!actionTargetMapQueueValue) {
                 NSString *queueName = [NSString stringWithFormat:@"com.subliminal.SLTestController+AppContext-%p.actionTargetMapQueue", self];
                 dispatch_queue_t actionTargetMapQueue = dispatch_queue_create([queueName UTF8String], DISPATCH_QUEUE_SERIAL);
+                // target the actionTargetMapQueue at the main thread
+                // so that we may safely access SLMainThreadRefs' targets from the queue
+                dispatch_set_target_queue(actionTargetMapQueue, dispatch_get_main_queue());
+                
                 actionTargetMapQueueValue = [NSValue value:&actionTargetMapQueue withObjCType:@encode(typeof(actionTargetMapQueue))];
                 objc_setAssociatedObject(self, kActionTargetMapQueueKey, actionTargetMapQueueValue, OBJC_ASSOCIATION_RETAIN);
             }
@@ -97,11 +94,10 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
     // register target
     id mapKey = [[self class] actionTargetMapKeyForAction:action];
     dispatch_async([self actionTargetMapQueue], ^{
-        SLWeakRef *existingRef = [self actionTargetMap][mapKey];
-        if (existingRef.value != target) {
-            SLWeakRef *weakRef = [[SLWeakRef alloc] init];
-            weakRef.value = target;
-            [self actionTargetMap][mapKey] = weakRef;
+        SLMainThreadRef *targetRef = [self actionTargetMap][mapKey];
+        if ([targetRef target] != target) {
+            targetRef = [SLMainThreadRef refWithTarget:target];
+            [self actionTargetMap][mapKey] = targetRef;
         }
     });
 }
@@ -115,7 +111,8 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
     id mapKey = [[self class] actionTargetMapKeyForAction:action];
     dispatch_async([self actionTargetMapQueue], ^{
         // if the target is registered for the action, deregister it
-        if (((SLWeakRef *)[self actionTargetMap][mapKey]).value == blockTarget) {
+        SLMainThreadRef *targetRef = [self actionTargetMap][mapKey];
+        if ([targetRef target] == blockTarget) {
             [[self actionTargetMap] removeObjectForKey:mapKey];
         }
     });
@@ -130,22 +127,13 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
     dispatch_async([self actionTargetMapQueue], ^{
         // first pass to find the objects
         NSMutableArray *actionsForTarget = [NSMutableArray array];
-        [[self actionTargetMap] enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-            if (((SLWeakRef *)obj).value == blockTarget) {
+        [[self actionTargetMap] enumerateKeysAndObjectsUsingBlock:^(id key, SLMainThreadRef *targetRef, BOOL *stop) {
+            if ([targetRef target] == blockTarget) {
                 [actionsForTarget addObject:key];
             }
         }];
         [[self actionTargetMap] removeObjectsForKeys:actionsForTarget];
     });
-}
-
-- (id)targetForAction:(SEL)action {
-    __block id target;
-    id mapKey = [[self class] actionTargetMapKeyForAction:action];
-    dispatch_sync([self actionTargetMapQueue], ^{
-        target = ((SLWeakRef *)[self actionTargetMap][mapKey]).value;
-    });
-    return target;
 }
 
 // The target lookup timeout is factored as a method
@@ -161,25 +149,19 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
     NSAssert(![NSThread isMainThread], @"-sendAction: must not be called from the main thread.");
 
     __block id returnValue;
-    // An autoreleasepool is used here to explicitely ensure that the target is not retained beyond
-    // the message send
-    @autoreleasepool {
-        id target = nil;
-        // wait for a target to be registered, if necessary
-        NSDate *startDate = [NSDate date];
-        do {
-            if ((target = [self targetForAction:action])) break;
-            [NSThread sleepForTimeInterval:kTargetLookupRetryDelay];
-        } while ([[NSDate date] timeIntervalSinceDate:startDate] <= [self targetLookupTimeout]);
-        if (!target) {
-            [NSException raise:SLAppActionTargetDoesNotExistException
-                        format:@"No target is currently registered for action %@. \
-             (Either no target was ever registered, or a registered target has fallen out of scope.)",
-             NSStringFromSelector(action)];
-        }
-
-        // perform the action on the main thread, for thread safety
-        dispatch_sync(dispatch_get_main_queue(), ^{
+    
+    // wait for a target to be registered, if necessary
+    __block BOOL lookupDidSucceed = NO;
+    id mapKey = [[self class] actionTargetMapKeyForAction:action];
+    NSDate *startDate = [NSDate date];
+    do {
+        dispatch_sync([self actionTargetMapQueue], ^{
+            SLMainThreadRef *targetRef = [self actionTargetMap][mapKey];
+            id target = [targetRef target];
+            
+            if (!target) return;
+            else lookupDidSucceed = YES;
+            
             NSMethodSignature *actionSignature = [target methodSignatureForSelector:action];
             const char *actionReturnType = [actionSignature methodReturnType];
             if (strcmp(actionReturnType, @encode(void)) != 0) {
@@ -195,37 +177,39 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
             // no way for us to enforce that at compile-time, though
             returnValue = [returnValue copyWithZone:NULL];
         });
-    }
+        if (lookupDidSucceed) break;
+        [NSThread sleepForTimeInterval:kTargetLookupRetryDelay];
+    } while ([[NSDate date] timeIntervalSinceDate:startDate] <= [self targetLookupTimeout]);
     
+    if (!lookupDidSucceed) {
+        [NSException raise:SLAppActionTargetDoesNotExistException
+                    format:@"No target is currently registered for action %@. \
+         (Either no target was ever registered, or a registered target has fallen out of scope.)",
+         NSStringFromSelector(action)];
+    }
+
     return returnValue;
 }
 
 - (id)sendAction:(SEL)action withObject:(id<NSCopying>)object {
     NSAssert(![NSThread isMainThread], @"-sendAction:withObject: must not be called from the main thread.");
 
+    // pass a copy of the argument, for thread safety
+    id arg = [object copyWithZone:NULL];
     __block id returnValue;
-    // An autoreleasepool is used here to explicitely ensure that the target is not retained beyond
-    // the message send
-    @autoreleasepool {
-        id target = nil;
-        // wait for a target to be registered, if necessary
-        NSDate *startDate = [NSDate date];
-        do {
-            if ((target = [self targetForAction:action])) break;
-            [NSThread sleepForTimeInterval:kTargetLookupRetryDelay];
-        } while ([[NSDate date] timeIntervalSinceDate:startDate] <= [self targetLookupTimeout]);
-        if (!target) {
-            [NSException raise:SLAppActionTargetDoesNotExistException
-                        format:@"No target is currently registered for action %@. \
-             (Either no target was ever registered, or a registered target has fallen out of scope.)",
-             NSStringFromSelector(action)];
-        }
 
-        // pass a copy of the argument, for thread safety
-        id arg = [object copyWithZone:NULL];
+    // wait for a target to be registered, if necessary
+    __block BOOL lookupDidSucceed = NO;
+    id mapKey = [[self class] actionTargetMapKeyForAction:action];
+    NSDate *startDate = [NSDate date];
+    do {
+        dispatch_sync([self actionTargetMapQueue], ^{
+            SLMainThreadRef *targetRef = [self actionTargetMap][mapKey];
+            id target = [targetRef target];
 
-        // perform the action on the main thread, for thread safety
-        dispatch_sync(dispatch_get_main_queue(), ^{
+            if (!target) return;
+            else lookupDidSucceed = YES;
+
             NSMethodSignature *actionSignature = [target methodSignatureForSelector:action];
             const char *actionReturnType = [actionSignature methodReturnType];
             if (strcmp(actionReturnType, @encode(void)) != 0) {
@@ -241,7 +225,17 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
             // no way for us to enforce that at compile-time, though
             returnValue = [returnValue copyWithZone:NULL];
         });
+        if (lookupDidSucceed) break;
+        [NSThread sleepForTimeInterval:kTargetLookupRetryDelay];
+    } while ([[NSDate date] timeIntervalSinceDate:startDate] <= [self targetLookupTimeout]);
+
+    if (!lookupDidSucceed) {
+        [NSException raise:SLAppActionTargetDoesNotExistException
+                    format:@"No target is currently registered for action %@. \
+         (Either no target was ever registered, or a registered target has fallen out of scope.)",
+         NSStringFromSelector(action)];
     }
+
     return returnValue;
 }
 
