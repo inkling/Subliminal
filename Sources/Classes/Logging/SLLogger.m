@@ -18,6 +18,19 @@ void SLLog(NSString *format, ...) {
     va_end(args);
 }
 
+void SLLogAsync(NSString *format, ...) {
+    NSCAssert([[SLLogger sharedLogger] conformsToProtocol:@protocol(SLThreadSafeLogger)],
+              @"SLLogAsync can only be used if the shared logger is thread-safe.");
+    
+    va_list args;
+    va_start(args, format);
+    NSString *message = [[NSString alloc] initWithFormat:format arguments:args];
+    va_end(args);
+
+    dispatch_async([(id<SLThreadSafeLogger>)[SLLogger sharedLogger] loggingQueue], ^{
+        [[SLLogger sharedLogger] logMessage:message];
+    });
+}
 
 @implementation SLLogger
 
@@ -28,6 +41,10 @@ static SLLogger *__sharedLogger = nil;
 
 + (void)setSharedLogger:(SLLogger *)logger {
     __sharedLogger = logger;
+}
+
+- (dispatch_queue_t)loggingQueue {
+    return NULL;
 }
 
 - (void)logDebug:(NSString *)debug test:(NSString *)test testCase:(NSString *)testCase {
