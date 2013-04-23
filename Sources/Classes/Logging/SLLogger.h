@@ -37,11 +37,6 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 - (void)logWarning:(NSString *)warning;
 - (void)logError:(NSString *)error;
 
-- (void)logDebug:(NSString *)debug test:(NSString *)test testCase:(NSString *)testCase;
-- (void)logMessage:(NSString *)message test:(NSString *)test testCase:(NSString *)testCase;
-- (void)logWarning:(NSString *)warning test:(NSString *)test testCase:(NSString *)testCase;
-- (void)logError:(NSString *)error test:(NSString *)test testCase:(NSString *)testCase;
-
 @end
 
 
@@ -68,6 +63,11 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 - (void)logTest:(NSString *)test caseFail:(NSString *)testCase;
 - (void)logTest:(NSString *)test casePass:(NSString *)testCase;
 - (void)logTest:(NSString *)test caseIssue:(NSString *)testCase;
+
+- (void)logDebug:(NSString *)debug test:(NSString *)test testCase:(NSString *)testCase;
+- (void)logMessage:(NSString *)message test:(NSString *)test testCase:(NSString *)testCase;
+- (void)logWarning:(NSString *)warning test:(NSString *)test testCase:(NSString *)testCase;
+- (void)logError:(NSString *)error test:(NSString *)test testCase:(NSString *)testCase;
 
 @end
 
