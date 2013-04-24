@@ -403,7 +403,7 @@
     // These values will need to be updated if the test class' definition changes.
     [[_loggerMock expect] logTestFinish:NSStringFromClass(testClass) withNumCasesExecuted:3 numCasesFailed:0];
 
-    [[_loggerMock expect] logTestingFinish];
+    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsFailed:0];
 
     // *** End expected test run
     
@@ -498,12 +498,15 @@
     // ...the test controller logs an error...
     [[_loggerMock expect] logError:[OCMArg any]];
 
-    // ...and the test controller logs the test as aborted (rather than finishing).
+    // ...and the test controller logs the test as aborted (rather than finishing)...
     [[_loggerMock expect] logTestAbort:NSStringFromClass(failingTestClass)];
+
+    // ...and the test controller logs testing as finishing with one test executed, one test failing.
+    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsFailed:1];
 
     // *** End expected test run
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObjects:failingTestClass, nil], nil);
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:failingTestClass], nil);
     STAssertNoThrow([failingTestSequencer verify], @"Test did not fail/messages were not logged in the expected sequence.");
 }
 
@@ -619,9 +622,12 @@
     // ...and logs the test case failing...
     [[_loggerMock expect] logTest:NSStringFromClass(failingTestClass) caseFail:NSStringFromSelector(failingTestCase)];
 
-    // ...and the test controller reports the test finishing with one test case failing.
-    // These values will need to be updated if the test class' definition changes.
+    // ...and the test controller reports the test finishing with one test case failing...
+    // (these values will need to be updated if the test class' definition changes)
     [[_loggerMock expect] logTestFinish:NSStringFromClass(failingTestClass) withNumCasesExecuted:3 numCasesFailed:1];
+
+    // ...and the test controller logs testing as finishing with one test executed, one test failing.
+    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsFailed:1];
 
     // *** End expected test run
 
@@ -736,9 +742,12 @@
     // ...the test logs the case as passing...
     [[_loggerMock expect] logTest:NSStringFromClass(testClass) casePass:NSStringFromSelector(testCase)];
 
-    // ...and the test controller reports the test finishing with no cases failing.
-    // These values will need to be updated if the test class' definition changes.
+    // ...and the test controller reports the test finishing with no cases failing...
+    // (these values will need to be updated if the test class' definition changes)
     [[_loggerMock expect] logTestFinish:NSStringFromClass(testClass) withNumCasesExecuted:3 numCasesFailed:0];
+
+    // ...and the test controller logs testing as finishing with one test executed, no tests failing.
+    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsFailed:0];
 
     // *** End expected test run
 
@@ -766,9 +775,12 @@
     // ...and logs the test case failing...
     [[_loggerMock expect] logTest:NSStringFromClass(failingTestClass) caseFail:NSStringFromSelector(failingTestCase)];
 
-    // ...and the test controller reports the test finishing with one case failing.
-    // These values will need to be updated if the test class' definition changes.
+    // ...and the test controller reports the test finishing with one case failing...
+    // (these values will need to be updated if the test class' definition changes)
     [[_loggerMock expect] logTestFinish:NSStringFromClass(failingTestClass) withNumCasesExecuted:3 numCasesFailed:1];
+
+    // ...and the test controller logs testing as finishing with one test executed, one test failing.
+    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsFailed:1];
 
     // *** End expected test run
 

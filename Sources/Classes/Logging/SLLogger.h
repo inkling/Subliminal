@@ -52,7 +52,8 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 
 - (void)logTestAbort:(NSString *)test;
 
-- (void)logTestingFinish;
+- (void)logTestingFinishWithNumTestsExecuted:(NSUInteger)numTestsExecuted
+                              numTestsFailed:(NSUInteger)numTestsFailed;
 
 @end
 

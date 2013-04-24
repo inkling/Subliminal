@@ -76,15 +76,18 @@ static SLLogger *__sharedLogger = nil;
 - (void)logTestFinish:(NSString *)test
  withNumCasesExecuted:(NSUInteger)numCasesExecuted
        numCasesFailed:(NSUInteger)numCasesFailed {
-    [self logMessage:[NSString stringWithFormat:@"Test \"%@\" finished: executed %u tests, with %u failures.", test, numCasesExecuted, numCasesFailed]];
+    [self logMessage:[NSString stringWithFormat:@"Test \"%@\" finished: executed %u cases, with %u failures.",
+                                                test, numCasesExecuted, numCasesFailed]];
 }
 
 - (void)logTestAbort:(NSString *)test {
     [self logError:[NSString stringWithFormat:@"Test \"%@\" terminated abnormally.", test]];
 }
 
-- (void)logTestingFinish {
-    [self logMessage:@"Testing finished."];
+- (void)logTestingFinishWithNumTestsExecuted:(NSUInteger)numTestsExecuted
+                              numTestsFailed:(NSUInteger)numTestsFailed {
+    [self logMessage:[NSString stringWithFormat:@"Testing finished: executed %u tests, with %u failures.",
+                                                numTestsExecuted, numTestsFailed]];
 }
 
 @end
