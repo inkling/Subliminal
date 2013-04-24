@@ -200,7 +200,8 @@
 
     [[testMock expect] run:[OCMArg anyPointer]];
 
-    [[_loggerMock expect] logTestingFinish];
+    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsFailed:0];
+    
     // warning at end
     [[_loggerMock expect] logMessage:@"Warning: this was a focused run. Fewer test cases may have run than normal."];
     

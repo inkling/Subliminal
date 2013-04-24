@@ -50,6 +50,7 @@ static void SLUncaughtExceptionHandler(NSException *exception)
 @implementation SLTestController {
     BOOL _runningWithFocus;
     NSSet *_testsToRun;
+    NSUInteger _numTestsExecuted, _numTestsFailed;
     void(^_completionBlock)(void);
 }
 
@@ -136,7 +137,7 @@ static SLTestController *__sharedController = nil;
     dispatch_async([[self class] runQueue], ^{
         NSAssert([SLLogger sharedLogger], @"A shared SLLogger must be set (+[SLLogger setSharedLogger:]) before SLTestController can run tests.");
         
-        _completionBlock = [completionBlock copy];
+        _completionBlock = completionBlock;
 
         _testsToRun = [[self class] testsToRun:tests withFocus:&_runningWithFocus];
         if (![_testsToRun count]) {
@@ -161,6 +162,7 @@ static SLTestController *__sharedController = nil;
                     [[SLLogger sharedLogger] logTestFinish:testName
                                       withNumCasesExecuted:numCasesExecuted
                                             numCasesFailed:numCasesFailed];
+                    if (numCasesFailed > 0) _numTestsFailed++;
                 }
                 @catch (NSException *e) {
                     // If an assertion carries call site info, that suggests it was "expected",
@@ -177,7 +179,9 @@ static SLTestController *__sharedController = nil;
                     }
                     [[SLLogger sharedLogger] logError:message];
                     [[SLLogger sharedLogger] logTestAbort:testName];
+                    _numTestsFailed++;
                 }
+                _numTestsExecuted++;
             }
         }
 
@@ -186,15 +190,11 @@ static SLTestController *__sharedController = nil;
 }
 
 - (void)_finishTesting {
-    // only log that we finished if we ran some tests
-    if ([_testsToRun count]) {
-        [[SLLogger sharedLogger] logTestingFinish];
+    [[SLLogger sharedLogger] logTestingFinishWithNumTestsExecuted:_numTestsExecuted
+                                                   numTestsFailed:_numTestsFailed];
 
-        if (_runningWithFocus) {
-            SLLog(@"Warning: this was a focused run. Fewer test cases may have run than normal.");
-        }
-    } else {
-        SLLog(@"Testing aborted.");
+    if (_runningWithFocus) {
+        SLLog(@"Warning: this was a focused run. Fewer test cases may have run than normal.");
     }
 
     if (_completionBlock) dispatch_sync(dispatch_get_main_queue(), _completionBlock);
@@ -204,6 +204,8 @@ static SLTestController *__sharedController = nil;
     [[SLTerminal sharedTerminal] eval:@"_testingHasFinished = true;"];
 
     // clear controller state (important when testing Subliminal, when the controller will test repeatedly)
+    _numTestsExecuted = 0;
+    _numTestsFailed = 0;
     _runningWithFocus = NO;
     _testsToRun = nil;
     _completionBlock = nil;

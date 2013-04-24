@@ -855,7 +855,7 @@
         // on the elements of the mock view path instead of the view path because
         // the mock view path contains the actual elements UIAutomation will
         // interact with, and it may be shorter than the view path.
-        [_accessibilityElementPath enumerateObjectsUsingBlock:^(SLMainThreadRef *objRef, NSUInteger idx, BOOL *stop) {
+        for (SLMainThreadRef *objRef in _accessibilityElementPath) {
             NSObject *obj = [objRef target];
 
             // see note on +mapPathToBackgroundThread:

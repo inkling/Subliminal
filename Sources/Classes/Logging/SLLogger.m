@@ -43,41 +43,21 @@ static SLLogger *__sharedLogger = nil;
     __sharedLogger = logger;
 }
 
-- (dispatch_queue_t)loggingQueue {
-    return NULL;
-}
-
-- (void)logDebug:(NSString *)debug test:(NSString *)test testCase:(NSString *)testCase {
+- (void)logDebug:(NSString *)debug {
     [self logMessage:[NSString stringWithFormat:@"Debug: %@", debug]];
 }
 
-- (void)logMessage:(NSString *)message test:(NSString *)test testCase:(NSString *)testCase {
-    NSLog(@"Concrete SLLogger subclass (%@) must provide an interface to a Javascript logging functions", NSStringFromClass([self class]));
+- (void)logMessage:(NSString *)message {
+    NSLog(@"Concrete SLLogger subclass (%@) must implement %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd));
     [self doesNotRecognizeSelector:_cmd];
 }
 
-- (void)logWarning:(NSString *)warning test:(NSString *)test testCase:(NSString *)testCase {
+- (void)logWarning:(NSString *)warning {
     [self logMessage:[NSString stringWithFormat:@"Warning: %@", warning]];
 }
 
-- (void)logError:(NSString *)error test:(NSString *)test testCase:(NSString *)testCase {
-    [self logMessage:[NSString stringWithFormat:@"Error: %@", error]];
-}
-
-- (void)logDebug:(NSString *)debug {
-    [self logDebug:debug test:nil testCase:nil];
-}
-
-- (void)logMessage:(NSString *)message {
-    [self logMessage:message test:nil testCase:nil];
-}
-
-- (void)logWarning:(NSString *)warning {
-    [self logWarning:warning test:nil testCase:nil];
-}
-
 - (void)logError:(NSString *)error {
-    [self logError:error test:nil testCase:nil];
+    [self logMessage:[NSString stringWithFormat:@"Error: %@", error]];
 }
 
 @end
@@ -96,15 +76,18 @@ static SLLogger *__sharedLogger = nil;
 - (void)logTestFinish:(NSString *)test
  withNumCasesExecuted:(NSUInteger)numCasesExecuted
        numCasesFailed:(NSUInteger)numCasesFailed {
-    [self logMessage:[NSString stringWithFormat:@"Test \"%@\" finished: executed %u tests, with %u failures.", test, numCasesExecuted, numCasesFailed]];
+    [self logMessage:[NSString stringWithFormat:@"Test \"%@\" finished: executed %u cases, with %u failures.",
+                                                test, numCasesExecuted, numCasesFailed]];
 }
 
 - (void)logTestAbort:(NSString *)test {
     [self logError:[NSString stringWithFormat:@"Test \"%@\" terminated abnormally.", test]];
 }
 
-- (void)logTestingFinish {
-    [self logMessage:@"Testing finished."];
+- (void)logTestingFinishWithNumTestsExecuted:(NSUInteger)numTestsExecuted
+                              numTestsFailed:(NSUInteger)numTestsFailed {
+    [self logMessage:[NSString stringWithFormat:@"Testing finished: executed %u tests, with %u failures.",
+                                                numTestsExecuted, numTestsFailed]];
 }
 
 @end
@@ -126,6 +109,22 @@ static SLLogger *__sharedLogger = nil;
 
 - (void)logTest:(NSString *)test caseIssue:(NSString *)testCase {
     [self logMessage:[NSString stringWithFormat:@"Test case \"-[%@ %@]\" terminated abnorally.", test, testCase]];
+}
+
+- (void)logDebug:(NSString *)debug test:(NSString *)test testCase:(NSString *)testCase {
+    [self logDebug:[NSString stringWithFormat:@"-[%@ %@]: %@", test, testCase, debug]];
+}
+
+- (void)logMessage:(NSString *)message test:(NSString *)test testCase:(NSString *)testCase {
+    [self logMessage:[NSString stringWithFormat:@"-[%@ %@]: %@", test, testCase, message]];
+}
+
+- (void)logWarning:(NSString *)warning test:(NSString *)test testCase:(NSString *)testCase {
+    [self logWarning:[NSString stringWithFormat:@"-[%@ %@]: %@", test, testCase, warning]];
+}
+
+- (void)logError:(NSString *)error test:(NSString *)test testCase:(NSString *)testCase {
+    [self logError:[NSString stringWithFormat:@"-[%@ %@]: %@", test, testCase, error]];
 }
 
 @end
