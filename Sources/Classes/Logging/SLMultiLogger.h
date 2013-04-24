@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "SLLogger.h"
 
-@interface SLMultiLogger : NSProxy
+@interface SLMultiLogger : NSProxy <SLThreadSafeLogger>
 
 - (id)init;
 - (void)addLogger:(SLLogger *)newLogger;
