@@ -26,6 +26,9 @@
  will be executed on the main queue. The test controller will then signal 
  UIAutomation to finish executing commands.
  
+ @warning A shared SLLogger must be [set](+[SLLogger setSharedLogger:]) before 
+ tests can be run.
+
  @param tests The set of tests to run.
  @param block The block to execute once testing has finished.
  
