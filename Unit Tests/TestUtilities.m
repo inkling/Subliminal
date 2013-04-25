@@ -40,33 +40,33 @@ void SLRunTestsAndWaitUntilFinished(NSSet *tests, void (^completionBlock)()) {
 
 - (void)slAssertTrue:(BOOL (^)(void))condition {
     NSParameterAssert(condition);
-    SLAssertTrue(condition(), @"");
+    SLAssertTrue(condition(), nil);
 }
 
 - (void)slAssertFalse:(BOOL (^)(void))condition {
     NSParameterAssert(condition);
-    SLAssertFalse(condition(), @"");
+    SLAssertFalse(condition(), nil);
 }
 
 - (void)sLWaitUntilTrue:(BOOL (^)(void))condition withTimeout:(NSTimeInterval)timeout {
     NSParameterAssert(condition);
-    SLWaitUntilTrue(condition(), timeout, @"");
+    SLWaitUntilTrue(condition(), timeout, nil);
 }
 
 - (void)slAssertThrows:(void (^)(void))expression {
     NSParameterAssert(expression);
-    SLAssertThrows(expression(), @"");
+    SLAssertThrows(expression(), nil);
 }
 
 - (void)slAssertThrows:(void (^)(void))expression named:(NSString *)exceptionName {
     NSParameterAssert(expression);
     NSParameterAssert(exceptionName);
-    SLAssertThrowsNamed(expression(), exceptionName, @"");
+    SLAssertThrowsNamed(expression(), exceptionName, nil);
 }
 
 - (void)slAssertNoThrow:(void (^)(void))expression {
     NSParameterAssert(expression);
-    SLAssertNoThrow(expression(), @"");
+    SLAssertNoThrow(expression(), nil);
 }
 
 @end
