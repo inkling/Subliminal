@@ -222,17 +222,14 @@
 - (NSString *)standardAccessibilityIdentifierReplacement;
 
 /** 
- Resets the receiver's accessibilityIdentifier and accessibilityLabel to their 
- appropriate values, unless their values have been changed again since they were 
- replaced with the standardAccessibilityIdentifierReplacement.
+ Resets the receiver's accessibilityIdentifier to its appropriate value, unless its
+ value has been changed again since it was replaced with the
+ standardAccessibilityIdentifierReplacement.
 
  @param previousIdentifier The accessibilityIdentifier's value before it was set to
  standardAccessibilityIdentifierReplacement.
- @param previousLabel The accessibilityLabel's value before it was set to
- standardAccessibilityIdentifierReplacement.
  **/
-- (void)resetAccessibilityInfoIfNecessaryWithPreviousIdentifier:(NSString *)previousIdentifier
-                                                  previousLabel:(NSString *)previousLabel;
+- (void)resetAccessibilityInfoIfNecessaryWithPreviousIdentifier:(NSString *)previousIdentifier;
 
 @end
 
@@ -496,17 +493,13 @@
     return [NSString stringWithFormat:@"%@: %p", [self class], self];
 }
 
-- (void)resetAccessibilityInfoIfNecessaryWithPreviousIdentifier:(NSString *)previousIdentifier previousLabel:(NSString *)previousLabel {
+- (void)resetAccessibilityInfoIfNecessaryWithPreviousIdentifier:(NSString *)previousIdentifier {
     
     if ([self respondsToSelector:@selector(accessibilityIdentifier)] && [self respondsToSelector:@selector(setAccessibilityIdentifier:)]) {
         NSString *currentIdentifier = [self performSelector:@selector(accessibilityIdentifier)];
         if ([currentIdentifier isEqualToString:[self standardAccessibilityIdentifierReplacement]]) {
             [self performSelector:@selector(setAccessibilityIdentifier:) withObject:previousIdentifier];
         }
-    }
-    
-    if ([self.accessibilityLabel isEqualToString:[self standardAccessibilityIdentifierReplacement]]) {
-        self.accessibilityLabel = previousLabel;
     }
 }
 
@@ -774,19 +767,15 @@
 // but rather track the identifiers on their corresponding views)
 // and that the path does not contain any extra elements.
 //
-// After the block has been executed, the accessibilityLabels and
-// accessibilityIdentifiers on each element in the view matching chain are reset.
+// After the block has been executed, the accessibilityIdentifiers on each element
+// in the view matching chain are reset.
 
 - (void)bindPath:(void (^)(SLAccessibilityPath *boundPath))block {
     __block NSMutableArray *previousAccessorPathIdentifiers = [[NSMutableArray alloc] init];
-    __block NSMutableArray *previousAccessorPathLabels = [[NSMutableArray alloc] init];
 
     // Unique the elements' identifiers
     dispatch_sync(dispatch_get_main_queue(), ^{
-        // Previous accessibility identifiers and labels are stored in a separate loop,
-        // before they are reassigned. This is because for some elements, these
-        // values depend on their parent elements' values, and will change
-        // when the parent elements' values are updated.
+
         for (SLMainThreadRef *objRef in _viewPath) {
             NSObject *obj = [objRef target];
 
@@ -802,31 +791,12 @@
             }
             [previousAccessorPathIdentifiers addObject:previousIdentifier];
 
-            NSObject *previousLabel = [obj accessibilityLabel];
-            if (previousLabel == nil) {
-                previousLabel = [NSNull null];
-            }
-            [previousAccessorPathLabels addObject:previousLabel];
-        }
-
-        // The path's elements' accessibility information is updated in reverse order,
-        // because of the issue described in the above note.
-        for (SLMainThreadRef *objRef in [_viewPath reverseObjectEnumerator]) {
-            NSObject *obj = [objRef target];
-
             // see note on +mapPathToBackgroundThread:
             // we only throw a fatal exception if there *are* objects in the path
             // that differ from our assumptions
             NSAssert(!obj || [obj respondsToSelector:@selector(accessibilityIdentifier)],
                      @"elements in the view path must conform to UIAccessibilityIdentification");
             [obj setAccessibilityIdentifierWithStandardReplacement];
-
-            // Even some view objects will not allow their accessibilityIdentifier to be modified.
-            // In these cases, if the accessibilityIdentifer is empty,
-            // we can uniquely identify the object with its label.
-            if ([[obj performSelector:@selector(accessibilityIdentifier)] length] == 0) {
-                obj.accessibilityLabel = [obj standardAccessibilityIdentifierReplacement];
-            }
         }
     });
 
@@ -836,14 +806,12 @@
     dispatch_sync(dispatch_get_main_queue(), ^{
         // The path's elements' accessibility information is updated in reverse order,
         // because of the issue listed in the above note.
-        [_viewPath enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(SLMainThreadRef *objRef, NSUInteger idx, BOOL *stop) {
+        [_viewPath enumerateObjectsUsingBlock:^(SLMainThreadRef *objRef, NSUInteger idx, BOOL *stop) {
             NSObject *obj = [objRef target];
             NSObject *identifierObj = [previousAccessorPathIdentifiers objectAtIndex:idx];
             NSString *identifier = ([identifierObj isEqual:[NSNull null]] ? nil : (NSString *)identifierObj);
-            NSObject *labelObj = [previousAccessorPathLabels objectAtIndex:idx];
-            NSString *label = ([labelObj isEqual:[NSNull null]] ? nil : (NSString *)labelObj);
             
-            [obj resetAccessibilityInfoIfNecessaryWithPreviousIdentifier:identifier previousLabel:label];
+            [obj resetAccessibilityInfoIfNecessaryWithPreviousIdentifier:identifier];
         }];
     });
 }
@@ -864,17 +832,30 @@
             NSAssert(!obj || [obj respondsToSelector:@selector(accessibilityIdentifier)],
                      @"elements in the mock view path must conform to UIAccessibilityIdentification");
 
-            // Elements must be identified by their accessibility identifier
-            // as long as one exists. The accessibility identifier may be nil
-            // for some classes on which you cannot set an accessibility identifer
+            // On some classes you cannot set an accessibility identifer
             // e.g. UISegmentedControl. In these cases the element can
-            // be identified by its label.
+            // be identified by its accessibilityLabel and accessibilityFrame.
             NSString *currentIdentifier = [obj performSelector:@selector(accessibilityIdentifier)];
             if (![currentIdentifier length]) {
                 currentIdentifier = obj.accessibilityLabel;
+                CGRect accessibilityRect = [obj accessibilityFrame];
+
+                NSString *predicate = [NSString stringWithFormat:@"(rect.x == %g) AND (rect.y == %g) AND (rect.width == %g) AND (rect.height == %g)",
+                                       accessibilityRect.origin.x,
+                                       accessibilityRect.origin.y,
+                                       accessibilityRect.size.width,
+                                       accessibilityRect.size.height];
+
+                if ([currentIdentifier length] > 0) {
+                    predicate = [predicate stringByAppendingFormat:@" AND (label like \"%@\")", [currentIdentifier slStringByEscapingForJavaScriptLiteral]];
+                }
+
+                [uiaRepresentation appendFormat:@".elements().firstWithPredicate(\"%@\")", [predicate slStringByEscapingForJavaScriptLiteral]];
+
+            } else {
+                [uiaRepresentation appendFormat:@".elements()['%@']",
+                 [currentIdentifier slStringByEscapingForJavaScriptLiteral]];
             }
-            [uiaRepresentation appendFormat:@".elements()['%@']",
-             [currentIdentifier slStringByEscapingForJavaScriptLiteral]];
         }
     });
     return uiaRepresentation;
