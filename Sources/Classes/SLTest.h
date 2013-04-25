@@ -345,15 +345,19 @@ extern NSString *SLComposeString(NSString *leadingString, NSString *format, ...)
     @try { \
         (expr); \
     } \
-    @catch (id anException) { \
-        if (![anException isKindOfClass:[NSException class]] ||\
-            ![[(NSException *)anException name] isEqualToString:exceptionName]) {\
-            NSString *reason = [NSString stringWithFormat:@"\"%@\" threw an exception (\"%@\"), but not an exception named \"%@\".%@", \
-                                    @(#expr), anException, exceptionName, SLComposeString(@" ", description, ##__VA_ARGS__)]; \
+    @catch (NSException *anException) { \
+        if (![[anException name] isEqualToString:exceptionName]) { \
+            NSString *reason = [NSString stringWithFormat:@"\"%@\" threw an exception named \"%@\" (\"%@\"), but not an exception named \"%@\". %@", \
+                                    @(#expr), [anException name], [anException reason], exceptionName, SLComposeString(@" ", description, ##__VA_ARGS__)]; \
             @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
         } else {\
             __caughtException = YES; \
         }\
+    } \
+    @catch (id anException) { \
+        NSString *reason = [NSString stringWithFormat:@"\"%@\" threw an exception, but not an exception named \"%@\". %@", \
+                                @(#expr), exceptionName, SLComposeString(@" ", description, ##__VA_ARGS__)]; \
+        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
     } \
     if (!__caughtException) { \
         NSString *reason = [NSString stringWithFormat:@"\"%@\" should have thrown an exception named \"%@\".%@", \
