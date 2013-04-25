@@ -221,13 +221,10 @@
 
 #pragma mark - Test waitUntil{Visible:,Invisible:}
 
-// Because we wait on a process involving UIAutomation,
-// there is some variability in the duration of UIAutomation's execution
-// and in the interval before we find out that it timed out.
-// Thus, the variability is +/- one SLElementWaitRetryDelay,
-// and one SLTerminalWaitRetryDelay.
+// Depending on slight timing variances, whenever we wait,
+// the wait may vary by the retry delay used by SLElement
 - (NSTimeInterval)waitDelayVariability {
-    return SLTerminalReadRetryDelay + SLElementWaitRetryDelay;
+    return SLElementWaitRetryDelay;
 }
 
 - (void)testWaitUntilVisibleDoesNotThrowAndReturnsImmediatelyWhenConditionIsTrueUponWait {
@@ -239,7 +236,8 @@
     
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(waitTimeInterval < .25, @"Test waited for %g but should not have waited for an appreciable interval.", waitTimeInterval);
+    SLAssertTrue(waitTimeInterval < .01,
+                 @"Test waited for %g but should not have waited for an appreciable interval.", waitTimeInterval);
 }
 
 - (void)testWaitUntilVisibleDoesNotThrowAndReturnsImmediatelyAfterConditionBecomesTrue {
@@ -342,7 +340,8 @@
     
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(waitTimeInterval < .25, @"Test waited for %g but should not have waited for an appreciable interval.", waitTimeInterval);
+    SLAssertTrue(waitTimeInterval < .01,
+                 @"Test waited for %g but should not have waited for an appreciable interval.", waitTimeInterval);
 }
 
 - (void)testWaitUntilInvisibleOrInvalidDoesNotThrowAndReturnsImmediatelyWhenValidityConditionIsTrueUponWait {
@@ -354,7 +353,8 @@
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(waitTimeInterval < .25, @"Test waited for %g but should not have waited for an appreciable interval.", waitTimeInterval);
+    SLAssertTrue(waitTimeInterval < .01,
+                 @"Test waited for %g but should not have waited for an appreciable interval.", waitTimeInterval);
 }
 
 - (void)testWaitUntilInvisibleOrInvalidDoesNotThrowAndReturnsImmediatelyAfterConditionBecomesTrue {

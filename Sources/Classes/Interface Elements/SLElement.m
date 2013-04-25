@@ -204,57 +204,91 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return isVisible;
 }
 
+// This method cannot use -examineMatchingObject:timeout: because
+// the block passed to that method ultimately executes on the main thread--we can't wait therein.
 - (void)waitUntilVisible:(NSTimeInterval)timeout {
-    // We allow for the the element to be invalid upon waiting,
-    // so long as it is ultimately visible, and we don't want to wait more
-    // or less than `timeout`--so we provide `performActionWithUIARepresentation:`
-    // at most `timeout` for element resolution...
-    
+    // We allow the the element to be invalid upon waiting,
+    // giving at most `timeout` for element resolution...
     NSTimeInterval resolutionStart = [NSDate timeIntervalSinceReferenceDate];
-    [self performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
-        NSTimeInterval resolutionEnd = [NSDate timeIntervalSinceReferenceDate];
-        NSTimeInterval resolutionDuration = resolutionEnd - resolutionStart;
+    SLAccessibilityPath *accessibilityPath = [self accessibilityPathWithTimeout:timeout];
+    if (!accessibilityPath) {
+        [NSException raise:SLElementInvalidException
+                    format:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]];
+    }
 
-        // ...and wait for only that part of `timeout` remaining after resolution
-        // for the element to become visible
-        NSTimeInterval remainingTimeout = timeout - resolutionDuration;
+    NSTimeInterval resolutionEnd = [NSDate timeIntervalSinceReferenceDate];
+    NSTimeInterval resolutionDuration = resolutionEnd - resolutionStart;
 
-        // `performActionWithUIARepresentation:` could have found the element
-        // right at the end of timeout
-        if (remainingTimeout <= 0.0) {
-            [NSException raise:SLElementNotVisibleException
-                        format:@"Element %@ did not become visible within %g seconds.",
-                                self, timeout];
+    // ...and allowing that part of `timeout` remaining after resolution
+    // for the element to become visible
+    NSTimeInterval remainingTimeout = timeout - resolutionDuration;
+
+    // we could have resolved the element right at the end of `timeout`
+    if (remainingTimeout <= 0.0) {
+        [NSException raise:SLElementNotVisibleException
+                    format:@"Element %@ did not become visible within %g seconds.",
+         self, timeout];
+    }
+
+    // Since we're waiting, it's possible, if unlikely, that the matching object
+    // might drop out of scope between the path's construction and its examination
+    __block BOOL didBecomeVisible = NO;
+    __block BOOL matchingObjectWasOutOfScope = NO;
+    NSDate *waitStartDate = [NSDate date];
+    do {
+        [accessibilityPath examineLastPathComponent:^(NSObject *lastPathComponent) {
+            if (!lastPathComponent) {
+                matchingObjectWasOutOfScope = YES;
+                return;
+            }
+            didBecomeVisible = [lastPathComponent slAccessibilityIsVisible];
+        }];
+
+        if (matchingObjectWasOutOfScope) {
+            [NSException raise:SLElementInvalidException
+                        format:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]];
         }
+        if (didBecomeVisible) break;
 
-        NSString *isVisible = [NSString stringWithFormat:@"%@.isVisible()", uiaRepresentation];
-        if (![[SLTerminal sharedTerminal] waitUntilTrue:isVisible
-                                             retryDelay:SLElementWaitRetryDelay
-                                                timeout:remainingTimeout]) {
-            [NSException raise:SLElementNotVisibleException
-                        format:@"Element %@ did not become visible within %g seconds.",
-                                self, timeout];
-        }
-    } timeout:timeout];
+        [NSThread sleepForTimeInterval:SLElementWaitRetryDelay];
+    } while ([[NSDate date] timeIntervalSinceDate:waitStartDate] < remainingTimeout);
+    
+    if (!didBecomeVisible) {
+        [NSException raise:SLElementNotVisibleException
+                    format:@"Element %@ did not become visible within %g seconds.",
+                            self, timeout];
+    }
 }
 
 - (void)waitUntilInvisibleOrInvalid:(NSTimeInterval)timeout {
-    // succeed immediately if we're not valid (otherwise performAction... will throw)
+    // succeed immediately if we're not valid
     if (![self isValid]) return;
 
-    [self performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
-        // The method lists "invisible" before "invalid" because the element not being visible
-        // is what the user really cares about.
-        // But we check validity first in case isVisible() might throw.
-        // (It doesn't--it returns NO, given an invalid element--but this is safest
-        // (and matches Subliminal's semantics).)
-        NSString *isInvalidOrInvisible = [NSString stringWithFormat:@"!%@.isValid() || !%@.isVisible()", uiaRepresentation, uiaRepresentation];
-        if (![[SLTerminal sharedTerminal] waitUntilTrue:isInvalidOrInvisible
-                                             retryDelay:SLElementWaitRetryDelay
-                                                timeout:timeout]) {
-            [NSException raise:SLElementVisibleException format:@"Element %@ was still visible after %g seconds.", self, timeout];
+    // try repeated checks to visibility, allowing for the element to become invalid
+    // (as -isVisible will match afresh each time)
+    BOOL stillVisible = NO;
+    NSDate *waitStartDate = [NSDate date];
+    @try {
+        do {
+            stillVisible = [self isVisible];
+            if (!stillVisible || !timeout) break;
+            
+            [NSThread sleepForTimeInterval:SLElementWaitRetryDelay];
+        } while ([[NSDate date] timeIntervalSinceDate:waitStartDate] < timeout);
+    }
+    @catch (NSException *exception) {
+        if ([[exception name] isEqualToString:SLElementInvalidException]) {
+            stillVisible = NO;
+        } else {
+            @throw exception;
         }
-    }];
+    }
+
+    if (stillVisible) {
+        [NSException raise:SLElementVisibleException
+                    format:@"Element %@ was still visible after %g seconds.",
+                             self, timeout];
+    }
 }
 
 - (void)tap {
