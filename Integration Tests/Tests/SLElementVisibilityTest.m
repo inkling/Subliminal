@@ -7,10 +7,48 @@
 //
 
 #import "SLIntegrationTest.h"
+#import "SLElement+Subclassing.h"
 
+
+/**
+ Subliminal's implementation of -isVisible does not rely upon UIAutomation, 
+ because UIAElement.isVisible() has a number of bugs as exercised in 
+ -testViewIsNotVisibleIfItIsHiddenEvenInTableViewCell and
+ -testAccessibilityElementIsNotVisibleIfContainerIsHiddenEvenInTableViewCell.
+
+ Subliminal's implementation otherwise attempts to conform to UIAutomation's 
+ definition of visibility, as demonstrated by the below test cases.
+ */
 @interface SLElementVisibilityTest : SLIntegrationTest
+@end
+
+
+@interface SLElement (SLElementVisibilityTest)
+
+/**
+ Determines whether the specified element is visible on the screen 
+ using UIAutomation.
+ 
+ This method is declared only as a reference for Subliminal's implementation
+ of -[SLElement isVisible], which is to be preferred to UIAElement.isVisible() 
+ due to bugs in the latter function.
+ */
+- (BOOL)uiaIsVisible;
 
 @end
+
+@implementation SLElement (SLElementVisibilityTest)
+
+- (BOOL)uiaIsVisible {
+    __block BOOL isVisible = NO;
+    [self performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+        isVisible = [[[SLTerminal sharedTerminal] evalWithFormat:@"(%@.isVisible() ? 'YES' : 'NO')", uiaRepresentation] boolValue];
+    }];
+    return isVisible;
+}
+
+@end
+
 
 @implementation SLElementVisibilityTest {
     SLElement *_testElement;
@@ -26,83 +64,159 @@
     _testElement = [SLElement elementWithAccessibilityLabel:@"test"];
 }
 
+- (void)setUpTestCaseWithSelector:(SEL)testSelector {
+    [super setUpTestCaseWithSelector:testSelector];
+
+    if (testSelector == @selector(testDeterminingVisibilityOfWebAccessibilityElements)) {
+        SLWaitUntilTrue(SLAskAppYesNo(webViewDidFinishLoad), 5.0, @"Webview did not load test HTML.");
+    }
+}
+
 #pragma mark - Test isVisible for elements that are views
 
 - (void)testViewIsNotVisibleIfItIsHidden {
-    SLAssertFalse([_testElement isVisible], @"Test element should not be visible.");
+    SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible.");
+    SLAssertFalse([_testElement isVisible], @"Subliminal should say that the element is not visible.");
 
     SLAskApp(showTestView);
-    
-    SLAssertTrue([_testElement isVisible], @"Test element should be visible.");
+
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
+}
+
+- (void)testViewIsNotVisibleIfItIsHiddenEvenInTableViewCell {
+    // once the view has been shown,
+    // the table view cell appears to cache its state
+    // breaking UIAElement.isVisible
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
+
+    SLAskApp(hideTestView);
+
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible, but it doesn't.");
+    SLAssertFalse([_testElement isVisible], @"Subliminal should say that the element is not visible.");
 }
 
 - (void)testViewIsNotVisibleIfSuperviewIsHidden {
-    SLAssertFalse([_testElement isVisible], @"Test element should not be visible.");
+    SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible.");
+    SLAssertFalse([_testElement isVisible], @"Subliminal should say that the element is not visible.");
 
     SLAskApp(showTestViewSuperview);
 
-    SLAssertTrue([_testElement isVisible], @"Test element should be visible.");
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
+}
+
+- (void)testViewIsVisibleEvenIfUserInteractionIsDisabled {
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
 }
 
 - (void)testViewIsNotVisibleIfItHasAlphaBelow0_01 {
-    SLAssertFalse([_testElement isVisible], @"Test element should not be visible.");
+    SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible.");
+    SLAssertFalse([_testElement isVisible], @"Subliminal should say that the element is not visible.");
 
     SLAskApp(increaseTestViewAlpha);
     
-    SLAssertTrue([_testElement isVisible], @"Test element should be visible.");
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
 }
 
 - (void)testViewIsNotVisibleIfItIsOffscreen {
-    SLAssertFalse([_testElement isVisible], @"Test element should not be visible.");
+    SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible.");
+    SLAssertFalse([_testElement isVisible], @"Subliminal should say that the element is not visible.");
 
     SLAskApp(moveTestViewOnscreen);
     
-    SLAssertTrue([_testElement isVisible], @"Test element should be visible.");
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
 }
 
 - (void)testViewIsNotVisibleIfItsCenterIsCovered {
-    SLAssertFalse([_testElement isVisible], @"Test element should not be visible.");
+    SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible.");
+    SLAssertFalse([_testElement isVisible], @"Subliminal should say that the element is not visible.");
 
     SLAskApp(uncoverTestView);
     
-    SLAssertTrue([_testElement isVisible], @"Test element should be visible.");
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
 }
 
 #pragma mark - Test isVisible for elements that are not views
 
 - (void)testAccessibilityElementIsNotVisibleIfContainerIsHidden {
-    SLAssertFalse([_testElement isVisible], @"Test element should not be visible.");
+    SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible.");
+    SLAssertFalse([_testElement isVisible], @"Subliminal should say that the element is not visible.");
 
     // the test view is the container of the test element
     SLAskApp(showTestView);
 
-    SLAssertTrue([_testElement isVisible], @"Test element should be visible.");
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
+}
+
+- (void)testAccessibilityElementIsNotVisibleIfContainerIsHiddenEvenInTableViewCell {
+    // for some reason, UIAElement.isVisible always returns true
+    // for elements in table view cells, even if those elements' containers are hidden
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible, but it doesn't.");
+    SLAssertFalse([_testElement isVisible], @"Subliminal should say that the element is not visible.");
+
+    // the test view is the container of the test element
+    SLAskApp(showTestView);
+
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
+}
+
+- (void)testAccessibilityElementIsVisibleEvenIfHidden {
+    // UIAutomation ignores the value of accessibilityElementsHidden and so Subliminal does too
+    // --this is not clearly a bug in UIAutomation; the documentation is vague
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
 }
 
 - (void)testAccessibilityElementIsNotVisibleIfItIsOffscreen {
-    SLAssertFalse([_testElement isVisible], @"Test element should not be visible.");
+    SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible.");
+    SLAssertFalse([_testElement isVisible], @"Subliminal should say that the element is not visible.");
 
     // the test view is the container of the test element
     SLAskApp(moveTestViewOnscreen);
 
-    SLAssertTrue([_testElement isVisible], @"Test element should be visible.");
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
 }
 
 - (void)testAccessibilityElementIsNotVisibleIfItsCenterIsCoveredByView {
-    SLAssertFalse([_testElement isVisible], @"Test element should not be visible.");
+    SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible.");
+    SLAssertFalse([_testElement isVisible], @"Subliminal should say that the element is not visible.");
 
     // the test view is the container of the test element
     SLAskApp(uncoverTestView);
 
-    SLAssertTrue([_testElement isVisible], @"Test element should be visible.");
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
 }
 
 - (void)testAccessibilityElementIsNotVisibleIfItsCenterIsCoveredByElement {
-    SLAssertFalse([_testElement isVisible], @"Test element should not be visible.");
+    SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible.");
+    SLAssertFalse([_testElement isVisible], @"Subliminal should say that the element is not visible.");
 
     SLAskApp(uncoverTestElement);
 
-    SLAssertTrue([_testElement isVisible], @"Test element should be visible.");
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
+}
+
+- (void)testCanDetermineVisibilityOfWebAccessibilityElements {
+    // No accessibility elements are created to represent invisible HTML elements
+    // --as far as I can tell, UIAccessibility cannot describe an HTML element as "not visible"
+    // Tested by hiding elements using "display:none", "visibility:hidden", and "aria-hidden='true'".
+    SLAssertFalse([_testElement isValid], @"The test element should not be valid.");
+
+    SLAskApp(showTestText);
+
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
 }
 
 #pragma mark - Test waitUntil{Visible:,Invisible:}

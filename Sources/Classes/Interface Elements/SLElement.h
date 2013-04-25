@@ -66,6 +66,13 @@ extern const NSTimeInterval SLElementWaitRetryDelay;
 // If the UIAccessibilityElement corresponding to the receiver does not exist, isValid will return NO.
 // All other methods below will throw an SLInvalidElementException.
 - (BOOL)isValid;
+
+/**
+ Determines whether the specified element is visible on the screen.
+ 
+ @return YES if the user interface element represented by the specified element 
+ is visible onscreen, NO otherwise.
+ */
 - (BOOL)isVisible;
 - (void)waitUntilVisible:(NSTimeInterval)timeout;
 - (void)waitUntilInvisibleOrInvalid:(NSTimeInterval)timeout;

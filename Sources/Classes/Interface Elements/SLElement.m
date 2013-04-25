@@ -139,9 +139,13 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (void)examineMatchingObject:(void (^)(NSObject *object))block {
+    [self examineMatchingObject:block timeout:[[self class] defaultTimeout]];
+}
+
+- (void)examineMatchingObject:(void (^)(NSObject *))block timeout:(NSTimeInterval)timeout {
     NSParameterAssert(block);
     
-    SLAccessibilityPath *accessibilityPath = [self accessibilityPathWithTimeout:[[self class] defaultTimeout]];
+    SLAccessibilityPath *accessibilityPath = [self accessibilityPathWithTimeout:timeout];
     if (!accessibilityPath) {
         [NSException raise:SLElementInvalidException
                     format:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]];
@@ -157,6 +161,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         }
         block(lastPathComponent);
     }];
+
     if (matchingObjectWasOutOfScope) {
         [NSException raise:SLElementInvalidException
                     format:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]];
@@ -182,11 +187,18 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return ([self accessibilityPathWithTimeout:0.0] != nil);
 }
 
+/*
+ Subliminal's implementation of -isVisible does not rely upon UIAutomation,
+ because UIAElement.isVisible() has a number of bugs. However, Subliminal
+ maintains parity with UIAutomation in all cases.
+ See SLElementVisibilityTest for more information.
+ */
 - (BOOL)isVisible {
     __block BOOL isVisible = NO;
-    [self performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
-        isVisible = [[[SLTerminal sharedTerminal] evalWithFormat:@"(%@.isVisible() ? 'YES' : 'NO')", uiaRepresentation] boolValue];
-    }];
+    // isVisible evaluates the current state, no waiting to resolve the element
+    [self examineMatchingObject:^(NSObject *object) {
+        isVisible = [object slAccessibilityIsVisible];
+    } timeout:0.0];
     return isVisible;
 }
 
