@@ -11,7 +11,7 @@
 
 #import "SLElement.h"
 #import "SLElement+Subclassing.h"
-#import "NSString+SLJavaScript.h"
+#import "SLStringUtilities.h"
 #import "SLMainThreadRef.h"
 
 #import <UIKit/UIKit.h>

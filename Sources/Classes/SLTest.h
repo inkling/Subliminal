@@ -1,6 +1,6 @@
 //
-//  SLTestCase.h
-//  SubliminalTest
+//  SLTest.h
+//  Subliminal
 //
 //  Created by Jeffrey Wear on 9/3/12.
 //  Copyright (c) 2012 Inkling. All rights reserved.
@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import "SLTestController+AppContext.h"
+#import "SLStringUtilities.h"
 
 
 // all exceptions thrown by SLTest will have names beginning with this prefix
@@ -18,12 +19,6 @@ extern NSString *const SLTestAssertionFailedException;
 
 extern NSString *const SLTestExceptionFilenameKey;
 extern NSString *const SLTestExceptionLineNumberKey;
-
-#ifdef __cplusplus
-extern "C" NSString *SLComposeString(NSString *leadingString, NSString *format, ...);
-#else
-extern NSString *SLComposeString(NSString *leadingString, NSString *format, ...);
-#endif
 
 
 @interface SLTest : NSObject

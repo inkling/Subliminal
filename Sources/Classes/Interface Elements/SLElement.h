@@ -74,8 +74,6 @@ extern const NSTimeInterval SLElementWaitRetryDelay;
  is visible onscreen, NO otherwise.
  */
 - (BOOL)isVisible;
-- (void)waitUntilVisible:(NSTimeInterval)timeout;
-- (void)waitUntilInvisibleOrInvalid:(NSTimeInterval)timeout;
 
 - (void)tap;
 
@@ -107,3 +105,7 @@ extern const NSTimeInterval SLElementWaitRetryDelay;
 - (void)logElementTree;
 
 @end
+
+
+extern void SLWaitUntilVisible(SLElement *element, NSTimeInterval timeout, NSString *description, ...);
+extern void SLWaitUntilInvisibleOrInvalid(SLElement *element, NSTimeInterval timeout, NSString *description, ...);

@@ -9,7 +9,7 @@
 #import "SLUIALogger.h"
 
 #import "SLTerminal.h"
-#import "NSString+SLJavaScript.h"
+#import "SLStringUtilities.h"
 
 
 @implementation SLUIALogger {

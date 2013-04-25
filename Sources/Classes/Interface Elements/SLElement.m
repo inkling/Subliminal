@@ -204,93 +204,6 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return isVisible;
 }
 
-// This method cannot use -examineMatchingObject:timeout: because
-// the block passed to that method ultimately executes on the main thread--we can't wait therein.
-- (void)waitUntilVisible:(NSTimeInterval)timeout {
-    // We allow the the element to be invalid upon waiting,
-    // giving at most `timeout` for element resolution...
-    NSTimeInterval resolutionStart = [NSDate timeIntervalSinceReferenceDate];
-    SLAccessibilityPath *accessibilityPath = [self accessibilityPathWithTimeout:timeout];
-    if (!accessibilityPath) {
-        [NSException raise:SLElementInvalidException
-                    format:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]];
-    }
-
-    NSTimeInterval resolutionEnd = [NSDate timeIntervalSinceReferenceDate];
-    NSTimeInterval resolutionDuration = resolutionEnd - resolutionStart;
-
-    // ...and allowing that part of `timeout` remaining after resolution
-    // for the element to become visible
-    NSTimeInterval remainingTimeout = timeout - resolutionDuration;
-
-    // we could have resolved the element right at the end of `timeout`
-    if (remainingTimeout <= 0.0) {
-        [NSException raise:SLElementNotVisibleException
-                    format:@"Element %@ did not become visible within %g seconds.",
-         self, timeout];
-    }
-
-    // Since we're waiting, it's possible, if unlikely, that the matching object
-    // might drop out of scope between the path's construction and its examination
-    __block BOOL didBecomeVisible = NO;
-    __block BOOL matchingObjectWasOutOfScope = NO;
-    NSDate *waitStartDate = [NSDate date];
-    do {
-        [accessibilityPath examineLastPathComponent:^(NSObject *lastPathComponent) {
-            if (!lastPathComponent) {
-                matchingObjectWasOutOfScope = YES;
-                return;
-            }
-            didBecomeVisible = [lastPathComponent slAccessibilityIsVisible];
-        }];
-
-        if (matchingObjectWasOutOfScope) {
-            [NSException raise:SLElementInvalidException
-                        format:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]];
-        }
-        if (didBecomeVisible) break;
-
-        [NSThread sleepForTimeInterval:SLElementWaitRetryDelay];
-    } while ([[NSDate date] timeIntervalSinceDate:waitStartDate] < remainingTimeout);
-    
-    if (!didBecomeVisible) {
-        [NSException raise:SLElementNotVisibleException
-                    format:@"Element %@ did not become visible within %g seconds.",
-                            self, timeout];
-    }
-}
-
-- (void)waitUntilInvisibleOrInvalid:(NSTimeInterval)timeout {
-    // succeed immediately if we're not valid
-    if (![self isValid]) return;
-
-    // try repeated checks to visibility, allowing for the element to become invalid
-    // (as -isVisible will match afresh each time)
-    BOOL stillVisible = NO;
-    NSDate *waitStartDate = [NSDate date];
-    @try {
-        do {
-            stillVisible = [self isVisible];
-            if (!stillVisible || !timeout) break;
-            
-            [NSThread sleepForTimeInterval:SLElementWaitRetryDelay];
-        } while ([[NSDate date] timeIntervalSinceDate:waitStartDate] < timeout);
-    }
-    @catch (NSException *exception) {
-        if ([[exception name] isEqualToString:SLElementInvalidException]) {
-            stillVisible = NO;
-        } else {
-            @throw exception;
-        }
-    }
-
-    if (stillVisible) {
-        [NSException raise:SLElementVisibleException
-                    format:@"Element %@ was still visible after %g seconds.",
-                             self, timeout];
-    }
-}
-
 - (void)tap {
     [self sendMessage:@"tap()"];
 }
@@ -341,3 +254,103 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 @end
+
+
+// This function cannot use -examineMatchingObject:timeout: because
+// the block passed to that method ultimately executes on the main thread--we can't wait therein.
+void SLWaitUntilVisible(SLElement *element, NSTimeInterval timeout, NSString *description, ...) {
+    va_list args;
+    va_start(args, description);
+    NSString *formattedDescription = SLComposeStringv(@" ", description, args);
+    va_end(args);
+    
+    // We allow the the element to be invalid upon waiting,
+    // giving at most `timeout` for element resolution...
+    NSTimeInterval resolutionStart = [NSDate timeIntervalSinceReferenceDate];
+    SLAccessibilityPath *accessibilityPath = [element accessibilityPathWithTimeout:timeout];
+    if (!accessibilityPath) {
+        [NSException raise:SLElementInvalidException
+                    format:@"Element %@ did not become valid within %g seconds.%@",
+                             element, timeout, formattedDescription];
+    }
+
+    NSTimeInterval resolutionEnd = [NSDate timeIntervalSinceReferenceDate];
+    NSTimeInterval resolutionDuration = resolutionEnd - resolutionStart;
+
+    // ...and allowing that part of `timeout` remaining after resolution
+    // for the element to become visible
+    NSTimeInterval remainingTimeout = timeout - resolutionDuration;
+
+    // we could have resolved the element right at the end of `timeout`
+    if (remainingTimeout <= 0.0) {
+        [NSException raise:SLElementNotVisibleException
+                    format:@"Element %@ did not become visible within %g seconds.%@",
+                             element, timeout, formattedDescription];
+    }
+
+    // Since we're waiting, it's possible, if unlikely, that the matching object
+    // might drop out of scope between the path's construction and its examination
+    __block BOOL didBecomeVisible = NO;
+    __block BOOL matchingObjectWasOutOfScope = NO;
+    NSDate *waitStartDate = [NSDate date];
+    do {
+        [accessibilityPath examineLastPathComponent:^(NSObject *lastPathComponent) {
+            if (!lastPathComponent) {
+                matchingObjectWasOutOfScope = YES;
+                return;
+            }
+            didBecomeVisible = [lastPathComponent slAccessibilityIsVisible];
+        }];
+
+        if (matchingObjectWasOutOfScope) {
+            [NSException raise:SLElementInvalidException
+                        format:@"Element %@ became invalid before it became visible.%@",
+                                 element, formattedDescription];
+        }
+        if (didBecomeVisible) break;
+
+        [NSThread sleepForTimeInterval:SLElementWaitRetryDelay];
+    } while ([[NSDate date] timeIntervalSinceDate:waitStartDate] < remainingTimeout);
+
+    if (!didBecomeVisible) {
+        [NSException raise:SLElementNotVisibleException
+                    format:@"Element %@ did not become visible within %g seconds.%@",
+                             element, timeout, formattedDescription];
+    }
+}
+
+void SLWaitUntilInvisibleOrInvalid(SLElement *element, NSTimeInterval timeout, NSString *description, ...) {
+    // succeed immediately if the element isn't valid
+    if (![element isValid]) return;
+
+    va_list args;
+    va_start(args, description);
+    NSString *formattedDescription = SLComposeStringv(@" ", description, args);
+    va_end(args);
+
+    // try repeated checks to visibility, allowing for the element to become invalid
+    // (as -isVisible will match afresh each time)
+    BOOL stillVisible = NO;
+    NSDate *waitStartDate = [NSDate date];
+    @try {
+        do {
+            stillVisible = [element isVisible];
+            if (!stillVisible || !timeout) break;
+
+            [NSThread sleepForTimeInterval:SLElementWaitRetryDelay];
+        } while ([[NSDate date] timeIntervalSinceDate:waitStartDate] < timeout);
+    }
+    @catch (NSException *exception) {
+        if ([[exception name] isEqualToString:SLElementInvalidException]) {
+            stillVisible = NO;
+        } else {
+            @throw exception;
+        }
+    }
+
+    if (stillVisible) {
+        [NSException raise:SLElementVisibleException
+                    format:@"Element %@ was still visible after %g seconds.%@",
+                             element, timeout, formattedDescription];
+    }
+}

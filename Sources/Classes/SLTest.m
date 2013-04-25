@@ -25,24 +25,6 @@ NSString *const SLTestAssertionFailedException  = @"SLTestCaseAssertionFailedExc
 NSString *const SLTestExceptionFilenameKey      = @"SLTestExceptionFilenameKey";
 NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey";
 
-NSString *SLComposeString(NSString *leadingString, NSString *format, ...)
-{
-    if (!format) {
-        return @"";
-    }
-
-    va_list args;
-    va_start(args, format);
-    NSString *formattedString = [[NSString alloc] initWithFormat:format arguments:args];
-    va_end(args);
-
-    if (leadingString) {
-        return [leadingString stringByAppendingString:formattedString];
-    }
-
-    return formattedString;
-}
-
 
 @implementation SLTest {
     NSString *_lastKnownFilename;

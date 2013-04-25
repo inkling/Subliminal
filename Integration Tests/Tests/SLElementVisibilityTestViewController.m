@@ -189,17 +189,17 @@
     } else if ((testCase == @selector(testAccessibilityElementIsNotVisibleIfItsCenterIsCoveredByView)) ||
                (testCase == @selector(testAccessibilityElementIsNotVisibleIfItsCenterIsCoveredByElement)))  {
         nibName = @"SLElementVisibilityTestElementCovered";
-    } else if ((testCase == @selector(testWaitUntilVisibleDoesNotThrowAndReturnsImmediatelyWhenConditionIsTrueUponWait)) ||
-               (testCase == @selector(testWaitUntilVisibleDoesNotThrowAndReturnsImmediatelyAfterConditionBecomesTrue)) ||
-               (testCase == @selector(testWaitUntilVisibleDoesNotThrowIfElementIsInvalidUponWaiting)) ||
-               (testCase == @selector(testWaitUntilVisibleWaitsForSpecifiedTimeoutEvenIfElementIsInvalidUponWaiting)) ||
-               (testCase == @selector(testWaitUntilVisibleThrowsIfConditionIsStillFalseAtEndOfTimeout)) ||
-               (testCase == @selector(testWaitUntilVisibleThrowsAfterSpecifiedTimeoutEvenIfElementIsInvalidUponWaiting)) ||
-               (testCase == @selector(testWaitUntilInvisibleOrInvalidDoesNotThrowAndReturnsImmediatelyWhenVisibilityConditionIsTrueUponWait)) ||
-               (testCase == @selector(testWaitUntilInvisibleOrInvalidDoesNotThrowAndReturnsImmediatelyWhenValidityConditionIsTrueUponWait)) ||
-               (testCase == @selector(testWaitUntilInvisibleOrInvalidDoesNotThrowAndReturnsImmediatelyAfterConditionBecomesTrue)) ||
-               (testCase == @selector(testWaitUntilInvisibleOrInvalidDoesNotThrowIfElementBecomesDirectlyInvalid)) ||
-               (testCase == @selector(testWaitUntilInvisibleOrInvalidThrowsIfConditionIsStillFalseAtEndOfTimeout))) {
+    } else if ((testCase == @selector(testSLWaitUntilVisibleDoesNotThrowAndReturnsImmediatelyWhenConditionIsTrueUponWait)) ||
+               (testCase == @selector(testSLWaitUntilVisibleDoesNotThrowAndReturnsImmediatelyAfterConditionBecomesTrue)) ||
+               (testCase == @selector(testSLWaitUntilVisibleDoesNotThrowIfElementIsInvalidUponWaiting)) ||
+               (testCase == @selector(testSLWaitUntilVisibleWaitsForSpecifiedTimeoutEvenIfElementIsInvalidUponWaiting)) ||
+               (testCase == @selector(testSLWaitUntilVisibleThrowsIfConditionIsStillFalseAtEndOfTimeout)) ||
+               (testCase == @selector(testSLWaitUntilVisibleThrowsAfterSpecifiedTimeoutEvenIfElementIsInvalidUponWaiting)) ||
+               (testCase == @selector(testSLWaitUntilInvisibleOrInvalidDoesNotThrowAndReturnsImmediatelyWhenVisibilityConditionIsTrueUponWait)) ||
+               (testCase == @selector(testSLWaitUntilInvisibleOrInvalidDoesNotThrowAndReturnsImmediatelyWhenValidityConditionIsTrueUponWait)) ||
+               (testCase == @selector(testSLWaitUntilInvisibleOrInvalidDoesNotThrowAndReturnsImmediatelyAfterConditionBecomesTrue)) ||
+               (testCase == @selector(testSLWaitUntilInvisibleOrInvalidDoesNotThrowIfElementBecomesDirectlyInvalid)) ||
+               (testCase == @selector(testSLWaitUntilInvisibleOrInvalidThrowsIfConditionIsStillFalseAtEndOfTimeout))) {
         nibName = @"SLElementVisibilityTestHidden";
     }
     return nibName;
@@ -263,28 +263,28 @@ static NSString *TestCellIdentifier = nil;
 
     NSString *testCaseName = NSStringFromSelector(self.testCase);
     if ([testCaseName hasPrefix:@"testView"] ||
-        [testCaseName hasPrefix:@"testWait"]) {
+        [testCaseName hasPrefix:@"testSLWait"]) {
         self.testView.isAccessibilityElement = YES;
 
         if ([testCaseName isEqualToString:@"testViewIsVisibleEvenIfUserInteractionIsDisabled"]) {
             self.testView.userInteractionEnabled = NO;
         }
 
-        if ([testCaseName isEqualToString:@"testWaitUntilVisibleDoesNotThrowIfElementIsInvalidUponWaiting"] ||
-            [testCaseName isEqualToString:@"testWaitUntilVisibleWaitsForSpecifiedTimeoutEvenIfElementIsInvalidUponWaiting"] ||
-            [testCaseName isEqualToString:@"testWaitUntilVisibleThrowsAfterSpecifiedTimeoutEvenIfElementIsInvalidUponWaiting"]) {
+        if ([testCaseName isEqualToString:@"testSLWaitUntilVisibleDoesNotThrowIfElementIsInvalidUponWaiting"] ||
+            [testCaseName isEqualToString:@"testSLWaitUntilVisibleWaitsForSpecifiedTimeoutEvenIfElementIsInvalidUponWaiting"] ||
+            [testCaseName isEqualToString:@"testSLWaitUntilVisibleThrowsAfterSpecifiedTimeoutEvenIfElementIsInvalidUponWaiting"]) {
             // cause the element with label "test" to be invalid
             self.testView.accessibilityLabel = @"not test";
         } else {
             self.testView.accessibilityLabel = @"test";
         }
 
-        if ([testCaseName isEqualToString:@"testWaitUntilVisibleDoesNotThrowAndReturnsImmediatelyWhenConditionIsTrueUponWait"] ||
-            [testCaseName isEqualToString:@"testWaitUntilInvisibleOrInvalidDoesNotThrowAndReturnsImmediatelyAfterConditionBecomesTrue"] ||
-            [testCaseName isEqualToString:@"testWaitUntilInvisibleOrInvalidDoesNotThrowIfElementBecomesDirectlyInvalid"] ||
-            [testCaseName isEqualToString:@"testWaitUntilInvisibleOrInvalidThrowsIfConditionIsStillFalseAtEndOfTimeout"]) {
+        if ([testCaseName isEqualToString:@"testSLWaitUntilVisibleDoesNotThrowAndReturnsImmediatelyWhenConditionIsTrueUponWait"] ||
+            [testCaseName isEqualToString:@"testSLWaitUntilInvisibleOrInvalidDoesNotThrowAndReturnsImmediatelyAfterConditionBecomesTrue"] ||
+            [testCaseName isEqualToString:@"testSLWaitUntilInvisibleOrInvalidDoesNotThrowIfElementBecomesDirectlyInvalid"] ||
+            [testCaseName isEqualToString:@"testSLWaitUntilInvisibleOrInvalidThrowsIfConditionIsStillFalseAtEndOfTimeout"]) {
             self.testView.hidden = NO;
-        } else if ([testCaseName isEqualToString:@"testWaitUntilInvisibleOrInvalidDoesNotThrowAndReturnsImmediatelyWhenValidityConditionIsTrueUponWait"]) {
+        } else if ([testCaseName isEqualToString:@"testSLWaitUntilInvisibleOrInvalidDoesNotThrowAndReturnsImmediatelyWhenValidityConditionIsTrueUponWait"]) {
             [self.testView removeFromSuperview];
         }
     } else if ([testCaseName hasPrefix:@"testAccessibilityElement"]) {

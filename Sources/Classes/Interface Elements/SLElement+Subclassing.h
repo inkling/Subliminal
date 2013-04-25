@@ -10,7 +10,7 @@
 #import "SLLogger.h"
 #import "SLTerminal.h"
 #import "SLTerminal+ConvenienceMethods.h"
-#import "NSString+SLJavaScript.h"
+#import "SLStringUtilities.h"
 
 @interface SLElement (Subclassing)
 

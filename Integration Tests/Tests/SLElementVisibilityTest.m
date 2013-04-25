@@ -219,7 +219,7 @@
     SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
 }
 
-#pragma mark - Test waitUntil{Visible:,Invisible:}
+#pragma mark - Test SLWaitUntil{Visible:,InvisibleOrInvalid:}
 
 // Depending on slight timing variances, whenever we wait,
 // the wait may vary by the retry delay used by SLElement
@@ -227,12 +227,12 @@
     return SLElementWaitRetryDelay;
 }
 
-- (void)testWaitUntilVisibleDoesNotThrowAndReturnsImmediatelyWhenConditionIsTrueUponWait {
+- (void)testSLWaitUntilVisibleDoesNotThrowAndReturnsImmediatelyWhenConditionIsTrueUponWait {
     SLAssertTrue([_testElement isVisible], @"Test element should be visible.");
 
     NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
 
-    SLAssertNoThrow([_testElement waitUntilVisible:1.5], @"Should not have thrown.");
+    SLAssertNoThrow(SLWaitUntilVisible(_testElement, 1.5, nil), @"Should not have thrown.");
     
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
@@ -240,7 +240,7 @@
                  @"Test waited for %g but should not have waited for an appreciable interval.", waitTimeInterval);
 }
 
-- (void)testWaitUntilVisibleDoesNotThrowAndReturnsImmediatelyAfterConditionBecomesTrue {
+- (void)testSLWaitUntilVisibleDoesNotThrowAndReturnsImmediatelyAfterConditionBecomesTrue {
     SLAssertFalse([_testElement isVisible], @"Test element should not be visible.");
 
     NSTimeInterval waitTimeInterval = 2.0;
@@ -248,7 +248,7 @@
     NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
 
     SLAskApp1(showTestViewAfterInterval:, @(expectedWaitTimeInterval));
-    SLAssertNoThrow([_testElement waitUntilVisible:waitTimeInterval], @"Should not have thrown.");
+    SLAssertNoThrow(SLWaitUntilVisible(_testElement, waitTimeInterval, nil), @"Should not have thrown.");
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
@@ -257,7 +257,7 @@
                  actualWaitTimeInterval, waitTimeInterval);
 }
 
-- (void)testWaitUntilVisibleDoesNotThrowIfElementIsInvalidUponWaiting {
+- (void)testSLWaitUntilVisibleDoesNotThrowIfElementIsInvalidUponWaiting {
     SLAssertFalse([_testElement isValid], @"Test element should not be valid.");
 
     NSTimeInterval waitTimeInterval = 2.0;
@@ -267,7 +267,7 @@
     // we cause the test element to become valid by relabeling the test view
     // to the test element's label
     SLAskApp1(relabelTestViewToTestAndShowAfterInterval:, @(expectedWaitTimeInterval));
-    SLAssertNoThrow([_testElement waitUntilVisible:waitTimeInterval], @"Should not have thrown.");
+    SLAssertNoThrow(SLWaitUntilVisible(_testElement, waitTimeInterval, nil), @"Should not have thrown.");
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
@@ -278,7 +278,7 @@
 
 // the specified timeout is used both to resolve the element
 // and to wait for it to become visible
-- (void)testWaitUntilVisibleWaitsForSpecifiedTimeoutEvenIfElementIsInvalidUponWaiting {
+- (void)testSLWaitUntilVisibleWaitsForSpecifiedTimeoutEvenIfElementIsInvalidUponWaiting {
     SLAssertFalse([_testElement isValid], @"Test element should not be valid.");
 
     NSTimeInterval waitTimeInterval = [SLElement defaultTimeout] + 5.0;
@@ -286,7 +286,7 @@
     NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
 
     SLAskApp1(relabelTestViewToTestAndShowAfterInterval:, @(expectedWaitTimeInterval));
-    SLAssertNoThrow([_testElement waitUntilVisible:waitTimeInterval], @"Should not have thrown.");
+    SLAssertNoThrow(SLWaitUntilVisible(_testElement, waitTimeInterval, nil), @"Should not have thrown.");
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
@@ -295,13 +295,13 @@
                  actualWaitTimeInterval, waitTimeInterval);
 }
 
-- (void)testWaitUntilVisibleThrowsIfConditionIsStillFalseAtEndOfTimeout {
+- (void)testSLWaitUntilVisibleThrowsIfConditionIsStillFalseAtEndOfTimeout {
     SLAssertFalse([_testElement isVisible], @"Test element should not be visible.");
 
     NSTimeInterval expectedWaitTimeInterval = 2.0;
     NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
 
-    SLAssertThrowsNamed([_testElement waitUntilVisible:expectedWaitTimeInterval],
+    SLAssertThrowsNamed(SLWaitUntilVisible(_testElement, expectedWaitTimeInterval, nil),
                         SLElementNotVisibleException, @"Should have thrown.");
     
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
@@ -313,7 +313,7 @@
 
 // the specified timeout is used both to resolve the element
 // and to wait for it to become visible
-- (void)testWaitUntilVisibleThrowsAfterSpecifiedTimeoutEvenIfElementIsInvalidUponWaiting {
+- (void)testSLWaitUntilVisibleThrowsAfterSpecifiedTimeoutEvenIfElementIsInvalidUponWaiting {
     SLAssertFalse([_testElement isValid], @"Test element should not be valid.");
 
     NSTimeInterval expectedWaitTimeInterval = [SLElement defaultTimeout] - 3.0;
@@ -321,7 +321,7 @@
     SLAssertTrue(expectedWaitTimeInterval > 0.0, @"The default timeout is too short for the purposes of this test.");
     NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
 
-    SLAssertThrowsNamed([_testElement waitUntilVisible:expectedWaitTimeInterval],
+    SLAssertThrowsNamed(SLWaitUntilVisible(_testElement, expectedWaitTimeInterval, nil),
                         SLElementInvalidException, @"Should have thrown.");
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
@@ -331,12 +331,12 @@
                  actualWaitTimeInterval, expectedWaitTimeInterval);
 }
 
-- (void)testWaitUntilInvisibleOrInvalidDoesNotThrowAndReturnsImmediatelyWhenVisibilityConditionIsTrueUponWait {
+- (void)testSLWaitUntilInvisibleOrInvalidDoesNotThrowAndReturnsImmediatelyWhenVisibilityConditionIsTrueUponWait {
     SLAssertFalse([_testElement isVisible], @"Test element should not be visible.");
 
     NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
 
-    SLAssertNoThrow([_testElement waitUntilInvisibleOrInvalid:1.5], @"Should not have thrown.");
+    SLAssertNoThrow(SLWaitUntilInvisibleOrInvalid(_testElement, 1.5, nil), @"Should not have thrown.");
     
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
@@ -344,12 +344,12 @@
                  @"Test waited for %g but should not have waited for an appreciable interval.", waitTimeInterval);
 }
 
-- (void)testWaitUntilInvisibleOrInvalidDoesNotThrowAndReturnsImmediatelyWhenValidityConditionIsTrueUponWait {
+- (void)testSLWaitUntilInvisibleOrInvalidDoesNotThrowAndReturnsImmediatelyWhenValidityConditionIsTrueUponWait {
     SLAssertFalse([_testElement isValid], @"Test element should not be valid.");
 
     NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
 
-    SLAssertNoThrow([_testElement waitUntilInvisibleOrInvalid:1.5], @"Should not have thrown.");
+    SLAssertNoThrow(SLWaitUntilInvisibleOrInvalid(_testElement, 1.5, nil), @"Should not have thrown.");
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
@@ -357,7 +357,7 @@
                  @"Test waited for %g but should not have waited for an appreciable interval.", waitTimeInterval);
 }
 
-- (void)testWaitUntilInvisibleOrInvalidDoesNotThrowAndReturnsImmediatelyAfterConditionBecomesTrue {
+- (void)testSLWaitUntilInvisibleOrInvalidDoesNotThrowAndReturnsImmediatelyAfterConditionBecomesTrue {
     SLAssertTrue([_testElement isVisible], @"Test element should be visible.");
 
     NSTimeInterval waitTimeInterval = 2.0;
@@ -365,7 +365,7 @@
     NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
 
     SLAskApp1(hideTestViewAfterInterval:, @(expectedWaitTimeInterval));
-    SLAssertNoThrow([_testElement waitUntilInvisibleOrInvalid:waitTimeInterval], @"Should not have thrown.");
+    SLAssertNoThrow(SLWaitUntilInvisibleOrInvalid(_testElement, waitTimeInterval, nil), @"Should not have thrown.");
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
@@ -374,7 +374,7 @@
                  actualWaitTimeInterval, waitTimeInterval);
 }
 
-- (void)testWaitUntilInvisibleOrInvalidDoesNotThrowIfElementBecomesDirectlyInvalid {
+- (void)testSLWaitUntilInvisibleOrInvalidDoesNotThrowIfElementBecomesDirectlyInvalid {
     SLAssertTrue([_testElement isVisible], @"Test element should be visible.");
 
     NSTimeInterval waitTimeInterval = 2.0;
@@ -385,7 +385,7 @@
     // this will cause it to be considered "not visible", even though -isVisible
     // would throw (because the state of an invalid element is indeterminate)
     SLAskApp1(removeTestViewFromSuperviewAfterInterval:, @(expectedWaitTimeInterval));
-    SLAssertNoThrow([_testElement waitUntilInvisibleOrInvalid:waitTimeInterval], @"Should not have thrown.");
+    SLAssertNoThrow(SLWaitUntilInvisibleOrInvalid(_testElement, waitTimeInterval, nil), @"Should not have thrown.");
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
@@ -394,13 +394,13 @@
                  actualWaitTimeInterval, waitTimeInterval);
 }
 
-- (void)testWaitUntilInvisibleOrInvalidThrowsIfConditionIsStillFalseAtEndOfTimeout {
+- (void)testSLWaitUntilInvisibleOrInvalidThrowsIfConditionIsStillFalseAtEndOfTimeout {
     SLAssertTrue([_testElement isVisible], @"Test element should be visible.");
 
     NSTimeInterval expectedWaitTimeInterval = 2.0;
     NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
 
-    SLAssertThrowsNamed([_testElement waitUntilInvisibleOrInvalid:expectedWaitTimeInterval],
+    SLAssertThrowsNamed(SLWaitUntilInvisibleOrInvalid(_testElement, expectedWaitTimeInterval, nil),
                         SLElementVisibleException, @"Should have thrown.");
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];

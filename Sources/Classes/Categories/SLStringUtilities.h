@@ -1,5 +1,5 @@
 //
-//  NSString+JavaScript.h
+//  SLStringUtilities.h
 //  Subliminal
 //
 //  Created by William Green on 10/31/12.
@@ -17,3 +17,7 @@
  */
 - (NSString *)slStringByEscapingForJavaScriptLiteral;
 @end
+
+
+extern NSString *SLComposeString(NSString *leadingString, NSString *format, ...);
+extern NSString *SLComposeStringv(NSString *leadingString, NSString *format, va_list args);
