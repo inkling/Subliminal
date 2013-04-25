@@ -128,11 +128,13 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 - (SLAccessibilityPath *)accessibilityPathWithTimeout:(NSTimeInterval)timeout {
     __block SLAccessibilityPath *accessibilityPath = nil;
     NSDate *startDate = [NSDate date];
+    // a timeout of 0 means check once--but then return immediately, no waiting
     do {
         dispatch_sync(dispatch_get_main_queue(), ^{
             accessibilityPath = [[[UIApplication sharedApplication] keyWindow] slAccessibilityPathToElement:self];
         });
-        if (accessibilityPath) break;
+        if (accessibilityPath || !timeout) break;
+        
         [NSThread sleepForTimeInterval:SLElementWaitRetryDelay];
     } while ([[NSDate date] timeIntervalSinceDate:startDate] < timeout);
     return accessibilityPath;
