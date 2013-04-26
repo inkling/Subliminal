@@ -588,27 +588,34 @@
             (traits & UIAccessibilityTraitStaticText));
 }
 
+// At the NSObject level, we identify several private classes that seem to be
+// special cases that will always appear in the accessibility hierarchy.
+// We identify them by their context to avoid accessing or referencing private APIs.
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
-    // UIWebBrowserView is a private api class that appears to be a special case, they will
-    // always exist in the accessibility hierarchy. We identify them by their superviews and
-    // by the non UIAccessibilityElement objects they vend from elementAtAccessibilityIndex:
-    // to avoid accessing private api's.
+    id parent = [self slAccessibilityParent];
+
+    // We identify UIWebBrowserViews by their superviews and by
+    // the non-UIAccessibilityElement objects they vend from elementAtAccessibilityIndex:.
     BOOL isWebBrowserView = NO;
-    if([[[self slAccessibilityParent] slAccessibilityParent] isKindOfClass:[UIWebView class]]) {
-        for (int i = 0; i < [self accessibilityElementCount]; i++) {
-            id accessibilityObject = [self accessibilityElementAtIndex:i];
-            if (![accessibilityObject isKindOfClass:[UIAccessibilityElement class]]) {
-                isWebBrowserView = YES;
-                break;
+    if([[parent slAccessibilityParent] isKindOfClass:[UIWebView class]]) {
+        NSInteger elementCount = [self accessibilityElementCount];
+        if (elementCount != NSNotFound && elementCount > 0) {
+            for (NSUInteger i = 0; i < elementCount; i++) {
+                id accessibilityObject = [self accessibilityElementAtIndex:i];
+                if (![accessibilityObject isKindOfClass:[UIAccessibilityElement class]]) {
+                    isWebBrowserView = YES;
+                    break;
+                }
             }
         }
     }
+    if (isWebBrowserView) return YES;
 
-    // _UIPopoverView is another private api special case. It will always exist in the accessibility
-    // hierarchy, and is identified by its parent's label to avoid accessing private apis.
-    NSObject *parent = [self slAccessibilityParent];
+    // _UIPopoverView is identified by its parent's label.
     BOOL isPopover = [[parent accessibilityLabel] isEqualToString:@"dismiss popup"];
-    return (isWebBrowserView || isPopover);
+    if (isPopover) return YES;
+
+    return NO;
 }
 
 static const void *const kSLReplacementAccessibilityIdentifierHasBeenLoadedKey = &kSLReplacementAccessibilityIdentifierHasBeenLoadedKey;
