@@ -154,6 +154,17 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
 + (void)addHandler:(SLAlertHandler *)handler;
 
 /**
+ Removes the specified handler from the queue of SLAlertHandlers given a chance to handle
+ (dismiss) an alert when it is shown.
+ 
+ @param handler An alert handler to remove.
+ 
+ @exception NSInternalInconsistencyException if a handler asked to be removed has not yet been
+ added.
+ */
++ (void)removeHandler:(SLAlertHandler *)handler;
+
+/**
  Returns YES if the receiver has dismissed an alert, NO otherwise.
  
  @return YES if the receiver has dismissed an alert, NO otherwise.
