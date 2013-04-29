@@ -213,6 +213,10 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     [self sendMessage:@"dragInsideWithOptions({startOffset:{x:%f, y:%f}, endOffset:{x:%f, y:%f}, duration:1.0})", startPoint.x, startPoint.y, endPoint.x, endPoint.y];
 }
 
+- (NSString *)label {
+    return [self sendMessage:@"label()"];
+}
+
 - (NSString *)value {
     return [self sendMessage:@"value()"];
 }
