@@ -160,6 +160,26 @@ const NSTimeInterval SLAlertHandlerDefaultTimeout = 2.0;
     handler->_hasBeenAdded = YES;
 }
 
++ (void)removeHandler:(SLAlertHandler *)handler {
+    // We don't use NSParameterAsserts here because if they failed
+    // they'd leak the implementation (in the form of their conditions) to the client
+    if (!handler->_hasBeenAdded) {
+        [NSException raise:NSInternalInconsistencyException format:@"Handler for alert %@ must have been added before being removed.", handler->_alert];
+    }
+    
+    NSString *alertHandlerId = [[handler identifier] slStringByEscapingForJavaScriptLiteral];
+    [[SLTerminal sharedTerminal] evalWithFormat:@"\
+        for (var handlerIndex = 0; handlerIndex < _alertHandlers.length; handlerIndex++) {\
+            var handler = _alertHandlers[handlerIndex];\
+            if (handler.id === \"%@\") {\
+                _alertHandlers.splice(handlerIndex,1);\
+                break;\
+            }\
+        }", alertHandlerId];
+
+    handler->_hasBeenAdded = NO;
+}
+
 + (NSString *)defaultUIAAlertHandler {
     return @"\
         var didDismissAlert = false;\

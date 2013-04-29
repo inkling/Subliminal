@@ -206,6 +206,34 @@
     SLAssertTrue([defaultButtonHandler didHandleAlert], @"The default button handler should have handled the alert.");
 }
 
+- (void)testRemoveHandler {
+    NSString *alertTitle = @"Foo";
+    NSString *cancelButtonTitle = @"Cancel";
+    NSString *otherButtonTitle = @"Ok";
+
+    SLAlert *alert = [SLAlert alertWithTitle:alertTitle];
+    SLAlertHandler *okButtonHandler = [alert dismissWithButtonTitled:otherButtonTitle];
+
+    [SLAlertHandler addHandler:okButtonHandler];
+    [SLAlertHandler removeHandler:okButtonHandler];
+
+    SLAskApp1(showAlertWithInfo:, (@{   @"title": alertTitle,
+                                   @"cancel": cancelButtonTitle,
+                                   @"other": otherButtonTitle }));
+
+    [self wait:SLAlertHandlerDefaultTimeout];
+    SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:cancelButtonTitle],
+                 @"The alert should have been dismissed using the cancel button by default.");
+}
+
+- (void)testRemoveHandlerThrowsIfNotAlreadyAdded {
+    SLAlert *alert = [SLAlert alertWithTitle:@"Foo"];
+    SLAlertHandler *handler = [alert dismiss];
+    SLAssertThrowsNamed([SLAlertHandler removeHandler:handler],
+                        NSInternalInconsistencyException,
+                        @"SLAlertHandler should have thrown an exception because the handler had not been added using +[SLAlertHandler addHandler:].");
+}
+
 - (void)testMultipleHandlersMayBeAddedSimultaneously {
     NSString *alert1Title = @"Alert 1";
     SLAlert *alert1 = [SLAlert alertWithTitle:alert1Title];
