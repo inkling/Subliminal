@@ -82,7 +82,8 @@
  
  Path components are objects at successive levels of an accessibility hierarchy 
  (where the component at index i + 1 is the child of the component at index i).
- The last path component is the object at the deepest level of such a hierarchy.
+ The last path component is the object at the deepest level of such a hierarchy, 
+ i.e. the destination of the path.
  
  The block will be executed synchronously on the main thread.
 
@@ -128,8 +129,8 @@
  this message) will be serialized as elements()["(null)"].
 
  @warning To guarantee that each `UIAElementArray` reference will uniquely identify
- the corresponding component of the receiver, the receiver should be
- [bound](-bindPath:) before serialization.
+ the corresponding component of the receiver, this method must only be called 
+ while the receiver is [bound](-bindPath:).
  
  @bug This method should not assume that the path identifies elements within
  the main window.
