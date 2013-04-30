@@ -612,6 +612,26 @@
     }
     if (isWebBrowserView) return YES;
 
+    // UITableViewSectionElements are mock views created for UITableView header views,
+    // which return NO from -isAccessibilityElement and do not carry any accessibility
+    // information--thus will not otherwise pass -shouldAppearInAccessibilityHierarchy
+    // or -elementObject:isMockingViewObject:--but will still appear in the hierarchy.
+    // We identify them as accessibility elements vended by their parent table views.
+    BOOL isTableViewSectionElement = NO;
+    if ([parent isKindOfClass:[UITableView class]] &&
+        [self isKindOfClass:[UIAccessibilityElement class]]) {
+        NSInteger elementCount = [parent accessibilityElementCount];
+        if (elementCount != NSNotFound && elementCount > 0) {
+            for (NSUInteger i = 0; i < elementCount; i++) {
+                if (self == [parent accessibilityElementAtIndex:i]) {
+                    isTableViewSectionElement = YES;
+                    break;
+                }
+            }
+        }
+    }
+    if (isTableViewSectionElement) return YES;
+
     // _UIPopoverView is identified by its parent's label.
     BOOL isPopover = [[parent accessibilityLabel] isEqualToString:@"dismiss popup"];
     if (isPopover) return YES;

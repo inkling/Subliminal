@@ -67,4 +67,21 @@
     SLAssertTrue([[UIAElement(fooSwitch) label] isEqualToString:@"fooSwitch"], @"Could not match custom UITableViewCell child element.");
 }
 
+- (void)testMatchingTableViewHeader {
+    SLElement *fooHeader = [SLElement elementWithAccessibilityLabel:@"fooHeader"];
+    SLAssertTrue([[UIAElement(fooHeader) label] isEqualToString:@"fooHeader"],
+                 @"Could not match UITableView header.");
+}
+
+// in order to exercise a particular (prior) bug in Subliminal,
+// it's important that the header contain two views
+- (void)testMatchingTableViewHeaderChildElements {
+    SLElement *leftLabel = [SLElement elementWithAccessibilityLabel:@"left"];
+    SLAssertTrue([[UIAElement(leftLabel) label] isEqualToString:@"left"],
+                 @"Could not match UITableView header child element.");
+
+    SLElement *rightLabel = [SLElement elementWithAccessibilityLabel:@"right"];
+    SLAssertTrue([rightLabel isValid], @"Could not match UITableView header child element.");
+}
+
 @end

@@ -105,7 +105,9 @@
     } else if ((testCase == @selector(testMatchingTableViewCellTextLabel)) ||
                (testCase == @selector(testMatchingTableViewCellWithCombinedLabel)) ||
                (testCase == @selector(testCannotMatchIndividualChildLabelsOfTableViewCell)) ||
-               (testCase == @selector(testMatchingNonLabelTableViewCellChildElement))) {
+               (testCase == @selector(testMatchingNonLabelTableViewCellChildElement)) ||
+               (testCase == @selector(testMatchingTableViewHeader)) ||
+               (testCase == @selector(testMatchingTableViewHeaderChildElements))) {
         return @"SLTableViewChildElementMatchingTestViewController";
     } else {
         return nil;
@@ -131,7 +133,9 @@ static NSString *TestCellIdentifier = nil;
 
     if (self.tableView) {
         Class testCellClass;
-        if (self.testCase == @selector(testMatchingTableViewCellTextLabel)) {
+        if ((self.testCase == @selector(testMatchingTableViewCellTextLabel)) ||
+            (self.testCase == @selector(testMatchingTableViewHeader)) ||
+            (self.testCase == @selector(testMatchingTableViewHeaderChildElements))) {
             testCellClass = [UITableViewCell class];
         } else if ((self.testCase == @selector(testMatchingNonLabelTableViewCellChildElement)) ||
                    (self.testCase == @selector(testMatchingTableViewCellWithCombinedLabel)) ||
@@ -147,6 +151,10 @@ static NSString *TestCellIdentifier = nil;
 
 #pragma mark UITableViewDataSource
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return 1;
 }
@@ -154,7 +162,9 @@ static NSString *TestCellIdentifier = nil;
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:TestCellIdentifier forIndexPath:indexPath];
 
-    if (self.testCase == @selector(testMatchingTableViewCellTextLabel)) {
+    if ((self.testCase == @selector(testMatchingTableViewCellTextLabel)) ||
+        (self.testCase == @selector(testMatchingTableViewHeader)) ||
+        (self.testCase == @selector(testMatchingTableViewHeaderChildElements))) {
         cell.textLabel.text = @"fooLabel";
     } else {
         NSAssert([cell isKindOfClass:[SLElementMatchingTestCell class]],
@@ -163,6 +173,49 @@ static NSString *TestCellIdentifier = nil;
     }
 
     return cell;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    return 30.0f;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    UIView *headerView = nil;
+
+    if (self.testCase == @selector(testMatchingTableViewHeader)) {
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
+        label.text = @"fooHeader";
+        [label sizeToFit];
+        headerView = label;
+    } else if (self.testCase == @selector(testMatchingTableViewHeaderChildElements)) {
+        CGFloat headerHeight = [self tableView:tableView heightForHeaderInSection:section];
+        CGRect headerRect = (CGRect){
+            CGPointZero,
+            CGSizeMake(CGRectGetWidth(tableView.frame), headerHeight)
+        };
+        headerView = [[UIView alloc] initWithFrame:headerRect];
+        CGRect contentRect = CGRectInset(headerRect, 20.0f, 0.0f);
+        CGFloat halfWidth = CGRectGetWidth(contentRect) / 2.0;
+        CGSize halfSize = CGSizeMake(halfWidth, CGRectGetHeight(contentRect));
+
+        UILabel *labelLeft = [[UILabel alloc] initWithFrame:(CGRect){
+            contentRect.origin,
+            halfSize
+        }];
+        labelLeft.textAlignment = NSTextAlignmentLeft;
+        labelLeft.text = @"left";
+        [headerView addSubview:labelLeft];
+
+        UILabel *labelRight = [[UILabel alloc] initWithFrame:(CGRect){
+            CGPointMake(CGRectGetMinX(contentRect) + halfWidth, CGRectGetMinY(contentRect)),
+            halfSize
+        }];
+        labelRight.textAlignment = NSTextAlignmentRight;
+        labelRight.text = @"right";
+        [headerView addSubview:labelRight];
+    }
+
+    return headerView;
 }
 
 @end
