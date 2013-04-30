@@ -11,13 +11,13 @@
 
 #import "SLElement.h"
 #import "SLElement+Subclassing.h"
-#import "NSString+SLJavaScript.h"
+#import "SLStringUtilities.h"
 #import "SLMainThreadRef.h"
 
 #import <UIKit/UIKit.h>
 
 
-#pragma mark SLAccessibilityPath Interface
+#pragma mark SLAccessibilityPath interface
 
 @interface SLAccessibilityPath ()
 
@@ -95,14 +95,14 @@
 @end
 
 
-#pragma mark - NSObject (SLAccessibility_Internal)
+#pragma mark - SLAccessibility internal interfaces
 
 /**
- The methods in the NSObject (SLAccessibility_Internal) category are used 
+ The methods in the NSObject (SLAccessibility_SLAccessibilityPath) category are used
  by SLAccessibilityPath in the process of constructing, sanitizing, binding, 
  and serializing paths.
  */
-@interface NSObject (SLAccessibility_Internal)
+@interface NSObject (SLAccessibility_SLAccessibilityPath)
 
 /// ----------------------------------------
 /// @name Constructing paths
@@ -234,7 +234,32 @@
 @end
 
 
-@interface UIView (SLAccessibility_Internal)
+@interface UIView (SLAccessibility_Visibility)
+
+/**
+ Returns a Boolean value indicating whether the receiver contains the specified
+ point, as indicated by its accessibility information.
+ 
+ @param point A point that is in screen coordinates.
+ @return YES if point is inside the receiver's accessibility frame; otherwise, NO.
+ */
+- (BOOL)slAccessibilityPointInside:(CGPoint)point;
+
+/**
+ Returns the farthest descendant of the receiver in the accessibility hierarchy 
+ (including itself) that contains a specified point.
+
+ @param point A point specified in screen coordinates.
+ @return The view object that is the farthest descendant of the current view 
+ that contains point. Returns `nil` if the point lies completely outside 
+ the receiver's accessibility hierarchy.
+ */
+- (UIView *)slAccessibilityHitTest:(CGPoint)point;
+
+@end
+
+
+@interface UIView (SLAccessibility_SLAccessibilityPath)
 
 /**
  Returns a Boolean value that indicates whether an object is a mock view.
@@ -278,9 +303,11 @@
 @end
 
 
+#pragma mark - SLAccessibility implementation
+
 @implementation NSObject (SLAccessibility)
 
-#pragma mark - Public NSObject (SLAccessibility) methods
+#pragma mark -Public methods
 
 - (NSString *)slAccessibilityName {
     if ([self respondsToSelector:@selector(accessibilityIdentifier)]) {
@@ -299,6 +326,68 @@
 
     return [[SLAccessibilityPath alloc] initWithRawAccessibilityElementPath:accessibilityElementPath
                                                                 rawViewPath:viewPath];
+}
+
+// There are objects in the accessibility hierarchy which are neither UIAccessibilityElements
+// nor UIViews, e.g. the elements vended by UIWebBrowserViews. We attempt to
+// locate these elements in the hierarchy using an implementation
+// similar to UIAccessibilityElement's.
+- (BOOL)slAccessibilityIsVisible {
+    CGPoint testPoint = CGPointMake(CGRectGetMidX(self.accessibilityFrame),
+                                    CGRectGetMidY(self.accessibilityFrame));
+
+    if (![self respondsToSelector:@selector(accessibilityContainer)]) {
+        SLLogAsync(@"Cannot locate %@ in the accessibility hierarchy. Returning -NO from -slAccessibilityIsVisible.", self);
+        return NO;
+    }
+
+    // we first determine that we are the foremost element within our containment hierarchy
+    id parentOrSelf = self;
+    id container = [self performSelector:@selector(accessibilityContainer)];
+    while (container) {
+        // UIAutomation ignores accessibilityElementsHidden, so we do too
+
+        NSInteger elementCount = [container accessibilityElementCount];
+        NSAssert(((elementCount != NSNotFound) && (elementCount > 0)),
+                 @"%@'s accessibility container should implement the UIAccessibilityContainer protocol.", self);
+        for (NSInteger idx = 0; idx < elementCount; idx++) {
+            id element = [container accessibilityElementAtIndex:idx];
+            if (element == parentOrSelf) break;
+            // UIWebBrowserViews vend an element whose container is not the UIWebBrowserView
+            // but rather, whose container's container is the UIWebBrowserView
+            if ([element respondsToSelector:@selector(accessibilityContainer)] &&
+                [element performSelector:@selector(accessibilityContainer)] == parentOrSelf) break;
+
+            // if another element comes before us/our parent in the array
+            // (thus is z-ordered before us/our parent)
+            // and contains our hitpoint, it covers us
+            if (CGRectContainsPoint([element accessibilityFrame], testPoint)) return NO;
+        }
+
+        // we should eventually reach a container that is a view
+        // --the accessibility hierarchy begins with the main window if nothing else--
+        // at which point we test the rest of the hierarchy using hit-testing
+        if ([container isKindOfClass:[UIView class]]) break;
+
+        // it's not a requirement that accessibility containers vend UIAccessibilityElements,
+        // so it might not be possible to traverse the hierarchy upwards
+        if (![container respondsToSelector:@selector(accessibilityContainer)]) {
+            SLLogAsync(@"Cannot locate %@ in the accessibility hierarchy. Returning -NO from -slAccessibilityIsVisible.", self);
+            return NO;
+        }
+        parentOrSelf = container;
+        container = [container accessibilityContainer];
+    }
+
+    NSAssert([container isKindOfClass:[UIView class]],
+             @"Every accessibility hierarchy should be rooted in a view.");
+    UIView *viewContainer = (UIView *)container;
+
+    UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+    UIView *hitView = [window slAccessibilityHitTest:testPoint];
+    if (hitView != viewContainer) return NO;
+
+    return YES;
 }
 
 - (NSString *)slAccessibilityDescription {
@@ -381,7 +470,7 @@
     return recursiveDescription;
 }
 
-#pragma mark - Private NSObject (SLAccessibility) methods
+#pragma mark -Private methods
 
 - (NSArray *)rawAccessibilityPathToElement:(SLElement *)element favoringUISubviews:(BOOL)favoringUISubviews {
     if ([element matchesObject:self]) {
@@ -506,7 +595,7 @@
 @end
 
 
-#pragma mark - NSObject (SLAccessibility) Overrides
+#pragma mark UIAccessibilityElement overrides
 
 @implementation UIAccessibilityElement (SLAccessibility)
 
@@ -518,12 +607,63 @@
     return self.accessibilityLabel;
 }
 
+- (BOOL)slAccessibilityIsVisible {
+    CGPoint testPoint = CGPointMake(CGRectGetMidX(self.accessibilityFrame),
+                                    CGRectGetMidY(self.accessibilityFrame));
+
+    // we first determine that we are the foremost element within our containment hierarchy
+    id parentOrSelf = self;
+    id container = self.accessibilityContainer;
+    while (container) {
+        // UIAutomation ignores accessibilityElementsHidden, so we do too
+
+        NSInteger elementCount = [container accessibilityElementCount];
+        NSAssert(((elementCount != NSNotFound) && (elementCount > 0)),
+                 @"%@'s accessibility container should implement the UIAccessibilityContainer protocol.", self);
+        for (NSInteger idx = 0; idx < elementCount; idx++) {
+            id element = [container accessibilityElementAtIndex:idx];
+            if (element == parentOrSelf) break;
+
+            // if another element comes before us/our parent in the array
+            // (thus is z-ordered before us/our parent)
+            // and contains our hitpoint, it covers us
+            if (CGRectContainsPoint([element accessibilityFrame], testPoint)) return NO;
+        }
+
+        // we should eventually reach a container that is a view
+        // --the accessibility hierarchy begins with the main window if nothing else--
+        // at which point we test the rest of the hierarchy using hit-testing
+        if ([container isKindOfClass:[UIView class]]) break;
+
+        // it's not a requirement that accessibility containers vend UIAccessibilityElements,
+        // so it might not be possible to traverse the hierarchy upwards
+        if (![container respondsToSelector:@selector(accessibilityContainer)]) {
+            SLLogAsync(@"Cannot locate %@ in the accessibility hierarchy. Returning -NO from -slAccessibilityIsVisible.", self);
+            return NO;
+        }
+        parentOrSelf = container;
+        container = [container accessibilityContainer];
+    }
+
+    NSAssert([container isKindOfClass:[UIView class]],
+             @"Every accessibility hierarchy should be rooted in a view.");
+    UIView *viewContainer = (UIView *)container;
+
+    UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+    UIView *hitView = [window slAccessibilityHitTest:testPoint];
+    if (hitView != viewContainer) return NO;
+    
+    return YES;
+}
+
 @end
 
 
-#pragma mark -
+#pragma mark UIView overrides
 
 @implementation UIView (SLAccessibility)
+
+#pragma mark -Public methods
 
 - (NSString *)slAccessibilityName {
     // Prioritize identifiers over labels because some UIKit objects have transient labels.
@@ -533,6 +673,38 @@
     }
 
     return self.accessibilityLabel;
+}
+
+- (BOOL)slAccessibilityIsVisible {
+    // a view is visible if its midpoint hit-tests to itself
+    CGPoint testPoint = CGPointMake(CGRectGetMidX(self.accessibilityFrame),
+                                    CGRectGetMidY(self.accessibilityFrame));
+    UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+    UIView *hitView = [window slAccessibilityHitTest:testPoint];
+    return (hitView == self);
+}
+
+#pragma mark -Private methods
+
+- (BOOL)slAccessibilityPointInside:(CGPoint)point {
+    return CGRectContainsPoint(self.accessibilityFrame, point);
+}
+
+- (UIView *)slAccessibilityHitTest:(CGPoint)point {
+    // we ignore views for all the same reasons as -hitTest:withEvent:
+    // except -userInteractionEnabled: UIAutomation ignores it
+    // (see -[SLElementVisibilityTest testViewIsVisibleEvenIfUserInteractionIsDisabled])
+    if (![self slAccessibilityPointInside:point] ||
+        self.hidden ||
+        self.alpha < 0.01) return nil;
+
+    // enumerate the subviews in reverse == front-to-back
+    for (UIView *subview in [self.subviews reverseObjectEnumerator]) {
+        UIView *hitView = [subview slAccessibilityHitTest:point];
+        if (hitView) return hitView;
+    }
+
+    return self;
 }
 
 - (NSArray *)slChildAccessibilityElementsFavoringUISubviews:(BOOL)favoringUISubViews {
@@ -590,7 +762,7 @@
 @end
 
 
-#pragma mark -
+#pragma mark UIView subclass overrides
 
 @implementation UITableViewCell (SLAccessibility)
 - (BOOL)classForcesPresenceOfMockingViewsInAccessibilityHierarchy {
@@ -629,8 +801,6 @@
 @end
 
 
-#pragma mark -
-
 @implementation UITableView (SLAccessibility)
 
 - (NSString *)slAccessibilityName {
@@ -648,7 +818,7 @@
 @end
 
 
-#pragma mark - SLAccessibilityPath Implementation
+#pragma mark - SLAccessibilityPath implementation
 
 @implementation SLAccessibilityPath {
     NSArray *_accessibilityElementPath, *_viewPath;
@@ -754,10 +924,10 @@
 }
 
 - (void)examineLastPathComponent:(void (^)(NSObject *lastPathComponent))block {
-    // examine the last object in the mock view path because that's the path
-    // actually used by UIAutomation
+    // examine the last object in the view path because that's the "real"
+    // destination of the path--the real view, not the mock view
     dispatch_sync(dispatch_get_main_queue(), ^{
-        block([[_accessibilityElementPath lastObject] target]);
+        block([[_viewPath lastObject] target]);
     });
 }
 

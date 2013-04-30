@@ -9,7 +9,7 @@
 #import "SLAlert.h"
 #import "SLTerminal.h"
 #import "SLTerminal+ConvenienceMethods.h"
-#import "NSString+SLJavaScript.h"
+#import "SLStringUtilities.h"
 
 
 NSString *const SLAlertDidNotShowException = @"SLAlertDidNotShowException";

@@ -15,7 +15,7 @@
 #import "SLElement.h"
 #import "SLAlert.h"
 
-#import "NSString+SLJavaScript.h"
+#import "SLStringUtilities.h"
 
 #import <objc/runtime.h>
 

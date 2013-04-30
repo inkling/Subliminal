@@ -42,6 +42,14 @@
  */
 - (SLAccessibilityPath *)slAccessibilityPathToElement:(SLElement *)element;
 
+/**
+ Determines if the specified object is visible on the screen.
+ 
+ @return YES if the receiver is visible within the accessibility hierarchy, 
+ NO otherwise.
+ */
+- (BOOL)slAccessibilityIsVisible;
+
 /// ----------------------------------------
 /// @name Debug methods
 /// ----------------------------------------

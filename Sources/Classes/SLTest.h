@@ -1,6 +1,6 @@
 //
-//  SLTestCase.h
-//  SubliminalTest
+//  SLTest.h
+//  Subliminal
 //
 //  Created by Jeffrey Wear on 9/3/12.
 //  Copyright (c) 2012 Inkling. All rights reserved.
@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import "SLTestController+AppContext.h"
+#import "SLStringUtilities.h"
 
 
 // all exceptions thrown by SLTest will have names beginning with this prefix
@@ -18,12 +19,6 @@ extern NSString *const SLTestAssertionFailedException;
 
 extern NSString *const SLTestExceptionFilenameKey;
 extern NSString *const SLTestExceptionLineNumberKey;
-
-#ifdef __cplusplus
-extern "C" NSString *SLComposeString(NSString *leadingString, NSString *format, ...);
-#else
-extern NSString *SLComposeString(NSString *leadingString, NSString *format, ...);
-#endif
 
 
 @interface SLTest : NSObject
@@ -345,15 +340,19 @@ extern NSString *SLComposeString(NSString *leadingString, NSString *format, ...)
     @try { \
         (expr); \
     } \
-    @catch (id anException) { \
-        if (![anException isKindOfClass:[NSException class]] ||\
-            ![[(NSException *)anException name] isEqualToString:exceptionName]) {\
-            NSString *reason = [NSString stringWithFormat:@"\"%@\" threw an exception (\"%@\"), but not an exception named \"%@\".%@", \
-                                    @(#expr), anException, exceptionName, SLComposeString(@" ", description, ##__VA_ARGS__)]; \
+    @catch (NSException *anException) { \
+        if (![[anException name] isEqualToString:exceptionName]) { \
+            NSString *reason = [NSString stringWithFormat:@"\"%@\" threw an exception named \"%@\" (\"%@\"), but not an exception named \"%@\". %@", \
+                                    @(#expr), [anException name], [anException reason], exceptionName, SLComposeString(@" ", description, ##__VA_ARGS__)]; \
             @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
         } else {\
             __caughtException = YES; \
         }\
+    } \
+    @catch (id anException) { \
+        NSString *reason = [NSString stringWithFormat:@"\"%@\" threw an exception, but not an exception named \"%@\". %@", \
+                                @(#expr), exceptionName, SLComposeString(@" ", description, ##__VA_ARGS__)]; \
+        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
     } \
     if (!__caughtException) { \
         NSString *reason = [NSString stringWithFormat:@"\"%@\" should have thrown an exception named \"%@\".%@", \

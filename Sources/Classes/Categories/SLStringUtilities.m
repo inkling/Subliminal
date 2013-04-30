@@ -1,12 +1,12 @@
 //
-//  NSString+JavaScript.m
+//  SLStringUtilities.m
 //  Subliminal
 //
 //  Created by William Green on 10/31/12.
 //  Copyright (c) 2012 Inkling. All rights reserved.
 //
 
-#import "NSString+SLJavaScript.h"
+#import "SLStringUtilities.h"
 
 @implementation NSString (SLJavaScript)
 
@@ -25,3 +25,27 @@
 }
 
 @end
+
+
+NSString *SLComposeString(NSString *leadingString, NSString *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    NSString *formattedString = SLComposeStringv(leadingString, format, args);
+    va_end(args);
+
+    return formattedString;
+}
+
+NSString *SLComposeStringv(NSString *leadingString, NSString *format, va_list args) {
+    if (!format) {
+        return @"";
+    }
+
+    NSString *formattedString = [[NSString alloc] initWithFormat:format arguments:args];
+    if (leadingString) {
+        return [leadingString stringByAppendingString:formattedString];
+    }
+
+    return formattedString;
+}
