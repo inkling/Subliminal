@@ -8,6 +8,9 @@
 
 #import "SLTestCaseViewController.h"
 
+#import <Subliminal/SLTestController+AppContext.h>
+
+
 @interface SLElementMatchingTestViewController : SLTestCaseViewController
 @end
 
@@ -91,16 +94,24 @@
 @interface SLElementMatchingTestViewController () <UITableViewDataSource, UITableViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *fooButton;
+@property (weak, nonatomic) IBOutlet UIButton *barButton;
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @end
 
-@implementation SLElementMatchingTestViewController
+@implementation SLElementMatchingTestViewController {
+    UIWebView *_webView;
+    BOOL _webViewDidFinishLoad;
+}
 
 + (NSString *)nibNameForTestCase:(SEL)testCase {
-    if (testCase == @selector(testAnyElement) ||
-        testCase == @selector(testElementWithAccessibilityLabel)) {
+    if ((testCase == @selector(testElementsDoNotCaptureTheirMatches)) ||
+        (testCase == @selector(testElementsCanMatchTheSameObjectTwice)) ||
+        (testCase == @selector(testAnyElement)) ||
+        (testCase == @selector(testElementWithAccessibilityLabel)) ||
+        (testCase == @selector(testSubliminalOnlyReplacesAccessibilityIdentifiersOfElementsInvolvedInMatch)) ||
+        (testCase == @selector(testSubliminalRestoresAccessibilityIdentifiersAfterMatching))) {
         return @"SLElementMatchingTestViewController";
     } else if ((testCase == @selector(testMatchingTableViewCellTextLabel)) ||
                (testCase == @selector(testMatchingTableViewCellWithCombinedLabel)) ||
@@ -117,9 +128,15 @@
 - (instancetype)initWithTestCaseWithSelector:(SEL)testCase {
     self = [super initWithTestCaseWithSelector:testCase];
     if (self) {
-        // Custom initialization
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(swapButtons)];
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(fooButtonIdentifier)];
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(barButtonIdentifier)];
     }
     return self;
+}
+
+- (void)dealloc {
+    [[SLTestController sharedTestController] deregisterTarget:self];
 }
 
 static NSString *TestCellIdentifier = nil;
@@ -128,8 +145,12 @@ static NSString *TestCellIdentifier = nil;
 
     self.searchBar.text = @"barText";
 
+    self.fooButton.accessibilityIdentifier = @"fooId";
     self.fooButton.accessibilityLabel = @"foo";
     self.fooButton.accessibilityValue = @"fooValue";
+
+    self.barButton.accessibilityIdentifier = @"barId";
+    self.barButton.accessibilityLabel = @"bar";
 
     if (self.tableView) {
         Class testCellClass;
@@ -216,6 +237,29 @@ static NSString *TestCellIdentifier = nil;
     }
 
     return headerView;
+}
+
+#pragma mark - App hooks
+
+- (void)swapButtons {
+    CGRect buttonFrame = self.fooButton.frame;
+    NSString *buttonLabel = self.fooButton.accessibilityLabel;
+    [self.fooButton removeFromSuperview];
+
+    UIButton *newButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    newButton.frame = buttonFrame;
+    newButton.accessibilityLabel = buttonLabel;
+    newButton.accessibilityValue = @"foo2Value";
+    [self.view addSubview:newButton];
+    self.fooButton = newButton;
+}
+
+- (NSString *)fooButtonIdentifier {
+    return self.fooButton.accessibilityIdentifier;
+}
+
+- (NSString *)barButtonIdentifier {
+    return self.barButton.accessibilityIdentifier;
 }
 
 @end

@@ -7,10 +7,12 @@
 //
 
 #import "SLIntegrationTest.h"
+#import "SLElement+Subclassing.h"
+
 
 @interface SLElementMatchingTest : SLIntegrationTest
-
 @end
+
 
 @implementation SLElementMatchingTest
 
@@ -18,14 +20,43 @@
     return @"SLElementMatchingTestViewController";
 }
 
+#pragma mark - Matching basics
+
+// Elements match afresh each time
+- (void)testElementsDoNotCaptureTheirMatches {
+    SLElement *fooButton = [SLElement elementWithAccessibilityLabel:@"foo"];
+    SLAssertTrue([[UIAElement(fooButton) value] isEqualToString:@"fooValue"],
+                 @"Should have matched the first button with label 'foo'.");
+
+    SLAskApp(swapButtons);
+
+    SLAssertTrue([[UIAElement(fooButton) value] isEqualToString:@"foo2Value"],
+                 @"Should have matched the second button with label 'foo'.");
+}
+
+// The converse of the above test
+// (Also something of an internal test)
+- (void)testElementsCanMatchTheSameObjectTwice {
+    SLElement *fooButton = [SLElement elementWithAccessibilityLabel:@"foo"];
+    SLAssertTrue([[UIAElement(fooButton) value] isEqualToString:@"fooValue"],
+                 @"Should have matched the button with label 'foo'.");
+
+    SLAssertTrue([[UIAElement(fooButton) value] isEqualToString:@"fooValue"],
+                 @"Should have matched the button with label 'foo' again.");
+}
+
+#pragma mark - Matching criteria
+
 - (void)testAnyElement {
     SLSearchBar *anySearchBar = [SLSearchBar anyElement];
-    SLAssertTrue([[UIAElement(anySearchBar) text] isEqualToString:@"barText"], @"SLSearchBar should have matched the search bar onscreen.");
+    SLAssertTrue([[UIAElement(anySearchBar) text] isEqualToString:@"barText"],
+                 @"SLSearchBar should have matched the search bar onscreen.");
 }
 
 - (void)testElementWithAccessibilityLabel {
     SLElement *fooButton = [SLElement elementWithAccessibilityLabel:@"foo"];
-    SLAssertTrue([[UIAElement(fooButton) value] isEqualToString:@"fooValue"], @"SLElement should have matched the button onscreen.");
+    SLAssertTrue([[UIAElement(fooButton) value] isEqualToString:@"fooValue"],
+                 @"Should have matched the button with label 'foo'.");
 }
 
 #pragma mark - Table views
@@ -82,6 +113,51 @@
 
     SLElement *rightLabel = [SLElement elementWithAccessibilityLabel:@"right"];
     SLAssertTrue([rightLabel isValid], @"Could not match UITableView header child element.");
+}
+
+#pragma mark - Internal tests
+
+// Subliminal replaces the accessibility identifiers of objects in the accessibility
+// hierarchy above the matched object while communicating with UIAutomation
+// (in order to uniquely identify the elements) but restores them afterward.
+- (void)testSubliminalOnlyReplacesAccessibilityIdentifiersOfElementsInvolvedInMatch {
+    NSString *originalFooIdentifier = SLAskApp(fooButtonIdentifier);
+    NSString *originalBarIdentifier = SLAskApp(barButtonIdentifier);
+
+    SLElement *fooButton = [SLElement elementWithAccessibilityLabel:@"foo"];
+    SLElement *barButton = [SLElement elementWithAccessibilityLabel:@"bar"];
+
+    // Sanity check
+    SLAssertTrue([[UIAElement(fooButton) label] isEqualToString:@"foo"],
+                 @"Should have matched the button with label 'foo'.");
+    SLAssertTrue([[UIAElement(barButton) label] isEqualToString:@"bar"],
+                 @"Should have matched the button with label 'bar'.");
+
+    [fooButton performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+        SLAssertFalse([SLAskApp(fooButtonIdentifier) isEqualToString:originalFooIdentifier],
+                      @"While matched, an object's identifier is replaced.");
+        SLAssertTrue([SLAskApp(barButtonIdentifier) isEqualToString:originalBarIdentifier],
+                     @"If an object is not involved in the hierarchy of a matched object, \
+                     its identifier should not be replaced, even if it is of the same type.");
+    }];
+}
+
+- (void)testSubliminalRestoresAccessibilityIdentifiersAfterMatching {
+    NSString *originalIdentifier = SLAskApp(fooButtonIdentifier);
+
+    SLElement *fooButton = [SLElement elementWithAccessibilityLabel:@"foo"];
+
+    // Sanity check
+    SLAssertTrue([[UIAElement(fooButton) label] isEqualToString:@"foo"],
+                 @"Should have matched the button with label 'foo'.");
+
+    [fooButton performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+        SLAssertFalse([SLAskApp(fooButtonIdentifier) isEqualToString:originalIdentifier],
+                      @"While matched, an object's identifier is replaced.");
+    }];
+
+    SLAssertTrue([SLAskApp(fooButtonIdentifier) isEqualToString:originalIdentifier],
+                 @"After being matched, an object's identifier should have been restored.");
 }
 
 @end
