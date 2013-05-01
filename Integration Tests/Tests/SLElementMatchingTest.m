@@ -115,6 +115,38 @@
     SLAssertTrue([rightLabel isValid], @"Could not match UITableView header child element.");
 }
 
+#pragma mark - Web views
+
+// This test case is restricted to the iPhone to guarantee the properties of
+// the elements tested, because it uses mobile-optimized HTML.
+- (void)testMatchingWebViewChildElements_iPhone {
+    SLElement *openMenuLink = [SLElement elementMatching:^BOOL(NSObject *obj) {
+        return [obj.accessibilityHint isEqualToString:@"Open main menu"];
+    } withDescription:@"Open main menu link"];
+    
+    CGRect expectedOpenMenuLinkFrame = CGRectMake(0.0f, 63.0f, 40.0f, 46.0f);
+    CGRect actualOpenMenuLinkFrame = [UIAElement(openMenuLink) rect];
+    BOOL openMenuLinkFrameMatches = CGRectEqualToRect(actualOpenMenuLinkFrame, expectedOpenMenuLinkFrame);
+    if (!openMenuLinkFrameMatches) {
+        // the y-origin wavers depending on the device
+        expectedOpenMenuLinkFrame.origin.y = 64.0f;
+        openMenuLinkFrameMatches = CGRectEqualToRect(actualOpenMenuLinkFrame, expectedOpenMenuLinkFrame);
+    }
+    SLAssertTrue(openMenuLinkFrameMatches, @"Could not match element in webview.");
+
+    SLElement *searchField = [SLElement elementWithAccessibilityLabel:nil value:@"Search Wikipedia" traits:0];
+    SLAssertTrue([[UIAElement(searchField) value] isEqualToString:@"Search Wikipedia"],
+                  @"Could not match element in webview.");
+
+    SLElement *title = [SLElement elementWithAccessibilityLabel:@"Inklings"];
+    SLAssertTrue([[UIAElement(title) label] isEqualToString:@"Inklings"],
+                 @"Could not match element in webview.");
+
+    SLElement *memorabiliaLink = [SLElement elementWithAccessibilityLabel:@"memorabilia"];
+    SLAssertTrue([[UIAElement(memorabiliaLink) label] isEqualToString:@"memorabilia"],
+                 @"Could not match element in webview.");
+}
+
 #pragma mark - Internal tests
 
 // Subliminal replaces the accessibility identifiers of objects in the accessibility

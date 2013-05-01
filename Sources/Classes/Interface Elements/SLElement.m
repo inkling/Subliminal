@@ -253,6 +253,8 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 - (BOOL)matchesObject:(NSObject *)object
 {
+    if (![object willAppearInAccessibilityHierarchy]) return NO;
+    
     NSAssert(_matchesObject, @"matchesObject called on %@, which has no _matchesObject predicate", self);
     return _matchesObject(object);
 }

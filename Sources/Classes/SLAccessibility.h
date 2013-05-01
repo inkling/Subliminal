@@ -12,8 +12,9 @@
 
 /**
  The methods in the NSObject (SLAccessibility) category 
- allow Subliminal to access and manipulate the accessibility hierarchy 
- for the purposes of describing the hierarchy to the user, for debugging, 
+ allow Subliminal to access and manipulate the accessibility hierarchy
+ --a subset of the hierarchy formed by views and the accessibility elements
+ they vend--for the purposes of describing the hierarchy to the user, for debugging;
  and to UIAutomation, in order to evaluate expressions involving the `UIAElement`s 
  corresponding to SLElements.
  */
@@ -41,6 +42,24 @@
  rooted in the receiver.
  */
 - (SLAccessibilityPath *)slAccessibilityPathToElement:(SLElement *)element;
+
+/**
+ Returns a Boolean value that indicates whether the receiver will appear
+ in the accessibility hierarchy.
+ 
+ The receiver will only be accessible to UIAutomation if it appears in the 
+ hierarchy. Experimentation reveals that presence in the hierarchy is determined by a
+ combination of the receiver's accessibility information and its location in the
+ view hierarchy.
+ 
+ See the method's implementation for specifics, or use the Accessibility Inspector: 
+ if it can read an element's information, some underlying object is present 
+ in the hierarchy.
+
+ @return YES if the receiver will appear in the accessibility hierarchy,
+ otherwise NO.
+ */
+- (BOOL)willAppearInAccessibilityHierarchy;
 
 /**
  Determines if the specified object is visible on the screen.

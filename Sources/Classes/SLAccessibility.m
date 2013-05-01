@@ -24,10 +24,10 @@
 
 /**
  Creates and returns an array containing only those objects from
- the specified accessibility element path that should appear in the accessibility
+ the specified accessibility element path that will appear in the accessibility
  hierarchy as understood by UIAutomation.
 
- These objects corresponds closely, but not entirely, to the views that should appear
+ These objects corresponds closely, but not entirely, to the _views_ that will appear
  in the accessibility hierarchy.
 
  @param accessibilityElementPath The predominantly-UIAccessibilityElement path to filter.
@@ -70,7 +70,7 @@
  with the specified component paths.
  
  The accessibility element path should prioritize paths along UIAccessibilityElements
- to a matching object, while the view path should prioritize paths comprising 
+ to a matching object, while the view path should prioritize paths comprising
  UIViews. If this is done, every view in the accessibility element path will exist 
  in the view path, and each object in the accessibility element path that mocks 
  a view, will mock a view from the view path.
@@ -163,27 +163,6 @@
  if it is an accessibility element; otherwise `nil`.
  */
 - (NSObject *)slAccessibilityParent;
-
-/**
- Returns a Boolean value that indicates whether the receiver should appear
- in an accessibility hierarchy.
- 
- Experimentation reveals that an object will appear in UIAutomation's 
- accessibility hierarchy if: 
-
- * its [parent](-slAccessibilityParent) is not [an accessibility element](-[NSObject
- isAccessibilityElement]), and
- * it is [an accessibility element](-[NSObject isAccessibilityElement]), or
- * it has a non-empty accessibility identifier, or
- * it has accessibility traits that [force its presence in the accessibility
- hierarchy](-accessibilityTraitsForcePresenceInAccessibilityHierarchy), or
- * it is an instance of one of a [certain set
- of classes](-classForcesPresenceInAccessibilityHierarchy).
-
- @return YES if the receiver should appear in an accessibility hierarchy,
- otherwise NO.
- */
-- (BOOL)shouldAppearInAccessibilityHierarchy;
 
 /**
  Returns a Boolean value that indicates whether the receiver's accessibility
@@ -314,17 +293,17 @@
 
 /**
  Returns a Boolean value that indicates whether an object mocking the receiver
- should appear in an accessibility hierarchy.
+ will appear in an accessibility hierarchy.
 
  Experimentation reveals that a mock view will appear in the accessibility hierarchy
- if the real object should appear in [any accessibility hierarchy]
- (-shouldAppearInAccessibilityHierarchy) or is an instance of one of a [certain set
+ if the real object will appear in [any accessibility hierarchy]
+ (-willAppearInAccessibilityHierarchy) or is an instance of one of a [certain set
  of classes](-classForcesPresenceOfMockingViewsInAccessibilityHierarchy).
 
- @return YES if an object mocking the receiver should appear in an accessibility
+ @return YES if an object mocking the receiver will appear in an accessibility
  hierarchy, otherwise NO.
  */
-- (BOOL)elementMockingSelfShouldAppearInAccessibilityHierarchy;
+- (BOOL)elementMockingSelfWillAppearInAccessibilityHierarchy;
 
 /**
  Returns a Boolean value that indicates whether the receiver's class
@@ -548,7 +527,7 @@
     }
 }
 
-- (BOOL)shouldAppearInAccessibilityHierarchy {
+- (BOOL)willAppearInAccessibilityHierarchy {
     // An object will not appear in the accessibility hierarchy
     // if its direct parent is an accessibility element.
     NSObject *parent = [self slAccessibilityParent];
@@ -861,8 +840,8 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
     return isMocking;
 }
 
-- (BOOL)elementMockingSelfShouldAppearInAccessibilityHierarchy {
-    if ([self shouldAppearInAccessibilityHierarchy]) return YES;
+- (BOOL)elementMockingSelfWillAppearInAccessibilityHierarchy {
+    if ([self willAppearInAccessibilityHierarchy]) return YES;
 
     if ([self classForcesPresenceOfMockingViewsInAccessibilityHierarchy]) {
         return YES;
@@ -882,7 +861,7 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
 
 @implementation UILabel (SLAccessibility)
 
-- (BOOL)shouldAppearInAccessibilityHierarchy {
+- (BOOL)willAppearInAccessibilityHierarchy {
     NSObject *parent = [self slAccessibilityParent];
     // A label will not appear in the accessibility hierarchy
     // if it is contained within a UITableViewCell, at any depth
@@ -894,7 +873,7 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
         } while ((parent = [parent slAccessibilityParent]));
     }
 
-    return [super shouldAppearInAccessibilityHierarchy];
+    return [super willAppearInAccessibilityHierarchy];
 }
 
 @end
@@ -989,25 +968,25 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
             }
         }
 
-        // Views that should appear in the hierarchy are always included
+        // Views that will appear in the hierarchy are always included
         if ([objectFromAccessibilityElementPath isKindOfClass:[UIView class]]) {
             viewPathIndex++;
-            if ([objectFromAccessibilityElementPath shouldAppearInAccessibilityHierarchy]) {
+            if ([objectFromAccessibilityElementPath willAppearInAccessibilityHierarchy]) {
                 [filteredArray addObject:objectFromAccessibilityElementPath];
             }
 
         // Mock views are included in the hierarchy depending on the view
         } else if ([UIView elementObject:objectFromAccessibilityElementPath isMockingViewObject:currentViewPathObject]) {
             viewPathIndex++;
-            if ([(UIView *)currentViewPathObject elementMockingSelfShouldAppearInAccessibilityHierarchy]) {
+            if ([(UIView *)currentViewPathObject elementMockingSelfWillAppearInAccessibilityHierarchy]) {
                 [filteredArray addObject:objectFromAccessibilityElementPath];
             }
 
         // At this point, we only add the current objectFromAccessibilityElementPath
         // if we can be sure it's not mocking a view (by us having exhausted
-        // the views in the view path) and it should appear in the accessibility hierarchy
+        // the views in the view path) and it will appear in the accessibility hierarchy
         } else if ((![currentViewPathObject isKindOfClass:[UIView class]] &&
-                    [objectFromAccessibilityElementPath shouldAppearInAccessibilityHierarchy])){
+                    [objectFromAccessibilityElementPath willAppearInAccessibilityHierarchy])){
             [filteredArray addObject:objectFromAccessibilityElementPath];
         }
     }];
@@ -1021,9 +1000,9 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
         // appear in the accessibility hierarchy, as well as any objects
         // that will be accompanied by mock views that will appear in the
         // accessibility hierarchy
-        if ([obj shouldAppearInAccessibilityHierarchy] ||
+        if ([obj willAppearInAccessibilityHierarchy] ||
                 ([obj isKindOfClass:[UIView class]] &&
-                [(UIView *)obj elementMockingSelfShouldAppearInAccessibilityHierarchy])) {
+                [(UIView *)obj elementMockingSelfWillAppearInAccessibilityHierarchy])) {
             [filteredPath addObject:obj];
         }
     }];

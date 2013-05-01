@@ -91,7 +91,7 @@
 @end
 
 
-@interface SLElementMatchingTestViewController () <UITableViewDataSource, UITableViewDelegate>
+@interface SLElementMatchingTestViewController () <UITableViewDataSource, UITableViewDelegate, UIWebViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *fooButton;
 @property (weak, nonatomic) IBOutlet UIButton *barButton;
@@ -131,12 +131,21 @@
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(swapButtons)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(fooButtonIdentifier)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(barButtonIdentifier)];
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(webViewDidFinishLoad)];
     }
     return self;
 }
 
 - (void)dealloc {
     [[SLTestController sharedTestController] deregisterTarget:self];
+}
+
+- (void)loadViewForTestCase:(SEL)testCase {
+    if (testCase == @selector(testMatchingWebViewChildElements_iPhone)) {
+        _webView = [[UIWebView alloc] initWithFrame:CGRectZero];
+        _webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        self.view = _webView;
+    }
 }
 
 static NSString *TestCellIdentifier = nil;
@@ -167,6 +176,13 @@ static NSString *TestCellIdentifier = nil;
         }
         TestCellIdentifier = [NSString stringWithFormat:@"%@_%@", NSStringFromClass(testCellClass), NSStringFromSelector(self.testCase)];
         [self.tableView registerClass:testCellClass forCellReuseIdentifier:TestCellIdentifier];
+    }
+
+    if (_webView) {
+        NSURL *webArchiveURL = [[NSBundle mainBundle] URLForResource:@"Inklings~iPhone" withExtension:@"webarchive"];
+        NSURLRequest *webArchiveRequest = [NSURLRequest requestWithURL:webArchiveURL];
+        _webView.delegate = self;
+        [_webView loadRequest:webArchiveRequest];
     }
 }
 
@@ -239,6 +255,12 @@ static NSString *TestCellIdentifier = nil;
     return headerView;
 }
 
+#pragma mark - UIWebView delegate
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+    _webViewDidFinishLoad = YES;
+}
+
 #pragma mark - App hooks
 
 - (void)swapButtons {
@@ -260,6 +282,10 @@ static NSString *TestCellIdentifier = nil;
 
 - (NSString *)barButtonIdentifier {
     return self.barButton.accessibilityIdentifier;
+}
+
+- (NSNumber *)webViewDidFinishLoad {
+    return @(_webViewDidFinishLoad);
 }
 
 @end
