@@ -20,6 +20,13 @@
     return @"SLElementMatchingTestViewController";
 }
 
+- (void)tearDownTestCaseWithSelector:(SEL)testSelector {
+    if (testSelector == @selector(testMatchingPopoverChildElement_iPad)) {
+        SLAskApp(hidePopover);
+    }
+    [super tearDownTestCaseWithSelector:testSelector];
+}
+
 #pragma mark - Matching basics
 
 // Elements match afresh each time
@@ -145,6 +152,17 @@
     SLElement *memorabiliaLink = [SLElement elementWithAccessibilityLabel:@"memorabilia"];
     SLAssertTrue([[UIAElement(memorabiliaLink) label] isEqualToString:@"memorabilia"],
                  @"Could not match element in webview.");
+}
+
+#pragma mark - Popovers
+
+// Popovers are only available on the iPad.
+- (void)testMatchingPopoverChildElement_iPad {
+    SLAskApp(showPopover);
+
+    SLElement *fooButtonInPopover = [SLElement elementWithAccessibilityLabel:@"fooInPopover"];
+    SLAssertTrue([[UIAElement(fooButtonInPopover) label] isEqualToString:@"fooInPopover"],
+                 @"Could not match button in popover.");
 }
 
 #pragma mark - Internal tests

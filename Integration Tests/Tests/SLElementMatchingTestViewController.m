@@ -103,6 +103,8 @@
 @implementation SLElementMatchingTestViewController {
     UIWebView *_webView;
     BOOL _webViewDidFinishLoad;
+
+    UIPopoverController *_popoverController;
 }
 
 + (NSString *)nibNameForTestCase:(SEL)testCase {
@@ -111,7 +113,8 @@
         (testCase == @selector(testAnyElement)) ||
         (testCase == @selector(testElementWithAccessibilityLabel)) ||
         (testCase == @selector(testSubliminalOnlyReplacesAccessibilityIdentifiersOfElementsInvolvedInMatch)) ||
-        (testCase == @selector(testSubliminalRestoresAccessibilityIdentifiersAfterMatching))) {
+        (testCase == @selector(testSubliminalRestoresAccessibilityIdentifiersAfterMatching)) ||
+        (testCase == @selector(testMatchingPopoverChildElement_iPad))) {
         return @"SLElementMatchingTestViewController";
     } else if ((testCase == @selector(testMatchingTableViewCellTextLabel)) ||
                (testCase == @selector(testMatchingTableViewCellWithCombinedLabel)) ||
@@ -132,6 +135,7 @@
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(fooButtonIdentifier)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(barButtonIdentifier)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(webViewDidFinishLoad)];
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showPopover)];
     }
     return self;
 }
@@ -286,6 +290,25 @@ static NSString *TestCellIdentifier = nil;
 
 - (NSNumber *)webViewDidFinishLoad {
     return @(_webViewDidFinishLoad);
+}
+
+- (void)showPopover {
+    // Inception!
+    SLElementMatchingTestViewController *contentViewController = [[SLElementMatchingTestViewController alloc] initWithTestCaseWithSelector:self.testCase];
+
+    _popoverController = [[UIPopoverController alloc] initWithContentViewController:contentViewController];
+    _popoverController.popoverContentSize = CGSizeMake(320.0f, 480.0f);
+    [_popoverController presentPopoverFromRect:self.fooButton.frame inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:NO];
+
+    // we must rename the button after the view has loaded
+    contentViewController.fooButton.accessibilityLabel = @"fooInPopover";
+
+    // register this here vs. in init so the controller we just presented doesn't steal it
+    [[SLTestController sharedTestController] registerTarget:self forAction:@selector(hidePopover)];
+}
+
+- (void)hidePopover {
+    [_popoverController dismissPopoverAnimated:NO];
 }
 
 @end
