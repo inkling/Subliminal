@@ -28,14 +28,43 @@
     SLAssertTrue([[UIAElement(fooButton) value] isEqualToString:@"fooValue"], @"SLElement should have matched the button onscreen.");
 }
 
-- (void)testMatchingTableViewChildElement {
-    SLElement *fooCell = [SLElement elementWithAccessibilityLabel:@"foo"];
-    SLAssertTrue([UIAElement(fooCell) isValid], @"Matching of UITableViewCell by label with SLElement failed.");
+#pragma mark - Table views
+
+// note that we're not really matching the textLabel here,
+// but rather the table view cell, which takes its label from its textLabel's text
+// see testCannotMatchIndividualChildLabelsOfTableViewCell
+- (void)testMatchingTableViewCellTextLabel {
+    SLElement *fooLabel = [SLElement elementWithAccessibilityLabel:@"fooLabel"];
+    SLAssertTrue([[UIAElement(fooLabel) label] isEqualToString:@"fooLabel"],
+                 @"Could not match standard UITableViewCell child element.");
 }
 
-- (void)testTappingTableViewChildElement {
-    SLElement *fooCell = [SLElement elementWithAccessibilityLabel:@"foo"];
-    SLAssertNoThrow([UIAElement(fooCell) tap], @"An exception should not have been thrown tapping on the table view cell.");
+// as recommended by the "Enhancing the Accessibility of Table View Cells" document
+// http://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/iPhoneAccessibility/Making_Application_Accessible/Making_Application_Accessible.html#//apple_ref/doc/uid/TP40008785-CH102-SW3
+// note that it appears that table view cells will combine sub-labels automatically anyway
+- (void)testMatchingTableViewCellWithCombinedLabel {
+    SLElement *currentWeatherCell = [SLElement elementWithAccessibilityLabel:@"city, temp"];
+    SLAssertTrue([[UIAElement(currentWeatherCell) label] isEqualToString:@"city, temp"],
+                 @"Could not match UITableViewCell with accessibility label combined from child elements' labels.");
+}
+
+// combining sublabels' accessibilityLabels appears to be done automatically,
+// despite the document linked above, and child labels cannot be matched individually
+// --UIAccessibility does not represent such labels within tableviews' accessibility hierarchies
+- (void)testCannotMatchIndividualChildLabelsOfTableViewCell {
+    SLElement *currentWeatherCell = [SLElement elementWithAccessibilityLabel:@"city, temp"];
+    SLAssertTrue([[UIAElement(currentWeatherCell) label] isEqualToString:@"city, temp"],
+                 @"Could not match UITableViewCell with accessibility label combined from child elements' labels.");
+
+    SLElement *cityLabel = [SLElement elementWithAccessibilityLabel:@"city"];
+    SLAssertFalse([cityLabel isValid], @"Should not be able to match individual child label.");
+}
+
+// matching child elements may be done on a per-element basis (e.g. controls)
+// the Accessibility Inspector reports the ground truth
+- (void)testMatchingNonLabelTableViewCellChildElement {
+    SLElement *fooSwitch = [SLElement elementWithAccessibilityLabel:@"fooSwitch"];
+    SLAssertTrue([[UIAElement(fooSwitch) label] isEqualToString:@"fooSwitch"], @"Could not match custom UITableViewCell child element.");
 }
 
 @end

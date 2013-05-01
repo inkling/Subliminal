@@ -764,17 +764,39 @@
 
 #pragma mark UIView subclass overrides
 
+@implementation UILabel (SLAccessibility)
+
+- (BOOL)shouldAppearInAccessibilityHierarchy {
+    NSObject *parent = [self slAccessibilityParent];
+    // A label will not appear in the accessibility hierarchy
+    // if it is contained within a UITableViewCell, at any depth
+    // -- UITableViewCells create a mock element that aggregates sublabels' text;
+    // we can match that combined label, but not individual labels.
+    if ([self isKindOfClass:[UILabel class]]) {
+        do {
+            if ([parent isKindOfClass:[UITableViewCell class]]) return NO;
+        } while ((parent = [parent slAccessibilityParent]));
+    }
+
+    return [super shouldAppearInAccessibilityHierarchy];
+}
+
+@end
+
+
 @implementation UITableViewCell (SLAccessibility)
 - (BOOL)classForcesPresenceOfMockingViewsInAccessibilityHierarchy {
     return YES;
 }
 @end
-    
+
+
 @implementation UIScrollView (SLAccessibility)
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
     return YES;
 }
 @end
+
 
 @implementation UIToolbar (SLAccessibility)
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
@@ -782,17 +804,20 @@
 }
 @end
 
+
 @implementation UINavigationBar (SLAccessibility)
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
     return YES;
 }
 @end
 
+
 @implementation UIControl (SLAccessibility)
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
     return YES;
 }
 @end
+
 
 @implementation UIAlertView (SLAccessibility)
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
