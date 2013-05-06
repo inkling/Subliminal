@@ -15,6 +15,7 @@
 #import "SLMainThreadRef.h"
 
 #import <UIKit/UIKit.h>
+#import <objc/runtime.h>
 
 
 #pragma mark SLAccessibilityPath interface
@@ -23,10 +24,10 @@
 
 /**
  Creates and returns an array containing only those objects from
- the specified accessibility element path that should appear in the accessibility
+ the specified accessibility element path that will appear in the accessibility
  hierarchy as understood by UIAutomation.
 
- These objects corresponds closely, but not entirely, to the views that should appear
+ These objects corresponds closely, but not entirely, to the _views_ that will appear
  in the accessibility hierarchy.
 
  @param accessibilityElementPath The predominantly-UIAccessibilityElement path to filter.
@@ -69,16 +70,15 @@
  with the specified component paths.
  
  The accessibility element path should prioritize paths along UIAccessibilityElements
- to a matching object, while the view path should prioritize paths comprising 
+ to a matching object, while the view path should prioritize paths comprising
  UIViews. If this is done, every view in the accessibility element path will exist 
  in the view path, and each object in the accessibility element path that mocks 
  a view, will mock a view from the view path.
 
  It is the accessibility element path that (when [serialized](-UIARepresentation))
  matches the path that UIAutomation would use to identify the accessibility
- path's referent. The view path is be used to set the accessibility identifiers 
- of mock views in the accessibility element accessibility path, during 
- [binding](-bindPath:).
+ path's referent. Providing a view path enables clients to examine
+ the actual object that was matched in the event that the path's referent is a view.
 
  @warning The accessibility path filters the component paths in the process of
  initialization. If, after filtering, either path is empty, the accessibility
@@ -165,27 +165,6 @@
 - (NSObject *)slAccessibilityParent;
 
 /**
- Returns a Boolean value that indicates whether the receiver should appear
- in an accessibility hierarchy.
- 
- Experimentation reveals that an object will appear in UIAutomation's 
- accessibility hierarchy if: 
-
- * its [parent](-slAccessibilityParent) is not [an accessibility element](-[NSObject
- isAccessibilityElement]), and
- * it is [an accessibility element](-[NSObject isAccessibilityElement]), or
- * it has a non-empty accessibility identifier, or
- * it has accessibility traits that [force its presence in the accessibility
- hierarchy](-accessibilityTraitsForcePresenceInAccessibilityHierarchy), or
- * it is an instance of one of a [certain set
- of classes](-classForcesPresenceInAccessibilityHierarchy).
-
- @return YES if the receiver should appear in an accessibility hierarchy,
- otherwise NO.
- */
-- (BOOL)shouldAppearInAccessibilityHierarchy;
-
-/**
  Returns a Boolean value that indicates whether the receiver's accessibility
  traits force its presence in an accessibility hierarchy.
 
@@ -215,21 +194,60 @@
 /// @name Binding and serializing paths
 /// ----------------------------------------
 
-/** Sets a unique identifier as the accessibilityIdentifier **/
-- (void)setAccessibilityIdentifierWithStandardReplacement;
+/**
+ Returns a Boolean value that indicates whether the receiver 
+ has loaded -slReplacementAccessibilityIdentifier.
+ 
+ @return YES if +loadSLReplacementAccessibilityIdentifier has been sent
+ on the receiver, otherwise NO;
+ */
++ (BOOL)slReplacementAccessibilityIdentifierHasBeenLoaded;
 
-/** The string that should be used to uniquely identify this object to UIAutomation **/
-- (NSString *)standardAccessibilityIdentifierReplacement;
+/**
+ Replaces the receiver's implementation of -accessibilityIdentifier 
+ with -slReplacementAccessibilityIdentifier.
+ 
+ This method is idempotent.
 
-/** 
- Resets the receiver's accessibilityIdentifier to its appropriate value, unless its
- value has been changed again since it was replaced with the
- standardAccessibilityIdentifierReplacement.
+ Note that -slReplacementAccessibilityIdentifier will return the true
+ value of -accessibilityIdentifier unless -useSLReplacementAccessibilityIdentifier 
+ is YES.
+ */
++ (void)loadSLReplacementAccessibilityIdentifier;
 
- @param previousIdentifier The accessibilityIdentifier's value before it was set to
- standardAccessibilityIdentifierReplacement.
+/**
+ Indicates whether -slReplacementAccessibilityIdentifier should return
+ the receiver's [replacement accessibility identifier](-slReplacementAccessibilityIdentifier), 
+ or the object's [true accessibility identifier](-slTrueAccessibilityIdentifier).
+ 
+ When this is set to YES, the receiver's class will [load -slReplacementAccessibilityIdentifier]
+ (+loadSLReplacementAccessibilityIdentifier) if necessary.
+ */
+@property (nonatomic) BOOL useSLReplacementAccessibilityIdentifier;
+
+/**
+ Returns a replacement for -[UIAccessibilityIdentification accessibilityIdentifier] 
+ if -useSLReplacementAccessibilityIdentifier is YES.
+
+ @warning This method must not be called unless +loadSLReplacementAccessibilityIdentifier 
+ has been previously sent to the receiver's class.
+
+ @return A replacement for -accessibilityIdentifier that is unique to the receiver, 
+ if -useSLReplacementAccessibilityIdentifier is YES; otherwise, the value 
+ returned by the receiver's true implementation of -accessibilityIdentifier.
  **/
-- (void)resetAccessibilityInfoIfNecessaryWithPreviousIdentifier:(NSString *)previousIdentifier;
+- (NSString *)slReplacementAccessibilityIdentifier;
+
+/**
+ Returns the true accessibility identifier of the receiver.
+ 
+ @warning This is intentionally unimplemented. Its implementation is set 
+ when +loadSLReplacementAccessibilityIdentifier is sent to the receiver's class.
+ 
+ @return The value returned by the receiver's implementation of -accessibilityIdentifier
+ prior to -slReplacementAccessibilityIdentifier having been [loaded](+loadSLReplacementAccessibilityIdentifier).
+ */
+- (NSString *)slTrueAccessibilityIdentifier;
 
 @end
 
@@ -275,17 +293,17 @@
 
 /**
  Returns a Boolean value that indicates whether an object mocking the receiver
- should appear in an accessibility hierarchy.
+ will appear in an accessibility hierarchy.
 
  Experimentation reveals that a mock view will appear in the accessibility hierarchy
- if the real object should appear in [any accessibility hierarchy]
- (-shouldAppearInAccessibilityHierarchy) or is an instance of one of a [certain set
+ if the real object will appear in [any accessibility hierarchy]
+ (-willAppearInAccessibilityHierarchy) or is an instance of one of a [certain set
  of classes](-classForcesPresenceOfMockingViewsInAccessibilityHierarchy).
 
- @return YES if an object mocking the receiver should appear in an accessibility
+ @return YES if an object mocking the receiver will appear in an accessibility
  hierarchy, otherwise NO.
  */
-- (BOOL)elementMockingSelfShouldAppearInAccessibilityHierarchy;
+- (BOOL)elementMockingSelfWillAppearInAccessibilityHierarchy;
 
 /**
  Returns a Boolean value that indicates whether the receiver's class
@@ -509,7 +527,7 @@
     }
 }
 
-- (BOOL)shouldAppearInAccessibilityHierarchy {
+- (BOOL)willAppearInAccessibilityHierarchy {
     // An object will not appear in the accessibility hierarchy
     // if its direct parent is an accessibility element.
     NSObject *parent = [self slAccessibilityParent];
@@ -549,46 +567,123 @@
             (traits & UIAccessibilityTraitStaticText));
 }
 
+// At the NSObject level, we identify several private classes that seem to be
+// special cases that will always appear in the accessibility hierarchy.
+// We identify them by their context to avoid accessing or referencing private APIs.
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
-    // UIWebBrowserView is a private api class that appears to be a special case, they will
-    // always exist in the accessibility hierarchy. We identify them by their superviews and
-    // by the non UIAccessibilityElement objects they vend from elementAtAccessibilityIndex:
-    // to avoid accessing private api's.
+    id parent = [self slAccessibilityParent];
+
+    // We identify UIWebBrowserViews by their superviews and by
+    // the non-UIAccessibilityElement objects they vend from elementAtAccessibilityIndex:.
     BOOL isWebBrowserView = NO;
-    if([[[self slAccessibilityParent] slAccessibilityParent] isKindOfClass:[UIWebView class]]) {
-        for (int i = 0; i < [self accessibilityElementCount]; i++) {
-            id accessibilityObject = [self accessibilityElementAtIndex:i];
-            if (![accessibilityObject isKindOfClass:[UIAccessibilityElement class]]) {
-                isWebBrowserView = YES;
-                break;
+    if([parent isKindOfClass:[UIScrollView class]] &&
+       [[parent slAccessibilityParent] isKindOfClass:[UIWebView class]]) {
+        NSInteger elementCount = [self accessibilityElementCount];
+        if (elementCount != NSNotFound && elementCount > 0) {
+            for (NSUInteger i = 0; i < elementCount; i++) {
+                id accessibilityObject = [self accessibilityElementAtIndex:i];
+                if (![accessibilityObject isKindOfClass:[UIAccessibilityElement class]]) {
+                    isWebBrowserView = YES;
+                    break;
+                }
             }
         }
     }
+    if (isWebBrowserView) return YES;
 
-    // _UIPopoverView is another private api special case. It will always exist in the accessibility
-    // hierarchy, and is identified by its parent's label to avoid accessing private apis.
-    NSObject *parent = [self slAccessibilityParent];
+    // UITableViewSectionElements are mock views created for UITableView header views,
+    // which return NO from -isAccessibilityElement and do not carry any accessibility
+    // information--thus will not otherwise pass -shouldAppearInAccessibilityHierarchy
+    // or -elementObject:isMockingViewObject:--but will still appear in the hierarchy.
+    // We identify them as accessibility elements vended by their parent table views.
+    BOOL isTableViewSectionElement = NO;
+    if ([parent isKindOfClass:[UITableView class]] &&
+        [self isKindOfClass:[UIAccessibilityElement class]]) {
+        NSInteger elementCount = [parent accessibilityElementCount];
+        if (elementCount != NSNotFound && elementCount > 0) {
+            for (NSUInteger i = 0; i < elementCount; i++) {
+                if (self == [parent accessibilityElementAtIndex:i]) {
+                    isTableViewSectionElement = YES;
+                    break;
+                }
+            }
+        }
+    }
+    if (isTableViewSectionElement) return YES;
+
+    // _UIPopoverView is identified by its parent's label.
     BOOL isPopover = [[parent accessibilityLabel] isEqualToString:@"dismiss popup"];
-    return (isWebBrowserView || isPopover);
+    if (isPopover) return YES;
+
+    return NO;
 }
 
-- (void)setAccessibilityIdentifierWithStandardReplacement {
-    if ([self respondsToSelector:@selector(setAccessibilityIdentifier:)]) {
-        [self performSelector:@selector(setAccessibilityIdentifier:) withObject:[self standardAccessibilityIdentifierReplacement]];
+static const void *const kSLReplacementAccessibilityIdentifierHasBeenLoadedKey = &kSLReplacementAccessibilityIdentifierHasBeenLoadedKey;
++ (BOOL)slReplacementAccessibilityIdentifierHasBeenLoaded {
+    if ([objc_getAssociatedObject(self, kSLReplacementAccessibilityIdentifierHasBeenLoadedKey) boolValue]) {
+        return YES;
+    }
+
+    // -slReplacementAccessibilityIdentifier might have been loaded on a superclass;
+    // if the subclass doesn't override -accessibilityIdentifier,
+    // it's loaded on the subclass too
+    Method accessibilityIdentifierMethod = class_getInstanceMethod(self, @selector(accessibilityIdentifier));
+    IMP accessibilityIdentifierImp = method_getImplementation(accessibilityIdentifierMethod);
+    
+    Method replacementIdentifierMethod = class_getInstanceMethod(self, @selector(slReplacementAccessibilityIdentifier));
+    IMP replacementIdentifierIMP = method_getImplementation(replacementIdentifierMethod);
+
+    if (accessibilityIdentifierImp == replacementIdentifierIMP) {
+        [self setSLReplacementAccessibilityIdentifierHasBeenLoaded];
+        return YES;
+    }
+
+    return NO;
+}
+
++ (void)setSLReplacementAccessibilityIdentifierHasBeenLoaded {
+    objc_setAssociatedObject(self, kSLReplacementAccessibilityIdentifierHasBeenLoadedKey, @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
++ (void)loadSLReplacementAccessibilityIdentifier {
+    if (![self slReplacementAccessibilityIdentifierHasBeenLoaded]) {
+        // we use class_getInstanceMethod to get the original IMP
+        // rather than using the return value of class_replaceMethod
+        // because class_replaceMethod returns NULL when it overrides a superclass' implementation
+        Method originalIdentifierMethod = class_getInstanceMethod(self, @selector(accessibilityIdentifier));
+        IMP originalIdentifierImp = method_getImplementation(originalIdentifierMethod);
+
+        Method replacementIdentifierMethod = class_getInstanceMethod(self, @selector(slReplacementAccessibilityIdentifier));
+        IMP replacementIdentifierIMP = method_getImplementation(replacementIdentifierMethod);
+        const char *replacementIdentifierTypes = method_getTypeEncoding(replacementIdentifierMethod);
+
+        (void)class_replaceMethod(self, method_getName(originalIdentifierMethod), replacementIdentifierIMP, replacementIdentifierTypes);
+        class_addMethod(self, @selector(slTrueAccessibilityIdentifier), originalIdentifierImp, replacementIdentifierTypes);
+
+        [self setSLReplacementAccessibilityIdentifierHasBeenLoaded];
     }
 }
 
-- (NSString *)standardAccessibilityIdentifierReplacement {
-    return [NSString stringWithFormat:@"%@: %p", [self class], self];
+static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIdentifierKey;
+- (BOOL)useSLReplacementAccessibilityIdentifier {
+    return [objc_getAssociatedObject(self, kUseSLReplacementIdentifierKey) boolValue];
 }
 
-- (void)resetAccessibilityInfoIfNecessaryWithPreviousIdentifier:(NSString *)previousIdentifier {
+- (void)setUseSLReplacementAccessibilityIdentifier:(BOOL)useSLReplacementAccessibilityIdentifier {
+    if (useSLReplacementAccessibilityIdentifier) {
+        [[self class] loadSLReplacementAccessibilityIdentifier];
+    }
+    objc_setAssociatedObject(self, kUseSLReplacementIdentifierKey, @(useSLReplacementAccessibilityIdentifier), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (NSString *)slReplacementAccessibilityIdentifier {
+    NSAssert([[self class] slReplacementAccessibilityIdentifierHasBeenLoaded],
+             @"-slReplacementAccessibilityIdentifier must not be called before it has been loaded.");
     
-    if ([self respondsToSelector:@selector(accessibilityIdentifier)] && [self respondsToSelector:@selector(setAccessibilityIdentifier:)]) {
-        NSString *currentIdentifier = [self performSelector:@selector(accessibilityIdentifier)];
-        if ([currentIdentifier isEqualToString:[self standardAccessibilityIdentifierReplacement]]) {
-            [self performSelector:@selector(setAccessibilityIdentifier:) withObject:previousIdentifier];
-        }
+    if (self.useSLReplacementAccessibilityIdentifier) {
+        return [NSString stringWithFormat:@"%@: %p", [self class], self];
+    } else {
+        return [self slTrueAccessibilityIdentifier];
     }
 }
 
@@ -732,7 +827,7 @@
     }
     UIView *view = (UIView *)viewObject;
     NSString *previousIdentifier = view.accessibilityIdentifier;
-    [view setAccessibilityIdentifierWithStandardReplacement];
+    view.accessibilityIdentifier = [NSString stringWithFormat:@"%@: %p", [view class], view];
 
     BOOL isMocking = NO;
     if ([elementObject respondsToSelector:@selector(accessibilityIdentifier)]) {
@@ -745,8 +840,8 @@
     return isMocking;
 }
 
-- (BOOL)elementMockingSelfShouldAppearInAccessibilityHierarchy {
-    if ([self shouldAppearInAccessibilityHierarchy]) return YES;
+- (BOOL)elementMockingSelfWillAppearInAccessibilityHierarchy {
+    if ([self willAppearInAccessibilityHierarchy]) return YES;
 
     if ([self classForcesPresenceOfMockingViewsInAccessibilityHierarchy]) {
         return YES;
@@ -764,17 +859,39 @@
 
 #pragma mark UIView subclass overrides
 
+@implementation UILabel (SLAccessibility)
+
+- (BOOL)willAppearInAccessibilityHierarchy {
+    NSObject *parent = [self slAccessibilityParent];
+    // A label will not appear in the accessibility hierarchy
+    // if it is contained within a UITableViewCell, at any depth
+    // -- UITableViewCells create a mock element that aggregates sublabels' text;
+    // we can match that combined label, but not individual labels.
+    if ([self isKindOfClass:[UILabel class]]) {
+        do {
+            if ([parent isKindOfClass:[UITableViewCell class]]) return NO;
+        } while ((parent = [parent slAccessibilityParent]));
+    }
+
+    return [super willAppearInAccessibilityHierarchy];
+}
+
+@end
+
+
 @implementation UITableViewCell (SLAccessibility)
 - (BOOL)classForcesPresenceOfMockingViewsInAccessibilityHierarchy {
     return YES;
 }
 @end
-    
+
+
 @implementation UIScrollView (SLAccessibility)
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
     return YES;
 }
 @end
+
 
 @implementation UIToolbar (SLAccessibility)
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
@@ -782,17 +899,20 @@
 }
 @end
 
+
 @implementation UINavigationBar (SLAccessibility)
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
     return YES;
 }
 @end
 
+
 @implementation UIControl (SLAccessibility)
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
     return YES;
 }
 @end
+
 
 @implementation UIAlertView (SLAccessibility)
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
@@ -821,7 +941,8 @@
 #pragma mark - SLAccessibilityPath implementation
 
 @implementation SLAccessibilityPath {
-    NSArray *_accessibilityElementPath, *_viewPath;
+    NSArray *_accessibilityElementPath;
+    SLMainThreadRef *_destinationRef;
 }
 
 + (NSArray *)filterRawAccessibilityElementPath:(NSArray *)accessibilityElementPath
@@ -847,25 +968,25 @@
             }
         }
 
-        // Views that should appear in the hierarchy are always included
+        // Views that will appear in the hierarchy are always included
         if ([objectFromAccessibilityElementPath isKindOfClass:[UIView class]]) {
             viewPathIndex++;
-            if ([objectFromAccessibilityElementPath shouldAppearInAccessibilityHierarchy]) {
+            if ([objectFromAccessibilityElementPath willAppearInAccessibilityHierarchy]) {
                 [filteredArray addObject:objectFromAccessibilityElementPath];
             }
 
         // Mock views are included in the hierarchy depending on the view
         } else if ([UIView elementObject:objectFromAccessibilityElementPath isMockingViewObject:currentViewPathObject]) {
             viewPathIndex++;
-            if ([(UIView *)currentViewPathObject elementMockingSelfShouldAppearInAccessibilityHierarchy]) {
+            if ([(UIView *)currentViewPathObject elementMockingSelfWillAppearInAccessibilityHierarchy]) {
                 [filteredArray addObject:objectFromAccessibilityElementPath];
             }
 
         // At this point, we only add the current objectFromAccessibilityElementPath
         // if we can be sure it's not mocking a view (by us having exhausted
-        // the views in the view path) and it should appear in the accessibility hierarchy
+        // the views in the view path) and it will appear in the accessibility hierarchy
         } else if ((![currentViewPathObject isKindOfClass:[UIView class]] &&
-                    [objectFromAccessibilityElementPath shouldAppearInAccessibilityHierarchy])){
+                    [objectFromAccessibilityElementPath willAppearInAccessibilityHierarchy])){
             [filteredArray addObject:objectFromAccessibilityElementPath];
         }
     }];
@@ -879,9 +1000,9 @@
         // appear in the accessibility hierarchy, as well as any objects
         // that will be accompanied by mock views that will appear in the
         // accessibility hierarchy
-        if ([obj shouldAppearInAccessibilityHierarchy] ||
+        if ([obj willAppearInAccessibilityHierarchy] ||
                 ([obj isKindOfClass:[UIView class]] &&
-                [(UIView *)obj elementMockingSelfShouldAppearInAccessibilityHierarchy])) {
+                [(UIView *)obj elementMockingSelfWillAppearInAccessibilityHierarchy])) {
             [filteredPath addObject:obj];
         }
     }];
@@ -910,43 +1031,52 @@
     if (self) {
         NSArray *filteredAccessibilityElementPath = [[self class] filterRawAccessibilityElementPath:accessibilityElementPath
                                                                                    usingRawViewPath:viewPath];
-        _accessibilityElementPath = [[self class] mapPathToBackgroundThread:filteredAccessibilityElementPath];
-        
         NSArray *filteredViewPath = [[self class] filterRawViewPath:viewPath];
-        _viewPath = [[self class] mapPathToBackgroundThread:filteredViewPath];
 
-        if (![_accessibilityElementPath count] || ![_viewPath count]) {
+        // If, after filtering, the accessibility element path contains no elements,
+        // or filtering removes the last element of the path (the path's destination)
+        // the path is invalid
+        if (![filteredAccessibilityElementPath count] ||
+            ([filteredAccessibilityElementPath lastObject] != [accessibilityElementPath lastObject])) {
             self = nil;
             return self;
         }
+
+        // the path's destination is given by the last element in the view path
+        // (because that contains real and not mock views, as well as accessibility
+        // elements generated by the application vs. the system),
+        // unless it was filtered (e.g. it was a UILabel in a UITableViewCell)
+        id destination;
+        if ([filteredViewPath count] && ([filteredViewPath lastObject] == [viewPath lastObject])) {
+            destination = [filteredViewPath lastObject];
+        } else {
+            destination = [filteredAccessibilityElementPath lastObject];
+        }
+
+        _accessibilityElementPath = [[self class] mapPathToBackgroundThread:filteredAccessibilityElementPath];
+        _destinationRef = [SLMainThreadRef refWithTarget:destination];
     }
     return self;
 }
 
 - (void)examineLastPathComponent:(void (^)(NSObject *lastPathComponent))block {
-    // examine the last object in the view path because that's the "real"
-    // destination of the path--the real view, not the mock view
     dispatch_sync(dispatch_get_main_queue(), ^{
-        block([[_viewPath lastObject] target]);
+        block([_destinationRef target]);
     });
 }
 
-// To bind the path to a unique destination, unique identifiers are set on
-// the objects in the view path. This ensures that the identifiers are set
-// successfully (because some mock views' identifiers cannot be set directly,
-// but rather track the identifiers on their corresponding views)
-// and that the path does not contain any extra elements.
-//
-// After the block has been executed, the accessibilityIdentifiers on each element
-// in the view matching chain are reset.
-
 - (void)bindPath:(void (^)(SLAccessibilityPath *boundPath))block {
-    __block NSMutableArray *previousAccessorPathIdentifiers = [[NSMutableArray alloc] init];
-
-    // Unique the elements' identifiers
+    // To bind the path to a unique destination, each object in the mock view path
+    // is caused to return a unique replacement identifier. This is done by swizzling
+    // -accessibilityIdentifier because some objects' identifiers cannot be set directly
+    // (e.g. UISegmentedControl, some mock views).
+    //
+    // @warning This implementation assumes that there's only one SLAccessibilityPath
+    // binding/bound at a time. It also assumes that it's unlikely that clients
+    // other than UIAccessibility will try to read the elements' identifiers
+    // while bound.
     dispatch_sync(dispatch_get_main_queue(), ^{
-
-        for (SLMainThreadRef *objRef in _viewPath) {
+        for (SLMainThreadRef *objRef in _accessibilityElementPath) {
             NSObject *obj = [objRef target];
 
             // see note on +mapPathToBackgroundThread:;
@@ -955,44 +1085,24 @@
             NSAssert(!obj || [obj respondsToSelector:@selector(accessibilityIdentifier)],
                      @"elements in the view path must conform to UIAccessibilityIdentification");
 
-            NSObject *previousIdentifier = [obj performSelector:@selector(accessibilityIdentifier)];
-            if (previousIdentifier == nil) {
-                previousIdentifier = [NSNull null];
-            }
-            [previousAccessorPathIdentifiers addObject:previousIdentifier];
-
-            // see note on +mapPathToBackgroundThread:
-            // we only throw a fatal exception if there *are* objects in the path
-            // that differ from our assumptions
-            NSAssert(!obj || [obj respondsToSelector:@selector(accessibilityIdentifier)],
-                     @"elements in the view path must conform to UIAccessibilityIdentification");
-            [obj setAccessibilityIdentifierWithStandardReplacement];
+            obj.useSLReplacementAccessibilityIdentifier = YES;
         }
     });
 
     block(self);
 
-    // Reset the elements' identifiers
+    // Set the objects to use the original -accessibilityIdentifier again.
     dispatch_sync(dispatch_get_main_queue(), ^{
-        // The path's elements' accessibility information is updated in reverse order,
-        // because of the issue listed in the above note.
-        [_viewPath enumerateObjectsUsingBlock:^(SLMainThreadRef *objRef, NSUInteger idx, BOOL *stop) {
+        for (SLMainThreadRef *objRef in _accessibilityElementPath) {
             NSObject *obj = [objRef target];
-            NSObject *identifierObj = [previousAccessorPathIdentifiers objectAtIndex:idx];
-            NSString *identifier = ([identifierObj isEqual:[NSNull null]] ? nil : (NSString *)identifierObj);
-            
-            [obj resetAccessibilityInfoIfNecessaryWithPreviousIdentifier:identifier];
-        }];
+            obj.useSLReplacementAccessibilityIdentifier = NO;
+        }
     });
 }
 
 - (NSString *)UIARepresentation {
     __block NSMutableString *uiaRepresentation = [@"UIATarget.localTarget().frontMostApp().mainWindow()" mutableCopy];
     dispatch_sync(dispatch_get_main_queue(), ^{
-        // The representation must be generated from the accessibility information
-        // on the elements of the mock view path instead of the view path because
-        // the mock view path contains the actual elements UIAutomation will
-        // interact with, and it may be shorter than the view path.
         for (SLMainThreadRef *objRef in _accessibilityElementPath) {
             NSObject *obj = [objRef target];
 
@@ -1002,30 +1112,10 @@
             NSAssert(!obj || [obj respondsToSelector:@selector(accessibilityIdentifier)],
                      @"elements in the mock view path must conform to UIAccessibilityIdentification");
 
-            // On some classes you cannot set an accessibility identifer
-            // e.g. UISegmentedControl. In these cases the element can
-            // be identified by its accessibilityLabel and accessibilityFrame.
-            NSString *currentIdentifier = [obj performSelector:@selector(accessibilityIdentifier)];
-            if (![currentIdentifier length]) {
-                currentIdentifier = obj.accessibilityLabel;
-                CGRect accessibilityRect = [obj accessibilityFrame];
+            NSString *identifier = [obj performSelector:@selector(accessibilityIdentifier)];
+            NSAssert(!obj || [identifier length], @"Accessibility paths can only be serialized while bound.");
 
-                NSString *predicate = [NSString stringWithFormat:@"(rect.x == %g) AND (rect.y == %g) AND (rect.width == %g) AND (rect.height == %g)",
-                                       accessibilityRect.origin.x,
-                                       accessibilityRect.origin.y,
-                                       accessibilityRect.size.width,
-                                       accessibilityRect.size.height];
-
-                if ([currentIdentifier length] > 0) {
-                    predicate = [predicate stringByAppendingFormat:@" AND (label like \"%@\")", [currentIdentifier slStringByEscapingForJavaScriptLiteral]];
-                }
-
-                [uiaRepresentation appendFormat:@".elements().firstWithPredicate(\"%@\")", [predicate slStringByEscapingForJavaScriptLiteral]];
-
-            } else {
-                [uiaRepresentation appendFormat:@".elements()['%@']",
-                 [currentIdentifier slStringByEscapingForJavaScriptLiteral]];
-            }
+            [uiaRepresentation appendFormat:@".elements()['%@']", [identifier slStringByEscapingForJavaScriptLiteral]];
         }
     });
     return uiaRepresentation;

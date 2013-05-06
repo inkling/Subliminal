@@ -41,13 +41,22 @@
     self = [super initWithTestCaseWithSelector:testCase];
     if (self) {
         SLTestController *testController = [SLTestController sharedTestController];
+        [testController registerTarget:self forAction:@selector(elementLabel)];
         [testController registerTarget:self forAction:@selector(elementValue)];
         [testController registerTarget:self forAction:@selector(elementRect)];
     }
     return self;
 }
 
+- (void)dealloc {
+    [[SLTestController sharedTestController] deregisterTarget:self];
+}
+
 #pragma mark - App hooks
+
+- (NSString *)elementLabel {
+    return _button.accessibilityLabel;
+}
 
 - (NSString *)elementValue {
     return _button.accessibilityValue;

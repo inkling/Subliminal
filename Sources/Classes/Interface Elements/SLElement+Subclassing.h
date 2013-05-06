@@ -21,6 +21,8 @@
  with which the element was constructed (i.e. the argument to
  +elementMatching:withDescription:, or a predicate derived from the arguments 
  to higher-level constructor).
+ 
+ If you override this method, you must call `super` in your implementation.
 
  @param object The object to which the instance of SLElement should be compared.
  @return a BOOL indicating whether or not the instance of SLElement matches object.

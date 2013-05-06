@@ -86,6 +86,14 @@ extern const NSTimeInterval SLElementWaitRetryDelay;
 // according to Apple's UIAElement class reference.
 - (void)dragWithStartPoint:(CGPoint)startPoint endPoint:(CGPoint)endPoint;
 
+/**
+ Returns the element's label attribute.
+ 
+ This wraps UIAElement.label(), which returns the [accessibility label](-[NSObject accessibilityLabel]) 
+ of the matching object.
+ */
+- (NSString *)label;
+
 - (NSString *)value;
 
 /**
