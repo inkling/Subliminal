@@ -113,6 +113,31 @@ static SLTestController *__sharedController = nil;
     return self;
 }
 
+// Having the Accessibility Inspector enabled while tests are running
+// can cause problems with touch handling and/or prevent UIAutomation's alert
+// handler from being called.
+- (void)warnIfAccessibilityInspectorIsEnabled {
+#if TARGET_IPHONE_SIMULATOR
+    // We detect if the Inspector is enabled by examining the simulator's Accessibility preferences
+
+    // 1. get into the simulator's app support directory by fetching the sandboxed Library's path
+    NSString *userDirectoryPath = [[[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject] path];
+
+    // 2. get out of our application directory, back to the root support directory for this system version
+    NSString *plistRootPath = [userDirectoryPath substringToIndex:([userDirectoryPath rangeOfString:@"Applications"].location)];
+    
+    // 3. locate, relative to here, the Accessibility preferences
+    NSString *relativePlistPath = @"Library/Preferences/com.apple.Accessibility.plist";
+    NSString *plistPath = [plistRootPath stringByAppendingPathComponent:relativePlistPath];
+
+    // 4. Check whether the Inspector is enabled
+    NSDictionary *accessibilityPreferences = [NSDictionary dictionaryWithContentsOfFile:plistPath];
+    if ([accessibilityPreferences[@"AXInspectorEnabled"] boolValue]) {
+        [[SLLogger sharedLogger] logWarning:@"The Accessibility Inspector is enabled. Tests may not run as expected."];
+    }
+#endif
+}
+
 - (void)_beginTesting {
     appsUncaughtExceptionHandler = NSGetUncaughtExceptionHandler();
     NSSetUncaughtExceptionHandler(&SLUncaughtExceptionHandler);
@@ -130,6 +155,9 @@ static SLTestController *__sharedController = nil;
     if (_runningWithFocus) {
         SLLog(@"Focusing on test cases in specific tests: %@.", [[_testsToRun allObjects] componentsJoinedByString:@","]);
     }
+
+    [self warnIfAccessibilityInspectorIsEnabled];
+
     [[SLLogger sharedLogger] logTestingStart];
 }
 
