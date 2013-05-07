@@ -99,6 +99,7 @@
 		F0C07A541704011400C93F93 /* SLKeyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C07A521704011300C93F93 /* SLKeyboard.m */; };
 		F0C07A57170401E500C93F93 /* SLWebView.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A55170401E400C93F93 /* SLWebView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0C07A58170401E500C93F93 /* SLWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C07A56170401E500C93F93 /* SLWebView.m */; };
+		F0C4DB4817388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C4DB4717388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib */; };
 		F0CE9FFD16D60E2C008A3B4A /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F08B86DB16859C4000C4FE44 /* libOCMock.a */; };
 		F0CEA00216D60EAD008A3B4A /* SLDeviceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CE9FFF16D60EAD008A3B4A /* SLDeviceTest.m */; };
 		F0CEA00316D60EAD008A3B4A /* SLDeviceTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CEA00016D60EAD008A3B4A /* SLDeviceTestViewController.m */; };
@@ -276,6 +277,7 @@
 		F0C07A521704011300C93F93 /* SLKeyboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLKeyboard.m; sourceTree = "<group>"; };
 		F0C07A55170401E400C93F93 /* SLWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLWebView.h; sourceTree = "<group>"; };
 		F0C07A56170401E500C93F93 /* SLWebView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLWebView.m; sourceTree = "<group>"; };
+		F0C4DB4717388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestSuperviewWithVisibleSubview.xib; sourceTree = "<group>"; };
 		F0CE9FFF16D60EAD008A3B4A /* SLDeviceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDeviceTest.m; sourceTree = "<group>"; };
 		F0CEA00016D60EAD008A3B4A /* SLDeviceTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDeviceTestViewController.m; sourceTree = "<group>"; };
 		F0CEA00116D60EAD008A3B4A /* SLDeviceTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLDeviceTestViewController.xib; sourceTree = "<group>"; };
@@ -505,6 +507,7 @@
 				F077D70B16D9D77900908FF5 /* SLElementVisibilityTestViewController.m */,
 				F090AE6D16D9E01D000F0B6F /* SLElementVisibilityTestHidden.xib */,
 				F090AE7316D9E1D1000F0B6F /* SLElementVisibilityTestSuperviewHidden.xib */,
+				F0C4DB4717388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib */,
 				F043A9BF1729EFD100A4FD1D /* SLElementVisibilityTestUserInteractionDisabled.xib */,
 				F090AE6E16D9E01D000F0B6F /* SLElementVisibilityTestLowAlpha.xib */,
 				F090AE6F16D9E01D000F0B6F /* SLElementVisibilityTestOffscreen.xib */,
@@ -821,6 +824,7 @@
 				F043A9C01729EFD100A4FD1D /* SLElementVisibilityTestUserInteractionDisabled.xib in Resources */,
 				F043A9C7172A160600A4FD1D /* SLElementVisibilityTest.html in Resources */,
 				F08005591730762C00198F6F /* Inklings~iPhone.webarchive in Resources */,
+				F0C4DB4817388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

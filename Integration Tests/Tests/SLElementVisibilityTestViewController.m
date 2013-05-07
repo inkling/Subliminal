@@ -172,6 +172,8 @@
         nibName = @"SLElementVisibilityTestHidden";
     } else if (testCase == @selector(testViewIsNotVisibleIfSuperviewIsHidden)) {
         nibName = @"SLElementVisibilityTestSuperviewHidden";
+    } else if (testCase == @selector(testViewIsVisibleIfDescendantIsVisible)) {
+        nibName = @"SLElementVisibilityTestSuperviewWithVisibleSubview";
     } else if (testCase == @selector(testViewIsVisibleEvenIfUserInteractionIsDisabled)) {
         nibName = @"SLElementVisibilityTestUserInteractionDisabled";
     } else if (testCase == @selector(testViewIsNotVisibleIfItHasAlphaBelow0_01)) {
@@ -211,6 +213,7 @@
         SLTestController *testController = [SLTestController sharedTestController];
         [testController registerTarget:self forAction:@selector(showTestView)];
         [testController registerTarget:self forAction:@selector(showTestViewSuperview)];
+        [testController registerTarget:self forAction:@selector(makeOtherViewAccessible)];
         [testController registerTarget:self forAction:@selector(increaseTestViewAlpha)];
         [testController registerTarget:self forAction:@selector(moveTestViewOnscreen)];
         [testController registerTarget:self forAction:@selector(uncoverTestView)];
@@ -341,6 +344,11 @@ static NSString *TestCellIdentifier = nil;
 
 - (void)showTestViewSuperview {
     self.otherView.hidden = NO;
+}
+
+- (void)makeOtherViewAccessible {
+    self.otherView.isAccessibilityElement = YES;
+    self.otherView.accessibilityLabel = @"other";
 }
 
 - (void)increaseTestViewAlpha {

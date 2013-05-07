@@ -776,7 +776,7 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
                                     CGRectGetMidY(self.accessibilityFrame));
     UIWindow *window = [[UIApplication sharedApplication] keyWindow];
     UIView *hitView = [window slAccessibilityHitTest:testPoint];
-    return (hitView == self);
+    return ([hitView isDescendantOfView:self]);
 }
 
 #pragma mark -Private methods

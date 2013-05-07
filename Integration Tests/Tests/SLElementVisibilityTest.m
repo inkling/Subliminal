@@ -107,6 +107,20 @@
     SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
 }
 
+// a view is visible if its center hit-tests to itself or a descendant
+- (void)testViewIsVisibleIfDescendantIsVisible {
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the subview is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the subview is visible.");
+
+    // we must make the superview accessible after checking the subview
+    // because a view will not appear in the accessibility hierarchy if its parent is accessible
+    SLAskApp(makeOtherViewAccessible);
+
+    SLElement *otherElement = [SLElement elementWithAccessibilityLabel:@"other"];
+    SLAssertTrue([otherElement uiaIsVisible], @"UIAutomation should say that the superview is visible.");
+    SLAssertTrue([otherElement isVisible], @"Subliminal should say that the superview is visible.");
+}
+
 - (void)testViewIsVisibleEvenIfUserInteractionIsDisabled {
     SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
     SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
