@@ -191,9 +191,8 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 /*
  Subliminal's implementation of -isVisible does not rely upon UIAutomation,
- because UIAElement.isVisible() has a number of bugs. However, Subliminal
- maintains parity with UIAutomation in all cases.
- See SLElementVisibilityTest for more information.
+ because UIAElement.isVisible() has a number of bugs. See SLElementVisibilityTest 
+ for more information.
  */
 - (BOOL)isVisible {
     __block BOOL isVisible = NO;
