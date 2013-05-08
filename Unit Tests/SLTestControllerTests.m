@@ -203,7 +203,7 @@
     [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsFailed:0];
     
     // warning at end
-    [[_loggerMock expect] logMessage:@"Warning: this was a focused run. Fewer test cases may have run than normal."];
+    [[_loggerMock expect] logWarning:@"This was a focused run. Fewer test cases may have run than normal."];
     
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
     STAssertNoThrow([sequencer verify], @"Test was not run/messages were not logged as expected.");

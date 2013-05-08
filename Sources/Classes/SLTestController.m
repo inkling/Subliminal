@@ -194,7 +194,7 @@ static SLTestController *__sharedController = nil;
                                                    numTestsFailed:_numTestsFailed];
 
     if (_runningWithFocus) {
-        SLLog(@"Warning: this was a focused run. Fewer test cases may have run than normal.");
+        [[SLLogger sharedLogger] logWarning:@"This was a focused run. Fewer test cases may have run than normal."];
     }
 
     if (_completionBlock) dispatch_sync(dispatch_get_main_queue(), _completionBlock);
