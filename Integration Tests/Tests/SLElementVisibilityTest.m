@@ -9,12 +9,12 @@
 #import "SLIntegrationTest.h"
 #import "SLElement+Subclassing.h"
 
-
 /**
  Subliminal's implementation of -isVisible does not rely upon UIAutomation, 
  because UIAElement.isVisible() has a number of bugs as exercised in 
- -testViewIsNotVisibleIfItIsHiddenEvenInTableViewCell,
- -testAccessibilityElementIsNotVisibleIfContainerIsHiddenEvenInTableViewCell, and
+ -testViewIsNotVisibleIfItIsHiddenEvenInTableViewCell
+ -testAccessibilityElementIsNotVisibleIfContainerIsHiddenEvenInTableViewCell
+ -testViewIsVisibleIfItsCenterIsCoveredByClearRegion
  -testViewIsNotVisibleIfCenterAndUpperLeftHandCornerAreCovered
 
  Subliminal's implementation otherwise attempts to conform to UIAutomation's 
@@ -195,6 +195,11 @@
     SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
     SLAssertFalse([_testElement isVisible], @"Subliminal should say that the element is not visible.");
     SLAskApp1(hideOtherViewWithTag:, @4);
+}
+
+- (void)testViewIsVisibleIfItsCenterIsCoveredByClearRegion {
+    SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible (even though it is!).");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
 }
 
 #pragma mark - Test isVisible for elements that are not views

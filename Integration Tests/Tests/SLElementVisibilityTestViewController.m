@@ -14,6 +14,15 @@
 @interface SLElementVisibilityTestViewController : SLTestCaseViewController <UITableViewDataSource, UITableViewDelegate>
 @end
 
+@interface CircleView : UIView
+@end
+
+@implementation CircleView
+- (void)drawRect:(CGRect)rect {
+    [[UIColor redColor] set];
+    CGContextFillEllipseInRect(UIGraphicsGetCurrentContext(), CGRectMake(0.0, 0.0, 75.0, 75.0));
+}
+@end
 
 @interface SLElementVisibilityTestElementContainerView : UIView
 @property (nonatomic) BOOL coverTestElement;
@@ -182,6 +191,8 @@
         nibName = @"SLElementVisibilityTestOffscreen";
     } else if (testCase == @selector(testViewIsNotVisibleIfCenterAndUpperLeftHandCornerAreCovered)) {
         nibName = @"SLElementVisibilityTestCovered";
+    } else if (testCase == @selector(testViewIsVisibleIfItsCenterIsCoveredByClearRegion)) {
+        nibName = @"SLElementVisibilityTestCoveredByClearRegion";
     } else if (testCase == @selector(testAccessibilityElementIsNotVisibleIfContainerIsHidden)) {
         nibName = @"SLElementVisibilityTestElementContainerHidden";
     } else if (testCase == @selector(testAccessibilityElementIsVisibleEvenIfHidden)) {
