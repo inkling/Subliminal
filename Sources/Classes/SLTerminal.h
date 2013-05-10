@@ -58,3 +58,11 @@ extern const NSTimeInterval SLTerminalReadRetryDelay;
 - (void)shutDown;
 
 @end
+
+
+@interface SLTerminal (Internal)
+
+/** The namespace (in SLTerminal.js) in which the SLTerminal defines variables. */
+@property (nonatomic, readonly) NSString *scriptNamespace;
+
+@end

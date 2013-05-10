@@ -22,6 +22,7 @@ const NSTimeInterval SLTerminalReadRetryDelay = 0.1;
 
 
 @implementation SLTerminal {
+    NSString *_scriptNamespace;
     dispatch_queue_t _evalQueue;
     NSUInteger _commandIndex;
 }
@@ -50,14 +51,18 @@ static SLTerminal *__sharedTerminal = nil;
     
     self = [super init];
     if (self) {
-        NSString *evalQueueName = [NSString stringWithFormat:@"com.inkling.subliminal.SLTerminal-%p.evalQueue", self];
-        _evalQueue = dispatch_queue_create([evalQueueName UTF8String], DISPATCH_QUEUE_SERIAL);
+        _scriptNamespace = @"SLTerminal";
+        _evalQueue = dispatch_queue_create("com.inkling.subliminal.SLTerminal.evalQueue", DISPATCH_QUEUE_SERIAL);
     }
     return self;
 }
 
 - (void)dealloc {
     dispatch_release(_evalQueue);
+}
+
+- (NSString *)scriptNamespace {
+    return _scriptNamespace;
 }
 
 #if TARGET_IPHONE_SIMULATOR
@@ -183,7 +188,7 @@ static SLTerminal *__sharedTerminal = nil;
 }
 
 - (void)shutDown {
-    [self eval:@"_terminalHasShutDown = true;"];
+    [self evalWithFormat:@"%@.hasShutDown = true;", self.scriptNamespace];
 }
 
 @end
