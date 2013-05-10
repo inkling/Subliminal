@@ -2,9 +2,10 @@
 var _target = UIATarget.localTarget();
 
 var _scriptIndex = 0;
-var _testingHasFinished = false;
 
-while(!_testingHasFinished) {
+var _terminalHasShutDown = false;
+
+while(!_terminalHasShutDown) {
 	// Wait for a command from SLTerminal
 	while (true) {
 		var commandIndex = _target.frontMostApp().preferencesValueForKey("commandIndex");

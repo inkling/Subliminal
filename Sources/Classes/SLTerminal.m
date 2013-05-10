@@ -182,4 +182,8 @@ static SLTerminal *__sharedTerminal = nil;
     return [self eval:statement];
 }
 
+- (void)shutDown {
+    [self eval:@"_terminalHasShutDown = true;"];
+}
+
 @end
