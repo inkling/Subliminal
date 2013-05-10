@@ -180,7 +180,7 @@
         nibName = @"SLElementVisibilityTestLowAlpha";
     } else if (testCase == @selector(testViewIsNotVisibleIfItIsOffscreen)) {
         nibName = @"SLElementVisibilityTestOffscreen";
-    } else if (testCase == @selector(testViewIsNotVisibleIfItsCenterIsCovered)) {
+    } else if (testCase == @selector(testViewIsNotVisibleIfCenterAndUpperLeftHandCornerAreCovered)) {
         nibName = @"SLElementVisibilityTestCovered";
     } else if (testCase == @selector(testAccessibilityElementIsNotVisibleIfContainerIsHidden)) {
         nibName = @"SLElementVisibilityTestElementContainerHidden";
@@ -216,7 +216,8 @@
         [testController registerTarget:self forAction:@selector(makeOtherViewAccessible)];
         [testController registerTarget:self forAction:@selector(increaseTestViewAlpha)];
         [testController registerTarget:self forAction:@selector(moveTestViewOnscreen)];
-        [testController registerTarget:self forAction:@selector(uncoverTestView)];
+        [testController registerTarget:self forAction:@selector(showOtherViewWithTag:)];
+        [testController registerTarget:self forAction:@selector(hideOtherViewWithTag:)];
         [testController registerTarget:self forAction:@selector(uncoverTestElement)];
         [testController registerTarget:self forAction:@selector(showTestViewAfterInterval:)];
         [testController registerTarget:self forAction:@selector(relabelTestViewToTestAndShowAfterInterval:)];
@@ -359,8 +360,12 @@ static NSString *TestCellIdentifier = nil;
     self.testView.center = self.view.center;
 }
 
-- (void)uncoverTestView {
-    self.otherView.frame = CGRectOffset(self.otherView.frame, -50.0f, -50.0f);
+- (void)showOtherViewWithTag:(NSNumber *)tag {
+    [self.view viewWithTag:[tag integerValue]].hidden = NO;
+}
+
+- (void)hideOtherViewWithTag:(NSNumber *)tag {
+    [self.view viewWithTag:[tag integerValue]].hidden = YES;
 }
 
 - (void)uncoverTestElement {
