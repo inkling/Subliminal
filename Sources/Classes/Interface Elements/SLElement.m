@@ -221,25 +221,16 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (CGRect)rect {
-    static NSString *const CGRectStringFromJSRectFunctionName = @"SLCGRectStringFromJSRect";
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSString *CGRectStringFromJSRectFunction = @"\
-            function %@(rect) {\
-                return '{{' + rect.origin.x + ',' + rect.origin.y + '},{'\
-                            + rect.size.width + ',' + rect.size.height + '}}';\
-            }\
-        ";
-        [[SLTerminal sharedTerminal] evalWithFormat:CGRectStringFromJSRectFunction,
-             CGRectStringFromJSRectFunctionName];
-    });
-
-    NSString *__block rectString = nil;
+    NSString *__block CGRectString = nil;
     [self performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
-        rectString = [[SLTerminal sharedTerminal] evalWithFormat:@"%@(%@.rect())",
-                          CGRectStringFromJSRectFunctionName, uiaRepresentation];
+        NSString *rectString = [NSString stringWithFormat:@"%@.rect()", uiaRepresentation];
+        CGRectString = [[SLTerminal sharedTerminal] evalFunctionWithName:@"SLCGRectStringFromJSRect"
+                                                                  params:@[ @"rect" ]
+                                                                    body:@"return '{{' + rect.origin.x + ',' + rect.origin.y + '},\
+                                                                                    {' + rect.size.width + ',' + rect.size.height + '}}';"
+                                                                withArgs:@[ rectString ]];
     }];
-    return ([rectString length] ? CGRectFromString(rectString) : CGRectNull);
+    return ([CGRectString length] ? CGRectFromString(CGRectString) : CGRectNull);
 }
 
 - (void)logElement {

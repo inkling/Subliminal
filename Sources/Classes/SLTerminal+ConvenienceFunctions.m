@@ -131,21 +131,18 @@
 - (BOOL)waitUntilTrue:(NSString *)condition
            retryDelay:(NSTimeInterval)retryDelay
               timeout:(NSTimeInterval)timeout {
-    NSString *retryFunction = [NSString stringWithFormat:@"\
-                               (function () {\
-                                   var cond = function() { return (%@); };\
-                                   var retryDelay = %g;\
-                                   var timeout = %g;\
-                                   \
-                                   var startTime = (Date.now() / 1000);\
-                                   var condTrue = false;\
-                                   while (!(condTrue = cond()) && (((Date.now() / 1000) - startTime) < timeout)) {\
-                                       UIATarget.localTarget().delay(retryDelay);\
-                                   };\
-                                   return condTrue;\
-                               })()", condition, retryDelay, timeout];
-
-    return [[self eval:retryFunction] boolValue];
+    NSString *conditionFunction = [NSString stringWithFormat:@"function() { return (%@); }", condition];
+    NSString *retryDelayStr = [NSString stringWithFormat:@"%g", retryDelay];
+    NSString *timeoutStr = [NSString stringWithFormat:@"%g", timeout];
+    return [[self evalFunctionWithName:@"SLWaitUntilTrue"
+                                params:@[ @"condition", @"retryDelay", @"timeout" ]
+                                  body:@"var startTime = (Date.now() / 1000);\
+                                         var condTrue = false;\
+                                         while (!(condTrue = condition()) && (((Date.now() / 1000) - startTime) < timeout)) {\
+                                             UIATarget.localTarget().delay(retryDelay);\
+                                         };\
+                                         return condTrue;"
+                              withArgs:@[ conditionFunction, retryDelayStr, timeoutStr ]] boolValue];
 }
 
 @end
