@@ -170,13 +170,13 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     }
 }
 
-- (NSString *)sendMessage:(NSString *)action, ... {
+- (id)sendMessage:(NSString *)action, ... {
     va_list(args);
     va_start(args, action);
     NSString *formattedAction = [[NSString alloc] initWithFormat:action arguments:args];
     va_end(args);
     
-    __block NSString *returnValue = nil;
+    id __block returnValue = nil;
     [self performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
             returnValue = [[SLTerminal sharedTerminal] evalWithFormat:@"%@.%@", uiaRepresentation, formattedAction];
     }];

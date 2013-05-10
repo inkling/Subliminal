@@ -5,6 +5,7 @@ var _scriptIndex = 0;
 var _testingHasFinished = false;
 
 while(!_testingHasFinished) {
+	// Wait for a command from SLTerminal
 	while (true) {
 		var commandIndex = _target.frontMostApp().preferencesValueForKey("commandIndex");
 		
@@ -14,10 +15,12 @@ while(!_testingHasFinished) {
 		_target.delay(0.1);
 	}
 	
+	// Read the command
 	var command = _target.frontMostApp().preferencesValueForKey("command");
 	// Uncomment to better understand what UIAutomation's doing (it may take awhile)
 	//UIALogger.logMessage("command:" + _scriptIndex + ": " + command);
 	
+	// Evaluate the command
 	var result = null;
 	try {
 		result = eval(command);
@@ -28,9 +31,18 @@ while(!_testingHasFinished) {
 			message += " from command: \"" + command + "\"";
 		}
 		_target.frontMostApp().setPreferencesValueForKey(message, "exception");
-	} finally {
-		_target.frontMostApp().setPreferencesValueForKey(result, "result");
-		_target.frontMostApp().setPreferencesValueForKey(_scriptIndex, "resultIndex");
 	}
+
+	// Serialize the result only if we can guarantee that it can be serialized to the preferences
+	var resultType = (typeof result);
+	if (!((resultType === "string") ||
+		  (resultType === "boolean") ||
+		  (resultType === "number"))) {
+		result = null;	
+	}
+	_target.frontMostApp().setPreferencesValueForKey(result, "result");
+
+	// Notify SLTerminal that we've finished evaluation
+	_target.frontMostApp().setPreferencesValueForKey(_scriptIndex, "resultIndex");
 	_scriptIndex++;
 }

@@ -29,7 +29,7 @@
  */
 - (BOOL)matchesObject:(NSObject *)object;
 
-- (NSString *)sendMessage:(NSString *)action, ... NS_FORMAT_FUNCTION(1, 2);
+- (id)sendMessage:(NSString *)action, ... NS_FORMAT_FUNCTION(1, 2);
 
 - (void)performActionWithUIARepresentation:(void(^)(NSString *uiaRepresentation))block;
 - (NSString *)staticUIARepresentation;

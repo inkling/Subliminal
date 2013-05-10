@@ -115,11 +115,11 @@ static SLTerminal *__sharedTerminal = nil;
  *      "exception": The textual representation of a javascript exception, will be empty if no exceptions occurred.
  *
  */
-- (NSString *)eval:(NSString *)javascript {
+- (id)eval:(NSString *)script {
     NSAssert(![NSThread isMainThread], @"-eval: must not be called from the main thread.");
 
     __block NSString *exceptionMessage;
-    __block NSString *result;
+    __block id result;
     dispatch_sync(_evalQueue, ^{
         // Step 1: Write the command to UIAutomation
 #if TARGET_IPHONE_SIMULATOR
@@ -128,7 +128,7 @@ static SLTerminal *__sharedTerminal = nil;
             prefs = [NSMutableDictionary dictionary];
         }
         [prefs setObject:@( _commandIndex ) forKey:SLTerminalPreferencesKeyCommandIndex];
-        [prefs setObject:javascript forKey:SLTerminalPreferencesKeyCommand];
+        [prefs setObject:script forKey:SLTerminalPreferencesKeyCommand];
         [prefs removeObjectForKey:SLTerminalPreferencesKeyResultIndex];
         [prefs removeObjectForKey:SLTerminalPreferencesKeyResult];
         [prefs removeObjectForKey:SLTerminalPreferencesKeyException];
@@ -173,10 +173,10 @@ static SLTerminal *__sharedTerminal = nil;
     }
 }
 
-- (NSString *)evalWithFormat:(NSString *)javascript, ... {
+- (NSString *)evalWithFormat:(NSString *)script, ... {
     va_list args;
-    va_start(args, javascript);
-    NSString *statement = [[NSString alloc] initWithFormat:javascript arguments:args];
+    va_start(args, script);
+    NSString *statement = [[NSString alloc] initWithFormat:script arguments:args];
     va_end(args);
 
     return [self eval:statement];
