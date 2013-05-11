@@ -199,6 +199,8 @@
         nibName = @"SLElementVisibilityTestElementHidden";
     } else if (testCase == @selector(testAccessibilityElementIsNotVisibleIfItIsOffscreen)) {
         nibName = @"SLElementVisibilityTestElementOffscreen";
+    } else if (testCase == @selector(testAccessibilityElementCannotBeOccludedByPeerSubview)) {
+        nibName = @"SLElementVisibilityWithSubviews";
     } else if ((testCase == @selector(testAccessibilityElementIsNotVisibleIfItsCenterIsCoveredByView)) ||
                (testCase == @selector(testAccessibilityElementIsNotVisibleIfItsCenterIsCoveredByElement)))  {
         nibName = @"SLElementVisibilityTestElementCovered";

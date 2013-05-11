@@ -279,6 +279,13 @@
     SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
 }
 
+- (void)testAccessibilityElementCannotBeOccludedByPeerSubview {
+    // Verify that the _testElement is considered visible by UIAutomation and by
+    // Subliminal even though it is covered by a subview of its container view.
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
+}
+
 #pragma mark - Test SLWaitUntil{Visible:,InvisibleOrInvalid:}
 
 // Depending on slight timing variances, whenever we wait,
