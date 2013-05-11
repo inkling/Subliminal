@@ -257,26 +257,6 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
 @interface UIView (SLAccessibility_Visibility)
 
 /**
- Returns a Boolean value indicating whether the receiver contains the specified
- point, as indicated by its accessibility information.
- 
- @param point A point that is in screen coordinates.
- @return YES if point is inside the receiver's accessibility frame; otherwise, NO.
- */
-- (BOOL)slAccessibilityPointInside:(CGPoint)point;
-
-/**
- Returns the farthest descendant of the receiver in the accessibility hierarchy 
- (including itself) that contains a specified point.
-
- @param point A point specified in screen coordinates.
- @return The view object that is the farthest descendant of the current view 
- that contains point. Returns `nil` if the point lies completely outside 
- the receiver's accessibility hierarchy.
- */
-- (UIView *)slAccessibilityHitTest:(CGPoint)point;
-
-/**
  Renders the input view and that views hierarchy using compositing options that
  cause the target view and all of its subviews to be drawn as black rectangles,
  while every view not in the hierarchy of the target renders with kCGBlendModeDestinationOut.
@@ -790,6 +770,8 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
     return self.accessibilityLabel;
 }
 
+#pragma mark -Private methods
+
 - (void)renderViewRecursively:(UIView *)view inContext:(CGContextRef)context withTargetView:(UIView *)target baseView:(UIView *)baseView {
     // Push the current transform onto the stack managed by context.
     CGContextSaveGState(context);
@@ -934,29 +916,6 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
         // Center is not covered, so consider the view visible no matter what else is going on.
         return YES;
     }
-}
-
-#pragma mark -Private methods
-
-- (BOOL)slAccessibilityPointInside:(CGPoint)point {
-    return CGRectContainsPoint(self.accessibilityFrame, point);
-}
-
-- (UIView *)slAccessibilityHitTest:(CGPoint)point {
-    // we ignore views for all the same reasons as -hitTest:withEvent:
-    // except -userInteractionEnabled: UIAutomation ignores it
-    // (see -[SLElementVisibilityTest testViewIsVisibleEvenIfUserInteractionIsDisabled])
-    if (![self slAccessibilityPointInside:point] ||
-        self.hidden ||
-        self.alpha < 0.01) return nil;
-
-    // enumerate the subviews in reverse == front-to-back
-    for (UIView *subview in [self.subviews reverseObjectEnumerator]) {
-        UIView *hitView = [subview slAccessibilityHitTest:point];
-        if (hitView) return hitView;
-    }
-
-    return self;
 }
 
 - (NSArray *)slChildAccessibilityElementsFavoringUISubviews:(BOOL)favoringUISubViews {
