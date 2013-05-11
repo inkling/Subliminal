@@ -9,12 +9,13 @@
 #import "SLIntegrationTest.h"
 #import "SLElement+Subclassing.h"
 
-
 /**
  Subliminal's implementation of -isVisible does not rely upon UIAutomation, 
  because UIAElement.isVisible() has a number of bugs as exercised in 
- -testViewIsNotVisibleIfItIsHiddenEvenInTableViewCell and
- -testAccessibilityElementIsNotVisibleIfContainerIsHiddenEvenInTableViewCell.
+ -testViewIsNotVisibleIfItIsHiddenEvenInTableViewCell
+ -testAccessibilityElementIsNotVisibleIfContainerIsHiddenEvenInTableViewCell
+ -testViewIsVisibleIfItsCenterIsCoveredByClearRegion
+ -testViewIsNotVisibleIfCenterAndUpperLeftHandCornerAreCovered
 
  Subliminal's implementation otherwise attempts to conform to UIAutomation's 
  definition of visibility, as demonstrated by the below test cases.
@@ -146,13 +147,58 @@
     SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
 }
 
-- (void)testViewIsNotVisibleIfItsCenterIsCovered {
+- (void)testViewIsNotVisibleIfCenterAndUpperLeftHandCornerAreCovered {
+    // The upper left hand corner (and any/all other corners) can be hidden and the view will remain visible
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
+    SLAskApp1(showOtherViewWithTag:, @1);   // upper left
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
+    SLAskApp1(showOtherViewWithTag:, @2);   // upper right
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
+    SLAskApp1(showOtherViewWithTag:, @3);   // lower right
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
+    SLAskApp1(showOtherViewWithTag:, @4);   // lower left
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
+
+    SLAskApp1(hideOtherViewWithTag:, @4);
+    SLAskApp1(hideOtherViewWithTag:, @3);
+    SLAskApp1(hideOtherViewWithTag:, @2);
+    SLAskApp1(hideOtherViewWithTag:, @1);
+
+    // But if the center and the upper left hand corner are hidden then the view will become not visible to UIAutomation
+    // and Subliminal.  Subliminal treats the view as visible if the center is visible or all four corners are visible.
+    // Unlike UIAutomation, Subliminal does not give any special privilege to the top left corner.
+    SLAskApp1(showOtherViewWithTag:, @5);   // center hidden
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
+
+    SLAskApp1(showOtherViewWithTag:, @1);
     SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible.");
     SLAssertFalse([_testElement isVisible], @"Subliminal should say that the element is not visible.");
+    SLAskApp1(hideOtherViewWithTag:, @1);
 
-    SLAskApp(uncoverTestView);
-    
+    SLAskApp1(showOtherViewWithTag:, @2);
     SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertFalse([_testElement isVisible], @"Subliminal should say that the element is not visible.");
+    SLAskApp1(hideOtherViewWithTag:, @2);
+
+    SLAskApp1(showOtherViewWithTag:, @3);
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertFalse([_testElement isVisible], @"Subliminal should say that the element is not visible.");
+    SLAskApp1(hideOtherViewWithTag:, @3);
+
+    SLAskApp1(showOtherViewWithTag:, @4);
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertFalse([_testElement isVisible], @"Subliminal should say that the element is not visible.");
+    SLAskApp1(hideOtherViewWithTag:, @4);
+}
+
+- (void)testViewIsVisibleIfItsCenterIsCoveredByClearRegion {
+    SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible (even though it is!).");
     SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
 }
 
@@ -205,7 +251,7 @@
     SLAssertFalse([_testElement isVisible], @"Subliminal should say that the element is not visible.");
 
     // the test view is the container of the test element
-    SLAskApp(uncoverTestView);
+    SLAskApp1(hideOtherViewWithTag:, @1);
 
     SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
     SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
@@ -229,6 +275,13 @@
 
     SLAskApp(showTestText);
 
+    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
+}
+
+- (void)testAccessibilityElementCannotBeOccludedByPeerSubview {
+    // Verify that the _testElement is considered visible by UIAutomation and by
+    // Subliminal even though it is covered by a subview of its container view.
     SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
     SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
 }

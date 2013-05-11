@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		064B6F55173B13E9004AB1BF /* SLElementVisibilityTestCoveredByClearRegion.xib in Resources */ = {isa = PBXBuildFile; fileRef = 064B6F54173B13E9004AB1BF /* SLElementVisibilityTestCoveredByClearRegion.xib */; };
+		064B6FC7173DCE9A004AB1BF /* SLElementVisibilityWithSubviews.xib in Resources */ = {isa = PBXBuildFile; fileRef = 064B6FC6173DCE9A004AB1BF /* SLElementVisibilityWithSubviews.xib */; };
 		068D3E4D16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 068D3E4C16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib */; };
 		0696BA5816E013D600DD70CF /* SLElementDraggingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0696BA5516E013D600DD70CF /* SLElementDraggingTest.m */; };
 		0696BA5916E013D600DD70CF /* SLElementDraggingTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0696BA5616E013D600DD70CF /* SLElementDraggingTestViewController.m */; };
@@ -176,6 +178,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		064B6F54173B13E9004AB1BF /* SLElementVisibilityTestCoveredByClearRegion.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestCoveredByClearRegion.xib; sourceTree = "<group>"; };
+		064B6FC6173DCE9A004AB1BF /* SLElementVisibilityWithSubviews.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityWithSubviews.xib; sourceTree = "<group>"; };
 		068D3E4C16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLTableViewChildElementMatchingTestViewController.xib; sourceTree = "<group>"; };
 		0696BA5516E013D600DD70CF /* SLElementDraggingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementDraggingTest.m; sourceTree = "<group>"; };
 		0696BA5616E013D600DD70CF /* SLElementDraggingTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementDraggingTestViewController.m; sourceTree = "<group>"; };
@@ -512,10 +516,12 @@
 				F090AE6E16D9E01D000F0B6F /* SLElementVisibilityTestLowAlpha.xib */,
 				F090AE6F16D9E01D000F0B6F /* SLElementVisibilityTestOffscreen.xib */,
 				F077D70C16D9D77900908FF5 /* SLElementVisibilityTestCovered.xib */,
+				064B6F54173B13E9004AB1BF /* SLElementVisibilityTestCoveredByClearRegion.xib */,
 				F0E80D8516DB2CEB00945D25 /* SLElementVisibilityTestElementContainerHidden.xib */,
 				F043A9BD1729CFFE00A4FD1D /* SLElementVisibilityTestElementHidden.xib */,
 				F0E80D8716DB2CEB00945D25 /* SLElementVisibilityTestElementOffscreen.xib */,
 				F0E80D8616DB2CEB00945D25 /* SLElementVisibilityTestElementCovered.xib */,
+				064B6FC6173DCE9A004AB1BF /* SLElementVisibilityWithSubviews.xib */,
 				F043A9C6172A160600A4FD1D /* SLElementVisibilityTest.html */,
 			);
 			name = "SLElement Visibility Tests";
@@ -825,6 +831,8 @@
 				F043A9C7172A160600A4FD1D /* SLElementVisibilityTest.html in Resources */,
 				F08005591730762C00198F6F /* Inklings~iPhone.webarchive in Resources */,
 				F0C4DB4817388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib in Resources */,
+				064B6F55173B13E9004AB1BF /* SLElementVisibilityTestCoveredByClearRegion.xib in Resources */,
+				064B6FC7173DCE9A004AB1BF /* SLElementVisibilityWithSubviews.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -17,6 +17,8 @@
 #import <UIKit/UIKit.h>
 #import <objc/runtime.h>
 
+const CGFloat kMinVisibleAlphaFloat = 0.01;
+const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitmap buffers use integer color components.
 
 #pragma mark SLAccessibilityPath interface
 
@@ -255,24 +257,32 @@
 @interface UIView (SLAccessibility_Visibility)
 
 /**
- Returns a Boolean value indicating whether the receiver contains the specified
- point, as indicated by its accessibility information.
- 
- @param point A point that is in screen coordinates.
- @return YES if point is inside the receiver's accessibility frame; otherwise, NO.
+ Renders the input view and that views hierarchy using compositing options that
+ cause the target view and all of its subviews to be drawn as black rectangles,
+ while every view not in the hierarchy of the target renders with kCGBlendModeDestinationOut.
+ The result is a rendering with black or gray pixels everywhere that the target view is visible.
+ Pixels will be black where the target view is not occluded at all, and gray where the target view
+ is occluded by views that are not fully opaque.
+
+ @param view the view to be rendered
+ @param context the drawing context in which to render view
+ @param target the view whose hierarchy should be drawn as black rectangles
+ @param baseView the view which provides the base coordinate system for the rendering, usually target's window.
  */
-- (BOOL)slAccessibilityPointInside:(CGPoint)point;
+- (void)renderViewRecursively:(UIView *)view inContext:(CGContextRef)context withTargetView:(UIView *)target baseView:(UIView *)baseView;
 
 /**
- Returns the farthest descendant of the receiver in the accessibility hierarchy 
- (including itself) that contains a specified point.
+ Returns the number of points from a set of test points for which the receiver is visible in a given window.
 
- @param point A point specified in screen coordinates.
- @return The view object that is the farthest descendant of the current view 
- that contains point. Returns `nil` if the point lies completely outside 
- the receiver's accessibility hierarchy.
+ @param testPointsInWindow a C array of points to test for visibility
+ @param count the number of elements in testPointsInWindow
+ @param window the UIWindow in which to test visibility.  This should usually be
+        the receiver's window, but could be a different window, for example if the
+        point is to test whether the view is in one window or a different window.
+
+ @return the number of points from testPointsInWindow at which the receiver is visible.
  */
-- (UIView *)slAccessibilityHitTest:(CGPoint)point;
+- (NSUInteger)numberOfPointsFromSet:(const CGPoint *)testPointsInWindow count:(const NSUInteger)numPoints thatAreVisibleInWindow:(UIWindow *)window;
 
 @end
 
@@ -400,12 +410,7 @@
     NSAssert([container isKindOfClass:[UIView class]],
              @"Every accessibility hierarchy should be rooted in a view.");
     UIView *viewContainer = (UIView *)container;
-
-    UIWindow *window = [[UIApplication sharedApplication] keyWindow];
-    UIView *hitView = [window slAccessibilityHitTest:testPoint];
-    if (hitView != viewContainer) return NO;
-
-    return YES;
+    return [viewContainer slAccessibilityIsVisible];
 }
 
 - (NSString *)slAccessibilityDescription {
@@ -743,12 +748,7 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
     NSAssert([container isKindOfClass:[UIView class]],
              @"Every accessibility hierarchy should be rooted in a view.");
     UIView *viewContainer = (UIView *)container;
-
-    UIWindow *window = [[UIApplication sharedApplication] keyWindow];
-    UIView *hitView = [window slAccessibilityHitTest:testPoint];
-    if (hitView != viewContainer) return NO;
-    
-    return YES;
+    return [viewContainer slAccessibilityIsVisible];
 }
 
 @end
@@ -770,36 +770,152 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
     return self.accessibilityLabel;
 }
 
-- (BOOL)slAccessibilityIsVisible {
-    // a view is visible if its midpoint hit-tests to itself
-    CGPoint testPoint = CGPointMake(CGRectGetMidX(self.accessibilityFrame),
-                                    CGRectGetMidY(self.accessibilityFrame));
-    UIWindow *window = [[UIApplication sharedApplication] keyWindow];
-    UIView *hitView = [window slAccessibilityHitTest:testPoint];
-    return ([hitView isDescendantOfView:self]);
-}
-
 #pragma mark -Private methods
 
-- (BOOL)slAccessibilityPointInside:(CGPoint)point {
-    return CGRectContainsPoint(self.accessibilityFrame, point);
-}
+- (void)renderViewRecursively:(UIView *)view inContext:(CGContextRef)context withTargetView:(UIView *)target baseView:(UIView *)baseView {
+    // Push the current transform onto the stack managed by context.
+    CGContextSaveGState(context);
 
-- (UIView *)slAccessibilityHitTest:(CGPoint)point {
-    // we ignore views for all the same reasons as -hitTest:withEvent:
-    // except -userInteractionEnabled: UIAutomation ignores it
-    // (see -[SLElementVisibilityTest testViewIsVisibleEvenIfUserInteractionIsDisabled])
-    if (![self slAccessibilityPointInside:point] ||
-        self.hidden ||
-        self.alpha < 0.01) return nil;
+    // Apply a transform that takes the origin to view's top left corner.
+    const CGPoint viewOrigin = [baseView convertPoint:view.bounds.origin fromView:view];
+    CGContextTranslateCTM(context, viewOrigin.x, viewOrigin.y);
 
-    // enumerate the subviews in reverse == front-to-back
-    for (UIView *subview in [self.subviews reverseObjectEnumerator]) {
-        UIView *hitView = [subview slAccessibilityHitTest:point];
-        if (hitView) return hitView;
+    // If this is *not* in our target view's hierarchy then use the destination
+    // out blend mode to reduce the visibility of any already painted pixels by
+    // the alpha of the current view.
+    //
+    // If this is in our target view's hierarchy then just draw a black rectangle
+    // covering the whole thing.
+    //
+    // Skip any views that are hidden or have alpha < kMinVisibleAlphaFloat.
+    if (!view.hidden && view.alpha >= kMinVisibleAlphaFloat) {
+        if (![view isDescendantOfView:target]) {
+            CGContextSetBlendMode(context, kCGBlendModeDestinationOut);
+            // Draw the view.  I haven't found anything better than this, unfortunately.
+            // renderInContext is pretty inefficient for our purpose because it renders
+            // the whole tree under view instead of *only* rendering view.
+            [view.layer renderInContext:context];
+        } else {
+            CGContextSetFillColor(context, (CGFloat[2]){0.0, 1.0});
+            CGContextSetBlendMode(context, kCGBlendModeCopy);
+            CGContextFillRect(context, view.bounds);
+        }
     }
 
-    return self;
+    // Pop the translation we applied for view off the transform stack
+    // maintained by context.
+    CGContextRestoreGState(context);
+
+    // Recurse for subviews
+    for (UIView *subview in [view subviews]) {
+        [self renderViewRecursively:subview inContext:context withTargetView:target baseView:baseView];
+    }
+}
+
+- (NSUInteger)numberOfPointsFromSet:(const CGPoint *)testPointsInWindow count:(const NSUInteger)numPoints thatAreVisibleInWindow:(UIWindow *)window {
+    static CGColorSpaceRef rgbColorSpace;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        rgbColorSpace = CGColorSpaceCreateDeviceRGB();
+    });
+
+    NSParameterAssert(numPoints > 0);
+    NSParameterAssert(testPointsInWindow != NULL);
+    NSParameterAssert(window != nil);
+
+    // Allocate a buffer sufficiently large to store a rendering that could possibly cover all the test points.
+    int x = rintf(testPointsInWindow[0].x);
+    int y = rintf(testPointsInWindow[0].y);
+    int minX = x;
+    int maxX = x;
+    int minY = y;
+    int maxY = y;
+    for (NSUInteger j = 1; j < numPoints; j++) {
+        x = rintf(testPointsInWindow[j].x);
+        y = rintf(testPointsInWindow[j].y);
+        minX = MIN(minX, x);
+        maxX = MAX(maxX, x);
+        minY = MIN(minY, y);
+        maxY = MAX(maxY, y);
+    }
+    NSAssert(maxX >= minX, @"maxX (%d) should be greater than or equal to minX (%d)", maxX, minX);
+    NSAssert(maxY >= minY, @"maxY (%d) should be greater than or equal to minY (%d)", maxY, minY);
+    size_t columns = maxX - minX + 1;
+    size_t rows = maxY - minY + 1;
+    unsigned char *pixels = (unsigned char *)malloc(columns * rows * 4);
+    CGContextRef context = CGBitmapContextCreate(pixels, columns, rows, 8, 4 * columns, rgbColorSpace, kCGImageAlphaPremultipliedLast);
+    CGContextTranslateCTM(context, -minX, -minY);
+    [self renderViewRecursively:window inContext:context withTargetView:self baseView:window];
+
+    NSUInteger count = 0;
+    for (NSUInteger j = 0; j < numPoints; j++) {
+        int x = rintf(testPointsInWindow[j].x);
+        int y = rintf(testPointsInWindow[j].y);
+        NSAssert(x >= minX, @"Invalid x encountered, %d, but min is %d", x, minX);
+        NSAssert(y >= minY, @"Invalid y encountered, %d, but min is %d", y, minY);
+        NSUInteger col = x - minX;
+        NSUInteger row = y - minY;
+        NSUInteger pixelIndex = row * columns + col;
+        NSAssert(pixelIndex < columns * rows, @"Encountered invalid pixel index: %ul", pixelIndex);
+        if (pixels[4 * pixelIndex + 3] >= kMinVisibleAlphaInt) {
+            count++;
+        }
+    }
+
+    CGContextRelease(context);
+    free(pixels);
+
+    return count;
+}
+
+- (BOOL)slAccessibilityIsVisible {
+    // View is not visible if it's hidden or has very low alpha.
+    if (self.hidden || self.alpha < kMinVisibleAlphaFloat) {
+        return NO;
+    }
+
+    // View is not visible if its center point is not inside its window.
+    const CGRect accessibilityFrame = self.accessibilityFrame;
+    const CGPoint centerInScreenCoordinates = CGPointMake(CGRectGetMidX(accessibilityFrame), CGRectGetMidY(accessibilityFrame));
+
+    UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+    const CGPoint centerInWindow = [window convertPoint:centerInScreenCoordinates fromWindow:nil];
+
+    const CGRect windowBounds = [window bounds];
+    if (!CGRectContainsPoint(windowBounds, centerInWindow)) {
+        return NO;
+    }
+
+    // View is not visible if it is a descendent of any hidden view.
+    UIView *parent = [self superview];
+    while (parent) {
+        if (parent.hidden || parent.alpha < kMinVisibleAlphaFloat) {
+            return NO;
+        }
+        parent = [parent superview];
+    }
+
+    // Subliminal's visibility rules are:
+    // 1.  If the center is visible then the view is visible.
+    // 2.  If the center is not visible *and* at least one corner is not visible then the view is not visible.
+    // 3.  If the center is not visible but *all four* corners are visible (strange as that would be) the view is visible.
+    if ([self numberOfPointsFromSet:&centerInWindow count:1 thatAreVisibleInWindow:window] == 0) {
+        // Center is covered, so check the status of the corners.
+        const CGPoint topLeftInScreenCoordinates = CGPointMake(CGRectGetMinX(accessibilityFrame), CGRectGetMinY(accessibilityFrame));
+        const CGPoint topRightInScreenCoordinates = CGPointMake(CGRectGetMaxX(accessibilityFrame) - 1.0, CGRectGetMinY(accessibilityFrame));
+        const CGPoint bottomLeftInScreenCoordinates = CGPointMake(CGRectGetMinX(accessibilityFrame), CGRectGetMaxY(accessibilityFrame) - 1.0);
+        const CGPoint bottomRightInScreenCoordinates = CGPointMake(CGRectGetMaxX(accessibilityFrame) - 1.0, CGRectGetMaxY(accessibilityFrame) - 1.0);
+        const CGPoint topLeftInWindow = [window convertPoint:topLeftInScreenCoordinates fromWindow:nil];
+        const CGPoint topRightInWindow = [window convertPoint:topRightInScreenCoordinates fromWindow:nil];
+        const CGPoint bottomLeftInWindow = [window convertPoint:bottomLeftInScreenCoordinates fromWindow:nil];
+        const CGPoint bottomRightInWindow = [window convertPoint:bottomRightInScreenCoordinates fromWindow:nil];
+        NSUInteger numberOfVisiblePoints = [self numberOfPointsFromSet:(CGPoint[4]){topLeftInWindow, topRightInWindow, bottomLeftInWindow, bottomRightInWindow} count:4 thatAreVisibleInWindow:window];
+        // View with a covered center is visible only if all four corners are visible.
+        return (numberOfVisiblePoints == 4);
+    } else {
+        // Center is not covered, so consider the view visible no matter what else is going on.
+        return YES;
+    }
 }
 
 - (NSArray *)slChildAccessibilityElementsFavoringUISubviews:(BOOL)favoringUISubViews {
