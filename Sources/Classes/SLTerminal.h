@@ -65,4 +65,7 @@ extern const NSTimeInterval SLTerminalReadRetryDelay;
 /** The namespace (in SLTerminal.js) in which the SLTerminal defines variables. */
 @property (nonatomic, readonly) NSString *scriptNamespace;
 
+/** The serial queue on which the receiver evaluates all Javascript. */
+@property (nonatomic, readonly) dispatch_queue_t evalQueue;
+
 @end
