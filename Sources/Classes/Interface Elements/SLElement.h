@@ -89,6 +89,13 @@ extern BOOL SLCGPointIsNull(CGPoint point);
  */
 - (BOOL)isTappable;
 
+/**
+ Taps the specified element.
+ 
+ The tap occurs at the element's [hitpoint](-hitpoint).
+ 
+ @exception SLJavaScriptException if the element is not [tappable](-isTappable).
+ */
 - (void)tap;
 
 // Triggers the JavaScript call dragInsideWithOptions, passing the start and end points in floating point format.
