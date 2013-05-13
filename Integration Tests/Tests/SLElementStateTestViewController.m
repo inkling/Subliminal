@@ -14,6 +14,7 @@
 @interface SLElementStateTestViewController : SLTestCaseViewController
 
 @property (weak, nonatomic) IBOutlet UIButton *button;
+@property (weak, nonatomic) IBOutlet UIView *coveringView;
 
 @end
 
@@ -24,7 +25,8 @@
     NSString *nibName = nil;
     if (testCase == @selector(testHitpointReturnsAlternatePointIfRectMidpointIsCovered)) {
         nibName = @"SLElementStateTestMidpointCovered";
-    } else if (testCase == @selector(testHitpointReturnsNullPointIfElementIsCovered) {
+    } else if (testCase == @selector(testHitpointReturnsNullPointIfElementIsCovered) ||
+               testCase == @selector(testElementIsTappableIfItHasANonNullHitpoint)) {
         nibName = @"SLElementStateTestCompletelyCovered";
     }
     return nibName;
@@ -60,6 +62,7 @@
         SLTestController *testController = [SLTestController sharedTestController];
         [testController registerTarget:self forAction:@selector(elementLabel)];
         [testController registerTarget:self forAction:@selector(elementValue)];
+        [testController registerTarget:self forAction:@selector(uncoverTestView)];
         [testController registerTarget:self forAction:@selector(elementRect)];
     }
     return self;
@@ -77,6 +80,10 @@
 
 - (NSString *)elementValue {
     return _button.accessibilityValue;
+}
+
+- (void)uncoverTestView {
+    _coveringView.hidden = YES;
 }
 
 - (NSValue *)elementRect {

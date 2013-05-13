@@ -82,6 +82,13 @@ extern BOOL SLCGPointIsNull(CGPoint point);
  */
 - (BOOL)isVisible;
 
+/**
+ Determines whether the specified element is tappable.
+ 
+ @return YES if the element is tappable, NO otherwise.
+ */
+- (BOOL)isTappable;
+
 - (void)tap;
 
 // Triggers the JavaScript call dragInsideWithOptions, passing the start and end points in floating point format.

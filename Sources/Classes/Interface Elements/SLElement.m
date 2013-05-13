@@ -209,6 +209,10 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return isVisible;
 }
 
+- (BOOL)isTappable {
+    return !SLCGPointIsNull([self hitpoint]);
+}
+
 - (void)tap {
     [self sendMessage:@"tap()"];
 }
