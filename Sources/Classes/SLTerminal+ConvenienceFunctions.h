@@ -130,21 +130,21 @@
                               body:(NSString *)body
                           withArgs:(NSArray *)args;
 
-/// ----------------------------------------
-/// @name Waiting on boolean expressions
-/// ----------------------------------------
+/// -----------------------------------------------------------
+/// @name Waiting on boolean expressions and functions
+/// -----------------------------------------------------------
 
 /**
- Waits for an arbitrary Javascript expression to evaluate to true
+ Waits for an arbitrary JavaScript expression to evaluate to true
  within a specified timeout.
+
+ This method is designed to wait efficiently by performing the waiting/re-evaluation
+ entirely within UIAutomation's (Javascript) context.
 
  The expression will be re-evaluated at small intervals.
  If and when the expression evaluates to true, the method will immediately return
  YES; if the expression is still false at the end of the timeout, this method
  will return NO.
-
- This method is designed to wait efficiently by performing the waiting/re-evaluation
- entirely within UIAutomation's (Javascript) context.
 
  @warning This method does not itself throw an exception if the condition fails
  to become true within the timeout. Rather, the caller should throw a suitably
@@ -155,9 +155,37 @@
  @param timeout The interval for which to wait.
  @return YES if and when the expression evaluates to true within the timeout;
  otherwise, NO.
+ 
+ @exception SLTerminalJavascriptException if condition cannot be evaluated.
+ 
+ @see -waitUntilFunctionWithNameIsTrue:evaluatedWithArgs:retryDelay:timeout:
  */
 - (BOOL)waitUntilTrue:(NSString *)condition
            retryDelay:(NSTimeInterval)retryDelay
               timeout:(NSTimeInterval)timeout;
+
+/**
+ Waits for a JavaScript function existing in the terminal's namespace 
+ to evaluate to true, given the specified arguments, within a specified timeout.
+ 
+ This is a wrapper around -waitUntilTrue:retryDelay:timeout: where `condition` 
+ is a call to the specified function with the given arguments.
+ 
+ @param name The name of a function previously added to the terminal's namespace.
+ @param args The arguments to the function, as strings.
+ @param retryDelay The interval at which to re-evaluate the function.
+ @param timeout The interval for which to wait.
+ @return YES if and when the function evaluates to true within the timeout;
+ otherwise, NO.
+ 
+ @exception NSInternalInconsistencyException if a function with the specified name
+ has not previously been loaded.
+ @exception SLTerminalJavascriptException if an exception occurs when evaluating
+ the function.
+ */
+- (BOOL)waitUntilFunctionWithNameIsTrue:(NSString *)name
+                  whenEvaluatedWithArgs:(NSArray *)args
+                             retryDelay:(NSTimeInterval)retryDelay
+                                timeout:(NSTimeInterval)timeout;
 
 @end

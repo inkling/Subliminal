@@ -126,7 +126,7 @@
     return [self evalFunctionWithName:name withArgs:args];
 }
 
-#pragma mark - Waiting on boolean expressions
+#pragma mark - Waiting on boolean expressions and functions
 
 - (BOOL)waitUntilTrue:(NSString *)condition
            retryDelay:(NSTimeInterval)retryDelay
@@ -143,6 +143,16 @@
                                          };\
                                          return condTrue;"
                               withArgs:@[ conditionFunction, retryDelayStr, timeoutStr ]] boolValue];
+}
+
+- (BOOL)waitUntilFunctionWithNameIsTrue:(NSString *)name
+                  whenEvaluatedWithArgs:(NSArray *)args
+                             retryDelay:(NSTimeInterval)retryDelay
+                                timeout:(NSTimeInterval)timeout {
+    NSAssert([self functionWithNameIsLoaded:name], @"No function with name %@ has been loaded.", name);
+    NSString *argList = [args componentsJoinedByString:@", "];
+    NSString *condition = [NSString stringWithFormat:@"%@.%@(%@)", self.scriptNamespace, name, argList];
+    return [self waitUntilTrue:condition retryDelay:retryDelay timeout:timeout];
 }
 
 @end

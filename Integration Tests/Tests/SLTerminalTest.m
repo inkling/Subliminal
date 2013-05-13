@@ -6,17 +6,23 @@
 //  Copyright (c) 2013 Inkling. All rights reserved.
 //
 
-#import "SLTest.h"
-#import "SLTerminal.h"
+#import "SLIntegrationTest.h"
+#import "SLElement+Subclassing.h"
 
-@interface SLTerminalTest : SLTest  // The terminal test doesn't need an interface
+@interface SLTerminalTest : SLIntegrationTest
 @end
 
 @implementation SLTerminalTest {
     NSString *_functionName;
 }
 
++ (NSString *)testCaseViewControllerClassName {
+    return @"SLTerminalTestViewController";
+}
+
 - (void)setUpTestCaseWithSelector:(SEL)testSelector {
+    [super setUpTestCaseWithSelector:testSelector];
+    
     // The function evaluation test cases below must each use a different function,
     // as Subliminal does not support unloading functions.
     // A simple way to enforce this is to derive the function name from the test case name.
@@ -192,6 +198,115 @@
                                                                  withArgs:(@[ @"5" ])],
                         SLTerminalJavaScriptException,
                         @"Should have thrown because the function was called with an argument of the wrong type.");
+}
+
+#pragma mark - Waiting on boolean expressions and functions tests
+
+static const NSTimeInterval kWaitUntilTrueRetryDelay = 0.25;
+
+// Because we wait on a process involving JS execution,
+// there is some variability in the duration of that execution
+// and in the interval before we find out that it timed out.
+// Thus, the variability is +/- one kWaitUntilTrueRetryDelay,
+// and one SLTerminalReadRetryDelay.
+- (NSTimeInterval)waitDelayVariability {
+    return kWaitUntilTrueRetryDelay + SLTerminalReadRetryDelay;
+}
+
+- (void)testWaitUntilTrueReturnsYESImmediatelyWhenConditionIsTrueUponWait {
+    __block NSTimeInterval startTimeInterval, endTimeInterval;
+
+    SLElement *testElement = [SLElement elementWithAccessibilityLabel:@"Nothing to show here."];
+    [testElement performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+        NSString *elementIsVisible = [NSString stringWithFormat:@"%@.isVisible()", uiaRepresentation];
+
+        startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+        SLAssertTrue([[SLTerminal sharedTerminal] waitUntilTrue:elementIsVisible
+                                                     retryDelay:kWaitUntilTrueRetryDelay
+                                                        timeout:1.5],
+                     @"The expression should have evaluated to true within the timeout.");
+        endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+    }];
+
+    NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
+    SLAssertTrue(waitTimeInterval < [self waitDelayVariability],
+                 @"Test waited for %g but should not have waited for an appreciable interval.", waitTimeInterval);
+}
+
+- (void)testWaitUntilTrueReturnsYESImmediatelyAfterConditionBecomesTrue {
+    NSTimeInterval waitTimeInterval = 2.0;
+    NSTimeInterval expectedWaitTimeInterval = waitTimeInterval - [self waitDelayVariability] - 0.05;
+    __block NSTimeInterval startTimeInterval, endTimeInterval;
+
+    SLElement *testElement = [SLElement elementWithAccessibilityLabel:@"Nothing to show here."];
+    [testElement performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+        NSString *elementIsVisible = [NSString stringWithFormat:@"%@.isVisible()", uiaRepresentation];
+
+        startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+        SLAskApp1(showTestViewAfterInterval:, @(expectedWaitTimeInterval));
+        SLAssertTrue([[SLTerminal sharedTerminal] waitUntilTrue:elementIsVisible
+                                                     retryDelay:kWaitUntilTrueRetryDelay
+                                                        timeout:waitTimeInterval],
+                     @"The expression should have evaluated to true within the timeout.");
+        endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+    }];
+
+    NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
+    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],
+                 @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
+                 actualWaitTimeInterval, waitTimeInterval);
+}
+
+- (void)testWaitUntilTrueReturnsNOIfConditionIsStillFalseAtEndOfTimeout {
+    NSTimeInterval expectedWaitTimeInterval = 2.0;
+    __block NSTimeInterval startTimeInterval, endTimeInterval;
+
+    SLElement *testElement = [SLElement elementWithAccessibilityLabel:@"Nothing to show here."];
+    [testElement performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+        NSString *elementIsVisible = [NSString stringWithFormat:@"%@.isVisible()", uiaRepresentation];
+
+        startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+        SLAssertFalse([[SLTerminal sharedTerminal] waitUntilTrue:elementIsVisible
+                                                      retryDelay:kWaitUntilTrueRetryDelay
+                                                         timeout:expectedWaitTimeInterval],
+                     @"The expression should have evaluated to true within the timeout.");
+        endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+    }];
+
+    NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
+    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],
+                 @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
+                 actualWaitTimeInterval, expectedWaitTimeInterval);
+}
+
+// this is just an example of how to use -waitUntilFunctionWithNameIsTrue...;
+// it should behave exactly as the above test cases describe -waitUntilTrue:...,
+// as waitUntilFunctionWithNameIsTrue... is just a wrapper around -waitUntilTrue:...
+- (void)testWaitUntilFunctionWithNameIsTrue {
+    [[SLTerminal sharedTerminal] loadFunctionWithName:_functionName
+                                               params:@[ @"element" ]
+                                                 body:@"return element.isVisible();"];
+
+    NSTimeInterval waitTimeInterval = 2.0;
+    NSTimeInterval expectedWaitTimeInterval = waitTimeInterval - [self waitDelayVariability] - 0.05;
+    __block NSTimeInterval startTimeInterval, endTimeInterval;
+
+    SLElement *testElement = [SLElement elementWithAccessibilityLabel:@"Nothing to show here."];
+    [testElement performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+        startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+        SLAskApp1(showTestViewAfterInterval:, @(expectedWaitTimeInterval));
+        SLAssertTrue([[SLTerminal sharedTerminal] waitUntilFunctionWithNameIsTrue:_functionName
+                                                            whenEvaluatedWithArgs:(@[ uiaRepresentation ])
+                                                                       retryDelay:kWaitUntilTrueRetryDelay
+                                                                          timeout:waitTimeInterval],
+                     @"The expression should have evaluated to true within the timeout.");
+        endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+    }];
+
+    NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
+    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],
+                 @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
+                 actualWaitTimeInterval, waitTimeInterval);
 }
 
 @end
