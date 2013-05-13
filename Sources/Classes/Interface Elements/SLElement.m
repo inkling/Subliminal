@@ -226,8 +226,9 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         NSString *rectString = [NSString stringWithFormat:@"%@.rect()", uiaRepresentation];
         CGRectString = [[SLTerminal sharedTerminal] evalFunctionWithName:@"SLCGRectStringFromJSRect"
                                                                   params:@[ @"rect" ]
-                                                                    body:@"return '{{' + rect.origin.x + ',' + rect.origin.y + '},\
-                                                                                    {' + rect.size.width + ',' + rect.size.height + '}}';"
+                                                                    body:@"if (!rect) return '';\
+                                                                           else return '{{' + rect.origin.x + ',' + rect.origin.y + '},\
+                                                                                         {' + rect.size.width + ',' + rect.size.height + '}}';"
                                                                 withArgs:@[ rectString ]];
     }];
     return ([CGRectString length] ? CGRectFromString(CGRectString) : CGRectNull);
