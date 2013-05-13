@@ -13,6 +13,8 @@
 #import <objc/runtime.h>
 
 
+#pragma mark SLElement
+
 // all exceptions thrown by SLElement must have names beginning with this prefix
 // so that they may be identified as "expected" throughout the testing framework
 NSString *const SLElementExceptionNamePrefix    = @"SLElement";
@@ -23,8 +25,12 @@ NSString *const SLElementVisibleException       = @"SLElementVisibleException";
 
 const NSTimeInterval SLElementWaitRetryDelay = 0.25;
 
+const CGPoint SLCGPointNull = (CGPoint){ INFINITY, INFINITY };
 
-#pragma mark SLElement
+BOOL SLCGPointIsNull(CGPoint point) {
+    return CGPointEqualToPoint(point, SLCGPointNull);
+}
+
 
 @interface SLElement ()
 
@@ -218,6 +224,19 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 - (NSString *)value {
     return [self sendMessage:@"value()"];
+}
+
+- (CGPoint)hitpoint {
+    NSString *__block CGHitpointString = nil;
+    [self performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+        NSString *hitpointString = [NSString stringWithFormat:@"%@.hitpoint()", uiaRepresentation];
+        CGHitpointString = [[SLTerminal sharedTerminal] evalFunctionWithName:@"SLCGPointStringFromJSPoint"
+                                                                      params:@[ @"point" ]
+                                                                        body:@"if (!point) return '';\
+                                                                               else return '{' + point.x + ',' + point.y + '}';"
+                                                                    withArgs:@[ hitpointString ]];
+    }];
+    return ([CGHitpointString length] ? CGPointFromString(CGHitpointString) : SLCGPointNull);
 }
 
 - (CGRect)rect {

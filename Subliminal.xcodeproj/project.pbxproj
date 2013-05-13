@@ -102,6 +102,8 @@
 		F0C07A541704011400C93F93 /* SLKeyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C07A521704011300C93F93 /* SLKeyboard.m */; };
 		F0C07A57170401E500C93F93 /* SLWebView.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A55170401E400C93F93 /* SLWebView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0C07A58170401E500C93F93 /* SLWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C07A56170401E500C93F93 /* SLWebView.m */; };
+		F0C27CDF1741694900335A41 /* SLElementStateTestMidpointCovered.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C27CDE1741694900335A41 /* SLElementStateTestMidpointCovered.xib */; };
+		F0C27CE917416EC400335A41 /* SLElementStateTestCompletelyCovered.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C27CE817416EC400335A41 /* SLElementStateTestCompletelyCovered.xib */; };
 		F0C4DB4817388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C4DB4717388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib */; };
 		F0CE9FFD16D60E2C008A3B4A /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F08B86DB16859C4000C4FE44 /* libOCMock.a */; };
 		F0CEA00216D60EAD008A3B4A /* SLDeviceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CE9FFF16D60EAD008A3B4A /* SLDeviceTest.m */; };
@@ -283,6 +285,8 @@
 		F0C07A521704011300C93F93 /* SLKeyboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLKeyboard.m; sourceTree = "<group>"; };
 		F0C07A55170401E400C93F93 /* SLWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLWebView.h; sourceTree = "<group>"; };
 		F0C07A56170401E500C93F93 /* SLWebView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLWebView.m; sourceTree = "<group>"; };
+		F0C27CDE1741694900335A41 /* SLElementStateTestMidpointCovered.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementStateTestMidpointCovered.xib; sourceTree = "<group>"; };
+		F0C27CE817416EC400335A41 /* SLElementStateTestCompletelyCovered.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementStateTestCompletelyCovered.xib; sourceTree = "<group>"; };
 		F0C4DB4717388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestSuperviewWithVisibleSubview.xib; sourceTree = "<group>"; };
 		F0CE9FFF16D60EAD008A3B4A /* SLDeviceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDeviceTest.m; sourceTree = "<group>"; };
 		F0CEA00016D60EAD008A3B4A /* SLDeviceTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDeviceTestViewController.m; sourceTree = "<group>"; };
@@ -611,6 +615,8 @@
 			children = (
 				F0AE4C8B16F7F92D00B2BB2B /* SLElementStateTest.m */,
 				F0AE4C8C16F7F92D00B2BB2B /* SLElementStateTestViewController.m */,
+				F0C27CDE1741694900335A41 /* SLElementStateTestMidpointCovered.xib */,
+				F0C27CE817416EC400335A41 /* SLElementStateTestCompletelyCovered.xib */,
 			);
 			name = "SLElement State Tests";
 			sourceTree = "<group>";
@@ -836,6 +842,8 @@
 				F0C4DB4817388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib in Resources */,
 				064B6F55173B13E9004AB1BF /* SLElementVisibilityTestCoveredByClearRegion.xib in Resources */,
 				064B6FC7173DCE9A004AB1BF /* SLElementVisibilityWithSubviews.xib in Resources */,
+				F0C27CDF1741694900335A41 /* SLElementStateTestMidpointCovered.xib in Resources */,
+				F0C27CE917416EC400335A41 /* SLElementStateTestCompletelyCovered.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,25 +10,42 @@
 
 #import <Subliminal/SLTestController+AppContext.h>
 
+
 @interface SLElementStateTestViewController : SLTestCaseViewController
+
+@property (weak, nonatomic) IBOutlet UIButton *button;
 
 @end
 
-@implementation SLElementStateTestViewController {
-    UIButton *_button;
+
+@implementation SLElementStateTestViewController
+
++ (NSString *)nibNameForTestCase:(SEL)testCase {
+    NSString *nibName = nil;
+    if (testCase == @selector(testHitpointReturnsAlternatePointIfRectMidpointIsCovered)) {
+        nibName = @"SLElementStateTestMidpointCovered";
+    } else if (testCase == @selector(testHitpointReturnsNullPointIfElementIsCovered) {
+        nibName = @"SLElementStateTestCompletelyCovered";
+    }
+    return nibName;
 }
 
 - (void)loadViewForTestCase:(SEL)testCase {
-    UIView *view = [[UIView alloc] initWithFrame:self.navigationController.view.bounds];
-    view.backgroundColor = [UIColor whiteColor];
+    if (testCase == @selector(testLabel) ||
+        testCase == @selector(testValue) ||
+        testCase == @selector(testHitpointReturnsRectMidpointByDefault) ||
+        testCase == @selector(testRect)) {
+        UIView *view = [[UIView alloc] initWithFrame:self.navigationController.view.bounds];
+        view.backgroundColor = [UIColor whiteColor];
 
-    _button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    _button.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin;
-    [view addSubview:_button];
-    _button.frame = (CGRect){CGPointZero, CGSizeMake(100.0f, 50.0f)};
-    _button.center = view.center;
+        _button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+        _button.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin;
+        [view addSubview:_button];
+        _button.frame = (CGRect){CGPointZero, CGSizeMake(100.0f, 50.0f)};
+        _button.center = view.center;
 
-    self.view = view;
+        self.view = view;
+    }
 }
 
 - (void)viewDidLoad {
