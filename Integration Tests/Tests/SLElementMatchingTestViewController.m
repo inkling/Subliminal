@@ -114,6 +114,7 @@
         (testCase == @selector(testElementWithAccessibilityLabel)) ||
         (testCase == @selector(testSubliminalOnlyReplacesAccessibilityIdentifiersOfElementsInvolvedInMatch)) ||
         (testCase == @selector(testSubliminalRestoresAccessibilityIdentifiersAfterMatching)) ||
+        (testCase == @selector(testSubliminalRestoresAccessibilityIdentifiersAfterMatchingEvenIfActionThrows)) ||
         (testCase == @selector(testMatchingPopoverChildElement_iPad))) {
         return @"SLElementMatchingTestViewController";
     } else if ((testCase == @selector(testMatchingTableViewCellTextLabel)) ||

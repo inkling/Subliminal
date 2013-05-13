@@ -223,4 +223,23 @@
                  @"After being matched, an object's identifier should have been restored.");
 }
 
+- (void)testSubliminalRestoresAccessibilityIdentifiersAfterMatchingEvenIfActionThrows {
+    NSString *originalIdentifier = SLAskApp(fooButtonIdentifier);
+
+    SLElement *fooButton = [SLElement elementWithAccessibilityLabel:@"foo"];
+
+    // Sanity check
+    SLAssertTrue([[UIAElement(fooButton) label] isEqualToString:@"foo"],
+                 @"Should have matched the button with label 'foo'.");
+
+    SLAssertThrows([fooButton performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+        SLAssertFalse([SLAskApp(fooButtonIdentifier) isEqualToString:originalIdentifier],
+                      @"While matched, an object's identifier is replaced.");
+        [NSException raise:@"TestException" format:nil];
+    }], @"Should have thrown test exception.");
+
+    SLAssertTrue([SLAskApp(fooButtonIdentifier) isEqualToString:originalIdentifier],
+                 @"After being matched, an object's identifier should have been restored.");
+}
+
 @end

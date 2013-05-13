@@ -126,9 +126,17 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     // out of scope between the path's construction and its binding/serialization
     // here. If the representation is invalid, UIAutomation will throw an exception,
     // and it will be caught by Subliminal.
+    NSException *__block actionException = nil;
     [accessibilityPath bindPath:^(SLAccessibilityPath *boundPath) {
-        block([boundPath UIARepresentation]);
+        // catch and rethrow exceptions so that we can unbind the path
+        @try {
+            block([boundPath UIARepresentation]);
+        }
+        @catch (NSException *exception) {
+            actionException = exception;
+        }
     }];
+    if (actionException) @throw actionException;
 }
 
 - (SLAccessibilityPath *)accessibilityPathWithTimeout:(NSTimeInterval)timeout {
