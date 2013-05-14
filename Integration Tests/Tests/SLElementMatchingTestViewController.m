@@ -93,7 +93,10 @@
 
 @interface SLElementMatchingTestViewController () <UITableViewDataSource, UITableViewDelegate, UIWebViewDelegate>
 
-@property (weak, nonatomic) IBOutlet UIButton *fooButton;
+// fooButton is purposely strong so that we can hold onto it
+// while it's removed from the view hierarchy in testElementsWaitToMatchValidObjects
+@property (strong, nonatomic) IBOutlet UIButton *fooButton;
+
 @property (weak, nonatomic) IBOutlet UIButton *barButton;
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -110,6 +113,8 @@
 + (NSString *)nibNameForTestCase:(SEL)testCase {
     if ((testCase == @selector(testElementsDoNotCaptureTheirMatches)) ||
         (testCase == @selector(testElementsCanMatchTheSameObjectTwice)) ||
+        (testCase == @selector(testElementsWaitToMatchValidObjects)) ||
+        (testCase == @selector(testElementsThrowIfNoValidObjectIsFoundAtEndOfTimeout)) ||
         (testCase == @selector(testAnyElement)) ||
         (testCase == @selector(testElementWithAccessibilityLabel)) ||
         (testCase == @selector(testSubliminalOnlyReplacesAccessibilityIdentifiersOfElementsInvolvedInMatch)) ||
@@ -134,6 +139,8 @@
     if (self) {
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(swapButtons)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(fooButtonIdentifier)];
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(removeFooButtonFromSuperview)];
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(addFooButtonToViewAfterInterval:)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(barButtonIdentifier)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(webViewDidFinishLoad)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showPopover)];
@@ -306,6 +313,18 @@ static NSString *TestCellIdentifier = nil;
 
 - (NSString *)fooButtonIdentifier {
     return self.fooButton.accessibilityIdentifier;
+}
+
+- (void)removeFooButtonFromSuperview {
+    [self.fooButton removeFromSuperview];
+}
+
+- (void)addFooButtonToView {
+    [self.view addSubview:self.fooButton];
+}
+
+- (void)addFooButtonToViewAfterInterval:(NSNumber *)intervalNumber {
+    [self performSelector:@selector(addFooButtonToView) withObject:nil afterDelay:[intervalNumber doubleValue]];
 }
 
 - (NSString *)barButtonIdentifier {
