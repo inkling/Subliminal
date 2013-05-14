@@ -77,6 +77,20 @@
     SLAssertTrue([UIAElement(_testElement) isTappable], @"Element should be tappable if hitpoint is not null.");
 }
 
+// UIAutomation calls which do not involve (simulated) user interaction
+// should not require tappability. Contrast to calls that do require user
+// interaction, as described by cases in SLElementTapTest, SLElementDraggingTest, etc.
+- (void)testCanRetrieveLabelEvenIfNotTappable {
+    SLAssertFalse([UIAElement(_testElement) isTappable],
+                  @"For the purposes of this test case, the test element should not be tappable.");
+
+    NSString *expectedLabel = SLAskApp(elementLabel);
+    NSString *label;
+    SLAssertNoThrow(label = [UIAElement(_testElement) label],
+                    @"Accessing -label should not have thrown, despite not being tappable.");
+    SLAssertTrue([label isEqualToString:expectedLabel], @"-label did not return expected.");
+}
+
 - (void)testRect {
     CGRect expectedRect = [SLAskApp(elementRect) CGRectValue];
     CGRect rect = [UIAElement(_testElement) rect];
