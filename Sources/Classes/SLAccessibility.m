@@ -1008,19 +1008,19 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
 
 @implementation UILabel (SLAccessibility)
 
-- (BOOL)willAppearInAccessibilityHierarchy {
+- (BOOL)accessibilityAncestorPreventsPresenceInAccessibilityHierarchy {
+    if ([super accessibilityAncestorPreventsPresenceInAccessibilityHierarchy]) return YES;
+
     NSObject *parent = [self slAccessibilityParent];
     // A label will not appear in the accessibility hierarchy
     // if it is contained within a UITableViewCell, at any depth
     // -- UITableViewCells create a mock element that aggregates sublabels' text;
     // we can match that combined label, but not individual labels.
-    if ([self isKindOfClass:[UILabel class]]) {
-        do {
-            if ([parent isKindOfClass:[UITableViewCell class]]) return NO;
-        } while ((parent = [parent slAccessibilityParent]));
-    }
+    do {
+        if ([parent isKindOfClass:[UITableViewCell class]]) return YES;
+    } while ((parent = [parent slAccessibilityParent]));
 
-    return [super willAppearInAccessibilityHierarchy];
+    return NO;
 }
 
 @end
