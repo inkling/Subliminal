@@ -26,6 +26,7 @@
     const CGRect kTextFieldFrame = (CGRect){CGPointZero, CGSizeMake(100.0f, 30.0f)};
     if (testCase == @selector(testSetText) ||
         testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
+        testCase == @selector(testCanSetTextOnlyWhenTappable) ||
         testCase == @selector(testGetText) ||
         // we'll test that we match the searchBar *and not* the textField
         testCase == @selector(testMatchesSearchBarTextField)) {
@@ -56,6 +57,7 @@
     if (self) {
         SLTestController *testController = [SLTestController sharedTestController];
         [testController registerTarget:self forAction:@selector(text)];
+        [testController registerTarget:self forAction:@selector(showTextField)];
         [testController registerTarget:self forAction:@selector(webViewDidFinishLoad)];
     }
     return self;
@@ -73,9 +75,13 @@
     if (self.testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing)) {
         _textField.clearsOnBeginEditing = YES;
     }
+    if (self.testCase == @selector(testCanSetTextOnlyWhenTappable)) {
+        _textField.hidden = YES;
+    }
 
     if (self.testCase != @selector(testSetText) &&
-        self.testCase != @selector(testSetTextWhenFieldClearsOnBeginEditing)) {
+        self.testCase != @selector(testSetTextWhenFieldClearsOnBeginEditing) &&
+        self.testCase != @selector(testCanSetTextOnlyWhenTappable)) {
         _textField.text = @"foo";
     }
 
@@ -116,6 +122,7 @@
     NSString *text;
     if (self.testCase == @selector(testSetText) ||
         self.testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
+        self.testCase == @selector(testCanSetTextOnlyWhenTappable) ||
         self.testCase == @selector(testGetText)) {
         text = _textField.text;
     } else if (self.testCase == @selector(testMatchesSearchBarTextField) ||
@@ -128,6 +135,10 @@
         text = [_webView stringByEvaluatingJavaScriptFromString:@"getText()"];
     }
     return text;
+}
+
+- (void)showTextField {
+    _textField.hidden = NO;
 }
 
 - (NSNumber *)webViewDidFinishLoad {

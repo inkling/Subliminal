@@ -15,13 +15,21 @@
 
 @implementation SLElementDraggingTest
 
++ (NSString *)testCaseViewControllerClassName {
+    return @"SLElementDraggingTestViewController";
+}
+
 - (void)setUpTest {
 	[super setUpTest];
     _scrollView = [SLElement elementWithAccessibilityLabel:@"drag scrollview"];
 }
 
-+ (NSString *)testCaseViewControllerClassName {
-    return @"SLElementDraggingTestViewController";
+- (void)setUpTestCaseWithSelector:(SEL)testCaseSelector {
+    [super setUpTestCaseWithSelector:testCaseSelector];
+
+    if (testCaseSelector == @selector(testCanDragOnlyWhenTappable)) {
+        SLAskApp(disableScrollViewUserInteraction); // to make the scroll view not tappable
+    }
 }
 
 /// This test demonstrates simply that we can drag a view.
@@ -64,6 +72,34 @@
     SLAssertTrue(ABS(dragDistance - expectedDragDistance) < kDragRecognitionTolerance,
                  @"Average drag offset (%g) is very far from the expected offset (%g)!",
                  dragDistance, expectedDragDistance);
+}
+
+- (void)testCanDragOnlyWhenTappable {
+    // try dragging bottom to top to scroll down and show the bottom label, first when not tappable
+    SLAssertFalse([UIAElement(_scrollView) isTappable],
+                  @"For the purposes of this test case, the scroll view should not be tappable.");
+    CGFloat dragStartY = 0.99;
+    CGFloat dragEndY = 0.2;
+
+    SLLog(@"*** The errors seen in the test output immediately below are an expected part of the tests.");
+    SLAssertThrowsNamed([UIAElement(_scrollView) dragWithStartPoint:CGPointMake(0.75, dragStartY)
+                                                           endPoint:CGPointMake(0.75, dragEndY)],
+                        SLTerminalJavaScriptException,
+                        @"Element should be draggable only when tappable.");
+    // sanity check
+    SLElement *bottomLabel = [SLElement elementWithAccessibilityLabel:@"Bottom"];
+    SLAssertFalse([UIAElement(bottomLabel) isVisible], @"The scroll view should not have been dragged.");
+
+    // make the scroll view tappable
+    SLAskApp(enableScrollViewUserInteraction);
+
+    // try dragging bottom to top to scroll down and show the bottom label, now when tappable
+    SLAssertTrue([UIAElement(_scrollView) isTappable],
+                 @"The scroll view should now be tappable.");
+    SLAssertNoThrow([UIAElement(_scrollView) dragWithStartPoint:CGPointMake(0.75, dragStartY)
+                                                           endPoint:CGPointMake(0.75, dragEndY)],
+                    @"Element should be draggable now that it is tappable.");
+    SLWaitUntilVisible(UIAElement(bottomLabel), 3.0, @"The bottom label should have become visible after dragging.");
 }
 
 @end

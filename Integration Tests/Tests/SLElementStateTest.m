@@ -55,6 +55,11 @@
     SLAssertFalse(SLCGPointIsNull(hitpoint), @"-hitpoint did not return expected value.");
 }
 
+// UIAElement.hitpoint() may return null for other reasons, depending on the view
+// --for instance, UIAScrollViews return null if their corresponding UIScrollViews
+// have userInteractionEnabled = NO, whereas UIAutomation can still determine the
+// hitpoint for other views with userInteractionEnabled = NO; but hiding the view
+// is a reliable way to induce failure
 - (void)testHitpointReturnsNullPointIfElementIsCovered {
     CGPoint hitpoint = [UIAElement(_testElement) hitpoint];
     SLAssertTrue(SLCGPointIsNull(hitpoint), @"-hitpoint did not return expected value.");

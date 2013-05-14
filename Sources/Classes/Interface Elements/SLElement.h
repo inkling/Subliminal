@@ -83,9 +83,10 @@ extern BOOL SLCGPointIsNull(CGPoint point);
 - (BOOL)isVisible;
 
 /**
- Determines whether the specified element is tappable.
- 
- @return YES if the element is tappable, NO otherwise.
+ Determines whether it is possible to interact with the specified element.
+
+ @return YES if it is possible to tap on or otherwise interact with the element, 
+ NO otherwise.
  */
 - (BOOL)isTappable;
 

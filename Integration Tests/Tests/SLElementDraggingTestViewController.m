@@ -19,12 +19,18 @@
 
 @implementation SLElementDraggingTestViewController
 
++ (NSString *)nibNameForTestCase:(SEL)testCase {
+    return @"SLElementDraggingTestViewController";
+}
+
 - (instancetype)initWithTestCaseWithSelector:(SEL)testCase {
-    self = [super initWithNibName:[[self class] nibNameForTestCase:testCase] bundle:nil];
+    self = [super initWithTestCaseWithSelector:testCase];
     if (self) {
         SLTestController *testController = [SLTestController sharedTestController];
         [testController registerTarget:self forAction:@selector(resetScrollingState)];
         [testController registerTarget:self forAction:@selector(dragDistance)];
+        [testController registerTarget:self forAction:@selector(disableScrollViewUserInteraction)];
+        [testController registerTarget:self forAction:@selector(enableScrollViewUserInteraction)];
     }
     return self;
 }
@@ -34,20 +40,9 @@
 }
 
 - (void)viewDidLoad {
+    [super viewDidLoad];
+    
     self.scrollView.accessibilityIdentifier = @"drag scrollview";
-}
-
-- (void)resetScrollingState {
-    [self.scrollView setContentOffset:CGPointZero animated:NO];
-    _dragDistance = 0.0;
-}
-
-- (NSNumber *)dragDistance {
-    return @(_dragDistance);
-}
-
-+ (NSString *)nibNameForTestCase:(SEL)testCase {
-    return @"SLElementDraggingTestViewController";
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -63,6 +58,25 @@
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     CGFloat scrollViewDidEndDraggingOffset = scrollView.contentOffset.y;
     _dragDistance = ABS(scrollViewDidEndDraggingOffset - _scrollViewWillBeginDraggingOffset);
+}
+
+#pragma mark - App hooks
+
+- (void)resetScrollingState {
+    [self.scrollView setContentOffset:CGPointZero animated:NO];
+    _dragDistance = 0.0;
+}
+
+- (NSNumber *)dragDistance {
+    return @(_dragDistance);
+}
+
+- (void)disableScrollViewUserInteraction {
+    self.scrollView.userInteractionEnabled = NO;
+}
+
+- (void)enableScrollViewUserInteraction {
+    self.scrollView.userInteractionEnabled = YES;
 }
 
 @end
