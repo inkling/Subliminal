@@ -192,6 +192,20 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
  */
 - (BOOL)classForcesPresenceInAccessibilityHierarchy;
 
+
+/**
+ Returns a Boolean value that indicates whether the receiver is prevented from
+ existing in the accessibility hierarchy by an accessibility element above it in
+ the hierarchy.
+ 
+ Experimentation reveals that accessibilityElements decending from certain classes
+ prevent any other elements from existing in the hierarchy below them.
+ 
+ @return YES if there exists an element above the receiver in the accessibility hierarchy
+ that prevents its accessibility descendents from appearing in the accessibility hierarchy.
+ */
+- (BOOL)accessibilityAncestorPreventsPresenceInAccessibilityHierarchy;
+
 /// ----------------------------------------
 /// @name Binding and serializing paths
 /// ----------------------------------------
@@ -539,7 +553,11 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
     if ([parent isAccessibilityElement]) {
         return NO;
     }
-    
+
+    if ([self accessibilityAncestorPreventsPresenceInAccessibilityHierarchy]) {
+        return NO;
+    }
+
     NSString *accessibilityIdentifier;
     if ([self respondsToSelector:@selector(accessibilityIdentifier)]) {
         accessibilityIdentifier = [self performSelector:@selector(accessibilityIdentifier)];
@@ -562,6 +580,19 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
 
     return NO;
 }
+
+
+- (BOOL)accessibilityAncestorPreventsPresenceInAccessibilityHierarchy {
+    id parent = [self slAccessibilityParent];
+    while (parent) {
+        if ([parent isKindOfClass:[UIControl class]] && [parent isAccessibilityElement]) {
+            return YES;
+        }
+        parent = [parent slAccessibilityParent];
+    }
+    return NO;
+}
+
 
 - (BOOL)accessibilityTraitsForcePresenceInAccessibilityHierarchy {
     UIAccessibilityTraits traits = self.accessibilityTraits;
