@@ -773,7 +773,18 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
 #pragma mark -Private methods
 
 - (void)renderViewRecursively:(UIView *)view inContext:(CGContextRef)context withTargetView:(UIView *)target baseView:(UIView *)baseView {
-    // Push the current transform onto the stack managed by context.
+    // Skip any views that are hidden or have alpha < kMinVisibleAlphaFloat.
+    if (view.hidden || view.alpha < kMinVisibleAlphaFloat) {
+        return;
+    }
+
+    // Push the drawing state to save the clip mask.
+    CGContextSaveGState(context);
+    if ([view clipsToBounds]) {
+        CGContextClipToRect(context, [baseView convertRect:view.bounds fromView:view]);
+    }
+
+    // Push the drawing state to save the CTM.
     CGContextSaveGState(context);
 
     // Apply a transform that takes the origin to view's top left corner.
@@ -786,30 +797,28 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
     //
     // If this is in our target view's hierarchy then just draw a black rectangle
     // covering the whole thing.
-    //
-    // Skip any views that are hidden or have alpha < kMinVisibleAlphaFloat.
-    if (!view.hidden && view.alpha >= kMinVisibleAlphaFloat) {
-        if (![view isDescendantOfView:target]) {
-            CGContextSetBlendMode(context, kCGBlendModeDestinationOut);
-            // Draw the view.  I haven't found anything better than this, unfortunately.
-            // renderInContext is pretty inefficient for our purpose because it renders
-            // the whole tree under view instead of *only* rendering view.
-            [view.layer renderInContext:context];
-        } else {
-            CGContextSetFillColor(context, (CGFloat[2]){0.0, 1.0});
-            CGContextSetBlendMode(context, kCGBlendModeCopy);
-            CGContextFillRect(context, view.bounds);
-        }
+    if (![view isDescendantOfView:target]) {
+        CGContextSetBlendMode(context, kCGBlendModeDestinationOut);
+        // Draw the view.  I haven't found anything better than this, unfortunately.
+        // renderInContext is pretty inefficient for our purpose because it renders
+        // the whole tree under view instead of *only* rendering view.
+        [view.layer renderInContext:context];
+    } else {
+        CGContextSetFillColor(context, (CGFloat[2]){0.0, 1.0});
+        CGContextSetBlendMode(context, kCGBlendModeCopy);
+        CGContextFillRect(context, view.bounds);
     }
 
-    // Pop the translation we applied for view off the transform stack
-    // maintained by context.
+    // Restore the CTM.
     CGContextRestoreGState(context);
 
     // Recurse for subviews
     for (UIView *subview in [view subviews]) {
         [self renderViewRecursively:subview inContext:context withTargetView:target baseView:baseView];
     }
+
+    // Restore the clip mask.
+    CGContextRestoreGState(context);
 }
 
 - (NSUInteger)numberOfPointsFromSet:(const CGPoint *)testPointsInWindow count:(const NSUInteger)numPoints thatAreVisibleInWindow:(UIWindow *)window {
