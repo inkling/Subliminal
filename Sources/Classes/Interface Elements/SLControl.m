@@ -12,11 +12,7 @@
 @implementation SLControl
 
 - (BOOL)isEnabled {
-    __block BOOL isEnabled = NO;
-    [self performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
-        isEnabled = [[[SLTerminal sharedTerminal] evalWithFormat:@"(%@.isEnabled() ? 'YES' : 'NO')", uiaRepresentation] boolValue];
-    }];
-    return isEnabled;
+    return [[self sendMessage:@"isEnabled()"] boolValue];
 }
 
 @end

@@ -24,7 +24,7 @@
                                 while (!(condTrue = cond()) && (((Date.now() / 1000) - startTime) < timeout)) {\
                                     UIATarget.localTarget().delay(retryDelay);\
                                 };\
-                                return (condTrue ? 'YES' : 'NO')\
+                                return condTrue;\
                             })()", condition, retryDelay, timeout];
     
     return [[self eval:retryFunction] boolValue];

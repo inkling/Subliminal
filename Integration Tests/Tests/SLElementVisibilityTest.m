@@ -41,11 +41,7 @@
 @implementation SLElement (SLElementVisibilityTest)
 
 - (BOOL)uiaIsVisible {
-    __block BOOL isVisible = NO;
-    [self performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
-        isVisible = [[[SLTerminal sharedTerminal] evalWithFormat:@"(%@.isVisible() ? 'YES' : 'NO')", uiaRepresentation] boolValue];
-    }];
-    return isVisible;
+    return [[self sendMessage:@"isVisible()"] boolValue];
 }
 
 @end

@@ -300,21 +300,21 @@ extern NSString *const SLTestExceptionLineNumberKey;
 
 #define SLAssertTrue(expr, description, ...) do { \
     [self recordLastKnownFile:__FILE__ line:__LINE__]; \
-    BOOL result = (expr); \
-    if (!result) { \
-        NSString *reason = [NSString stringWithFormat:@"\"%@\" should be true.%@", \
+    BOOL __result = (expr); \
+    if (!__result) { \
+        NSString *__reason = [NSString stringWithFormat:@"\"%@\" should be true.%@", \
                                 @(#expr), SLComposeString(@" ", description, ##__VA_ARGS__)]; \
-        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
+        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:__reason userInfo:nil]; \
     } \
 } while (0)
 
 #define SLAssertFalse(expr, description, ...) do { \
     [self recordLastKnownFile:__FILE__ line:__LINE__]; \
-    BOOL result = (expr); \
-    if (result) { \
-        NSString *reason = [NSString stringWithFormat:@"\"%@\" should be false.%@", \
+    BOOL __result = (expr); \
+    if (__result) { \
+        NSString *__reason = [NSString stringWithFormat:@"\"%@\" should be false.%@", \
                                 @(#expr), SLComposeString(@" ", description, ##__VA_ARGS__)]; \
-        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
+        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:__reason userInfo:nil]; \
     } \
 } while (0)
 
@@ -324,13 +324,13 @@ extern NSString *const SLTestExceptionLineNumberKey;
     @try { \
         (expr); \
     } \
-    @catch (id anException) { \
+    @catch (id __anException) { \
         __caughtException = YES; \
     } \
     if (!__caughtException) { \
-        NSString *reason = [NSString stringWithFormat:@"\"%@\" should have thrown an exception.%@", \
+        NSString *__reason = [NSString stringWithFormat:@"\"%@\" should have thrown an exception.%@", \
                                 @(#expr), SLComposeString(@" ", description, ##__VA_ARGS__)]; \
-        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
+        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:__reason userInfo:nil]; \
     } \
 } while (0)
 
@@ -340,24 +340,24 @@ extern NSString *const SLTestExceptionLineNumberKey;
     @try { \
         (expr); \
     } \
-    @catch (NSException *anException) { \
-        if (![[anException name] isEqualToString:exceptionName]) { \
-            NSString *reason = [NSString stringWithFormat:@"\"%@\" threw an exception named \"%@\" (\"%@\"), but not an exception named \"%@\". %@", \
-                                    @(#expr), [anException name], [anException reason], exceptionName, SLComposeString(@" ", description, ##__VA_ARGS__)]; \
-            @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
+    @catch (NSException *__anException) { \
+        if (![[__anException name] isEqualToString:exceptionName]) { \
+            NSString *__reason = [NSString stringWithFormat:@"\"%@\" threw an exception named \"%@\" (\"%@\"), but not an exception named \"%@\". %@", \
+                                    @(#expr), [__anException name], [__anException reason], exceptionName, SLComposeString(@" ", description, ##__VA_ARGS__)]; \
+            @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:__reason userInfo:nil]; \
         } else {\
             __caughtException = YES; \
         }\
     } \
-    @catch (id anException) { \
-        NSString *reason = [NSString stringWithFormat:@"\"%@\" threw an exception, but not an exception named \"%@\". %@", \
+    @catch (id __anException) { \
+        NSString *__reason = [NSString stringWithFormat:@"\"%@\" threw an exception, but not an exception named \"%@\". %@", \
                                 @(#expr), exceptionName, SLComposeString(@" ", description, ##__VA_ARGS__)]; \
-        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
+        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:__reason userInfo:nil]; \
     } \
     if (!__caughtException) { \
-        NSString *reason = [NSString stringWithFormat:@"\"%@\" should have thrown an exception named \"%@\".%@", \
+        NSString *__reason = [NSString stringWithFormat:@"\"%@\" should have thrown an exception named \"%@\".%@", \
                                 @(#expr), exceptionName, SLComposeString(@" ", description, ##__VA_ARGS__)]; \
-        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
+        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:__reason userInfo:nil]; \
     } \
 } while (0)
 
@@ -366,10 +366,10 @@ extern NSString *const SLTestExceptionLineNumberKey;
     @try { \
         (expr); \
     } \
-    @catch (id anException) { \
-        NSString *reason = [NSString stringWithFormat:@"\"%@\" should not have thrown an exception: \"%@\".%@", \
-                                @(#expr), anException, SLComposeString(@" ", description, ##__VA_ARGS__)]; \
-        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
+    @catch (id __anException) { \
+        NSString *__reason = [NSString stringWithFormat:@"\"%@\" should not have thrown an exception: \"%@\".%@", \
+                                @(#expr), __anException, SLComposeString(@" ", description, ##__VA_ARGS__)]; \
+        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:__reason userInfo:nil]; \
     } \
 } while (0)
 

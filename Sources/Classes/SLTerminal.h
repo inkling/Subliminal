@@ -19,13 +19,29 @@ extern const NSTimeInterval SLTerminalReadRetryDelay;
 
 + (SLTerminal *)sharedTerminal;
 
-/** Evaluates JavaScript code within UIAutomation.
+/**
+ Evaluates the specified JavaScript within UIAutomation and returns the 
+ result as an Objective-C object.
+
+ The evaluation is done using eval().
+
+ @param script The script to evaluate. May be a JavaScript expression, statement, 
+ or sequence of statements.
+ @return Returns the value of the last expression evaluated, as an Objective-C object:
  
- @param javascript The input to eval(). May be an expression preceeded by zero or more statements.
- @return Returns the result of eval() as a string.
- @exception SLTerminalJavaScriptException Thrown if a JavaScript exception occurred in eval().
+ - If the value is of type "string", -eval: will return an NSString * that is
+ equal to the value.
+ - If the value is of type "boolean", -eval: will return an NSNumber * whose
+ -boolValue is equal to the value.
+ - If the value is of type "number", -eval: will return an NSNumber * whose 
+ primitive value (using an accessor appropriate to the value's format) is equal 
+ to the value.
+ - Otherwise, -eval: will return nil.
+
+ @exception SLTerminalJavaScriptException if the script could not be evaluated,
+ or if the script threw an exception when evaluated.
  */
-- (NSString *)eval:(NSString *)javascript;
-- (NSString *)evalWithFormat:(NSString *)javascript, ... NS_FORMAT_FUNCTION(1, 2);
+- (id)eval:(NSString *)script;
+- (id)evalWithFormat:(NSString *)script, ... NS_FORMAT_FUNCTION(1, 2);
 
 @end

@@ -245,8 +245,7 @@ const NSTimeInterval SLAlertHandlerDefaultTimeout = 2.0;
         [NSException raise:NSInternalInconsistencyException format:@"Handler for alert %@ must be added using +[SLAlertHandler addHandler:] before it can handle an alert.", _alert];
     }
     
-    NSString *didHandleAlertJS = [NSString stringWithFormat:@"(%@ ? 'YES' : 'NO')", [self didHandleAlertJS]];
-    return [[[SLTerminal sharedTerminal] eval:didHandleAlertJS] boolValue];
+    return [[[SLTerminal sharedTerminal] eval:[self didHandleAlertJS]] boolValue];
 }
 
 - (void)waitUntilAlertHandled:(NSTimeInterval)timeout {

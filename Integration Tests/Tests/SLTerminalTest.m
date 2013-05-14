@@ -40,7 +40,39 @@
 // Note: the fundamental ability to communicate with UIAutomation
 // has been verified by the app delegate at startup time.
 
+- (void)testEvalReturnsValuesOfCommandsThatEvaluateToStringsBooleansOrNumbersElseNil {
+    id result;
+    SLAssertNoThrow((result = [[SLTerminal sharedTerminal] eval:@"'foo'"]), @"Should not have thrown.");
+    SLAssertTrue([result isEqual:@"foo"], @"-eval: did not return expected value.");
+
+    SLAssertNoThrow((result = [[SLTerminal sharedTerminal] eval:@"false"]), @"Should not have thrown.");
+    SLAssertTrue([result isEqual:@NO], @"-eval: did not return expected value.");
+
+    SLAssertNoThrow((result = [[SLTerminal sharedTerminal] eval:@"5"]), @"Should not have thrown.");
+    SLAssertTrue([result isEqual:@5], @"-eval: did not return expected value.");
+
+    // For everything else, we return nil.
+    // Arrays and dictionaries (hashes) serialize faithfully
+    // if they contain only property-list types, but if they don't,
+    // they serialize as empty collections.
+    // If at some point we decide to support more complex types,
+    // we should probably switch to using JSON.
+    SLAssertNoThrow((result = [[SLTerminal sharedTerminal] eval:@"function foo(){}"]), @"Should not have thrown.");
+    SLAssertTrue(result == nil, @"-eval: did not return expected value.");
+
+    SLAssertNoThrow((result = [[SLTerminal sharedTerminal] eval:@"var bar = { key: 'value' }; bar"]), @"Should not have thrown.");
+    SLAssertTrue(result == nil, @"-eval: did not return expected value.");
+
+    SLAssertNoThrow((result = [[SLTerminal sharedTerminal] eval:@"var bar = [ 'value' ]; bar"]), @"Should not have thrown.");
+    SLAssertTrue(result == nil, @"-eval: did not return expected value.");
+}
+
 - (void)testRethrowsJavascriptExceptions {
+    // throws because the script could not be evaluated
+    SLAssertThrowsNamed([[SLTerminal sharedTerminal] eval:@"var"], SLTerminalJavaScriptException,
+                        @"Terminal should have rethrown Javascript exception.");
+
+    // throws because the script threw an exception when evaluated
     SLAssertThrowsNamed([[SLTerminal sharedTerminal] eval:@"throw 'test'"],
                         SLTerminalJavaScriptException,
                         @"Terminal should have rethrown Javascript exception.");
