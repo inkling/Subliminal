@@ -150,6 +150,29 @@
         _webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         self.view = _webView;
     }
+    if (testCase == @selector(testCannotMatchUIControlDescendant)) {
+        UIView *view = [[UIView alloc] initWithFrame:CGRectZero];
+        view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        self.view = view;
+
+        UIControl *control = [[UIControl alloc] initWithFrame:CGRectMake(10, 200, 200, 100)];
+        control.accessibilityIdentifier = @"fooUIControl";
+        control.isAccessibilityElement = YES;
+        [self.view addSubview:control];
+
+        // A buffer view is placed between _uiControl and the test view. This is to ensure
+        // when the test view is not matched, it is a result of it being a descendant of a
+        // UIControl, not of because it is a direct descendant of an element that responds
+        // YES to isAccessibilityElement
+        UIView *bufferView = [[UIView alloc] initWithFrame:control.bounds];
+        bufferView.isAccessibilityElement = NO;
+        [control addSubview:bufferView];
+
+        UIView *testView = [[UIView alloc] initWithFrame:bufferView.bounds];
+        testView.isAccessibilityElement = YES;
+        testView.accessibilityIdentifier = @"fooTestView";
+        [bufferView addSubview:testView];
+    }
 }
 
 static NSString *TestCellIdentifier = nil;

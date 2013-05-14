@@ -66,6 +66,19 @@
                  @"Should have matched the button with label 'foo'.");
 }
 
+
+#pragma mark - UIControls
+
+
+- (void)testCannotMatchUIControlDescendant {
+    SLElement *uiControl = [SLElement elementWithAccessibilityLabel:@"fooUIControl"];
+    SLAssertTrue([uiControl isValid], @"Should be able to match the UIControl");
+
+    SLElement *uiControlDescendant = [SLElement elementWithAccessibilityLabel:@"fooTestView"];
+    SLAssertFalse([uiControlDescendant isValid], @"Should not be able to match descendant of UIControl.");
+}
+
+
 #pragma mark - Table views
 
 // note that we're not really matching the textLabel here,
