@@ -29,8 +29,6 @@
         SLTestController *testController = [SLTestController sharedTestController];
         [testController registerTarget:self forAction:@selector(resetScrollingState)];
         [testController registerTarget:self forAction:@selector(dragDistance)];
-        [testController registerTarget:self forAction:@selector(disableScrollViewUserInteraction)];
-        [testController registerTarget:self forAction:@selector(enableScrollViewUserInteraction)];
     }
     return self;
 }
@@ -69,14 +67,6 @@
 
 - (NSNumber *)dragDistance {
     return @(_dragDistance);
-}
-
-- (void)disableScrollViewUserInteraction {
-    self.scrollView.userInteractionEnabled = NO;
-}
-
-- (void)enableScrollViewUserInteraction {
-    self.scrollView.userInteractionEnabled = YES;
 }
 
 @end

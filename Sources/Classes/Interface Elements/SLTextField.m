@@ -28,7 +28,7 @@
     if (waitBeforeSettingText) {
         [self tap];
     }
-    [self sendMessage:@"setValue('%@')", [text slStringByEscapingForJavaScriptLiteral]];
+    [self waitUntilTappable:YES thenSendMessage:@"setValue('%@')", [text slStringByEscapingForJavaScriptLiteral]];
 }
 
 - (BOOL)matchesObject:(NSObject *)object {
@@ -80,7 +80,7 @@ static const NSTimeInterval kWebviewTextfieldDelay = 1;
 - (void)setText:(NSString *)text {
     [self tap];
     [NSThread sleepForTimeInterval:kWebviewTextfieldDelay];
-    [self sendMessage:@"setValue('%@')", [text slStringByEscapingForJavaScriptLiteral]];
+    [self waitUntilTappable:YES thenSendMessage:@"setValue('%@')", [text slStringByEscapingForJavaScriptLiteral]];
     [NSThread sleepForTimeInterval:kWebviewTextfieldDelay];
 }
 

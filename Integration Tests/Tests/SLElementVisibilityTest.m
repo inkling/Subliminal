@@ -41,7 +41,7 @@
 @implementation SLElement (SLElementVisibilityTest)
 
 - (BOOL)uiaIsVisible {
-    return [[self sendMessage:@"isVisible()"] boolValue];
+    return [[self waitUntilTappable:NO thenSendMessage:@"isVisible()"] boolValue];
 }
 
 @end

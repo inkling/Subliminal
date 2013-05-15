@@ -79,7 +79,7 @@
 
 // UIAutomation calls which do not involve (simulated) user interaction
 // should not require tappability. Contrast to calls that do require user
-// interaction, as described by cases in SLElementTapTest, SLElementDraggingTest, etc.
+// interaction, as described by -[SLElementTapTest testUIAutomationDoesNotWaitUntilTappable].
 - (void)testCanRetrieveLabelEvenIfNotTappable {
     SLAssertFalse([UIAElement(_testElement) isTappable],
                   @"For the purposes of this test case, the test element should not be tappable.");

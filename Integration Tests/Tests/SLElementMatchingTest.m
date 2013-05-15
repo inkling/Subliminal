@@ -251,7 +251,8 @@
     SLAssertTrue([[UIAElement(barButton) label] isEqualToString:@"bar"],
                  @"Should have matched the button with label 'bar'.");
 
-    [fooButton performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+    [fooButton waitUntilTappable:NO
+               thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         SLAssertFalse([SLAskApp(fooButtonIdentifier) isEqualToString:originalFooIdentifier],
                       @"While matched, an object's identifier is replaced.");
         SLAssertTrue([SLAskApp(barButtonIdentifier) isEqualToString:originalBarIdentifier],
@@ -269,7 +270,8 @@
     SLAssertTrue([[UIAElement(fooButton) label] isEqualToString:@"foo"],
                  @"Should have matched the button with label 'foo'.");
 
-    [fooButton performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+    [fooButton waitUntilTappable:NO
+               thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         SLAssertFalse([SLAskApp(fooButtonIdentifier) isEqualToString:originalIdentifier],
                       @"While matched, an object's identifier is replaced.");
     }];
@@ -287,7 +289,8 @@
     SLAssertTrue([[UIAElement(fooButton) label] isEqualToString:@"foo"],
                  @"Should have matched the button with label 'foo'.");
 
-    SLAssertThrows([fooButton performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+    SLAssertThrows([fooButton waitUntilTappable:NO
+                              thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         SLAssertFalse([SLAskApp(fooButtonIdentifier) isEqualToString:originalIdentifier],
                       @"While matched, an object's identifier is replaced.");
         [NSException raise:@"TestException" format:nil];

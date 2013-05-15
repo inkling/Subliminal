@@ -216,7 +216,8 @@ static const NSTimeInterval kWaitUntilTrueRetryDelay = 0.25;
     __block NSTimeInterval startTimeInterval, endTimeInterval;
 
     SLElement *testElement = [SLElement elementWithAccessibilityLabel:@"Nothing to show here."];
-    [testElement performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+    [testElement waitUntilTappable:NO
+                 thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         NSString *elementIsVisible = [NSString stringWithFormat:@"%@.isVisible()", uiaRepresentation];
 
         startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
@@ -238,7 +239,8 @@ static const NSTimeInterval kWaitUntilTrueRetryDelay = 0.25;
     __block NSTimeInterval startTimeInterval, endTimeInterval;
 
     SLElement *testElement = [SLElement elementWithAccessibilityLabel:@"Nothing to show here."];
-    [testElement performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+    [testElement waitUntilTappable:NO
+                 thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         NSString *elementIsVisible = [NSString stringWithFormat:@"%@.isVisible()", uiaRepresentation];
 
         startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
@@ -261,7 +263,8 @@ static const NSTimeInterval kWaitUntilTrueRetryDelay = 0.25;
     __block NSTimeInterval startTimeInterval, endTimeInterval;
 
     SLElement *testElement = [SLElement elementWithAccessibilityLabel:@"Nothing to show here."];
-    [testElement performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+    [testElement waitUntilTappable:NO
+                 thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         NSString *elementIsVisible = [NSString stringWithFormat:@"%@.isVisible()", uiaRepresentation];
 
         startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
@@ -291,7 +294,8 @@ static const NSTimeInterval kWaitUntilTrueRetryDelay = 0.25;
     __block NSTimeInterval startTimeInterval, endTimeInterval;
 
     SLElement *testElement = [SLElement elementWithAccessibilityLabel:@"Nothing to show here."];
-    [testElement performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+    [testElement waitUntilTappable:NO
+                 thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
         SLAskApp1(showTestViewAfterInterval:, @(expectedWaitTimeInterval));
         SLAssertTrue([[SLTerminal sharedTerminal] waitUntilFunctionWithNameIsTrue:_functionName

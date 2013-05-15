@@ -23,17 +23,13 @@
 }
 
 - (void)loadViewForTestCase:(SEL)testCase {
-    if (testCase == @selector(testCanTapElement) ||
-        testCase == @selector(testCanTapElementOnlyIfTappable) ||
-        testCase == @selector(testTapOccursAtHitpoint)) {
-        UIView *view = [[UIView alloc] initWithFrame:CGRectZero];
-        view.backgroundColor = [UIColor whiteColor];
+    UIView *view = [[UIView alloc] initWithFrame:CGRectZero];
+    view.backgroundColor = [UIColor whiteColor];
 
-        _testView = [[UIView alloc] initWithFrame:(CGRect){ .size = {100.0f, 100.0f} }];
-        [view addSubview:_testView];
+    _testView = [[UIView alloc] initWithFrame:(CGRect){ .size = {100.0f, 100.0f} }];
+    [view addSubview:_testView];
 
-        self.view = view;
-    }
+    self.view = view;
 }
 
 - (instancetype)initWithTestCaseWithSelector:(SEL)testCase {
@@ -43,6 +39,7 @@
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(resetTapRecognition)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(hideTestView)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showTestView)];
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showTestViewAfterInterval:)];
     }
     return self;
 }
@@ -89,6 +86,10 @@
 
 - (void)showTestView {
     _testView.hidden = NO;
+}
+
+- (void)showTestViewAfterInterval:(NSNumber *)intervalNumber {
+    [self performSelector:@selector(showTestView) withObject:nil afterDelay:[intervalNumber doubleValue]];
 }
 
 @end

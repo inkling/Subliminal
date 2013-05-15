@@ -25,7 +25,6 @@
 
     if (testSelector == @selector(testSetText) ||
         testSelector == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
-        testSelector == @selector(testCanSetTextOnlyWhenTappable) ||
         testSelector == @selector(testGetText)) {
         _textField = [SLTextField elementWithAccessibilityLabel:@"test element"];
     } else if (testSelector == @selector(testMatchesSearchBarTextField) ||
@@ -52,31 +51,6 @@
     NSString *const expectedText = @"foo";
     SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
     SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
-}
-
-- (void)testCanSetTextOnlyWhenTappable {
-    // try setting text when not tappable
-    SLAssertFalse([UIAElement(_textField) isTappable],
-                  @"For the purposes of this test case, the text field must not be tappable.");
-
-    SLLog(@"*** The errors seen in the test output immediately below are an expected part of the tests.");
-    NSString *const expectedText = @"foo";
-    SLAssertThrowsNamed([UIAElement(_textField) setText:expectedText],
-                        SLTerminalJavaScriptException,
-                        @"Should only be able to set text when the field is tappable.");
-    // sanity check
-    SLAssertFalse([SLAskApp(text) isEqualToString:expectedText], @"Text should not have been set.");
-
-    // make the field tappable
-    SLAskApp(showTextField);
-
-    // try setting text when tappable
-    SLAssertTrue([UIAElement(_textField) isTappable],
-                  @"The text field should now be tappable.");
-    SLAssertNoThrow([UIAElement(_textField) setText:expectedText],
-                    SLTerminalJavaScriptException,
-                    @"Should be able to set text now that the field is tappable.");
-    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text should have been set to expected value.");
 }
 
 - (void)testGetText {
