@@ -169,11 +169,11 @@ extern NSString *const SLTestExceptionLineNumberKey;
  @warning If set-up fails, this test case will be skipped and logged as having failed.
  However, -tearDownTestCaseWithSelector: will still be executed.
 
- @param testSelector The selector identifying the test case about to be run.
+ @param testCaseSelector The selector identifying the test case about to be run.
 
  @sa -tearDownTestCaseWithSelector:
  */
-- (void)setUpTestCaseWithSelector:(SEL)testSelector;
+- (void)setUpTestCaseWithSelector:(SEL)testCaseSelector;
 
 /**
  Called after each test case is run.
@@ -187,11 +187,11 @@ extern NSString *const SLTestExceptionLineNumberKey;
  @warning If tear-down fails, this test case will be logged as having failed even 
  if the test case itself succeeded.
  
- @param testSelector The selector identifying the test case that was run.
+ @param testCaseSelector The selector identifying the test case that was run.
 
  @sa -setUpTestCaseWithSelector:
  */
-- (void)tearDownTestCaseWithSelector:(SEL)testSelector;
+- (void)tearDownTestCaseWithSelector:(SEL)testCaseSelector;
 
 /**
  Returns YES if the test has at least one test case which is focused
@@ -209,6 +209,10 @@ extern NSString *const SLTestExceptionLineNumberKey;
  (as above), only those test cases will run--the narrowest focus applies.
  
  If a test is focused, that focus will apply to any tests which descend from it.
+
+ @warning Methods that take test case selectors as arguments (like 
+ -setUpTestCaseWithSelector:) are invoked with the unfocused form of the selectors
+ --they need not (and should not) be modified when a test case is focused.
 
  @warning Focused test cases will not be run if their test is not run (e.g. if
  it is not included in the set of tests to be run, or if it does not support 

@@ -39,8 +39,8 @@
                     @"App failed to present test %@.", test);
 }
 
-- (void)setUpTestCaseWithSelector:(SEL)testSelector {
-    NSString *testCase = NSStringFromSelector(testSelector);
+- (void)setUpTestCaseWithSelector:(SEL)testCaseSelector {
+    NSString *testCase = NSStringFromSelector(testCaseSelector);
     // strip focus prefix if necessary,
     // so that test case view controller doesn't have to handle the variant form
     if ([testCase hasPrefix:SLTestFocusPrefix]) {
@@ -55,7 +55,7 @@
                     @"App failed to present test case %@.", testCase);
 }
 
-- (void)tearDownTestCaseWithSelector:(SEL)testSelector {
+- (void)tearDownTestCaseWithSelector:(SEL)testCaseSelector {
     SLAskApp(dismissCurrentTestCase);
     SLWaitUntilTrue(!SLAskApp(currentTestCase), 5.0, @"App failed to dismiss current test case.");
 }
