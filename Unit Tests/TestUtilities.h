@@ -19,7 +19,20 @@ extern void SLRunTestsAndWaitUntilFinished(NSSet *tests, void (^completionBlock)
 
 
 /**
- This category provides a way for the SLTestTests to tell SLTests 
+ On load, this category sets an environment variable, SL_UNIT_TESTING, 
+ that indicates that unit tests are running. Subliminal can check this variable
+ to conditionalize code for the unit testing environment without 
+ having to be built specially for the unit tests (e.g. using a build configuration):
+ 
+    BOOL isUnitTesting = (getenv("SL_UNIT_TESTING") != NULL);
+
+ */
+@interface SLTestController (UnitTestingEnv)
+@end
+
+
+/**
+ This category provides a way for the SLTestTests to tell SLTests
  to use their various macros, where it is not possible for the SLTestTests
  to use them directly because they make reference to SLTest members when expanded.
  */

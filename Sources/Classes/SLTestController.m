@@ -116,10 +116,16 @@ static SLTestController *__sharedController = nil;
 // Having the Accessibility Inspector enabled while tests are running
 // can cause problems with touch handling and/or prevent UIAutomation's alert
 // handler from being called.
+//
+// The Accessibility Inspector shouldn't affect unit tests, though (and the
+// user directory path will be different in unit tests than when the application is running).
 - (void)warnIfAccessibilityInspectorIsEnabled {
 #if TARGET_IPHONE_SIMULATOR
-    // We detect if the Inspector is enabled by examining the simulator's Accessibility preferences
+    // To use a preprocessor macro here, we'd have to specially build Subliminal
+    // when unit testing, e.g. using a "Unit Testing" build configuration
+    if (getenv("SL_UNIT_TESTING")) return;
 
+    // We detect if the Inspector is enabled by examining the simulator's Accessibility preferences
     // 1. get into the simulator's app support directory by fetching the sandboxed Library's path
     NSString *userDirectoryPath = [[[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject] path];
 
