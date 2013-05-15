@@ -9,7 +9,7 @@ while(!_testingHasFinished) {
 	while (true) {
 		var commandIndex = _target.frontMostApp().preferencesValueForKey("commandIndex");
 		
-		if (commandIndex == _scriptIndex) {
+		if (commandIndex === _scriptIndex) {
 			break;
 		}
 		_target.delay(0.1);
@@ -27,7 +27,7 @@ while(!_testingHasFinished) {
 	} catch (e) {
 		// Special case SyntaxErrors so that we can examine the malformed command
 		var message = e.toString();
-		if ((e instanceof Error) && e.name == "SyntaxError") {
+		if ((e instanceof Error) && e.name === "SyntaxError") {
 			message += " from command: \"" + command + "\"";
 		}
 		_target.frontMostApp().setPreferencesValueForKey(message, "exception");
