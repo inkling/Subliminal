@@ -298,6 +298,18 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
  */
 - (NSUInteger)numberOfPointsFromSet:(const CGPoint *)testPointsInWindow count:(const NSUInteger)numPoints thatAreVisibleInWindow:(UIWindow *)window;
 
+/**
+ Determines if the section of the object located within the specified rect is visible
+ on the screen.
+
+ @param rect The area in which to determine if the receiver is visible. This value should
+ be provided in screen coordinates.
+
+ @return YES if the portion of the receiver within the specified rect is visible
+ within the accessibility hierarchy, NO otherwise.
+ */
+- (BOOL)slAccessibilityRectIsVisible:(CGRect)rect;
+
 @end
 
 
@@ -909,14 +921,18 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
 }
 
 - (BOOL)slAccessibilityIsVisible {
+    return [self slAccessibilityRectIsVisible:self.accessibilityFrame];
+}
+
+
+- (BOOL)slAccessibilityRectIsVisible:(CGRect)rect {
     // View is not visible if it's hidden or has very low alpha.
     if (self.hidden || self.alpha < kMinVisibleAlphaFloat) {
         return NO;
     }
 
-    // View is not visible if its center point is not inside its window.
-    const CGRect accessibilityFrame = self.accessibilityFrame;
-    const CGPoint centerInScreenCoordinates = CGPointMake(CGRectGetMidX(accessibilityFrame), CGRectGetMidY(accessibilityFrame));
+    // View is not visible within a rect if its center point is not inside its window.
+    const CGPoint centerInScreenCoordinates = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
 
     UIWindow *window = [[UIApplication sharedApplication] keyWindow];
     const CGPoint centerInWindow = [window convertPoint:centerInScreenCoordinates fromWindow:nil];
@@ -941,10 +957,10 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
     // 3.  If the center is not visible but *all four* corners are visible (strange as that would be) the view is visible.
     if ([self numberOfPointsFromSet:&centerInWindow count:1 thatAreVisibleInWindow:window] == 0) {
         // Center is covered, so check the status of the corners.
-        const CGPoint topLeftInScreenCoordinates = CGPointMake(CGRectGetMinX(accessibilityFrame), CGRectGetMinY(accessibilityFrame));
-        const CGPoint topRightInScreenCoordinates = CGPointMake(CGRectGetMaxX(accessibilityFrame) - 1.0, CGRectGetMinY(accessibilityFrame));
-        const CGPoint bottomLeftInScreenCoordinates = CGPointMake(CGRectGetMinX(accessibilityFrame), CGRectGetMaxY(accessibilityFrame) - 1.0);
-        const CGPoint bottomRightInScreenCoordinates = CGPointMake(CGRectGetMaxX(accessibilityFrame) - 1.0, CGRectGetMaxY(accessibilityFrame) - 1.0);
+        const CGPoint topLeftInScreenCoordinates = CGPointMake(CGRectGetMinX(rect), CGRectGetMinY(rect));
+        const CGPoint topRightInScreenCoordinates = CGPointMake(CGRectGetMaxX(rect) - 1.0, CGRectGetMinY(rect));
+        const CGPoint bottomLeftInScreenCoordinates = CGPointMake(CGRectGetMinX(rect), CGRectGetMaxY(rect) - 1.0);
+        const CGPoint bottomRightInScreenCoordinates = CGPointMake(CGRectGetMaxX(rect) - 1.0, CGRectGetMaxY(rect) - 1.0);
         const CGPoint topLeftInWindow = [window convertPoint:topLeftInScreenCoordinates fromWindow:nil];
         const CGPoint topRightInWindow = [window convertPoint:topRightInScreenCoordinates fromWindow:nil];
         const CGPoint bottomLeftInWindow = [window convertPoint:bottomLeftInScreenCoordinates fromWindow:nil];
