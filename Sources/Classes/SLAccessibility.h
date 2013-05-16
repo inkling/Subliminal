@@ -69,6 +69,35 @@
  */
 - (BOOL)slAccessibilityIsVisible;
 
+/**
+ Returns the SLAccessibility-specific accessibility container of the receiver.
+
+ This method is the inverse of slChildAccessibilityElementsFavoringUISubviews:,
+ and not necessarily the inverse of UIAutomation's accessibility hierarchy.
+ Objects returned from this method come with no guarantee regarding their
+ accessibility identification or existence in the accessibility hierarchy.
+
+ @return The object's superview, if it is a view; otherwise its accessibilityContainer,
+ if it is an accessibility element; otherwise `nil`.
+ */
+- (NSObject *)slAccessibilityParent;
+
+/**
+ Creates and returns an array of objects that are child accessibility elements
+ of this object.
+
+ This method is mostly a wrapper around the UIAccessibilityContainer protocol but
+ also includes subviews if the object is a UIView. It attempts to represent the
+ accessibility hierarchy used by the system.
+
+ @param favoringUISubViews If YES, subviews should be placed before
+ UIAccessibilityElements in the returned array; otherwise, they will be placed
+ afterwards.
+
+ @return An array of objects that are child accessibility elements of this object.
+ */
+- (NSArray *)slChildAccessibilityElementsFavoringUISubviews:(BOOL)favoringUISubviews;
+
 /// ----------------------------------------
 /// @name Debug methods
 /// ----------------------------------------
