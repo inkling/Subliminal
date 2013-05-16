@@ -585,7 +585,7 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
 - (BOOL)accessibilityAncestorPreventsPresenceInAccessibilityHierarchy {
     id parent = [self slAccessibilityParent];
     while (parent) {
-        if ([parent isKindOfClass:[UIControl class]] && [parent isAccessibilityElement]) {
+        if ([parent isAccessibilityElement]) {
             return YES;
         }
         parent = [parent slAccessibilityParent];
