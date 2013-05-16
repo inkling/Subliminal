@@ -190,16 +190,26 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 /*
- Subliminal's implementation of -isVisible does not rely upon UIAutomation,
- because UIAElement.isVisible() has a number of bugs. See SLElementVisibilityTest 
- for more information.
+ Subliminal's implementation of -isVisible does not rely upon UIAutomation to check
+ visibility of UIViews or UIAccessibilityElements, because UIAElement.isVisible()
+ has a number of bugs. See SLElementVisibilityTest for more information. For some classes,
+ for example those vended by UIWebBrowserView, we cannot fully determine whether or not
+ they will be visible, and must depend on UIAutomation to confirm visibility.
+ 
  */
 - (BOOL)isVisible {
     __block BOOL isVisible = NO;
+    __block BOOL matchedObjectOfUnknownClass = NO;
     // isVisible evaluates the current state, no waiting to resolve the element
     [self examineMatchingObject:^(NSObject *object) {
         isVisible = [object slAccessibilityIsVisible];
+        matchedObjectOfUnknownClass = ![object isKindOfClass:[UIView class]] && ![object isKindOfClass:[UIAccessibilityElement class]];
     } timeout:0.0];
+
+    if (isVisible && matchedObjectOfUnknownClass) {
+        isVisible = [[self sendMessage:@"isVisible()"] boolValue];
+    }
+
     return isVisible;
 }
 
