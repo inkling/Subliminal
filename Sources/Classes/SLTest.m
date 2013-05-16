@@ -68,8 +68,9 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
 
 + (BOOL)isFocused {    
     for (NSString *testCaseName in [self focusedTestCases]) {
-        SEL testCaseSelector = NSSelectorFromString(testCaseName);
-        if ([self testCaseWithSelectorSupportsCurrentPlatform:testCaseSelector]) return YES;
+        // pass the unfocused selector, as focus is temporary and shouldn't require modifying the test infrastructure
+        SEL unfocusedTestCaseSelector = NSSelectorFromString([self unfocusedTestCaseName:testCaseName]);
+        if ([self testCaseWithSelectorSupportsCurrentPlatform:unfocusedTestCaseSelector]) return YES;
     }
     return NO;
 }
@@ -111,11 +112,11 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     // nothing to do here
 }
 
-- (void)setUpTestCaseWithSelector:(SEL)testSelector {
+- (void)setUpTestCaseWithSelector:(SEL)testCaseSelector {
     // nothing to do here
 }
 
-- (void)tearDownTestCaseWithSelector:(SEL)testSelector {
+- (void)tearDownTestCaseWithSelector:(SEL)testCaseSelector {
     // nothing to do here
 }
 
@@ -137,11 +138,7 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
                 NSString *selectorString = NSStringFromSelector(selector);
 
                 // ignore the focus prefix for the purposes of aggregating all the test cases
-                NSString *unfocusedTestCaseName = selectorString;
-                NSRange rangeOfFocusPrefix = [selectorString rangeOfString:SLTestFocusPrefix];
-                if (rangeOfFocusPrefix.location != NSNotFound) {
-                    unfocusedTestCaseName = [selectorString substringFromIndex:NSMaxRange(rangeOfFocusPrefix)];
-                }
+                NSString *unfocusedTestCaseName = [self unfocusedTestCaseName:selectorString];
 
                 if ([unfocusedTestCaseName hasPrefix:kTestCaseNamePrefix] &&
                     methodReturnType && strlen(methodReturnType) > 0 && methodReturnType[0] == 'v' &&
@@ -198,9 +195,18 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
 + (NSSet *)testCasesToRun {
     NSSet *baseTestCases = (([[self class] isFocused]) ? [[self class] focusedTestCases] : [[self class] testCases]);
     return [baseTestCases filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
-        SEL testCaseSelector = NSSelectorFromString(evaluatedObject);
-        return [[self class] testCaseWithSelectorSupportsCurrentPlatform:testCaseSelector];
+        // pass the unfocused selector, as focus is temporary and shouldn't require modifying the test infrastructure
+        SEL unfocusedTestCaseSelector = NSSelectorFromString([self unfocusedTestCaseName:evaluatedObject]);
+        return [[self class] testCaseWithSelectorSupportsCurrentPlatform:unfocusedTestCaseSelector];
     }]];
+}
+
++ (NSString *)unfocusedTestCaseName:(NSString *)testCase {
+    NSRange rangeOfFocusPrefix = [testCase rangeOfString:SLTestFocusPrefix];
+    if (rangeOfFocusPrefix.location == 0) {
+        testCase = [testCase substringFromIndex:NSMaxRange(rangeOfFocusPrefix)];
+    }
+    return testCase;
 }
 
 + (BOOL)testCaseWithSelectorSupportsCurrentPlatform:(SEL)testCaseSelector {
@@ -229,15 +235,20 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
         NSString *test = NSStringFromClass([self class]);
         for (NSString *testCaseName in [[self class] testCasesToRun]) {
             @autoreleasepool {
+                // all logs below use the focused name, so that the logs are consistent
+                // wit what's actually running
                 [[SLLogger sharedLogger] logTest:test caseStart:testCaseName];
 
-                SEL testCaseSelector = NSSelectorFromString(testCaseName);
+                // but pass the unfocused selector to setUp/tearDown methods,
+                // because focus is temporary and shouldn't require modifying the test infrastructure
+                SEL unfocusedTestCaseSelector = NSSelectorFromString([[self class] unfocusedTestCaseName:testCaseName]);
                 BOOL caseFailed = NO;
                 @try {            
-                    [self setUpTestCaseWithSelector:testCaseSelector];
+                    [self setUpTestCaseWithSelector:unfocusedTestCaseSelector];
                     
                     // We use objc_msgSend so that Clang won't complain about performSelector leaks
-                    ((void(*)(id, SEL))objc_msgSend)(self, testCaseSelector);
+                    // Make sure to send the actual selector
+                    ((void(*)(id, SEL))objc_msgSend)(self, NSSelectorFromString(testCaseName));
                 }
                 @catch (NSException *e) {
                     // Catch all exceptions in test cases. If the app is in an inconsistent state then -tearDown: should abort completely.
@@ -247,7 +258,7 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
                 @finally {
                     // tear-down test case last so that it always executes, regardless of earlier failures
                     @try {
-                        [self tearDownTestCaseWithSelector:testCaseSelector];
+                        [self tearDownTestCaseWithSelector:unfocusedTestCaseSelector];
                     }
                     @catch (NSException *e) {
                         [self logException:e inTestCase:testCaseName];

@@ -323,6 +323,27 @@
     STAssertNoThrow([testWhereNarrowestFocusAppliesClassMock verify], @"Test cases did not execute as expected.");
 }
 
+- (void)testMethodsThatTakeTestCaseSelectorsAsArgumentsAreInvokedWithUnfocusedSelectors {
+    Class testWithAFocusedTestCaseClass = [TestWithAFocusedTestCase class];
+
+    id testWithAFocusedTestCaseClassObjectMock = [OCMockObject partialMockForClassObject:testWithAFocusedTestCaseClass];
+    id testWithAFocusedTestCaseClassMock = [OCMockObject partialMockForClass:testWithAFocusedTestCaseClass];
+
+    // expect the focused test case to run
+    [[testWithAFocusedTestCaseClassMock expect] focus_testTwo];
+
+    // but expect the test infrastructure to use the unfocused selector
+    // this allows test writers to avoid modifying the rest of their test when they focus a test case
+    // make sure we invoke the real implementation of -testCaseWithSelectorSupportsCurrentPlatform or else the case won't run!
+    [[[testWithAFocusedTestCaseClassObjectMock expect] andForwardToRealObject] testCaseWithSelectorSupportsCurrentPlatform:@selector(testTwo)];
+    [[testWithAFocusedTestCaseClassMock expect] setUpTestCaseWithSelector:@selector(testTwo)];
+    [[testWithAFocusedTestCaseClassMock expect] tearDownTestCaseWithSelector:@selector(testTwo)];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithAFocusedTestCaseClass], nil);
+    STAssertNoThrow([testWithAFocusedTestCaseClassObjectMock verify], @"Test cases did not execute as expected.");
+    STAssertNoThrow([testWithAFocusedTestCaseClassMock verify], @"Test cases did not execute as expected.");
+}
+
 - (void)testFocusedTestCasesMustSupportTheCurrentPlatformInOrderToRun {
     Class testWithAFocusedPlatformSpecificTestCaseClass = [TestWithAFocusedPlatformSpecificTestCase class];
 

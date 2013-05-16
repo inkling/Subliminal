@@ -21,10 +21,10 @@
     return @"SLAlertTestViewController";
 }
 
-- (void)tearDownTestCaseWithSelector:(SEL)testSelector {
+- (void)tearDownTestCaseWithSelector:(SEL)testCaseSelector {
     SLAskApp(dismissActiveAlertAndClearTitleOfLastButtonClicked);
 
-    [super tearDownTestCaseWithSelector:testSelector];
+    [super tearDownTestCaseWithSelector:testCaseSelector];
 }
 
 #pragma mark - Automatic dismissal

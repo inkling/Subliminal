@@ -26,6 +26,15 @@ void SLRunTestsAndWaitUntilFinished(NSSet *tests, void (^completionBlock)()) {
 }
 
 
+@implementation SLTestController (UnitTestingEnv)
+
++ (void)load {
+    setenv("SL_UNIT_TESTING", "YES", 1);
+}
+
+@end
+
+
 @implementation SLTest (SLTestTestsMacroHelpers)
 
 - (void)slAssertFailAtFilename:(NSString *__autoreleasing *)filename lineNumber:(int *)lineNumber {

@@ -20,11 +20,11 @@
     return @"SLElementMatchingTestViewController";
 }
 
-- (void)tearDownTestCaseWithSelector:(SEL)testSelector {
-    if (testSelector == @selector(testMatchingPopoverChildElement_iPad)) {
+- (void)tearDownTestCaseWithSelector:(SEL)testCaseSelector {
+    if (testCaseSelector == @selector(testMatchingPopoverChildElement_iPad)) {
         SLAskApp(hidePopover);
     }
-    [super tearDownTestCaseWithSelector:testSelector];
+    [super tearDownTestCaseWithSelector:testCaseSelector];
 }
 
 #pragma mark - Matching basics
