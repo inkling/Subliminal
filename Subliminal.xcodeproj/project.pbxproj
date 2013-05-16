@@ -61,6 +61,8 @@
 		F07DA32D16E43AD3004C2282 /* SLAlertTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DA32B16E43AD3004C2282 /* SLAlertTest.m */; };
 		F07DA32E16E43AD3004C2282 /* SLAlertTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DA32C16E43AD3004C2282 /* SLAlertTestViewController.m */; };
 		F08005591730762C00198F6F /* Inklings~iPhone.webarchive in Resources */ = {isa = PBXBuildFile; fileRef = F08005581730762C00198F6F /* Inklings~iPhone.webarchive */; };
+		F089F99417458BA300DF1F25 /* SLWindowTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F089F99217458BA300DF1F25 /* SLWindowTest.m */; };
+		F089F99517458BA300DF1F25 /* SLWindowTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F089F99317458BA300DF1F25 /* SLWindowTestViewController.m */; };
 		F08B86EB16859C8D00C4FE44 /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F08B86DB16859C4000C4FE44 /* libOCMock.a */; };
 		F08B87F21685A00400C4FE44 /* SharedSLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F08B87F11685A00400C4FE44 /* SharedSLTests.m */; };
 		F08B87F51685A07B00C4FE44 /* SLTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F08B87F41685A07B00C4FE44 /* SLTestTests.m */; };
@@ -240,6 +242,8 @@
 		F07DA32C16E43AD3004C2282 /* SLAlertTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAlertTestViewController.m; sourceTree = "<group>"; };
 		F08005581730762C00198F6F /* Inklings~iPhone.webarchive */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "Inklings~iPhone.webarchive"; sourceTree = "<group>"; };
 		F081539D170CBF550053B536 /* Integration Tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Integration Tests.xcconfig"; sourceTree = "<group>"; };
+		F089F99217458BA300DF1F25 /* SLWindowTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLWindowTest.m; sourceTree = "<group>"; };
+		F089F99317458BA300DF1F25 /* SLWindowTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLWindowTestViewController.m; sourceTree = "<group>"; };
 		F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OCMock.xcodeproj; path = OCMock/Source/OCMock.xcodeproj; sourceTree = "<group>"; };
 		F08B87F01685A00400C4FE44 /* SharedSLTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedSLTests.h; sourceTree = "<group>"; };
 		F08B87F11685A00400C4FE44 /* SharedSLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharedSLTests.m; sourceTree = "<group>"; };
@@ -546,6 +550,15 @@
 			name = "SLAlert Tests";
 			sourceTree = "<group>";
 		};
+		F089F98E17458B7400DF1F25 /* SLWindow Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F089F99217458BA300DF1F25 /* SLWindowTest.m */,
+				F089F99317458BA300DF1F25 /* SLWindowTestViewController.m */,
+			);
+			name = "SLWindow Tests";
+			sourceTree = "<group>";
+		};
 		F08B86CA16859B1A00C4FE44 /* OCMock */ = {
 			isa = PBXGroup;
 			children = (
@@ -609,6 +622,7 @@
 				0696BA5E16E013DF00DD70CF /* SLElement Gestures and Actions Tests */,
 				F01EBC951701150E00FF6A7C /* SLTextField Tests */,
 				F013798E16D0843B009BAF22 /* SLTerminal Tests */,
+				F089F98E17458B7400DF1F25 /* SLWindow Tests */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -951,6 +965,8 @@
 				F0B868EC1740A146008BDA80 /* SLTerminalTestViewController.m in Sources */,
 				F0CC759A173B097800E8F94A /* SLElementTapTest.m in Sources */,
 				F0CC759B173B097800E8F94A /* SLElementTapTestViewController.m in Sources */,
+				F089F99417458BA300DF1F25 /* SLWindowTest.m in Sources */,
+				F089F99517458BA300DF1F25 /* SLWindowTestViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

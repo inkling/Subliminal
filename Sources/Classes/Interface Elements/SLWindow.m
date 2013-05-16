@@ -12,14 +12,13 @@
 @implementation SLWindow
 
 + (SLWindow *)mainWindow {
-    return [SLWindow elementMatching:^BOOL(NSObject *obj) {
-        return YES;
+    return [self elementMatching:^BOOL(NSObject *obj) {
+        return (obj == [[UIApplication sharedApplication] keyWindow]);
     } withDescription:@"Main Window"];
 }
 
-
-- (NSString *)staticUIARepresentation {
-    return @"UIATarget.localTarget().frontMostApp().mainWindow()";
+- (BOOL)matchesObject:(NSObject *)object {
+    return [super matchesObject:object] && [object isKindOfClass:[UIWindow class]];
 }
 
 @end
