@@ -298,6 +298,18 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
  */
 - (NSUInteger)numberOfPointsFromSet:(const CGPoint *)testPointsInWindow count:(const NSUInteger)numPoints thatAreVisibleInWindow:(UIWindow *)window;
 
+/**
+ Determines if the section of the object located within the specified rect is visible
+ on the screen.
+
+ @param rect The area in which to determine if the receiver is visible. This value should
+ be provided in screen coordinates.
+
+ @return YES if the portion of the receiver within the specified rect is visible
+ within the accessibility hierarchy, NO otherwise.
+ */
+- (BOOL)slAccessibilityRectIsVisible:(CGRect)rect;
+
 @end
 
 
@@ -371,44 +383,19 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
 }
 
 // There are objects in the accessibility hierarchy which are neither UIAccessibilityElements
-// nor UIViews, e.g. the elements vended by UIWebBrowserViews. We attempt to
-// locate these elements in the hierarchy using an implementation
-// similar to UIAccessibilityElement's.
+// nor UIViews, e.g. the elements vended by UIWebBrowserViews. For these objects we cannot
+// determine whether or not they are visible directly, instead we determine whether the area
+// they occupy is visible within their first UIView accessibility ancestor.
 - (BOOL)slAccessibilityIsVisible {
-    CGPoint testPoint = CGPointMake(CGRectGetMidX(self.accessibilityFrame),
-                                    CGRectGetMidY(self.accessibilityFrame));
-
     if (![self respondsToSelector:@selector(accessibilityContainer)]) {
         SLLogAsync(@"Cannot locate %@ in the accessibility hierarchy. Returning -NO from -slAccessibilityIsVisible.", self);
         return NO;
     }
 
-    // we first determine that we are the foremost element within our containment hierarchy
-    id parentOrSelf = self;
     id container = [self performSelector:@selector(accessibilityContainer)];
     while (container) {
-        // UIAutomation ignores accessibilityElementsHidden, so we do too
-
-        NSInteger elementCount = [container accessibilityElementCount];
-        NSAssert(((elementCount != NSNotFound) && (elementCount > 0)),
-                 @"%@'s accessibility container should implement the UIAccessibilityContainer protocol.", self);
-        for (NSInteger idx = 0; idx < elementCount; idx++) {
-            id element = [container accessibilityElementAtIndex:idx];
-            if (element == parentOrSelf) break;
-            // UIWebBrowserViews vend an element whose container is not the UIWebBrowserView
-            // but rather, whose container's container is the UIWebBrowserView
-            if ([element respondsToSelector:@selector(accessibilityContainer)] &&
-                [element performSelector:@selector(accessibilityContainer)] == parentOrSelf) break;
-
-            // if another element comes before us/our parent in the array
-            // (thus is z-ordered before us/our parent)
-            // and contains our hitpoint, it covers us
-            if (CGRectContainsPoint([element accessibilityFrame], testPoint)) return NO;
-        }
-
         // we should eventually reach a container that is a view
-        // --the accessibility hierarchy begins with the main window if nothing else--
-        // at which point we test the rest of the hierarchy using hit-testing
+        // --the accessibility hierarchy begins with the main window if nothing else
         if ([container isKindOfClass:[UIView class]]) break;
 
         // it's not a requirement that accessibility containers vend UIAccessibilityElements,
@@ -417,14 +404,13 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
             SLLogAsync(@"Cannot locate %@ in the accessibility hierarchy. Returning -NO from -slAccessibilityIsVisible.", self);
             return NO;
         }
-        parentOrSelf = container;
         container = [container accessibilityContainer];
     }
 
     NSAssert([container isKindOfClass:[UIView class]],
              @"Every accessibility hierarchy should be rooted in a view.");
     UIView *viewContainer = (UIView *)container;
-    return [viewContainer slAccessibilityIsVisible];
+    return [viewContainer slAccessibilityRectIsVisible:self.accessibilityFrame];
 }
 
 - (NSString *)slAccessibilityDescription {
@@ -909,14 +895,18 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
 }
 
 - (BOOL)slAccessibilityIsVisible {
+    return [self slAccessibilityRectIsVisible:self.accessibilityFrame];
+}
+
+
+- (BOOL)slAccessibilityRectIsVisible:(CGRect)rect {
     // View is not visible if it's hidden or has very low alpha.
     if (self.hidden || self.alpha < kMinVisibleAlphaFloat) {
         return NO;
     }
 
-    // View is not visible if its center point is not inside its window.
-    const CGRect accessibilityFrame = self.accessibilityFrame;
-    const CGPoint centerInScreenCoordinates = CGPointMake(CGRectGetMidX(accessibilityFrame), CGRectGetMidY(accessibilityFrame));
+    // View is not visible within a rect if its center point is not inside its window.
+    const CGPoint centerInScreenCoordinates = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
 
     UIWindow *window = [[UIApplication sharedApplication] keyWindow];
     const CGPoint centerInWindow = [window convertPoint:centerInScreenCoordinates fromWindow:nil];
@@ -941,10 +931,10 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
     // 3.  If the center is not visible but *all four* corners are visible (strange as that would be) the view is visible.
     if ([self numberOfPointsFromSet:&centerInWindow count:1 thatAreVisibleInWindow:window] == 0) {
         // Center is covered, so check the status of the corners.
-        const CGPoint topLeftInScreenCoordinates = CGPointMake(CGRectGetMinX(accessibilityFrame), CGRectGetMinY(accessibilityFrame));
-        const CGPoint topRightInScreenCoordinates = CGPointMake(CGRectGetMaxX(accessibilityFrame) - 1.0, CGRectGetMinY(accessibilityFrame));
-        const CGPoint bottomLeftInScreenCoordinates = CGPointMake(CGRectGetMinX(accessibilityFrame), CGRectGetMaxY(accessibilityFrame) - 1.0);
-        const CGPoint bottomRightInScreenCoordinates = CGPointMake(CGRectGetMaxX(accessibilityFrame) - 1.0, CGRectGetMaxY(accessibilityFrame) - 1.0);
+        const CGPoint topLeftInScreenCoordinates = CGPointMake(CGRectGetMinX(rect), CGRectGetMinY(rect));
+        const CGPoint topRightInScreenCoordinates = CGPointMake(CGRectGetMaxX(rect) - 1.0, CGRectGetMinY(rect));
+        const CGPoint bottomLeftInScreenCoordinates = CGPointMake(CGRectGetMinX(rect), CGRectGetMaxY(rect) - 1.0);
+        const CGPoint bottomRightInScreenCoordinates = CGPointMake(CGRectGetMaxX(rect) - 1.0, CGRectGetMaxY(rect) - 1.0);
         const CGPoint topLeftInWindow = [window convertPoint:topLeftInScreenCoordinates fromWindow:nil];
         const CGPoint topRightInWindow = [window convertPoint:topRightInScreenCoordinates fromWindow:nil];
         const CGPoint bottomLeftInWindow = [window convertPoint:bottomLeftInScreenCoordinates fromWindow:nil];
