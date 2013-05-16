@@ -1055,6 +1055,13 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
 @end
 
 
+@implementation UIWindow (SLAccessibility)
+- (BOOL)classForcesPresenceInAccessibilityHierarchy {
+    return YES;
+}
+@end
+
+
 #pragma mark - SLAccessibilityPath implementation
 
 @implementation SLAccessibilityPath {
@@ -1218,7 +1225,7 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
 }
 
 - (NSString *)UIARepresentation {
-    __block NSMutableString *uiaRepresentation = [@"UIATarget.localTarget().frontMostApp().mainWindow()" mutableCopy];
+    __block NSMutableString *uiaRepresentation = [@"UIATarget.localTarget().frontMostApp()" mutableCopy];
     dispatch_sync(dispatch_get_main_queue(), ^{
         for (SLMainThreadRef *objRef in _accessibilityElementPath) {
             NSObject *obj = [objRef target];
