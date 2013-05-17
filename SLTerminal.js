@@ -1,15 +1,19 @@
 
 var _target = UIATarget.localTarget();
 
-var _scriptIndex = 0;
-var _testingHasFinished = false;
+// SLTerminal's namespace, used to denote properties of the terminal
+// and to avoid collisions with UIAutomation/arbitrary JS executed by/using Subliminal
+var SLTerminal = {} 
 
-while(!_testingHasFinished) {
+SLTerminal.scriptIndex = 0;
+SLTerminal.hasShutDown = false;
+
+while(!SLTerminal.hasShutDown) {
 	// Wait for a command from SLTerminal
 	while (true) {
 		var commandIndex = _target.frontMostApp().preferencesValueForKey("commandIndex");
 		
-		if (commandIndex == _scriptIndex) {
+		if (commandIndex === SLTerminal.scriptIndex) {
 			break;
 		}
 		_target.delay(0.1);
@@ -18,7 +22,7 @@ while(!_testingHasFinished) {
 	// Read the command
 	var command = _target.frontMostApp().preferencesValueForKey("command");
 	// Uncomment to better understand what UIAutomation's doing (it may take awhile)
-	//UIALogger.logMessage("command:" + _scriptIndex + ": " + command);
+	//UIALogger.logMessage("command:" + SLTerminal.scriptIndex + ": " + command);
 	
 	// Evaluate the command
 	var result = null;
@@ -27,7 +31,7 @@ while(!_testingHasFinished) {
 	} catch (e) {
 		// Special case SyntaxErrors so that we can examine the malformed command
 		var message = e.toString();
-		if ((e instanceof Error) && e.name == "SyntaxError") {
+		if ((e instanceof Error) && e.name === "SyntaxError") {
 			message += " from command: \"" + command + "\"";
 		}
 		_target.frontMostApp().setPreferencesValueForKey(message, "exception");
@@ -43,6 +47,6 @@ while(!_testingHasFinished) {
 	_target.frontMostApp().setPreferencesValueForKey(result, "result");
 
 	// Notify SLTerminal that we've finished evaluation
-	_target.frontMostApp().setPreferencesValueForKey(_scriptIndex, "resultIndex");
-	_scriptIndex++;
+	_target.frontMostApp().setPreferencesValueForKey(SLTerminal.scriptIndex, "resultIndex");
+	SLTerminal.scriptIndex++;
 }

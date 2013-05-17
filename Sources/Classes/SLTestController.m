@@ -235,7 +235,7 @@ static SLTestController *__sharedController = nil;
 
     // NOTE: Everything below the next line will not execute when running with Instruments attached,
     // because the UIAutomation script will terminate, and then the app.
-    [[SLTerminal sharedTerminal] eval:@"_testingHasFinished = true;"];
+    [[SLTerminal sharedTerminal] shutDown];
 
     // clear controller state (important when testing Subliminal, when the controller will test repeatedly)
     _numTestsExecuted = 0;

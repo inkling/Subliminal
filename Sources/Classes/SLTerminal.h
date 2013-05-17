@@ -44,4 +44,28 @@ extern const NSTimeInterval SLTerminalReadRetryDelay;
 - (id)eval:(NSString *)script;
 - (id)evalWithFormat:(NSString *)script, ... NS_FORMAT_FUNCTION(1, 2);
 
+/**
+ Causes SLTerminal.js to finish evaluating commands.
+
+ The terminal starts up automatically when the UIAutomation instrument is attached
+ and evaluating SLTerminal.js. SLTerminal.js then evaluates commands (scripts) 
+ sent through this terminal until this method is called, at which point 
+ SLTerminal.js will exit, and UIAutomation will terminate the application.
+ 
+ This method is called by the shared test controller when testing has finished.
+
+ */
+- (void)shutDown;
+
+@end
+
+
+@interface SLTerminal (Internal)
+
+/** The namespace (in SLTerminal.js) in which the SLTerminal defines variables. */
+@property (nonatomic, readonly) NSString *scriptNamespace;
+
+/** The serial queue on which the receiver evaluates all Javascript. */
+@property (nonatomic, readonly) dispatch_queue_t evalQueue;
+
 @end

@@ -13,7 +13,7 @@
 #import "SLTest.h"
 
 #import "SLTerminal.h"
-#import "SLTerminal+ConvenienceMethods.h"
+#import "SLTerminal+ConvenienceFunctions.h"
 
 #import "SLDevice.h"
 #import "SLElement.h"

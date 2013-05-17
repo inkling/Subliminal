@@ -35,8 +35,8 @@
 		F043A9BE1729CFFE00A4FD1D /* SLElementVisibilityTestElementHidden.xib in Resources */ = {isa = PBXBuildFile; fileRef = F043A9BD1729CFFE00A4FD1D /* SLElementVisibilityTestElementHidden.xib */; };
 		F043A9C01729EFD100A4FD1D /* SLElementVisibilityTestUserInteractionDisabled.xib in Resources */ = {isa = PBXBuildFile; fileRef = F043A9BF1729EFD100A4FD1D /* SLElementVisibilityTestUserInteractionDisabled.xib */; };
 		F043A9C7172A160600A4FD1D /* SLElementVisibilityTest.html in Resources */ = {isa = PBXBuildFile; fileRef = F043A9C6172A160600A4FD1D /* SLElementVisibilityTest.html */; };
-		F05C4F90171406EF00A381BC /* SLTerminal+ConvenienceMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = F05C4F8E171406EF00A381BC /* SLTerminal+ConvenienceMethods.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F05C4F91171406EF00A381BC /* SLTerminal+ConvenienceMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = F05C4F8F171406EF00A381BC /* SLTerminal+ConvenienceMethods.m */; };
+		F05C4F90171406EF00A381BC /* SLTerminal+ConvenienceFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = F05C4F8E171406EF00A381BC /* SLTerminal+ConvenienceFunctions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F05C4F91171406EF00A381BC /* SLTerminal+ConvenienceFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = F05C4F8F171406EF00A381BC /* SLTerminal+ConvenienceFunctions.m */; };
 		F05C51E5171C8AE000A381BC /* SLMainThreadRef.h in Headers */ = {isa = PBXBuildFile; fileRef = F05C51E3171C8AE000A381BC /* SLMainThreadRef.h */; settings = {ATTRIBUTES = (); }; };
 		F05C51E6171C8AE000A381BC /* SLMainThreadRef.m in Sources */ = {isa = PBXBuildFile; fileRef = F05C51E4171C8AE000A381BC /* SLMainThreadRef.m */; };
 		F05C51EC171C90B000A381BC /* SLMainThreadRefTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F05C51EB171C90B000A381BC /* SLMainThreadRefTests.m */; };
@@ -86,6 +86,7 @@
 		F0AC80E616BCF91800C5D5C0 /* SLTestCaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AC80E516BCF91800C5D5C0 /* SLTestCaseViewController.m */; };
 		F0AE4C8D16F7F92D00B2BB2B /* SLElementStateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AE4C8B16F7F92D00B2BB2B /* SLElementStateTest.m */; };
 		F0AE4C8E16F7F92D00B2BB2B /* SLElementStateTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AE4C8C16F7F92D00B2BB2B /* SLElementStateTestViewController.m */; };
+		F0B868EC1740A146008BDA80 /* SLTerminalTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B868EB1740A146008BDA80 /* SLTerminalTestViewController.m */; };
 		F0C07A381703F95B00C93F93 /* SLAlert.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A361703F95B00C93F93 /* SLAlert.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0C07A391703F95B00C93F93 /* SLAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C07A371703F95B00C93F93 /* SLAlert.m */; };
 		F0C07A3F1703F9A900C93F93 /* SLElement+Subclassing.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A3D1703F9A900C93F93 /* SLElement+Subclassing.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -101,6 +102,8 @@
 		F0C07A541704011400C93F93 /* SLKeyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C07A521704011300C93F93 /* SLKeyboard.m */; };
 		F0C07A57170401E500C93F93 /* SLWebView.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A55170401E400C93F93 /* SLWebView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0C07A58170401E500C93F93 /* SLWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C07A56170401E500C93F93 /* SLWebView.m */; };
+		F0C27CDF1741694900335A41 /* SLElementStateTestMidpointCovered.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C27CDE1741694900335A41 /* SLElementStateTestMidpointCovered.xib */; };
+		F0C27CE917416EC400335A41 /* SLElementStateTestCompletelyCovered.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C27CE817416EC400335A41 /* SLElementStateTestCompletelyCovered.xib */; };
 		F0C4DB4817388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C4DB4717388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib */; };
 		F0CE9FFD16D60E2C008A3B4A /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F08B86DB16859C4000C4FE44 /* libOCMock.a */; };
 		F0CEA00216D60EAD008A3B4A /* SLDeviceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CE9FFF16D60EAD008A3B4A /* SLDeviceTest.m */; };
@@ -206,8 +209,8 @@
 		F043A9BD1729CFFE00A4FD1D /* SLElementVisibilityTestElementHidden.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestElementHidden.xib; sourceTree = "<group>"; };
 		F043A9BF1729EFD100A4FD1D /* SLElementVisibilityTestUserInteractionDisabled.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestUserInteractionDisabled.xib; sourceTree = "<group>"; };
 		F043A9C6172A160600A4FD1D /* SLElementVisibilityTest.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = SLElementVisibilityTest.html; sourceTree = "<group>"; };
-		F05C4F8E171406EF00A381BC /* SLTerminal+ConvenienceMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLTerminal+ConvenienceMethods.h"; sourceTree = "<group>"; };
-		F05C4F8F171406EF00A381BC /* SLTerminal+ConvenienceMethods.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SLTerminal+ConvenienceMethods.m"; sourceTree = "<group>"; };
+		F05C4F8E171406EF00A381BC /* SLTerminal+ConvenienceFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLTerminal+ConvenienceFunctions.h"; sourceTree = "<group>"; };
+		F05C4F8F171406EF00A381BC /* SLTerminal+ConvenienceFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SLTerminal+ConvenienceFunctions.m"; sourceTree = "<group>"; };
 		F05C51E3171C8AE000A381BC /* SLMainThreadRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLMainThreadRef.h; sourceTree = "<group>"; };
 		F05C51E4171C8AE000A381BC /* SLMainThreadRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLMainThreadRef.m; sourceTree = "<group>"; };
 		F05C51EB171C90B000A381BC /* SLMainThreadRefTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLMainThreadRefTests.m; sourceTree = "<group>"; };
@@ -266,6 +269,7 @@
 		F0AC80E516BCF91800C5D5C0 /* SLTestCaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestCaseViewController.m; sourceTree = "<group>"; };
 		F0AE4C8B16F7F92D00B2BB2B /* SLElementStateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementStateTest.m; sourceTree = "<group>"; };
 		F0AE4C8C16F7F92D00B2BB2B /* SLElementStateTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementStateTestViewController.m; sourceTree = "<group>"; };
+		F0B868EB1740A146008BDA80 /* SLTerminalTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTerminalTestViewController.m; sourceTree = "<group>"; };
 		F0C07A361703F95B00C93F93 /* SLAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLAlert.h; sourceTree = "<group>"; };
 		F0C07A371703F95B00C93F93 /* SLAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAlert.m; sourceTree = "<group>"; };
 		F0C07A3D1703F9A900C93F93 /* SLElement+Subclassing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLElement+Subclassing.h"; sourceTree = "<group>"; };
@@ -281,6 +285,8 @@
 		F0C07A521704011300C93F93 /* SLKeyboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLKeyboard.m; sourceTree = "<group>"; };
 		F0C07A55170401E400C93F93 /* SLWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLWebView.h; sourceTree = "<group>"; };
 		F0C07A56170401E500C93F93 /* SLWebView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLWebView.m; sourceTree = "<group>"; };
+		F0C27CDE1741694900335A41 /* SLElementStateTestMidpointCovered.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementStateTestMidpointCovered.xib; sourceTree = "<group>"; };
+		F0C27CE817416EC400335A41 /* SLElementStateTestCompletelyCovered.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementStateTestCompletelyCovered.xib; sourceTree = "<group>"; };
 		F0C4DB4717388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestSuperviewWithVisibleSubview.xib; sourceTree = "<group>"; };
 		F0CE9FFF16D60EAD008A3B4A /* SLDeviceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDeviceTest.m; sourceTree = "<group>"; };
 		F0CEA00016D60EAD008A3B4A /* SLDeviceTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDeviceTestViewController.m; sourceTree = "<group>"; };
@@ -368,6 +374,7 @@
 		F013798E16D0843B009BAF22 /* SLTerminal Tests */ = {
 			isa = PBXGroup;
 			children = (
+				F0B868EB1740A146008BDA80 /* SLTerminalTestViewController.m */,
 				F0AC80C316BC355D00C5D5C0 /* SLTerminalTest.m */,
 			);
 			name = "SLTerminal Tests";
@@ -454,8 +461,8 @@
 				F0695DE1160138DF000B05D0 /* SLTest.m */,
 				F0695DDE160138DF000B05D0 /* SLTerminal.h */,
 				F0695DDF160138DF000B05D0 /* SLTerminal.m */,
-				F05C4F8E171406EF00A381BC /* SLTerminal+ConvenienceMethods.h */,
-				F05C4F8F171406EF00A381BC /* SLTerminal+ConvenienceMethods.m */,
+				F05C4F8E171406EF00A381BC /* SLTerminal+ConvenienceFunctions.h */,
+				F05C4F8F171406EF00A381BC /* SLTerminal+ConvenienceFunctions.m */,
 				F05C51E3171C8AE000A381BC /* SLMainThreadRef.h */,
 				F05C51E4171C8AE000A381BC /* SLMainThreadRef.m */,
 				F0695DD6160138DF000B05D0 /* Interface Elements */,
@@ -608,6 +615,8 @@
 			children = (
 				F0AE4C8B16F7F92D00B2BB2B /* SLElementStateTest.m */,
 				F0AE4C8C16F7F92D00B2BB2B /* SLElementStateTestViewController.m */,
+				F0C27CDE1741694900335A41 /* SLElementStateTestMidpointCovered.xib */,
+				F0C27CE817416EC400335A41 /* SLElementStateTestCompletelyCovered.xib */,
 			);
 			name = "SLElement State Tests";
 			sourceTree = "<group>";
@@ -675,7 +684,7 @@
 				F0C07A4F1704009E00C93F93 /* SLWindow.h in Headers */,
 				F0C07A531704011400C93F93 /* SLKeyboard.h in Headers */,
 				F0C07A57170401E500C93F93 /* SLWebView.h in Headers */,
-				F05C4F90171406EF00A381BC /* SLTerminal+ConvenienceMethods.h in Headers */,
+				F05C4F90171406EF00A381BC /* SLTerminal+ConvenienceFunctions.h in Headers */,
 				F05C51E5171C8AE000A381BC /* SLMainThreadRef.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -833,6 +842,8 @@
 				F0C4DB4817388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib in Resources */,
 				064B6F55173B13E9004AB1BF /* SLElementVisibilityTestCoveredByClearRegion.xib in Resources */,
 				064B6FC7173DCE9A004AB1BF /* SLElementVisibilityWithSubviews.xib in Resources */,
+				F0C27CDF1741694900335A41 /* SLElementStateTestMidpointCovered.xib in Resources */,
+				F0C27CE917416EC400335A41 /* SLElementStateTestCompletelyCovered.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -885,7 +896,7 @@
 				F0C07A501704009E00C93F93 /* SLWindow.m in Sources */,
 				F0C07A541704011400C93F93 /* SLKeyboard.m in Sources */,
 				F0C07A58170401E500C93F93 /* SLWebView.m in Sources */,
-				F05C4F91171406EF00A381BC /* SLTerminal+ConvenienceMethods.m in Sources */,
+				F05C4F91171406EF00A381BC /* SLTerminal+ConvenienceFunctions.m in Sources */,
 				F05C51E6171C8AE000A381BC /* SLMainThreadRef.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -915,6 +926,7 @@
 				F01EBC9C170115B100FF6A7C /* SLTextFieldTestViewController.m in Sources */,
 				F077D70D16D9D77900908FF5 /* SLElementVisibilityTest.m in Sources */,
 				F077D70E16D9D77900908FF5 /* SLElementVisibilityTestViewController.m in Sources */,
+				F0B868EC1740A146008BDA80 /* SLTerminalTestViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

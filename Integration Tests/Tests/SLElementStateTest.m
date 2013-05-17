@@ -37,6 +37,41 @@
     SLAssertTrue([value isEqualToString:expectedValue], @"-value did not return expected.");
 }
 
+- (void)testHitpointReturnsRectMidpointByDefault {
+    CGRect elementRect = [SLAskApp(elementRect) CGRectValue];
+    CGPoint expectedHitpoint = CGPointMake(CGRectGetMidX(elementRect), CGRectGetMidY(elementRect));
+    CGPoint hitpoint = [UIAElement(_testElement) hitpoint];
+    SLAssertTrue(CGPointEqualToPoint(hitpoint, expectedHitpoint), @"-hitpoint did not return expected value.");
+}
+
+- (void)testHitpointReturnsAlternatePointIfRectMidpointIsCovered {
+    CGRect elementRect = [SLAskApp(elementRect) CGRectValue];
+
+    // this is confirmed by the previous test case
+    CGPoint regularHitpoint = CGPointMake(CGRectGetMidX(elementRect), CGRectGetMidY(elementRect));
+    CGPoint hitpoint = [UIAElement(_testElement) hitpoint];
+
+    SLAssertFalse(CGPointEqualToPoint(hitpoint, regularHitpoint), @"-hitpoint did not return expected value.");
+    SLAssertFalse(SLCGPointIsNull(hitpoint), @"-hitpoint did not return expected value.");
+}
+
+- (void)testHitpointReturnsNullPointIfElementIsCovered {
+    CGPoint hitpoint = [UIAElement(_testElement) hitpoint];
+    SLAssertTrue(SLCGPointIsNull(hitpoint), @"-hitpoint did not return expected value.");
+}
+
+- (void)testElementIsTappableIfItHasANonNullHitpoint {
+    CGPoint hitpoint = [UIAElement(_testElement) hitpoint];
+    SLAssertTrue(SLCGPointIsNull(hitpoint), @"-hitpoint did not return expected value.");
+    SLAssertFalse([UIAElement(_testElement) isTappable], @"Element should not be tappable if hitpoint is null.");
+
+    SLAskApp(uncoverTestView);
+
+    hitpoint = [UIAElement(_testElement) hitpoint];
+    SLAssertFalse(SLCGPointIsNull(hitpoint), @"-hitpoint did not return expected value.");
+    SLAssertTrue([UIAElement(_testElement) isTappable], @"Element should be tappable if hitpoint is not null.");
+}
+
 - (void)testRect {
     CGRect expectedRect = [SLAskApp(elementRect) CGRectValue];
     CGRect rect = [UIAElement(_testElement) rect];

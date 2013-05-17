@@ -23,6 +23,13 @@ extern NSString *const SLElementVisibleException;
 
 extern const NSTimeInterval SLElementWaitRetryDelay;
 
+/// Represents an invalid CGPoint.
+extern const CGPoint SLCGPointNull;
+
+/// Returns YES if `point` is the null point, NO otherwise.
+extern BOOL SLCGPointIsNull(CGPoint point);
+
+
 @interface SLElement : NSObject
 
 // Defaults - to be set by the test controller
@@ -75,6 +82,13 @@ extern const NSTimeInterval SLElementWaitRetryDelay;
  */
 - (BOOL)isVisible;
 
+/**
+ Determines whether the specified element is tappable.
+ 
+ @return YES if the element is tappable, NO otherwise.
+ */
+- (BOOL)isTappable;
+
 - (void)tap;
 
 // Triggers the JavaScript call dragInsideWithOptions, passing the start and end points in floating point format.
@@ -95,6 +109,17 @@ extern const NSTimeInterval SLElementWaitRetryDelay;
 - (NSString *)label;
 
 - (NSString *)value;
+
+/**
+ Returns the screen position to tap for the element.
+ 
+ This is the midpoint of the element's -rect, unless that point cannot be tapped, 
+ in which case this method returns an alternate point, if possible.
+ 
+ @return The position to tap for the element, in screen coordinates,
+ or SLCGPointNull if a hitpoint cannot be determined.
+ */
+- (CGPoint)hitpoint;
 
 /**
  Returns the position of the object on the main screen.

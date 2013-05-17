@@ -8,7 +8,7 @@
 
 #import "SLAlert.h"
 #import "SLTerminal.h"
-#import "SLTerminal+ConvenienceMethods.h"
+#import "SLTerminal+ConvenienceFunctions.h"
 #import "SLStringUtilities.h"
 
 
@@ -94,6 +94,7 @@ const NSTimeInterval SLAlertHandlerDefaultTimeout = 2.0;
     BOOL _hasBeenAdded;
 }
 
+static NSString *const SLAlertHandlerDidHandleAlertFunctionName = @"SLAlertHandlerDidHandleAlert";
 + (void)loadUIAAlertHandling {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -134,6 +135,22 @@ const NSTimeInterval SLAlertHandlerDefaultTimeout = 2.0;
                   }\
             }\
          ", [self defaultUIAAlertHandler]]];
+
+        [[SLTerminal sharedTerminal] loadFunctionWithName:SLAlertHandlerDidHandleAlertFunctionName
+                                                   params:@[ @"alertId" ]
+                                                     body:@""
+             // we've handled an alert unless we find ourselves still registered
+             @"var haveHandledAlert = true;"
+             // enumerate registered handlers, from first to last
+             @"for (var handlerIndex = 0; handlerIndex < _alertHandlers.length; handlerIndex++) {\
+                 var handler = _alertHandlers[handlerIndex];\
+                 if (handler.id === alertId) {\
+                     haveHandledAlert = false;\
+                     break;\
+                 }\
+             };\
+             return haveHandledAlert;\
+         "];
     });
 }
 
@@ -222,30 +239,14 @@ const NSTimeInterval SLAlertHandlerDefaultTimeout = 2.0;
         ", [_alert isEqualToUIAAlertPredicate], _UIAAlertHandler];
 }
 
-- (NSString *)didHandleAlertJS {
-    return [NSString stringWithFormat:@"\
-                (function(){"
-                    // we've handled an alert unless we find ourselves still registered
-                    @"var haveHandledAlert = true;"
-                    // enumerate registered handlers, from first to last
-                    @"for (var handlerIndex = 0; handlerIndex < _alertHandlers.length; handlerIndex++) {\
-                        var handler = _alertHandlers[handlerIndex];\
-                        if (handler.id === \"%@\") {\
-                            haveHandledAlert = false;\
-                            break;\
-                        }\
-                    };\
-                    return haveHandledAlert;\
-                }())\
-            ", [self.identifier slStringByEscapingForJavaScriptLiteral]];
-}
-
 - (BOOL)didHandleAlert {
     if (!_hasBeenAdded) {
         [NSException raise:NSInternalInconsistencyException format:@"Handler for alert %@ must be added using +[SLAlertHandler addHandler:] before it can handle an alert.", _alert];
     }
-    
-    return [[[SLTerminal sharedTerminal] eval:[self didHandleAlertJS]] boolValue];
+
+    NSString *quotedIdentifier = [NSString stringWithFormat:@"'%@'", [self.identifier slStringByEscapingForJavaScriptLiteral]];
+    return [[[SLTerminal sharedTerminal] evalFunctionWithName:SLAlertHandlerDidHandleAlertFunctionName
+                                                     withArgs:@[ quotedIdentifier ]] boolValue];
 }
 
 - (void)waitUntilAlertHandled:(NSTimeInterval)timeout {
@@ -253,10 +254,12 @@ const NSTimeInterval SLAlertHandlerDefaultTimeout = 2.0;
         [NSException raise:NSInternalInconsistencyException format:@"Handler for alert %@ must be added using +[SLAlertHandler addHandler:] before it can handle an alert.", _alert];
     }
 
+    NSString *quotedIdentifier = [NSString stringWithFormat:@"'%@'", [self.identifier slStringByEscapingForJavaScriptLiteral]];
     NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
-    BOOL didHandleAlert = [[SLTerminal sharedTerminal] waitUntilTrue:[self didHandleAlertJS]
-                                                          retryDelay:SLAlertHandlerWaitRetryDelay
-                                                             timeout:timeout];
+    BOOL didHandleAlert = [[SLTerminal sharedTerminal] waitUntilFunctionWithNameIsTrue:SLAlertHandlerDidHandleAlertFunctionName
+                                                                 whenEvaluatedWithArgs:@[ quotedIdentifier ]
+                                                                            retryDelay:SLAlertHandlerWaitRetryDelay
+                                                                               timeout:timeout];
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
 
     // ensure we don't return until at least SLAlertHandlerDefaultTimeout has elapsed

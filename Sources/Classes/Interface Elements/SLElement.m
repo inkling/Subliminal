@@ -13,6 +13,8 @@
 #import <objc/runtime.h>
 
 
+#pragma mark SLElement
+
 // all exceptions thrown by SLElement must have names beginning with this prefix
 // so that they may be identified as "expected" throughout the testing framework
 NSString *const SLElementExceptionNamePrefix    = @"SLElement";
@@ -23,8 +25,12 @@ NSString *const SLElementVisibleException       = @"SLElementVisibleException";
 
 const NSTimeInterval SLElementWaitRetryDelay = 0.25;
 
+const CGPoint SLCGPointNull = (CGPoint){ INFINITY, INFINITY };
 
-#pragma mark SLElement
+BOOL SLCGPointIsNull(CGPoint point) {
+    return CGPointEqualToPoint(point, SLCGPointNull);
+}
+
 
 @interface SLElement ()
 
@@ -213,6 +219,10 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return isVisible;
 }
 
+- (BOOL)isTappable {
+    return !SLCGPointIsNull([self hitpoint]);
+}
+
 - (void)tap {
     [self sendMessage:@"tap()"];
 }
@@ -230,26 +240,31 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return [self sendMessage:@"value()"];
 }
 
-- (CGRect)rect {
-    static NSString *const CGRectStringFromJSRectFunctionName = @"SLCGRectStringFromJSRect";
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSString *CGRectStringFromJSRectFunction = @"\
-            function %@(rect) {\
-                return '{{' + rect.origin.x + ',' + rect.origin.y + '},{'\
-                            + rect.size.width + ',' + rect.size.height + '}}';\
-            }\
-        ";
-        [[SLTerminal sharedTerminal] evalWithFormat:CGRectStringFromJSRectFunction,
-             CGRectStringFromJSRectFunctionName];
-    });
-
-    NSString *__block rectString = nil;
+- (CGPoint)hitpoint {
+    NSString *__block CGHitpointString = nil;
     [self performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
-        rectString = [[SLTerminal sharedTerminal] evalWithFormat:@"%@(%@.rect())",
-                          CGRectStringFromJSRectFunctionName, uiaRepresentation];
+        NSString *hitpointString = [NSString stringWithFormat:@"%@.hitpoint()", uiaRepresentation];
+        CGHitpointString = [[SLTerminal sharedTerminal] evalFunctionWithName:@"SLCGPointStringFromJSPoint"
+                                                                      params:@[ @"point" ]
+                                                                        body:@"if (!point) return '';\
+                                                                               else return '{' + point.x + ',' + point.y + '}';"
+                                                                    withArgs:@[ hitpointString ]];
     }];
-    return ([rectString length] ? CGRectFromString(rectString) : CGRectNull);
+    return ([CGHitpointString length] ? CGPointFromString(CGHitpointString) : SLCGPointNull);
+}
+
+- (CGRect)rect {
+    NSString *__block CGRectString = nil;
+    [self performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+        NSString *rectString = [NSString stringWithFormat:@"%@.rect()", uiaRepresentation];
+        CGRectString = [[SLTerminal sharedTerminal] evalFunctionWithName:@"SLCGRectStringFromJSRect"
+                                                                  params:@[ @"rect" ]
+                                                                    body:@"if (!rect) return '';\
+                                                                           else return '{{' + rect.origin.x + ',' + rect.origin.y + '},\
+                                                                                         {' + rect.size.width + ',' + rect.size.height + '}}';"
+                                                                withArgs:@[ rectString ]];
+    }];
+    return ([CGRectString length] ? CGRectFromString(CGRectString) : CGRectNull);
 }
 
 - (void)logElement {
