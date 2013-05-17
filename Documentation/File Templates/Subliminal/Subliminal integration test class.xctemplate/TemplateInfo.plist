@@ -8,7 +8,7 @@
 		<string>public.objective-c-plus-plus-source</string>
 	</array>
 	<key>BuildableType</key>
-	<string>Integration Tests</string>
+	<string>Subliminal Integration Tests</string>
 	<key>DefaultCompletionName</key>
 	<string>Test</string>
 	<key>Description</key>

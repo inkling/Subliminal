@@ -18,6 +18,9 @@
     return @"___FILEBASENAMEASIDENTIFIER___ViewController";
 }
 
+// If you override set-up or tear-down methods,
+// you must call super in your implementations.
+
 - (void)testCase {
 #warning Incomplete method implementation.
 	// Rename and implement test case.
