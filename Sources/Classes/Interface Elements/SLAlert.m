@@ -12,10 +12,18 @@
 #import "SLStringUtilities.h"
 
 
-NSString *const SLAlertDidNotShowException = @"SLAlertDidNotShowException";
+const NSTimeInterval SLAlertHandlerAutomaticDelay = 1.5;
 
-const NSTimeInterval SLAlertHandlerWaitRetryDelay = 0.25;
-const NSTimeInterval SLAlertHandlerDefaultTimeout = 2.0;
+/**
+ Manual handlers delay for a small amount of time before returning, 
+ so that an alert's delegate will receive its callbacks before the tests 
+ continue.
+ 
+ This can be less than the automatic timeout because it's assumed that 
+ the tests will continue by calling -didHandleAlert on the manual handler, 
+ which will block until the alert has been handled.
+ */
+static const NSTimeInterval SLAlertHandlerManualDelay = 0.25;
 
 
 #pragma mark - SLAlertHandler
@@ -101,16 +109,20 @@ static NSString *const SLAlertHandlerDidHandleAlertFunctionName = @"SLAlertHandl
         // The onAlert handler returns true for an alert
         // iff Subliminal handles and dismisses that alert.
         // SLAlertHandler manipulates onAlert via _alertHandlers.
-        [[SLTerminal sharedTerminal] eval:[NSString stringWithFormat:@"\
+        [[SLTerminal sharedTerminal] evalWithFormat:@"\
             var _previousOnAlert = UIATarget.onAlert;\
             var _alertHandlers = [];\
             UIATarget.onAlert = function(alert) {"
                 // enumerate registered handlers, from first to last
                 @"for (var handlerIndex = 0; handlerIndex < _alertHandlers.length; handlerIndex++) {\
                     var handler = _alertHandlers[handlerIndex];"
-                    // if a handler matches the alert, remove it and return true
-                    @"if (handler.handleAlert(alert) === true) {\
-                        _alertHandlers.splice(handlerIndex, 1);\
+                    // if a handler matches the alert...
+                    @"if (handler.handleAlert(alert) === true) {"
+                        // ...ensure that the alert's delegate will receive its callbacks
+                        // before the next JS command (i.e. -didHandleAlert) evaluates...
+                        @"UIATarget.localTarget().delay(%g);"
+                        // ...then remove the handler and return true
+                        @"_alertHandlers.splice(handlerIndex, 1);\
                         return true;\
                     }\
                 }\
@@ -134,7 +146,7 @@ static NSString *const SLAlertHandlerDidHandleAlertFunctionName = @"SLAlertHandl
                       @"return false;\
                   }\
             }\
-         ", [self defaultUIAAlertHandler]]];
+         ", SLAlertHandlerManualDelay, [self defaultUIAAlertHandler]];
 
         [[SLTerminal sharedTerminal] loadFunctionWithName:SLAlertHandlerDidHandleAlertFunctionName
                                                    params:@[ @"alertId" ]
@@ -247,31 +259,6 @@ static NSString *const SLAlertHandlerDidHandleAlertFunctionName = @"SLAlertHandl
     NSString *quotedIdentifier = [NSString stringWithFormat:@"'%@'", [self.identifier slStringByEscapingForJavaScriptLiteral]];
     return [[[SLTerminal sharedTerminal] evalFunctionWithName:SLAlertHandlerDidHandleAlertFunctionName
                                                      withArgs:@[ quotedIdentifier ]] boolValue];
-}
-
-- (void)waitUntilAlertHandled:(NSTimeInterval)timeout {
-    if (!_hasBeenAdded) {
-        [NSException raise:NSInternalInconsistencyException format:@"Handler for alert %@ must be added using +[SLAlertHandler addHandler:] before it can handle an alert.", _alert];
-    }
-
-    NSString *quotedIdentifier = [NSString stringWithFormat:@"'%@'", [self.identifier slStringByEscapingForJavaScriptLiteral]];
-    NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
-    BOOL didHandleAlert = [[SLTerminal sharedTerminal] waitUntilFunctionWithNameIsTrue:SLAlertHandlerDidHandleAlertFunctionName
-                                                                 whenEvaluatedWithArgs:@[ quotedIdentifier ]
-                                                                            retryDelay:SLAlertHandlerWaitRetryDelay
-                                                                               timeout:timeout];
-    NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
-
-    // ensure we don't return until at least SLAlertHandlerDefaultTimeout has elapsed
-    // (see note on `timeout` in method documentation)
-    NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
-    if (waitTimeInterval < SLAlertHandlerDefaultTimeout) {
-        [NSThread sleepForTimeInterval:(SLAlertHandlerDefaultTimeout - waitTimeInterval)];
-    }
-
-    if (!didHandleAlert) {
-        [NSException raise:SLAlertDidNotShowException format:@"%@ did not show within %g seconds.", _alert, timeout];
-    }
 }
 
 - (SLAlertHandler *)andThen:(SLAlertHandler *)nextHandler {
