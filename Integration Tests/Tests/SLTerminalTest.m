@@ -7,7 +7,7 @@
 //
 
 #import "SLIntegrationTest.h"
-#import "SLElement+Subclassing.h"
+#import "SLUIAElement+Subclassing.h"
 
 @interface SLTerminalTest : SLIntegrationTest
 @end

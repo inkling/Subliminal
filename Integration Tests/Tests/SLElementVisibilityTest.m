@@ -7,7 +7,7 @@
 //
 
 #import "SLIntegrationTest.h"
-#import "SLElement+Subclassing.h"
+#import "SLUIAElement+Subclassing.h"
 
 /**
  Subliminal's implementation of -isVisible does not rely upon UIAutomation, 
@@ -287,7 +287,7 @@
 // Depending on slight timing variances, whenever we wait,
 // the wait may vary by the retry delay used by SLElement
 - (NSTimeInterval)waitDelayVariability {
-    return SLElementWaitRetryDelay;
+    return SLUIAElementWaitRetryDelay;
 }
 
 - (void)testSLWaitUntilVisibleDoesNotThrowAndReturnsImmediatelyWhenConditionIsTrueUponWait {
@@ -365,7 +365,7 @@
     NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
 
     SLAssertThrowsNamed(SLWaitUntilVisible(_testElement, expectedWaitTimeInterval, nil),
-                        SLElementNotVisibleException, @"Should have thrown.");
+                        SLUIAElementNotVisibleException, @"Should have thrown.");
     
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
@@ -385,7 +385,7 @@
     NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
 
     SLAssertThrowsNamed(SLWaitUntilVisible(_testElement, expectedWaitTimeInterval, nil),
-                        SLElementInvalidException, @"Should have thrown.");
+                        SLUIAElementInvalidException, @"Should have thrown.");
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
@@ -464,7 +464,7 @@
     NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
 
     SLAssertThrowsNamed(SLWaitUntilInvisibleOrInvalid(_testElement, expectedWaitTimeInterval, nil),
-                        SLElementVisibleException, @"Should have thrown.");
+                        SLUIAElementVisibleException, @"Should have thrown.");
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;

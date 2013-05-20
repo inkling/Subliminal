@@ -7,7 +7,7 @@
 //
 
 #import "SLWebView.h"
-#import "SLElement+Subclassing.h"
+#import "SLUIAElement+Subclassing.h"
 
 @implementation SLWebView
 

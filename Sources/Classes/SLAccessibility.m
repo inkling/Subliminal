@@ -10,7 +10,7 @@
 #import "SLAccessibility.h"
 
 #import "SLElement.h"
-#import "SLElement+Subclassing.h"
+#import "SLUIAElement+Subclassing.h"
 #import "SLStringUtilities.h"
 #import "SLMainThreadRef.h"
 

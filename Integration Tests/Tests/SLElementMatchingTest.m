@@ -7,7 +7,7 @@
 //
 
 #import "SLIntegrationTest.h"
-#import "SLElement+Subclassing.h"
+#import "SLUIAElement+Subclassing.h"
 
 
 @interface SLElementMatchingTest : SLIntegrationTest
@@ -78,7 +78,7 @@
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < SLElementWaitRetryDelay,
+    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < SLUIAElementWaitRetryDelay,
                  @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
                  actualWaitTimeInterval, expectedWaitTimeInterval);
 
@@ -97,12 +97,12 @@
 
     NSString *fooButtonValue;
     SLAssertThrowsNamed(fooButtonValue = [UIAElement(fooButton) value],
-                        SLElementInvalidException,
+                        SLUIAElementInvalidException,
                         @"Should have thrown.");
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < SLElementWaitRetryDelay,
+    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < SLUIAElementWaitRetryDelay,
                  @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
                  actualWaitTimeInterval, expectedWaitTimeInterval);
 }

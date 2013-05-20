@@ -7,7 +7,7 @@
 //
 
 #import "SLIntegrationTest.h"
-#import "SLElement+Subclassing.h"
+#import "SLUIAElement+Subclassing.h"
 
 @interface SLElementTapTest : SLIntegrationTest
 
@@ -89,7 +89,7 @@
 // and one for SLTerminal receiving the result)), and tapping
 // (two more SLTerminalReadRetryDelays).
 - (NSTimeInterval)waitDelayVariabilityIncludingTap:(BOOL)includingTap {
-    return SLElementWaitRetryDelay + SLTerminalReadRetryDelay * (includingTap ? 4 : 2);
+    return SLUIAElementWaitRetryDelay + SLTerminalReadRetryDelay * (includingTap ? 4 : 2);
 }
 
 - (void)testWaitUntilTappableNOThenPerformActionWithUIARepresentationDoesNotWaitUntilTappable {
@@ -151,7 +151,7 @@
                                                    thenPerformActionWithUIARepresentation:^(NSString *UIARepresentation) {
                             [[SLTerminal sharedTerminal] evalWithFormat:@"%@.tap()", UIARepresentation];
                         } timeout:[SLElement defaultTimeout]]),
-                        SLElementNotTappableException,
+                        SLUIAElementNotTappableException,
                         @"Element should not have been able to be tapped.");
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];

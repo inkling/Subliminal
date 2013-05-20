@@ -1,18 +1,35 @@
 //
-//  SLElement+Subclassing.h
+//  SLUIAElement+Subclassing.h
 //  Subliminal
 //
 //  Created by Jeffrey Wear on 3/27/13.
 //  Copyright (c) 2013 Inkling. All rights reserved.
 //
 
+#import "SLUIAElement.h"
 #import "SLElement.h"
 #import "SLLogger.h"
 #import "SLTerminal.h"
 #import "SLTerminal+ConvenienceFunctions.h"
 #import "SLStringUtilities.h"
 
+@interface SLUIAElement (Subclassing)
+
+- (id)waitUntilTappable:(BOOL)waitUntilTappable
+        thenSendMessage:(NSString *)action, ... NS_FORMAT_FUNCTION(2, 3);
+
+- (void)waitUntilTappable:(BOOL)waitUntilTappable
+        thenPerformActionWithUIARepresentation:(void(^)(NSString *UIARepresentation))block
+                                       timeout:(NSTimeInterval)timeout;
+
++ (NSString *)SLElementIsTappableFunctionName;
+
+@end
+
+
 @interface SLElement (Subclassing)
+
+- (NSString *)staticUIARepresentation;
 
 /** Returns YES if the instance of SLElement should 'match' object, no otherwise.
 
@@ -29,15 +46,6 @@
  */
 - (BOOL)matchesObject:(NSObject *)object;
 
-- (id)waitUntilTappable:(BOOL)waitUntilTappable
-        thenSendMessage:(NSString *)action, ... NS_FORMAT_FUNCTION(2, 3);
-
-- (void)waitUntilTappable:(BOOL)waitUntilTappable
-        thenPerformActionWithUIARepresentation:(void(^)(NSString *uiaRepresentation))block
-                                       timeout:(NSTimeInterval)timeout;
-
-- (NSString *)staticUIARepresentation;
-
 /**
  Allows the caller to interact with the actual object matched by the receiving SLElement.
 
@@ -47,7 +55,7 @@
  The block will be executed synchronously on the main thread.
 
  @param block A block which takes the matching object as an argument and returns void.
- @exception SLElementInvalidException If no matching object has been found
+ @exception SLUIAElementInvalidException If no matching object has been found
  after the defaultTimeout has elapsed.
  */
 - (void)examineMatchingObject:(void (^)(NSObject *object))block;

@@ -1,76 +1,21 @@
 //
 //  SLElement.m
-//  SubliminalTest
+//  Subliminal
 //
-//  Created by Jeffrey Wear on 9/4/12.
-//  Copyright (c) 2012 Inkling. All rights reserved.
+//  Created by Jeffrey Wear on 5/19/13.
+//  Copyright (c) 2013 Inkling. All rights reserved.
 //
 
 #import "SLElement.h"
-#import "SLElement+Subclassing.h"
+#import "SLUIAElement+Subclassing.h"
 #import "SLAccessibility.h"
-
-#import <objc/runtime.h>
-
-
-#pragma mark SLElement
-
-// all exceptions thrown by SLElement must have names beginning with this prefix
-// so that they may be identified as "expected" throughout the testing framework
-NSString *const SLElementExceptionNamePrefix    = @"SLElement";
-
-NSString *const SLElementInvalidException       = @"SLElementInvalidException";
-NSString *const SLElementNotTappableException   = @"SLElementNotTappableException";
-NSString *const SLElementNotVisibleException    = @"SLElementNotVisibleException";
-NSString *const SLElementVisibleException       = @"SLElementVisibleException";
-
-const NSTimeInterval SLElementWaitRetryDelay = 0.25;
-
-const CGPoint SLCGPointNull = (CGPoint){ INFINITY, INFINITY };
-
-BOOL SLCGPointIsNull(CGPoint point) {
-    return CGPointEqualToPoint(point, SLCGPointNull);
-}
-
-static NSString *const SLElementIsTappableFunctionName = @"SLElementIsTappable";
-
-
-@interface SLElement ()
-
-- (id)initWithPredicate:(BOOL (^)(NSObject *obj))predicate description:(NSString *)description;
-
-@end
-
 
 @implementation SLElement {
     BOOL (^_matchesObject)(NSObject*);
-@protected
     NSString *_description;
 }
 
-static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
-+ (void)setDefaultTimeout:(NSTimeInterval)defaultTimeout {
-    if (defaultTimeout != [self defaultTimeout]) {
-        // note that we explicitly associate with SLElement
-        // so that subclasses can reference the timeout too
-        objc_setAssociatedObject([SLElement class], kDefaultTimeoutKey, @(defaultTimeout), OBJC_ASSOCIATION_RETAIN);
-    }
-}
-
-+ (NSTimeInterval)defaultTimeout {
-    return (NSTimeInterval)[objc_getAssociatedObject([SLElement class], kDefaultTimeoutKey) doubleValue];
-}
-
-+ (void)loadSLElementIsTappableFunction {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [[SLTerminal sharedTerminal] loadFunctionWithName:SLElementIsTappableFunctionName
-                                                   params:@[ @"element" ]
-                                                     body:@"return (element.hitpoint() != null);"];
-    });
-}
-
-+ (id)elementMatching:(BOOL (^)(NSObject *obj))predicate withDescription:(NSString *)description
++ (instancetype)elementMatching:(BOOL (^)(NSObject *obj))predicate withDescription:(NSString *)description
 {
     return [[self alloc] initWithPredicate:predicate description:description];
 }
@@ -81,7 +26,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     } description:@"any element"];
 }
 
-+ (id)elementWithAccessibilityLabel:(NSString *)label {
++ (instancetype)elementWithAccessibilityLabel:(NSString *)label {
     return [[self alloc] initWithPredicate:^BOOL(NSObject *obj) {
         return [obj.slAccessibilityName isEqualToString:label] || ([obj.accessibilityLabel length] > 0 && [obj.accessibilityLabel isEqualToString:label]);
     } description:label];
@@ -96,7 +41,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     } description:[NSString stringWithFormat:@"label: %@; value: %@; traits: %llu", label, value, traits]];
 }
 
-- (id)initWithPredicate:(BOOL (^)(NSObject *))predicate description:(NSString *)description {
+- (instancetype)initWithPredicate:(BOOL (^)(NSObject *))predicate description:(NSString *)description {
     self = [super init];
     if (self) {
         _matchesObject = predicate;
@@ -105,22 +50,42 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return self;
 }
 
+- (BOOL)matchesObject:(NSObject *)object
+{
+    NSAssert(_matchesObject, @"matchesObject called on %@, which has no _matchesObject predicate", self);
+    BOOL matchesObject = _matchesObject(object);
+
+    return (matchesObject && [object willAppearInAccessibilityHierarchy]);
+}
+
 - (NSString *)description {
     return [NSString stringWithFormat:@"<%@ description:\"%@\">", NSStringFromClass([self class]), _description];
+}
+
+- (SLAccessibilityPath *)accessibilityPathWithTimeout:(NSTimeInterval)timeout {
+    __block SLAccessibilityPath *accessibilityPath = nil;
+    NSDate *startDate = [NSDate date];
+    // a timeout of 0 means check once--but then return immediately, no waiting
+    do {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            accessibilityPath = [[[UIApplication sharedApplication] keyWindow] slAccessibilityPathToElement:self];
+        });
+        if (accessibilityPath || !timeout) break;
+
+        [NSThread sleepForTimeInterval:SLUIAElementWaitRetryDelay];
+    } while ([[NSDate date] timeIntervalSinceDate:startDate] < timeout);
+    return accessibilityPath;
 }
 
 - (NSString *)staticUIARepresentation {
     return nil;
 }
 
-#pragma mark Sending Actions
-
 - (void)waitUntilTappable:(BOOL)waitUntilTappable
-        thenPerformActionWithUIARepresentation:(void(^)(NSString *uiaRepresentation))block
-                                       timeout:(NSTimeInterval)timeout {
+thenPerformActionWithUIARepresentation:(void(^)(NSString *UIARepresentation))block
+                  timeout:(NSTimeInterval)timeout {
 
     // A uiaRepresentation is created, unless a staticUIARepresentation is provided, and is passed to the action block.
-    
     NSString *staticUIARepresentation = [self staticUIARepresentation];
     if (staticUIARepresentation) {
         block(staticUIARepresentation);
@@ -128,12 +93,11 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     }
 
     NSTimeInterval resolutionStart = [NSDate timeIntervalSinceReferenceDate];
-    
     SLAccessibilityPath *accessibilityPath = [self accessibilityPathWithTimeout:timeout];
     if (!accessibilityPath) {
-        [NSException raise:SLElementInvalidException format:@"Element '%@' does not exist.", self];
+        [NSException raise:SLUIAElementInvalidException format:@"Element '%@' does not exist.", self];
     }
-    
+
     NSTimeInterval resolutionEnd = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval resolutionDuration = resolutionEnd - resolutionStart;
     NSTimeInterval remainingTimeout = timeout - resolutionDuration;
@@ -148,13 +112,11 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         @try {
             NSString *UIARepresentation = [boundPath UIARepresentation];
             if (waitUntilTappable) {
-                [[self class] loadSLElementIsTappableFunction];
-                BOOL didBecomeTappable = [[SLTerminal sharedTerminal] waitUntilFunctionWithNameIsTrue:SLElementIsTappableFunctionName
-                                                                                whenEvaluatedWithArgs:@[ UIARepresentation ]
-                                                                                           retryDelay:SLElementWaitRetryDelay
-                                                                                              timeout:remainingTimeout ];
-                if (!didBecomeTappable) {
-                    [NSException raise:SLElementNotTappableException format:@"Element '%@' is not tappable.", self];
+                if (![[SLTerminal sharedTerminal] waitUntilFunctionWithNameIsTrue:[[self class]SLElementIsTappableFunctionName]
+                                                            whenEvaluatedWithArgs:@[ UIARepresentation ]
+                                                                       retryDelay:SLUIAElementWaitRetryDelay
+                                                                          timeout:remainingTimeout]) {
+                    [NSException raise:SLUIAElementNotTappableException format:@"Element '%@' is not tappable.", self];
                 }
             }
 
@@ -167,32 +129,17 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     if (actionException) @throw actionException;
 }
 
-- (SLAccessibilityPath *)accessibilityPathWithTimeout:(NSTimeInterval)timeout {
-    __block SLAccessibilityPath *accessibilityPath = nil;
-    NSDate *startDate = [NSDate date];
-    // a timeout of 0 means check once--but then return immediately, no waiting
-    do {
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            accessibilityPath = [[[UIApplication sharedApplication] keyWindow] slAccessibilityPathToElement:self];
-        });
-        if (accessibilityPath || !timeout) break;
-        
-        [NSThread sleepForTimeInterval:SLElementWaitRetryDelay];
-    } while ([[NSDate date] timeIntervalSinceDate:startDate] < timeout);
-    return accessibilityPath;
-}
-
 - (void)examineMatchingObject:(void (^)(NSObject *object))block {
     [self examineMatchingObject:block timeout:[[self class] defaultTimeout]];
 }
 
 - (void)examineMatchingObject:(void (^)(NSObject *))block timeout:(NSTimeInterval)timeout {
     NSParameterAssert(block);
-    
+
     SLAccessibilityPath *accessibilityPath = [self accessibilityPathWithTimeout:timeout];
     if (!accessibilityPath) {
-        [NSException raise:SLElementInvalidException
-                    format:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]];
+        [NSException raise:SLUIAElementInvalidException
+                    format:@"Element %@ does not exist.", self];
     }
 
     // It's possible, if unlikely, that the matching object could have dropped
@@ -207,25 +154,9 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     }];
 
     if (matchingObjectWasOutOfScope) {
-        [NSException raise:SLElementInvalidException
-                    format:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]];
+        [NSException raise:SLUIAElementInvalidException
+                    format:@"Element %@ does not exist.", self];
     }
-}
-
-- (id)waitUntilTappable:(BOOL)waitUntilTappable
-        thenSendMessage:(NSString *)action, ... {
-    va_list(args);
-    va_start(args, action);
-    NSString *formattedAction = [[NSString alloc] initWithFormat:action arguments:args];
-    va_end(args);
-    
-    id __block returnValue = nil;
-    [self waitUntilTappable:waitUntilTappable
-          thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
-        returnValue = [[SLTerminal sharedTerminal] evalWithFormat:@"%@.%@", uiaRepresentation, formattedAction];
-    } timeout:[[self class] defaultTimeout]];
-    
-    return returnValue;
 }
 
 - (BOOL)isValid {
@@ -239,7 +170,6 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
  has a number of bugs. See SLElementVisibilityTest for more information. For some classes,
  for example those vended by UIWebBrowserView, we cannot fully determine whether or not
  they will be visible, and must depend on UIAutomation to confirm visibility.
- 
  */
 - (BOOL)isVisible {
     __block BOOL isVisible = NO;
@@ -257,155 +187,4 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return isVisible;
 }
 
-- (BOOL)isTappable {
-    __block BOOL isTappable;
-    [self waitUntilTappable:NO
-          thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
-        [[self class] loadSLElementIsTappableFunction];
-        isTappable = [[[SLTerminal sharedTerminal] evalFunctionWithName:SLElementIsTappableFunctionName
-                                                               withArgs:@[ uiaRepresentation ]] boolValue];
-    } timeout:0.0];
-    return isTappable;
-}
-
-- (void)tap {
-    [self waitUntilTappable:YES thenSendMessage:@"tap()"];
-}
-
-- (void)dragWithStartPoint:(CGPoint)startPoint endPoint:(CGPoint)endPoint
-{
-    [self waitUntilTappable:YES
-           thenSendMessage:@"dragInsideWithOptions({startOffset:{x:%f, y:%f}, endOffset:{x:%f, y:%f}, duration:1.0})",
-                             startPoint.x, startPoint.y, endPoint.x, endPoint.y];
-}
-
-- (NSString *)label {
-    return [self waitUntilTappable:NO thenSendMessage:@"label()"];
-}
-
-- (NSString *)value {
-    return [self waitUntilTappable:NO thenSendMessage:@"value()"];
-}
-
-- (CGPoint)hitpoint {
-    NSString *__block CGHitpointString = nil;
-    [self waitUntilTappable:NO
-          thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
-        NSString *hitpointString = [NSString stringWithFormat:@"%@.hitpoint()", uiaRepresentation];
-        CGHitpointString = [[SLTerminal sharedTerminal] evalFunctionWithName:@"SLCGPointStringFromJSPoint"
-                                                                      params:@[ @"point" ]
-                                                                        body:@"if (!point) return '';\
-                                                                               else return '{' + point.x + ',' + point.y + '}';"
-                                                                    withArgs:@[ hitpointString ]];
-    } timeout:[[self class] defaultTimeout]];
-    return ([CGHitpointString length] ? CGPointFromString(CGHitpointString) : SLCGPointNull);
-}
-
-- (CGRect)rect {
-    NSString *__block CGRectString = nil;
-    [self waitUntilTappable:NO
-          thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
-        NSString *rectString = [NSString stringWithFormat:@"%@.rect()", uiaRepresentation];
-        CGRectString = [[SLTerminal sharedTerminal] evalFunctionWithName:@"SLCGRectStringFromJSRect"
-                                                                  params:@[ @"rect" ]
-                                                                    body:@"if (!rect) return '';\
-                                                                           else return '{{' + rect.origin.x + ',' + rect.origin.y + '},\
-                                                                                         {' + rect.size.width + ',' + rect.size.height + '}}';"
-                                                                withArgs:@[ rectString ]];
-    } timeout:[[self class] defaultTimeout]];
-    return ([CGRectString length] ? CGRectFromString(CGRectString) : CGRectNull);
-}
-
-- (void)logElement {
-    [self waitUntilTappable:NO thenSendMessage:@"logElement()"];
-}
-
-- (void)logElementTree {
-    [self waitUntilTappable:NO thenSendMessage:@"logElementTree()"];
-}
-
-- (BOOL)matchesObject:(NSObject *)object
-{
-    NSAssert(_matchesObject, @"matchesObject called on %@, which has no _matchesObject predicate", self);
-    BOOL matchesObject = _matchesObject(object);
-
-    return (matchesObject && [object willAppearInAccessibilityHierarchy]);
-}
-
 @end
-
-
-void SLWaitUntilVisible(SLElement *element, NSTimeInterval timeout, NSString *description, ...) {
-    va_list args;
-    va_start(args, description);
-    NSString *formattedDescription = SLComposeStringv(@" ", description, args);
-    va_end(args);
-
-    // try repeated checks to visibility, allowing for the element to be invalid
-    BOOL didBecomeVisible = NO;
-
-    NSDate *waitStartDate = [NSDate date];
-    NSTimeInterval waitTimeInterval = 0;
-    do {
-        @try {
-            didBecomeVisible = [element isVisible];
-        }
-        @catch (NSException *exception) {
-            if (![[exception name] isEqualToString:SLElementInvalidException]) {
-                @throw exception;
-            }
-        }
-        // check only once if the timeout was 0.0
-        if (didBecomeVisible || !timeout) break;
-
-        [NSThread sleepForTimeInterval:SLElementWaitRetryDelay];
-        waitTimeInterval = [[NSDate date] timeIntervalSinceDate:waitStartDate];
-    } while (waitTimeInterval < timeout);
-
-    // specifically warn of a validity failure
-    if (!didBecomeVisible && ![element isValid]) {
-        [NSException raise:SLElementInvalidException
-                    format:@"Element %@ does not exist. %@", element, formattedDescription];
-    }
-
-    if (!didBecomeVisible) {
-        [NSException raise:SLElementNotVisibleException format:@"%@", formattedDescription];
-    }
-}
-
-void SLWaitUntilInvisibleOrInvalid(SLElement *element, NSTimeInterval timeout, NSString *description, ...) {
-    // succeed immediately if the element isn't valid
-    if (![element isValid]) return;
-
-    va_list args;
-    va_start(args, description);
-    NSString *formattedDescription = SLComposeStringv(@" ", description, args);
-    va_end(args);
-
-    // try repeated checks to visibility, allowing for the element to become invalid
-    // (as -isVisible will match afresh each time)
-    BOOL stillVisible = NO;
-    NSDate *waitStartDate = [NSDate date];
-    @try {
-        do {
-            stillVisible = [element isVisible];
-            if (!stillVisible || !timeout) break;
-
-            [NSThread sleepForTimeInterval:SLElementWaitRetryDelay];
-        } while ([[NSDate date] timeIntervalSinceDate:waitStartDate] < timeout);
-    }
-    @catch (NSException *exception) {
-        if ([[exception name] isEqualToString:SLElementInvalidException]) {
-            // the element became invalid: success
-            return;
-        } else {
-            @throw exception;
-        }
-    }
-
-    if (stillVisible) {
-        [NSException raise:SLElementVisibleException
-                    format:@"Element %@ was still visible after %g seconds.%@",
-                             element, timeout, formattedDescription];
-    }
-}

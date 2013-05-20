@@ -41,7 +41,7 @@
 		F05C51E6171C8AE000A381BC /* SLMainThreadRef.m in Sources */ = {isa = PBXBuildFile; fileRef = F05C51E4171C8AE000A381BC /* SLMainThreadRef.m */; };
 		F05C51EC171C90B000A381BC /* SLMainThreadRefTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F05C51EB171C90B000A381BC /* SLMainThreadRefTests.m */; };
 		F0695D8F16011515000B05D0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8E16011515000B05D0 /* Foundation.framework */; };
-		F0695DE4160138DF000B05D0 /* SLElement.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DD8160138DF000B05D0 /* SLElement.m */; };
+		F0695DE4160138DF000B05D0 /* SLUIAElement.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DD8160138DF000B05D0 /* SLUIAElement.m */; };
 		F0695DE5160138DF000B05D0 /* SLLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DDB160138DF000B05D0 /* SLLogger.m */; };
 		F0695DE6160138DF000B05D0 /* SLUIALogger.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DDD160138DF000B05D0 /* SLUIALogger.m */; };
 		F0695DE7160138DF000B05D0 /* SLTerminal.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DDF160138DF000B05D0 /* SLTerminal.m */; };
@@ -52,7 +52,7 @@
 		F0695E1D16014491000B05D0 /* SLTestController.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DE2160138DF000B05D0 /* SLTestController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0695E1E16014491000B05D0 /* SLTest.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DE0160138DF000B05D0 /* SLTest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0695E1F16014491000B05D0 /* SLTerminal.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDE160138DF000B05D0 /* SLTerminal.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F0695E2016014491000B05D0 /* SLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DD7160138DF000B05D0 /* SLElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0695E2016014491000B05D0 /* SLUIAElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DD7160138DF000B05D0 /* SLUIAElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0695E2116014491000B05D0 /* SLLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDA160138DF000B05D0 /* SLLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0695E2216014491000B05D0 /* SLUIALogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDC160138DF000B05D0 /* SLUIALogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F077D70D16D9D77900908FF5 /* SLElementVisibilityTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F077D70A16D9D77900908FF5 /* SLElementVisibilityTest.m */; };
@@ -71,6 +71,8 @@
 		F090AE7216D9E01D000F0B6F /* SLElementVisibilityTestOffscreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = F090AE6F16D9E01D000F0B6F /* SLElementVisibilityTestOffscreen.xib */; };
 		F090AE7416D9E1D1000F0B6F /* SLElementVisibilityTestSuperviewHidden.xib in Resources */ = {isa = PBXBuildFile; fileRef = F090AE7316D9E1D1000F0B6F /* SLElementVisibilityTestSuperviewHidden.xib */; };
 		F0A040131698ECDE009D8157 /* SLTestController+AppContextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A040121698ECDE009D8157 /* SLTestController+AppContextTests.m */; };
+		F0A04E1D1749F70F002C7520 /* SLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F0A04E1B1749F70F002C7520 /* SLElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0A04E1E1749F70F002C7520 /* SLElement.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A04E1C1749F70F002C7520 /* SLElement.m */; };
 		F0AC809516BB299500C5D5C0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695E0C16013D77000B05D0 /* UIKit.framework */; };
 		F0AC809616BB299500C5D5C0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8E16011515000B05D0 /* Foundation.framework */; };
 		F0AC809816BB299500C5D5C0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0AC809716BB299500C5D5C0 /* CoreGraphics.framework */; };
@@ -91,7 +93,7 @@
 		F0B868EC1740A146008BDA80 /* SLTerminalTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B868EB1740A146008BDA80 /* SLTerminalTestViewController.m */; };
 		F0C07A381703F95B00C93F93 /* SLAlert.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A361703F95B00C93F93 /* SLAlert.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0C07A391703F95B00C93F93 /* SLAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C07A371703F95B00C93F93 /* SLAlert.m */; };
-		F0C07A3F1703F9A900C93F93 /* SLElement+Subclassing.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A3D1703F9A900C93F93 /* SLElement+Subclassing.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0C07A3F1703F9A900C93F93 /* SLUIAElement+Subclassing.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A3D1703F9A900C93F93 /* SLUIAElement+Subclassing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0C07A431703FE5200C93F93 /* SLControl.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A411703FE5200C93F93 /* SLControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0C07A441703FE5200C93F93 /* SLControl.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C07A421703FE5200C93F93 /* SLControl.m */; };
 		F0C07A471703FEF600C93F93 /* SLButton.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A451703FEF600C93F93 /* SLButton.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -220,8 +222,8 @@
 		F05C51EB171C90B000A381BC /* SLMainThreadRefTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLMainThreadRefTests.m; sourceTree = "<group>"; };
 		F0695D8B16011515000B05D0 /* libSubliminal.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSubliminal.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0695D8E16011515000B05D0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		F0695DD7160138DF000B05D0 /* SLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLElement.h; sourceTree = "<group>"; };
-		F0695DD8160138DF000B05D0 /* SLElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElement.m; sourceTree = "<group>"; };
+		F0695DD7160138DF000B05D0 /* SLUIAElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLUIAElement.h; sourceTree = "<group>"; };
+		F0695DD8160138DF000B05D0 /* SLUIAElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLUIAElement.m; sourceTree = "<group>"; };
 		F0695DDA160138DF000B05D0 /* SLLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLLogger.h; sourceTree = "<group>"; };
 		F0695DDB160138DF000B05D0 /* SLLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLLogger.m; sourceTree = "<group>"; };
 		F0695DDC160138DF000B05D0 /* SLUIALogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLUIALogger.h; sourceTree = "<group>"; };
@@ -253,6 +255,8 @@
 		F090AE6F16D9E01D000F0B6F /* SLElementVisibilityTestOffscreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestOffscreen.xib; sourceTree = "<group>"; };
 		F090AE7316D9E1D1000F0B6F /* SLElementVisibilityTestSuperviewHidden.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestSuperviewHidden.xib; sourceTree = "<group>"; };
 		F0A040121698ECDE009D8157 /* SLTestController+AppContextTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SLTestController+AppContextTests.m"; sourceTree = "<group>"; };
+		F0A04E1B1749F70F002C7520 /* SLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLElement.h; sourceTree = "<group>"; };
+		F0A04E1C1749F70F002C7520 /* SLElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElement.m; sourceTree = "<group>"; };
 		F0AC809416BB299500C5D5C0 /* Subliminal (Integration Tests).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Subliminal (Integration Tests).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0AC809716BB299500C5D5C0 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F0AC809B16BB299500C5D5C0 /* Subliminal Integration Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Subliminal Integration Tests-Info.plist"; sourceTree = "<group>"; };
@@ -278,7 +282,7 @@
 		F0B868EB1740A146008BDA80 /* SLTerminalTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTerminalTestViewController.m; sourceTree = "<group>"; };
 		F0C07A361703F95B00C93F93 /* SLAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLAlert.h; sourceTree = "<group>"; };
 		F0C07A371703F95B00C93F93 /* SLAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAlert.m; sourceTree = "<group>"; };
-		F0C07A3D1703F9A900C93F93 /* SLElement+Subclassing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLElement+Subclassing.h"; sourceTree = "<group>"; };
+		F0C07A3D1703F9A900C93F93 /* SLUIAElement+Subclassing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLUIAElement+Subclassing.h"; sourceTree = "<group>"; };
 		F0C07A411703FE5200C93F93 /* SLControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLControl.h; sourceTree = "<group>"; };
 		F0C07A421703FE5200C93F93 /* SLControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLControl.m; sourceTree = "<group>"; };
 		F0C07A451703FEF600C93F93 /* SLButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLButton.h; sourceTree = "<group>"; };
@@ -484,9 +488,11 @@
 			children = (
 				CA75E78016697A1200D57E92 /* SLDevice.h */,
 				CA75E78116697A1200D57E92 /* SLDevice.m */,
-				F0695DD7160138DF000B05D0 /* SLElement.h */,
-				F0C07A3D1703F9A900C93F93 /* SLElement+Subclassing.h */,
-				F0695DD8160138DF000B05D0 /* SLElement.m */,
+				F0695DD7160138DF000B05D0 /* SLUIAElement.h */,
+				F0C07A3D1703F9A900C93F93 /* SLUIAElement+Subclassing.h */,
+				F0695DD8160138DF000B05D0 /* SLUIAElement.m */,
+				F0A04E1B1749F70F002C7520 /* SLElement.h */,
+				F0A04E1C1749F70F002C7520 /* SLElement.m */,
 				F0C07A361703F95B00C93F93 /* SLAlert.h */,
 				F0C07A371703F95B00C93F93 /* SLAlert.m */,
 				F0C07A451703FEF600C93F93 /* SLButton.h */,
@@ -702,7 +708,7 @@
 				F0695E1D16014491000B05D0 /* SLTestController.h in Headers */,
 				F0695E1E16014491000B05D0 /* SLTest.h in Headers */,
 				F0695E1F16014491000B05D0 /* SLTerminal.h in Headers */,
-				F0695E2016014491000B05D0 /* SLElement.h in Headers */,
+				F0695E2016014491000B05D0 /* SLUIAElement.h in Headers */,
 				F0695E2116014491000B05D0 /* SLLogger.h in Headers */,
 				F0695E2216014491000B05D0 /* SLUIALogger.h in Headers */,
 				F0271AFF162E0B950098F5F2 /* SLTestController+AppContext.h in Headers */,
@@ -713,7 +719,7 @@
 				F0CEDA3116BF5FA5005FE8B9 /* SLTest+Internal.h in Headers */,
 				F016493D16D42E3C000AEB50 /* SLTestController+Internal.h in Headers */,
 				F0C07A381703F95B00C93F93 /* SLAlert.h in Headers */,
-				F0C07A3F1703F9A900C93F93 /* SLElement+Subclassing.h in Headers */,
+				F0C07A3F1703F9A900C93F93 /* SLUIAElement+Subclassing.h in Headers */,
 				F0C07A431703FE5200C93F93 /* SLControl.h in Headers */,
 				F0C07A471703FEF600C93F93 /* SLButton.h in Headers */,
 				F0C07A4B1704002100C93F93 /* SLTextField.h in Headers */,
@@ -722,6 +728,7 @@
 				F0C07A57170401E500C93F93 /* SLWebView.h in Headers */,
 				F05C4F90171406EF00A381BC /* SLTerminal+ConvenienceFunctions.h in Headers */,
 				F05C51E5171C8AE000A381BC /* SLMainThreadRef.h in Headers */,
+				F0A04E1D1749F70F002C7520 /* SLElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -914,7 +921,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F0695DE4160138DF000B05D0 /* SLElement.m in Sources */,
+				F0695DE4160138DF000B05D0 /* SLUIAElement.m in Sources */,
 				F0695DE5160138DF000B05D0 /* SLLogger.m in Sources */,
 				F0695DE6160138DF000B05D0 /* SLUIALogger.m in Sources */,
 				F0695DE7160138DF000B05D0 /* SLTerminal.m in Sources */,
@@ -934,6 +941,7 @@
 				F0C07A58170401E500C93F93 /* SLWebView.m in Sources */,
 				F05C4F91171406EF00A381BC /* SLTerminal+ConvenienceFunctions.m in Sources */,
 				F05C51E6171C8AE000A381BC /* SLMainThreadRef.m in Sources */,
+				F0A04E1E1749F70F002C7520 /* SLElement.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
