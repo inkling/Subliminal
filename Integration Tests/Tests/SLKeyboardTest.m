@@ -35,6 +35,17 @@
                  @"The shared keyboard did not match the expected object.");
 }
 
+- (void)testTypeString {
+    SLAskApp(showKeyboard);
+    [self wait:[SLAskApp(keyboardInfo)[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];
+
+    NSString *const kExpectedText = @"foo";
+    [UIAElement([SLKeyboard keyboard]) typeString:kExpectedText];
+    NSString *actualText = SLAskApp(text);
+    SLAssertTrue([kExpectedText isEqualToString:actualText],
+                 @"Did not type string as expected.");
+}
+
 - (void)testTapKeyboardKey {
     SLAskApp(showKeyboard);
     [self wait:[SLAskApp(keyboardInfo)[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];

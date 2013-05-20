@@ -24,6 +24,14 @@
  */
 + (SLKeyboard *)keyboard;
 
+/**
+ Taps the keys of the specified keyboard as required 
+ to generate the specified string.
+ 
+ @param string The string to be typed on the keyboard.
+ */
+- (void)typeString:(NSString *)string;
+
 @end
 
 

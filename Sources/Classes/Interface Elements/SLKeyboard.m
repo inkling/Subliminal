@@ -15,6 +15,11 @@
     return [[self alloc] initWithUIARepresentation:@"UIATarget.localTarget().frontMostApp().keyboard()"];
 }
 
+- (void)typeString:(NSString *)string { 
+    [self waitUntilTappable:YES
+            thenSendMessage:@"typeString('%@')", [string slStringByEscapingForJavaScriptLiteral]];
+}
+
 @end
 
 
