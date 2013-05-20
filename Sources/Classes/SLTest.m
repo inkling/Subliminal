@@ -193,11 +193,11 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
 }
 
 + (NSSet *)testCasesToRun {
-    NSSet *baseTestCases = (([[self class] isFocused]) ? [[self class] focusedTestCases] : [[self class] testCases]);
+    NSSet *baseTestCases = (([self isFocused]) ? [self focusedTestCases] : [self testCases]);
     return [baseTestCases filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
         // pass the unfocused selector, as focus is temporary and shouldn't require modifying the test infrastructure
         SEL unfocusedTestCaseSelector = NSSelectorFromString([self unfocusedTestCaseName:evaluatedObject]);
-        return [[self class] testCaseWithSelectorSupportsCurrentPlatform:unfocusedTestCaseSelector];
+        return [self testCaseWithSelectorSupportsCurrentPlatform:unfocusedTestCaseSelector];
     }]];
 }
 
