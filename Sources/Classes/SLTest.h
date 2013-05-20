@@ -233,7 +233,7 @@ extern NSString *const SLTestExceptionLineNumberKey;
  You can use this method to provide enough time for lengthy operations to complete.
  
  If you have a specific condition on which you're waiting, it is more appropriate 
- to use the SLAssertTrueWithTimeout macro or the the SLElement "waitUntil..." methods.
+ to use the SLAssertTrueWithTimeout macro.
  
  @param interval The time interval for which to wait.
  */
@@ -283,11 +283,6 @@ extern NSString *const SLTestExceptionLineNumberKey;
  The macro polls the condition at small intervals.
  If the condition is not true when the timeout elapses, the macro
  will throw an exception.
-
- This macro should be used to wait on conditions that can be evaluated
- entirely within the application. To wait on conditions that involve
- user interface elements, it will likely be more efficient and declarative to use
- the SLElement "waitUntil..." methods.
 
  @param expr A boolean expression on whose truth the test should wait.
  @param timeout The interval for which to wait.

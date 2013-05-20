@@ -17,8 +17,6 @@ extern NSString *const SLUIAElementExceptionNamePrefix;
 
 extern NSString *const SLUIAElementInvalidException;
 extern NSString *const SLUIAElementNotTappableException;
-extern NSString *const SLUIAElementNotVisibleException;
-extern NSString *const SLUIAElementVisibleException;
 
 extern const NSTimeInterval SLUIAElementWaitRetryDelay;
 
@@ -47,11 +45,40 @@ extern BOOL SLCGPointIsNull(CGPoint point);
 
 /**
  Determines whether the specified element is visible on the screen.
- 
+
  @return YES if the user interface element represented by the specified element 
  is visible onscreen, NO otherwise.
+ @exception SLUIAElementInvalidException if the element is not valid. For this 
+ reason, developers are encouraged to use -isValidAndVisible and 
+ -isInvalidOrInvisible with SLAssertTrueWithTimeout, rather than this method.
  */
 - (BOOL)isVisible;
+
+/**
+ Determines whether the specified element is valid, and if so, 
+ if it is visible on the screen.
+ 
+ Unlike -isVisible, this method will not throw an SLUIAElementInvalidException 
+ if the element is not valid--it will just return NO. This allows test writers
+ to wait for an element to appear without having to worry about whether the element
+ is valid at the start of the wait.
+
+ @return YES if the element is both valid and visible, NO otherwise.
+ */
+- (BOOL)isValidAndVisible;
+
+/**
+ Determines whether the specified element is invalid or, if it is valid, 
+ if it is invisible.
+ 
+ Unlike -isVisible, this method will not throw an SLUIAElementInvalidException 
+ if the element is not valid--it will just return NO. This allows test writers 
+ to wait for an element to disappear without having to worry about whether 
+ the element will become invisible or simply invalid.
+ 
+ @return YES if the element is invalid or invisible, NO otherwise.
+ */
+- (BOOL)isInvalidOrInvisible;
 
 /**
  Determines whether it is possible to interact with the specified element.
@@ -136,7 +163,3 @@ extern BOOL SLCGPointIsNull(CGPoint point);
 - (void)logElementTree;
 
 @end
-
-
-extern void SLWaitUntilVisible(SLUIAElement *element, NSTimeInterval timeout, NSString *description, ...);
-extern void SLWaitUntilInvisibleOrInvalid(SLUIAElement *element, NSTimeInterval timeout, NSString *description, ...);

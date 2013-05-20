@@ -18,8 +18,6 @@ NSString *const SLUIAElementExceptionNamePrefix    = @"SLElement";
 
 NSString *const SLUIAElementInvalidException       = @"SLUIAElementInvalidException";
 NSString *const SLUIAElementNotTappableException   = @"SLUIAElementNotTappableException";
-NSString *const SLUIAElementNotVisibleException    = @"SLUIAElementNotVisibleException";
-NSString *const SLUIAElementVisibleException       = @"SLUIAElementVisibleException";
 
 const NSTimeInterval SLUIAElementWaitRetryDelay = 0.25;
 
@@ -80,6 +78,14 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         isVisible = [[[SLTerminal sharedTerminal] evalWithFormat:@"%@.isVisible()", UIARepresentation] boolValue];
     } timeout:0.0];
     return isVisible;
+}
+
+- (BOOL)isValidAndVisible {
+    return [self isValid] && [self isVisible];
+}
+
+- (BOOL)isInvalidOrInvisible {
+    return ![self isValidAndVisible];
 }
 
 + (NSString *)SLElementIsTappableFunctionName {
@@ -161,79 +167,3 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 @end
-
-
-void SLWaitUntilVisible(SLElement *element, NSTimeInterval timeout, NSString *description, ...) {
-    va_list args;
-    va_start(args, description);
-    NSString *formattedDescription = SLComposeStringv(@" ", description, args);
-    va_end(args);
-
-    // try repeated checks to visibility, allowing for the element to be invalid
-    BOOL didBecomeVisible = NO;
-
-    NSDate *waitStartDate = [NSDate date];
-    NSTimeInterval waitTimeInterval = 0;
-    do {
-        @try {
-            didBecomeVisible = [element isVisible];
-        }
-        @catch (NSException *exception) {
-            if (![[exception name] isEqualToString:SLUIAElementInvalidException]) {
-                @throw exception;
-            }
-        }
-        // check only once if the timeout was 0.0
-        if (didBecomeVisible || !timeout) break;
-
-        [NSThread sleepForTimeInterval:SLUIAElementWaitRetryDelay];
-        waitTimeInterval = [[NSDate date] timeIntervalSinceDate:waitStartDate];
-    } while (waitTimeInterval < timeout);
-
-    // specifically warn of a validity failure
-    if (!didBecomeVisible && ![element isValid]) {
-        [NSException raise:SLUIAElementInvalidException
-                    format:@"Element %@ does not exist. %@", element, formattedDescription];
-    }
-
-    if (!didBecomeVisible) {
-        [NSException raise:SLUIAElementNotVisibleException format:@"%@", formattedDescription];
-    }
-}
-
-void SLWaitUntilInvisibleOrInvalid(SLElement *element, NSTimeInterval timeout, NSString *description, ...) {
-    // succeed immediately if the element isn't valid
-    if (![element isValid]) return;
-
-    va_list args;
-    va_start(args, description);
-    NSString *formattedDescription = SLComposeStringv(@" ", description, args);
-    va_end(args);
-
-    // try repeated checks to visibility, allowing for the element to become invalid
-    // (as -isVisible will match afresh each time)
-    BOOL stillVisible = NO;
-    NSDate *waitStartDate = [NSDate date];
-    @try {
-        do {
-            stillVisible = [element isVisible];
-            if (!stillVisible || !timeout) break;
-
-            [NSThread sleepForTimeInterval:SLUIAElementWaitRetryDelay];
-        } while ([[NSDate date] timeIntervalSinceDate:waitStartDate] < timeout);
-    }
-    @catch (NSException *exception) {
-        if ([[exception name] isEqualToString:SLUIAElementInvalidException]) {
-            // the element became invalid: success
-            return;
-        } else {
-            @throw exception;
-        }
-    }
-
-    if (stillVisible) {
-        [NSException raise:SLUIAElementVisibleException
-                    format:@"Element %@ was still visible after %g seconds.%@",
-                             element, timeout, formattedDescription];
-    }
-}
