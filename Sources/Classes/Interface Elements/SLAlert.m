@@ -102,7 +102,6 @@ static const NSTimeInterval SLAlertHandlerManualDelay = 0.25;
     BOOL _hasBeenAdded;
 }
 
-static NSString *const SLAlertHandlerDidHandleAlertFunctionName = @"SLAlertHandlerDidHandleAlert";
 + (void)loadUIAAlertHandling {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -147,22 +146,6 @@ static NSString *const SLAlertHandlerDidHandleAlertFunctionName = @"SLAlertHandl
                   }\
             }\
          ", SLAlertHandlerManualDelay, [self defaultUIAAlertHandler]];
-
-        [[SLTerminal sharedTerminal] loadFunctionWithName:SLAlertHandlerDidHandleAlertFunctionName
-                                                   params:@[ @"alertId" ]
-                                                     body:@""
-             // we've handled an alert unless we find ourselves still registered
-             @"var haveHandledAlert = true;"
-             // enumerate registered handlers, from first to last
-             @"for (var handlerIndex = 0; handlerIndex < _alertHandlers.length; handlerIndex++) {\
-                 var handler = _alertHandlers[handlerIndex];\
-                 if (handler.id === alertId) {\
-                     haveHandledAlert = false;\
-                     break;\
-                 }\
-             };\
-             return haveHandledAlert;\
-         "];
     });
 }
 
@@ -256,8 +239,23 @@ static NSString *const SLAlertHandlerDidHandleAlertFunctionName = @"SLAlertHandl
         [NSException raise:NSInternalInconsistencyException format:@"Handler for alert %@ must be added using +[SLAlertHandler addHandler:] before it can handle an alert.", _alert];
     }
 
+    static NSString *const SLAlertHandlerDidHandleAlertFunctionName = @"SLAlertHandlerDidHandleAlert";
     NSString *quotedIdentifier = [NSString stringWithFormat:@"'%@'", [self.identifier slStringByEscapingForJavaScriptLiteral]];
     return [[[SLTerminal sharedTerminal] evalFunctionWithName:SLAlertHandlerDidHandleAlertFunctionName
+                                                       params:@[ @"alertId" ]
+                                                         body:@""
+                                                     // we've handled an alert unless we find ourselves still registered
+                                                     @"var haveHandledAlert = true;"
+                                                     // enumerate registered handlers, from first to last
+                                                     @"for (var handlerIndex = 0; handlerIndex < _alertHandlers.length; handlerIndex++) {\
+                                                         var handler = _alertHandlers[handlerIndex];\
+                                                         if (handler.id === alertId) {\
+                                                             haveHandledAlert = false;\
+                                                             break;\
+                                                         }\
+                                                     };\
+                                                     return haveHandledAlert;\
+                                                     "
                                                      withArgs:@[ quotedIdentifier ]] boolValue];
 }
 
