@@ -116,13 +116,6 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 #pragma mark Sending Actions
 
 - (void)waitUntilTappable:(BOOL)waitUntilTappable
-        thenPerformActionWithUIARepresentation:(void(^)(NSString *uiaRepresentation))block {
-    [self waitUntilTappable:waitUntilTappable
-          thenPerformActionWithUIARepresentation:block
-                                         timeout:[[self class] defaultTimeout]];
-}
-
-- (void)waitUntilTappable:(BOOL)waitUntilTappable
         thenPerformActionWithUIARepresentation:(void(^)(NSString *uiaRepresentation))block
                                        timeout:(NSTimeInterval)timeout {
 
@@ -230,7 +223,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     [self waitUntilTappable:waitUntilTappable
           thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         returnValue = [[SLTerminal sharedTerminal] evalWithFormat:@"%@.%@", uiaRepresentation, formattedAction];
-    }];
+    } timeout:[[self class] defaultTimeout]];
     
     return returnValue;
 }
@@ -271,7 +264,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         [[self class] loadSLElementIsTappableFunction];
         isTappable = [[[SLTerminal sharedTerminal] evalFunctionWithName:SLElementIsTappableFunctionName
                                                                withArgs:@[ uiaRepresentation ]] boolValue];
-    }];
+    } timeout:0.0];
     return isTappable;
 }
 
@@ -304,7 +297,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
                                                                         body:@"if (!point) return '';\
                                                                                else return '{' + point.x + ',' + point.y + '}';"
                                                                     withArgs:@[ hitpointString ]];
-    }];
+    } timeout:[[self class] defaultTimeout]];
     return ([CGHitpointString length] ? CGPointFromString(CGHitpointString) : SLCGPointNull);
 }
 
@@ -319,7 +312,7 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
                                                                            else return '{{' + rect.origin.x + ',' + rect.origin.y + '},\
                                                                                          {' + rect.size.width + ',' + rect.size.height + '}}';"
                                                                 withArgs:@[ rectString ]];
-    }];
+    } timeout:[[self class] defaultTimeout]];
     return ([CGRectString length] ? CGRectFromString(CGRectString) : CGRectNull);
 }
 

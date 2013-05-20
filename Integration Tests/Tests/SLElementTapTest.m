@@ -102,7 +102,7 @@
     SLAssertThrowsNamed(([UIAElement(_testElement) waitUntilTappable:NO
                                                    thenPerformActionWithUIARepresentation:^(NSString *UIARepresentation) {
                             [[SLTerminal sharedTerminal] evalWithFormat:@"%@.tap()", UIARepresentation];
-                        }]),
+                        } timeout:[SLElement defaultTimeout]]),
                         SLTerminalJavaScriptException,
                         @"Element should not have been able to be tapped.");
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
@@ -128,7 +128,7 @@
     SLAssertNoThrow(([UIAElement(_testElement) waitUntilTappable:YES
                                               thenPerformActionWithUIARepresentation:^(NSString *UIARepresentation) {
                         [[SLTerminal sharedTerminal] evalWithFormat:@"%@.tap()", UIARepresentation];
-                     }]),
+                     } timeout:[SLElement defaultTimeout]]),
                     @"Element should have been able to be tapped.");
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
@@ -150,7 +150,7 @@
     SLAssertThrowsNamed(([UIAElement(_testElement) waitUntilTappable:YES
                                                    thenPerformActionWithUIARepresentation:^(NSString *UIARepresentation) {
                             [[SLTerminal sharedTerminal] evalWithFormat:@"%@.tap()", UIARepresentation];
-                        }]),
+                        } timeout:[SLElement defaultTimeout]]),
                         SLElementNotTappableException,
                         @"Element should not have been able to be tapped.");
 

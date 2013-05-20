@@ -258,7 +258,7 @@
         SLAssertTrue([SLAskApp(barButtonIdentifier) isEqualToString:originalBarIdentifier],
                      @"If an object is not involved in the hierarchy of a matched object, \
                      its identifier should not be replaced, even if it is of the same type.");
-    }];
+    } timeout:[SLElement defaultTimeout]];
 }
 
 - (void)testSubliminalRestoresAccessibilityIdentifiersAfterMatching {
@@ -274,7 +274,7 @@
                thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         SLAssertFalse([SLAskApp(fooButtonIdentifier) isEqualToString:originalIdentifier],
                       @"While matched, an object's identifier is replaced.");
-    }];
+    } timeout:[SLElement defaultTimeout]];
 
     SLAssertTrue([SLAskApp(fooButtonIdentifier) isEqualToString:originalIdentifier],
                  @"After being matched, an object's identifier should have been restored.");
@@ -294,7 +294,7 @@
         SLAssertFalse([SLAskApp(fooButtonIdentifier) isEqualToString:originalIdentifier],
                       @"While matched, an object's identifier is replaced.");
         [NSException raise:@"TestException" format:nil];
-    }], @"Should have thrown test exception.");
+    } timeout:[SLElement defaultTimeout]], @"Should have thrown test exception.");
 
     SLAssertTrue([SLAskApp(fooButtonIdentifier) isEqualToString:originalIdentifier],
                  @"After being matched, an object's identifier should have been restored.");

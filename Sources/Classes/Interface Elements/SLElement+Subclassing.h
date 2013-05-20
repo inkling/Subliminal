@@ -33,7 +33,8 @@
         thenSendMessage:(NSString *)action, ... NS_FORMAT_FUNCTION(2, 3);
 
 - (void)waitUntilTappable:(BOOL)waitUntilTappable
-        thenPerformActionWithUIARepresentation:(void(^)(NSString *uiaRepresentation))block;
+        thenPerformActionWithUIARepresentation:(void(^)(NSString *uiaRepresentation))block
+                                       timeout:(NSTimeInterval)timeout;
 
 - (NSString *)staticUIARepresentation;
 
