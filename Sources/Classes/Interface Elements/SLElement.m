@@ -77,21 +77,9 @@
     return accessibilityPath;
 }
 
-- (NSString *)staticUIARepresentation {
-    return nil;
-}
-
 - (void)waitUntilTappable:(BOOL)waitUntilTappable
-thenPerformActionWithUIARepresentation:(void(^)(NSString *UIARepresentation))block
-                  timeout:(NSTimeInterval)timeout {
-
-    // A uiaRepresentation is created, unless a staticUIARepresentation is provided, and is passed to the action block.
-    NSString *staticUIARepresentation = [self staticUIARepresentation];
-    if (staticUIARepresentation) {
-        block(staticUIARepresentation);
-        return;
-    }
-
+        thenPerformActionWithUIARepresentation:(void(^)(NSString *UIARepresentation))block
+                                       timeout:(NSTimeInterval)timeout {
     NSTimeInterval resolutionStart = [NSDate timeIntervalSinceReferenceDate];
     SLAccessibilityPath *accessibilityPath = [self accessibilityPathWithTimeout:timeout];
     if (!accessibilityPath) {

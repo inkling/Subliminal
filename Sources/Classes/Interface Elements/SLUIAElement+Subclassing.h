@@ -29,8 +29,6 @@
 
 @interface SLElement (Subclassing)
 
-- (NSString *)staticUIARepresentation;
-
 /** Returns YES if the instance of SLElement should 'match' object, no otherwise.
 
  Subclasses of SLElement can override this method to provide custom matching behavior.
