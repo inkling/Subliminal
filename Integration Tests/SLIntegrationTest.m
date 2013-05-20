@@ -35,7 +35,7 @@
                    SLTestNameKey:   test,
                    SLTestCasesKey:  testCases
                }));
-    SLWaitUntilTrue([SLAskApp(currentTest) isEqualToString:test], 5.0,
+    SLAssertTrueWithTimeout([SLAskApp(currentTest) isEqualToString:test], 5.0,
                     @"App failed to present test %@.", test);
 }
 
@@ -51,18 +51,18 @@
                    SLTestCaseKey: testCase,
                    SLTestCaseViewControllerClassNameKey: [[self class] testCaseViewControllerClassName]
                }));
-    SLWaitUntilTrue([SLAskApp(currentTestCase) isEqualToString:testCase], 5.0,
+    SLAssertTrueWithTimeout([SLAskApp(currentTestCase) isEqualToString:testCase], 5.0,
                     @"App failed to present test case %@.", testCase);
 }
 
 - (void)tearDownTestCaseWithSelector:(SEL)testCaseSelector {
     SLAskApp(dismissCurrentTestCase);
-    SLWaitUntilTrue(!SLAskApp(currentTestCase), 5.0, @"App failed to dismiss current test case.");
+    SLAssertTrueWithTimeout(!SLAskApp(currentTestCase), 5.0, @"App failed to dismiss current test case.");
 }
 
 - (void)tearDownTest {
     SLAskApp(dismissCurrentTest);
-    SLWaitUntilTrue(!SLAskApp(currentTest), 5.0, @"App failed to dismiss current test.");
+    SLAssertTrueWithTimeout(!SLAskApp(currentTest), 5.0, @"App failed to dismiss current test.");
 }
 
 @end

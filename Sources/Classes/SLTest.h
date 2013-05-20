@@ -233,48 +233,12 @@ extern NSString *const SLTestExceptionLineNumberKey;
  You can use this method to provide enough time for lengthy operations to complete.
  
  If you have a specific condition on which you're waiting, it is more appropriate 
- to use the SLWaitUntilTrue macro or the the SLElement "waitUntil..." methods.
+ to use the SLAssertTrueWithTimeout macro or the the SLElement "waitUntil..." methods.
  
  @param interval The time interval for which to wait.
  */
 - (void)wait:(NSTimeInterval)interval;
 
-/**
- The SLWaitUntilTrue macro allows an SLTest to wait for an arbitrary
- condition to become true within a specified timeout.
- 
- The macro polls the condition at small intervals. 
- If the condition is not true when the timeout elapses, the macro
- will throw an exception.
-
- This macro should be used to wait on conditions that can be evaluated
- entirely within the application. To wait on conditions that involve
- user interface elements, it will likely be more efficient and declarative to use 
- the SLElement "waitUntil..." methods.
- 
- @param expr A boolean expression on whose truth the test should wait.
- @param timeout The interval for which to wait.
- @param description A description of the wait's failure should that occur. 
- This may be a format string taking variable arguments.
- @exception SLTestAssertionFailedException if expr does not evaluate to true 
- within the specified timeout.
- */
-#define SLWaitUntilTrue(expr, timeout, description, ...) do {\
-    [self recordLastKnownFile:__FILE__ line:__LINE__]; \
-    NSTimeInterval _retryDelay = 0.25; \
-    \
-    NSDate *_startDate = [NSDate date]; \
-    BOOL _exprTrue = NO; \
-    while (!(_exprTrue = (expr)) && \
-            ([[NSDate date] timeIntervalSinceDate:_startDate] < timeout)) { \
-        [NSThread sleepForTimeInterval:_retryDelay]; \
-    } \
-    if (!_exprTrue) { \
-        NSString *reason = [NSString stringWithFormat:@"\"%@\" did not become true within %g seconds.%@", \
-                                @(#expr), timeout, SLComposeString(@" ", description, ##__VA_ARGS__)]; \
-        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
-    } \
-} while (0)
 
 #pragma mark - SLElement Use
 
@@ -309,6 +273,43 @@ extern NSString *const SLTestExceptionLineNumberKey;
         NSString *__reason = [NSString stringWithFormat:@"\"%@\" should be true.%@", \
                                 @(#expr), SLComposeString(@" ", description, ##__VA_ARGS__)]; \
         @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:__reason userInfo:nil]; \
+    } \
+} while (0)
+
+/**
+ The SLAssertTrueWithTimeout macro allows an SLTest to wait for an arbitrary
+ condition to become true within a specified timeout.
+
+ The macro polls the condition at small intervals.
+ If the condition is not true when the timeout elapses, the macro
+ will throw an exception.
+
+ This macro should be used to wait on conditions that can be evaluated
+ entirely within the application. To wait on conditions that involve
+ user interface elements, it will likely be more efficient and declarative to use
+ the SLElement "waitUntil..." methods.
+
+ @param expr A boolean expression on whose truth the test should wait.
+ @param timeout The interval for which to wait.
+ @param description A description of the wait's failure should that occur.
+ This may be a format string taking variable arguments.
+ @exception SLTestAssertionFailedException if expr does not evaluate to true
+ within the specified timeout.
+ */
+#define SLAssertTrueWithTimeout(expr, timeout, description, ...) do {\
+    [self recordLastKnownFile:__FILE__ line:__LINE__]; \
+    NSTimeInterval _retryDelay = 0.25; \
+    \
+    NSDate *_startDate = [NSDate date]; \
+    BOOL _exprTrue = NO; \
+    while (!(_exprTrue = (expr)) && \
+        ([[NSDate date] timeIntervalSinceDate:_startDate] < timeout)) { \
+        [NSThread sleepForTimeInterval:_retryDelay]; \
+    } \
+    if (!_exprTrue) { \
+        NSString *reason = [NSString stringWithFormat:@"\"%@\" did not become true within %g seconds.%@", \
+        @(#expr), timeout, SLComposeString(@" ", description, ##__VA_ARGS__)]; \
+        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
     } \
 } while (0)
 

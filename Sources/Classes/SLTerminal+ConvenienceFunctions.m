@@ -134,7 +134,7 @@
     NSString *conditionFunction = [NSString stringWithFormat:@"function() { return (%@); }", condition];
     NSString *retryDelayStr = [NSString stringWithFormat:@"%g", retryDelay];
     NSString *timeoutStr = [NSString stringWithFormat:@"%g", timeout];
-    return [[self evalFunctionWithName:@"SLWaitUntilTrue"
+    return [[self evalFunctionWithName:@"SLAssertTrueWithTimeout"
                                 params:@[ @"condition", @"retryDelay", @"timeout" ]
                                   body:@"var startTime = (Date.now() / 1000);\
                                          var condTrue = false;\
