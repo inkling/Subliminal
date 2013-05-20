@@ -185,8 +185,11 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
  Returns a Boolean value that indicates whether the receiver 
  has loaded -slReplacementAccessibilityIdentifier.
  
+ This does not check whether a superclass of the receiver may have loaded 
+ -slReplacementAccessibilityIdentifier.
+
  @return YES if +loadSLReplacementAccessibilityIdentifier has been sent
- on the receiver, otherwise NO;
+ to the receiver, otherwise NO;
  */
 + (BOOL)slReplacementAccessibilityIdentifierHasBeenLoaded;
 
@@ -216,8 +219,8 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
  Returns a replacement for -[UIAccessibilityIdentification accessibilityIdentifier] 
  if -useSLReplacementAccessibilityIdentifier is YES.
 
- @warning This method must not be called unless +loadSLReplacementAccessibilityIdentifier 
- has been previously sent to the receiver's class.
+ @warning This method must not be called unless +loadSLReplacementAccessibilityIdentifier
+ has been previously sent to the receiver's class or a superclass.
 
  @return A replacement for -accessibilityIdentifier that is unique to the receiver, 
  if -useSLReplacementAccessibilityIdentifier is YES; otherwise, the value 
@@ -670,12 +673,12 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
 }
 
 - (NSString *)slReplacementAccessibilityIdentifier {
-    NSAssert([[self class] slReplacementAccessibilityIdentifierHasBeenLoaded],
-             @"-slReplacementAccessibilityIdentifier must not be called before it has been loaded.");
-    
     if (self.useSLReplacementAccessibilityIdentifier) {
         return [NSString stringWithFormat:@"%@: %p", [self class], self];
     } else {
+        // If this line crashes, something's wrong: this method should only be called
+        // if either the receiver's class or a superclass thereof
+        // have loaded -slReplacementAccessibilityIdentifier.
         return [self slTrueAccessibilityIdentifier];
     }
 }
