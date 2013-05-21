@@ -20,6 +20,7 @@
 NSString *const SLElementExceptionNamePrefix    = @"SLElement";
 
 NSString *const SLElementInvalidException       = @"SLElementInvalidException";
+NSString *const SLElementNotTappableException   = @"SLElementNotTappableException";
 NSString *const SLElementNotVisibleException    = @"SLElementNotVisibleException";
 NSString *const SLElementVisibleException       = @"SLElementVisibleException";
 
@@ -30,6 +31,8 @@ const CGPoint SLCGPointNull = (CGPoint){ INFINITY, INFINITY };
 BOOL SLCGPointIsNull(CGPoint point) {
     return CGPointEqualToPoint(point, SLCGPointNull);
 }
+
+static NSString *const SLElementIsTappableFunctionName = @"SLElementIsTappable";
 
 
 @interface SLElement ()
@@ -56,6 +59,15 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 + (NSTimeInterval)defaultTimeout {
     return (NSTimeInterval)[objc_getAssociatedObject([SLElement class], kDefaultTimeoutKey) doubleValue];
+}
+
++ (void)loadSLElementIsTappableFunction {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [[SLTerminal sharedTerminal] loadFunctionWithName:SLElementIsTappableFunctionName
+                                                   params:@[ @"element" ]
+                                                     body:@"return (element.hitpoint() != null);"];
+    });
 }
 
 + (id)elementMatching:(BOOL (^)(NSObject *obj))predicate withDescription:(NSString *)description
@@ -103,11 +115,16 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 #pragma mark Sending Actions
 
-- (void)performActionWithUIARepresentation:(void(^)(NSString *uiaRepresentation))block {
-    [self performActionWithUIARepresentation:block timeout:[[self class] defaultTimeout]];
+- (void)waitUntilTappable:(BOOL)waitUntilTappable
+        thenPerformActionWithUIARepresentation:(void(^)(NSString *uiaRepresentation))block {
+    [self waitUntilTappable:waitUntilTappable
+          thenPerformActionWithUIARepresentation:block
+                                         timeout:[[self class] defaultTimeout]];
 }
 
-- (void)performActionWithUIARepresentation:(void(^)(NSString *uiaRepresentation))block timeout:(NSTimeInterval)timeout {
+- (void)waitUntilTappable:(BOOL)waitUntilTappable
+        thenPerformActionWithUIARepresentation:(void(^)(NSString *uiaRepresentation))block
+                                       timeout:(NSTimeInterval)timeout {
 
     // A uiaRepresentation is created, unless a staticUIARepresentation is provided, and is passed to the action block.
     
@@ -116,19 +133,45 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
         block(staticUIARepresentation);
         return;
     }
+
+    NSTimeInterval resolutionStart = [NSDate timeIntervalSinceReferenceDate];
     
     SLAccessibilityPath *accessibilityPath = [self accessibilityPathWithTimeout:timeout];
     if (!accessibilityPath) {
-        @throw [NSException exceptionWithName:SLElementInvalidException reason:[NSString stringWithFormat:@"Element '%@' does not exist.", [_description slStringByEscapingForJavaScriptLiteral]] userInfo:nil];
+        [NSException raise:SLElementInvalidException format:@"Element '%@' does not exist.", self];
     }
+    
+    NSTimeInterval resolutionEnd = [NSDate timeIntervalSinceReferenceDate];
+    NSTimeInterval resolutionDuration = resolutionEnd - resolutionStart;
+    NSTimeInterval remainingTimeout = timeout - resolutionDuration;
 
     // It's possible, if unlikely, that one or more path components could have dropped
     // out of scope between the path's construction and its binding/serialization
     // here. If the representation is invalid, UIAutomation will throw an exception,
     // and it will be caught by Subliminal.
+    NSException *__block actionException = nil;
     [accessibilityPath bindPath:^(SLAccessibilityPath *boundPath) {
-        block([boundPath UIARepresentation]);
+        // catch and rethrow exceptions so that we can unbind the path
+        @try {
+            NSString *UIARepresentation = [boundPath UIARepresentation];
+            if (waitUntilTappable) {
+                [[self class] loadSLElementIsTappableFunction];
+                BOOL didBecomeTappable = [[SLTerminal sharedTerminal] waitUntilFunctionWithNameIsTrue:SLElementIsTappableFunctionName
+                                                                                whenEvaluatedWithArgs:@[ UIARepresentation ]
+                                                                                           retryDelay:SLElementWaitRetryDelay
+                                                                                              timeout:remainingTimeout ];
+                if (!didBecomeTappable) {
+                    [NSException raise:SLElementNotTappableException format:@"Element '%@' is not tappable.", self];
+                }
+            }
+
+            block(UIARepresentation);
+        }
+        @catch (NSException *exception) {
+            actionException = exception;
+        }
     }];
+    if (actionException) @throw actionException;
 }
 
 - (SLAccessibilityPath *)accessibilityPathWithTimeout:(NSTimeInterval)timeout {
@@ -176,15 +219,17 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     }
 }
 
-- (id)sendMessage:(NSString *)action, ... {
+- (id)waitUntilTappable:(BOOL)waitUntilTappable
+        thenSendMessage:(NSString *)action, ... {
     va_list(args);
     va_start(args, action);
     NSString *formattedAction = [[NSString alloc] initWithFormat:action arguments:args];
     va_end(args);
     
     id __block returnValue = nil;
-    [self performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
-            returnValue = [[SLTerminal sharedTerminal] evalWithFormat:@"%@.%@", uiaRepresentation, formattedAction];
+    [self waitUntilTappable:waitUntilTappable
+          thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+        returnValue = [[SLTerminal sharedTerminal] evalWithFormat:@"%@.%@", uiaRepresentation, formattedAction];
     }];
     
     return returnValue;
@@ -213,36 +258,46 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     } timeout:0.0];
 
     if (isVisible && matchedObjectOfUnknownClass) {
-        isVisible = [[self sendMessage:@"isVisible()"] boolValue];
+        isVisible = [[self waitUntilTappable:NO thenSendMessage:@"isVisible()"] boolValue];
     }
 
     return isVisible;
 }
 
 - (BOOL)isTappable {
-    return !SLCGPointIsNull([self hitpoint]);
+    __block BOOL isTappable;
+    [self waitUntilTappable:NO
+          thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+        [[self class] loadSLElementIsTappableFunction];
+        isTappable = [[[SLTerminal sharedTerminal] evalFunctionWithName:SLElementIsTappableFunctionName
+                                                               withArgs:@[ uiaRepresentation ]] boolValue];
+    }];
+    return isTappable;
 }
 
 - (void)tap {
-    [self sendMessage:@"tap()"];
+    [self waitUntilTappable:YES thenSendMessage:@"tap()"];
 }
 
 - (void)dragWithStartPoint:(CGPoint)startPoint endPoint:(CGPoint)endPoint
 {
-    [self sendMessage:@"dragInsideWithOptions({startOffset:{x:%f, y:%f}, endOffset:{x:%f, y:%f}, duration:1.0})", startPoint.x, startPoint.y, endPoint.x, endPoint.y];
+    [self waitUntilTappable:YES
+           thenSendMessage:@"dragInsideWithOptions({startOffset:{x:%f, y:%f}, endOffset:{x:%f, y:%f}, duration:1.0})",
+                             startPoint.x, startPoint.y, endPoint.x, endPoint.y];
 }
 
 - (NSString *)label {
-    return [self sendMessage:@"label()"];
+    return [self waitUntilTappable:NO thenSendMessage:@"label()"];
 }
 
 - (NSString *)value {
-    return [self sendMessage:@"value()"];
+    return [self waitUntilTappable:NO thenSendMessage:@"value()"];
 }
 
 - (CGPoint)hitpoint {
     NSString *__block CGHitpointString = nil;
-    [self performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+    [self waitUntilTappable:NO
+          thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         NSString *hitpointString = [NSString stringWithFormat:@"%@.hitpoint()", uiaRepresentation];
         CGHitpointString = [[SLTerminal sharedTerminal] evalFunctionWithName:@"SLCGPointStringFromJSPoint"
                                                                       params:@[ @"point" ]
@@ -255,7 +310,8 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 - (CGRect)rect {
     NSString *__block CGRectString = nil;
-    [self performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+    [self waitUntilTappable:NO
+          thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         NSString *rectString = [NSString stringWithFormat:@"%@.rect()", uiaRepresentation];
         CGRectString = [[SLTerminal sharedTerminal] evalFunctionWithName:@"SLCGRectStringFromJSRect"
                                                                   params:@[ @"rect" ]
@@ -268,11 +324,11 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (void)logElement {
-    [self sendMessage:@"logElement()"];
+    [self waitUntilTappable:NO thenSendMessage:@"logElement()"];
 }
 
 - (void)logElementTree {
-    [self sendMessage:@"logElementTree()"];
+    [self waitUntilTappable:NO thenSendMessage:@"logElementTree()"];
 }
 
 - (BOOL)matchesObject:(NSObject *)object

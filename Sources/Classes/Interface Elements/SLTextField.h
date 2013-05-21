@@ -13,7 +13,16 @@
  */
 @interface SLTextField : SLElement
 
-/** The text displayed by the text field. */
+/** 
+ The text displayed by the text field.
+ 
+ -setText: requires that the element be [tappable](-isTappable), and will wait
+ for it to become so, for the amount of time remaining (of SLElement's
+ [default timeout](+defaultTimeout)) after the element becomes valid.
+ 
+ @exception SLJavaScriptException (thrown by -setText:) if the element is not 
+ [tappable](-isTappable).
+ */
 @property (nonatomic, strong) NSString *text;
 
 @end

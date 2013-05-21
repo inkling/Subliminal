@@ -29,9 +29,12 @@
  */
 - (BOOL)matchesObject:(NSObject *)object;
 
-- (id)sendMessage:(NSString *)action, ... NS_FORMAT_FUNCTION(1, 2);
+- (id)waitUntilTappable:(BOOL)waitUntilTappable
+        thenSendMessage:(NSString *)action, ... NS_FORMAT_FUNCTION(2, 3);
 
-- (void)performActionWithUIARepresentation:(void(^)(NSString *uiaRepresentation))block;
+- (void)waitUntilTappable:(BOOL)waitUntilTappable
+        thenPerformActionWithUIARepresentation:(void(^)(NSString *uiaRepresentation))block;
+
 - (NSString *)staticUIARepresentation;
 
 /**

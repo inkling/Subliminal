@@ -12,7 +12,7 @@
 @implementation SLControl
 
 - (BOOL)isEnabled {
-    return [[self sendMessage:@"isEnabled()"] boolValue];
+    return [[self waitUntilTappable:NO thenSendMessage:@"isEnabled()"] boolValue];
 }
 
 @end

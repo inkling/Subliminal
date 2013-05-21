@@ -55,6 +55,11 @@
     SLAssertFalse(SLCGPointIsNull(hitpoint), @"-hitpoint did not return expected value.");
 }
 
+// UIAElement.hitpoint() may return null for other reasons, depending on the view
+// --for instance, UIAScrollViews return null if their corresponding UIScrollViews
+// have userInteractionEnabled = NO, whereas UIAutomation can still determine the
+// hitpoint for other views with userInteractionEnabled = NO; but hiding the view
+// is a reliable way to induce failure
 - (void)testHitpointReturnsNullPointIfElementIsCovered {
     CGPoint hitpoint = [UIAElement(_testElement) hitpoint];
     SLAssertTrue(SLCGPointIsNull(hitpoint), @"-hitpoint did not return expected value.");
@@ -70,6 +75,23 @@
     hitpoint = [UIAElement(_testElement) hitpoint];
     SLAssertFalse(SLCGPointIsNull(hitpoint), @"-hitpoint did not return expected value.");
     SLAssertTrue([UIAElement(_testElement) isTappable], @"Element should be tappable if hitpoint is not null.");
+}
+
+// UIAutomation does not throw an exception when asked to access a user interface
+// element, so long as that access does not involve simulating user interaction
+// with the element. Contrast -[SLElementTapTest testUserInteractionRequiresTappability].
+- (void)testCanRetrieveLabelEvenIfNotTappable {
+    NSString *const kTestElementUIARepresentation = @"UIATarget.localTarget().frontMostApp().mainWindow().elements()['Test Element']";
+    NSString *const kTestElementIsTappable = [NSString stringWithFormat:@"%@.hitpoint() != null", kTestElementUIARepresentation];
+
+    SLAssertFalse([[[SLTerminal sharedTerminal] eval:kTestElementIsTappable] boolValue],
+                  @"For the purposes of this test, the test element should not be tappable.");
+
+    NSString *expectedLabel = SLAskApp(elementLabel);
+    NSString *label;
+    SLAssertNoThrow(label = ([[SLTerminal sharedTerminal] evalWithFormat:@"%@.label()", kTestElementUIARepresentation]),
+                    @"Accessing -label should not have thrown, despite not being tappable.");
+    SLAssertTrue([label isEqualToString:expectedLabel], @"-label did not return expected.");
 }
 
 - (void)testRect {

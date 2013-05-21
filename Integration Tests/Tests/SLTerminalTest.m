@@ -204,20 +204,20 @@
 
 static const NSTimeInterval kWaitUntilTrueRetryDelay = 0.25;
 
-// Because we wait on a process involving JS execution,
-// there is some variability in the duration of that execution
-// and in the interval before we find out that it timed out.
-// Thus, the variability is +/- one kWaitUntilTrueRetryDelay,
-// and one SLTerminalReadRetryDelay.
+// There is some variability in waiting for JS to execute (kWaitUntilTrueRetryDelay)
+// and in communicating with UIAutomation (two SLTerminalReadRetryDelays, one
+// for SLTerminal.js receiving the command and one for SLTerminal receiving the
+// result).
 - (NSTimeInterval)waitDelayVariability {
-    return kWaitUntilTrueRetryDelay + SLTerminalReadRetryDelay;
+    return kWaitUntilTrueRetryDelay + SLTerminalReadRetryDelay * 2;
 }
 
 - (void)testWaitUntilTrueReturnsYESImmediatelyWhenConditionIsTrueUponWait {
     __block NSTimeInterval startTimeInterval, endTimeInterval;
 
     SLElement *testElement = [SLElement elementWithAccessibilityLabel:@"Nothing to show here."];
-    [testElement performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+    [testElement waitUntilTappable:NO
+                 thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         NSString *elementIsVisible = [NSString stringWithFormat:@"%@.isVisible()", uiaRepresentation];
 
         startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
@@ -239,7 +239,8 @@ static const NSTimeInterval kWaitUntilTrueRetryDelay = 0.25;
     __block NSTimeInterval startTimeInterval, endTimeInterval;
 
     SLElement *testElement = [SLElement elementWithAccessibilityLabel:@"Nothing to show here."];
-    [testElement performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+    [testElement waitUntilTappable:NO
+                 thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         NSString *elementIsVisible = [NSString stringWithFormat:@"%@.isVisible()", uiaRepresentation];
 
         startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
@@ -262,7 +263,8 @@ static const NSTimeInterval kWaitUntilTrueRetryDelay = 0.25;
     __block NSTimeInterval startTimeInterval, endTimeInterval;
 
     SLElement *testElement = [SLElement elementWithAccessibilityLabel:@"Nothing to show here."];
-    [testElement performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+    [testElement waitUntilTappable:NO
+                 thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         NSString *elementIsVisible = [NSString stringWithFormat:@"%@.isVisible()", uiaRepresentation];
 
         startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
@@ -292,7 +294,8 @@ static const NSTimeInterval kWaitUntilTrueRetryDelay = 0.25;
     __block NSTimeInterval startTimeInterval, endTimeInterval;
 
     SLElement *testElement = [SLElement elementWithAccessibilityLabel:@"Nothing to show here."];
-    [testElement performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+    [testElement waitUntilTappable:NO
+                 thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
         SLAskApp1(showTestViewAfterInterval:, @(expectedWaitTimeInterval));
         SLAssertTrue([[SLTerminal sharedTerminal] waitUntilFunctionWithNameIsTrue:_functionName

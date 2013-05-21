@@ -281,13 +281,12 @@
                         @"Handler should have thrown an exception because it had not been added using +[SLAlertHandler addHandler:].");
 }
 
-// Because we wait on a process involving UIAutomation,
-// there is some variability in the duration of UIAutomation's execution
-// and in the interval before we find out that it timed out.
-// Thus, the variability is +/- one SLElementWaitRetryDelay,
-// and one SLTerminalWaitRetryDelay.
+// Waiting for alerts to be handled is a process involving JS execution,
+// with some variability in waiting (SLAlertHandlerWaitRetryDelay), and communicating
+// with UIAutomation (two SLTerminalReadRetryDelays, one for SLTerminal.js
+// receiving the command and one for SLTerminal receiving the result).
 - (NSTimeInterval)waitDelayVariability {
-    return SLTerminalReadRetryDelay + SLAlertHandlerWaitRetryDelay;
+    return SLAlertHandlerWaitRetryDelay + SLTerminalReadRetryDelay * 2;
 }
 
 // immediately after the alert shows--as long as that's longer than the default timeout

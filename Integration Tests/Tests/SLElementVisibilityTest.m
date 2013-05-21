@@ -41,7 +41,7 @@
 @implementation SLElement (SLElementVisibilityTest)
 
 - (BOOL)uiaIsVisible {
-    return [[self sendMessage:@"isVisible()"] boolValue];
+    return [[self waitUntilTappable:NO thenSendMessage:@"isVisible()"] boolValue];
 }
 
 @end
@@ -317,7 +317,7 @@
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
     SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],
                  @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
-                 actualWaitTimeInterval, waitTimeInterval);
+                 actualWaitTimeInterval, expectedWaitTimeInterval);
 }
 
 - (void)testSLWaitUntilVisibleDoesNotThrowIfElementIsInvalidUponWaiting {
@@ -336,7 +336,7 @@
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
     SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],
                  @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
-                 actualWaitTimeInterval, waitTimeInterval);
+                 actualWaitTimeInterval, expectedWaitTimeInterval);
 }
 
 // the specified timeout is used both to resolve the element
@@ -355,7 +355,7 @@
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
     SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],
                  @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
-                 actualWaitTimeInterval, waitTimeInterval);
+                 actualWaitTimeInterval, expectedWaitTimeInterval);
 }
 
 - (void)testSLWaitUntilVisibleThrowsIfConditionIsStillFalseAtEndOfTimeout {
@@ -434,7 +434,7 @@
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
     SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],
                  @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
-                 actualWaitTimeInterval, waitTimeInterval);
+                 actualWaitTimeInterval, expectedWaitTimeInterval);
 }
 
 - (void)testSLWaitUntilInvisibleOrInvalidDoesNotThrowIfElementBecomesDirectlyInvalid {
@@ -454,7 +454,7 @@
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
     SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],
                  @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
-                 actualWaitTimeInterval, waitTimeInterval);
+                 actualWaitTimeInterval, expectedWaitTimeInterval);
 }
 
 - (void)testSLWaitUntilInvisibleOrInvalidThrowsIfConditionIsStillFalseAtEndOfTimeout {

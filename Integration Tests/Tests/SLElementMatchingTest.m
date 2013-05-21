@@ -20,6 +20,15 @@
     return @"SLElementMatchingTestViewController";
 }
 
+- (void)setUpTestCaseWithSelector:(SEL)testCaseSelector {
+    [super setUpTestCaseWithSelector:testCaseSelector];
+    
+    if (testCaseSelector == @selector(testElementsWaitToMatchValidObjects) ||
+        testCaseSelector == @selector(testElementsThrowIfNoValidObjectIsFoundAtEndOfTimeout)) {
+        SLAskApp(removeFooButtonFromSuperview);
+    }
+}
+
 - (void)tearDownTestCaseWithSelector:(SEL)testCaseSelector {
     if (testCaseSelector == @selector(testMatchingPopoverChildElement_iPad)) {
         SLAskApp(hidePopover);
@@ -50,6 +59,52 @@
 
     SLAssertTrue([[UIAElement(fooButton) value] isEqualToString:@"fooValue"],
                  @"Should have matched the button with label 'foo' again.");
+}
+
+- (void)testElementsWaitToMatchValidObjects {
+    SLElement *fooButton = [SLElement elementWithAccessibilityLabel:@"foo"];
+    // isValid returns immediately, and doesn't throw if the element is invalid
+    SLAssertFalse([fooButton isValid],
+                  @"There should be no button with the label 'foo' in the view hierarchy.");
+
+    NSTimeInterval expectedWaitTimeInterval = 2.0;
+    NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+
+    // it's not necessary to have the test explicitly wait for the button to be shown;
+    // -value will wait to match an object
+    SLAskApp1(addFooButtonToViewAfterInterval:, @(expectedWaitTimeInterval));
+    NSString *fooButtonValue;
+    SLAssertNoThrow(fooButtonValue = [UIAElement(fooButton) value], @"Should not have thrown.");
+
+    NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+    NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
+    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < SLElementWaitRetryDelay,
+                 @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
+                 actualWaitTimeInterval, expectedWaitTimeInterval);
+
+    SLAssertTrue([fooButtonValue isEqualToString:@"fooValue"],
+                 @"Should have matched the button with label 'foo'.");
+}
+
+- (void)testElementsThrowIfNoValidObjectIsFoundAtEndOfTimeout {
+    SLElement *fooButton = [SLElement elementWithAccessibilityLabel:@"foo"];
+    // isValid returns immediately, and doesn't throw if the element is invalid
+    SLAssertFalse([fooButton isValid],
+                  @"There should be no button with the label 'foo' in the view hierarchy.");
+
+    NSTimeInterval expectedWaitTimeInterval = [SLElement defaultTimeout];
+    NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+
+    NSString *fooButtonValue;
+    SLAssertThrowsNamed(fooButtonValue = [UIAElement(fooButton) value],
+                        SLElementInvalidException,
+                        @"Should have thrown.");
+
+    NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+    NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
+    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < SLElementWaitRetryDelay,
+                 @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
+                 actualWaitTimeInterval, expectedWaitTimeInterval);
 }
 
 #pragma mark - Matching criteria
@@ -196,7 +251,8 @@
     SLAssertTrue([[UIAElement(barButton) label] isEqualToString:@"bar"],
                  @"Should have matched the button with label 'bar'.");
 
-    [fooButton performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+    [fooButton waitUntilTappable:NO
+               thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         SLAssertFalse([SLAskApp(fooButtonIdentifier) isEqualToString:originalFooIdentifier],
                       @"While matched, an object's identifier is replaced.");
         SLAssertTrue([SLAskApp(barButtonIdentifier) isEqualToString:originalBarIdentifier],
@@ -214,10 +270,31 @@
     SLAssertTrue([[UIAElement(fooButton) label] isEqualToString:@"foo"],
                  @"Should have matched the button with label 'foo'.");
 
-    [fooButton performActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+    [fooButton waitUntilTappable:NO
+               thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         SLAssertFalse([SLAskApp(fooButtonIdentifier) isEqualToString:originalIdentifier],
                       @"While matched, an object's identifier is replaced.");
     }];
+
+    SLAssertTrue([SLAskApp(fooButtonIdentifier) isEqualToString:originalIdentifier],
+                 @"After being matched, an object's identifier should have been restored.");
+}
+
+- (void)testSubliminalRestoresAccessibilityIdentifiersAfterMatchingEvenIfActionThrows {
+    NSString *originalIdentifier = SLAskApp(fooButtonIdentifier);
+
+    SLElement *fooButton = [SLElement elementWithAccessibilityLabel:@"foo"];
+
+    // Sanity check
+    SLAssertTrue([[UIAElement(fooButton) label] isEqualToString:@"foo"],
+                 @"Should have matched the button with label 'foo'.");
+
+    SLAssertThrows([fooButton waitUntilTappable:NO
+                              thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
+        SLAssertFalse([SLAskApp(fooButtonIdentifier) isEqualToString:originalIdentifier],
+                      @"While matched, an object's identifier is replaced.");
+        [NSException raise:@"TestException" format:nil];
+    }], @"Should have thrown test exception.");
 
     SLAssertTrue([SLAskApp(fooButtonIdentifier) isEqualToString:originalIdentifier],
                  @"After being matched, an object's identifier should have been restored.");

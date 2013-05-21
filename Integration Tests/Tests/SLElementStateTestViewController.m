@@ -26,7 +26,8 @@
     if (testCase == @selector(testHitpointReturnsAlternatePointIfRectMidpointIsCovered)) {
         nibName = @"SLElementStateTestMidpointCovered";
     } else if (testCase == @selector(testHitpointReturnsNullPointIfElementIsCovered) ||
-               testCase == @selector(testElementIsTappableIfItHasANonNullHitpoint)) {
+               testCase == @selector(testElementIsTappableIfItHasANonNullHitpoint) ||
+               testCase == @selector(testCanRetrieveLabelEvenIfNotTappable)) {
         nibName = @"SLElementStateTestCompletelyCovered";
     }
     return nibName;

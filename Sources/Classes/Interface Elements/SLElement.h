@@ -18,6 +18,7 @@
 extern NSString *const SLElementExceptionNamePrefix;
 
 extern NSString *const SLElementInvalidException;
+extern NSString *const SLElementNotTappableException;
 extern NSString *const SLElementNotVisibleException;
 extern NSString *const SLElementVisibleException;
 
@@ -83,21 +84,48 @@ extern BOOL SLCGPointIsNull(CGPoint point);
 - (BOOL)isVisible;
 
 /**
- Determines whether the specified element is tappable.
- 
- @return YES if the element is tappable, NO otherwise.
+ Determines whether it is possible to interact with the specified element.
+
+ @return YES if it is possible to tap on or otherwise interact with the element, 
+ NO otherwise.
  */
 - (BOOL)isTappable;
 
+/**
+ Taps the specified element.
+ 
+ The tap occurs at the element's [hitpoint](-hitpoint).
+ 
+ This method requires that the element be [tappable](-isTappable), and will wait 
+ for it to become so, for the amount of time remaining (of SLElement's 
+ [default timeout](+defaultTimeout)) after the element becomes valid.
+ 
+ @exception SLJavaScriptException if the element is not [tappable](-isTappable).
+ */
 - (void)tap;
 
-// Triggers the JavaScript call dragInsideWithOptions, passing the start and end points in floating point format.
-// This causes the automation JavaScript system to interpret the points in the normalized coordinates of the target
-// SLElement's view.  That is, a start or end point of {0.5, 0.5} is interpretted to be at the center of the target
-// element's view.
-//
-// Uses a drag duration of 1.0 seconds because this is the documented default duration for touch-and-hold gestures
-// according to Apple's UIAElement class reference.
+/**
+ Triggers the JavaScript call dragInsideWithOptions with the specified 
+ start and end points.
+ 
+ This method passes the start and end points in floating point format.
+ This causes UIAutomation to interpret the points in the normalized coordinates 
+ of the specified element's view.  That is, a start or end point of {0.5, 0.5}
+ is interpreted to be at the center of the target element's view.
+
+ This method uses a drag duration of 1.0 seconds because this is the documented 
+ default duration for touch-and-hold gestures according to Apple's UIAElement 
+ class reference.
+ 
+ This method requires that the element be [tappable](-isTappable), and will wait
+ for it to become so, for the amount of time remaining (of SLElement's
+ [default timeout](+defaultTimeout)) after the element becomes valid.
+
+ @param startPoint The start point for the drag.
+ @param endPoint The end point for the drag.
+
+ @exception SLJavaScriptException if the element is not [tappable](-isTappable).
+ */
 - (void)dragWithStartPoint:(CGPoint)startPoint endPoint:(CGPoint)endPoint;
 
 /**
