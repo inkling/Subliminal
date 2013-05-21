@@ -107,21 +107,22 @@ static const NSTimeInterval SLAlertHandlerManualDelay = 0.25;
     dispatch_once(&onceToken, ^{
         // The onAlert handler returns true for an alert
         // iff Subliminal handles and dismisses that alert.
-        // SLAlertHandler manipulates onAlert via _alertHandlers.
+        // SLAlertHandler manipulates onAlert via SLAlertHandler.alertHandlers.
         [[SLTerminal sharedTerminal] evalWithFormat:@"\
-            var _previousOnAlert = UIATarget.onAlert;\
-            var _alertHandlers = [];\
+            var SLAlertHandler = {};\
+            SLAlertHandler.previousOnAlert = UIATarget.onAlert;\
+            SLAlertHandler.alertHandlers = [];\
             UIATarget.onAlert = function(alert) {"
                 // enumerate registered handlers, from first to last
-                @"for (var handlerIndex = 0; handlerIndex < _alertHandlers.length; handlerIndex++) {\
-                    var handler = _alertHandlers[handlerIndex];"
+                @"for (var handlerIndex = 0; handlerIndex < SLAlertHandler.alertHandlers.length; handlerIndex++) {\
+                    var handler = SLAlertHandler.alertHandlers[handlerIndex];"
                     // if a handler matches the alert...
                     @"if (handler.handleAlert(alert) === true) {"
                         // ...ensure that the alert's delegate will receive its callbacks
                         // before the next JS command (i.e. -didHandleAlert) evaluates...
                         @"UIATarget.localTarget().delay(%g);"
                         // ...then remove the handler and return true
-                        @"_alertHandlers.splice(handlerIndex, 1);\
+                        @"SLAlertHandler.alertHandlers.splice(handlerIndex, 1);\
                         return true;\
                     }\
                 }\
@@ -138,7 +139,7 @@ static const NSTimeInterval SLAlertHandlerManualDelay = 0.25;
                       // All we can do is log a message--if we throw an exception, Instruments will crash >.<
                       @"UIALogger.logError('Alert was not handled by the tests, and could not be dismissed by the default handler.');"
                       // Reset the onAlert handler so our handler doesn't get called infinitely
-                      @"UIATarget.onAlert = _previousOnAlert;"
+                      @"UIATarget.onAlert = SLAlertHandler.previousOnAlert;"
                       // If our default handler was unable to dismiss this alert,
                       // it's unlikely that UIAutomation's will be able to either,
                       // but we might as well invoke it.
@@ -168,7 +169,7 @@ static const NSTimeInterval SLAlertHandlerManualDelay = 0.25;
                                   handleAlert: function(alert){ %@ }\
                               }",
                               [[handler identifier] slStringByEscapingForJavaScriptLiteral], [handler JSHandler]];
-    [[SLTerminal sharedTerminal] evalWithFormat:@"_alertHandlers.push(%@);", alertHandler];
+    [[SLTerminal sharedTerminal] evalWithFormat:@"SLAlertHandler.alertHandlers.push(%@);", alertHandler];
     handler->_hasBeenAdded = YES;
 }
 
@@ -181,10 +182,10 @@ static const NSTimeInterval SLAlertHandlerManualDelay = 0.25;
     
     NSString *alertHandlerId = [[handler identifier] slStringByEscapingForJavaScriptLiteral];
     [[SLTerminal sharedTerminal] evalWithFormat:@"\
-        for (var handlerIndex = 0; handlerIndex < _alertHandlers.length; handlerIndex++) {\
-            var handler = _alertHandlers[handlerIndex];\
+        for (var handlerIndex = 0; handlerIndex < SLAlertHandler.alertHandlers.length; handlerIndex++) {\
+            var handler = SLAlertHandler.alertHandlers[handlerIndex];\
             if (handler.id === \"%@\") {\
-                _alertHandlers.splice(handlerIndex,1);\
+                SLAlertHandler.alertHandlers.splice(handlerIndex,1);\
                 break;\
             }\
         }", alertHandlerId];
@@ -247,8 +248,8 @@ static const NSTimeInterval SLAlertHandlerManualDelay = 0.25;
                                                      // we've handled an alert unless we find ourselves still registered
                                                      @"var haveHandledAlert = true;"
                                                      // enumerate registered handlers, from first to last
-                                                     @"for (var handlerIndex = 0; handlerIndex < _alertHandlers.length; handlerIndex++) {\
-                                                         var handler = _alertHandlers[handlerIndex];\
+                                                     @"for (var handlerIndex = 0; handlerIndex < SLAlertHandler.alertHandlers.length; handlerIndex++) {\
+                                                         var handler = SLAlertHandler.alertHandlers[handlerIndex];\
                                                          if (handler.id === alertId) {\
                                                              haveHandledAlert = false;\
                                                              break;\
