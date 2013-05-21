@@ -55,17 +55,19 @@
 
 #pragma mark - Internal tests
 
-// UIAutomation calls involving (simulated) user interaction will fail
-// if the element is not tappable (contrast to -[SLElementStateTest
-// testCanRetrieveLabelEvenIfNotTappable]). For this reason, Subliminal
-// protects all calls that require user interaction by waiting until tappable
-// (see the test cases below this one).
+// If UIAutomation is asked to simulate user interaction with an untappable element,
+// it will throw an exception (contrast -[SLElementStateTest testCanRetrieveLabelEvenIfNotTappable]).
+// For this reason, Subliminal defines an API for communicating with UIAutomation
+// that optionally waits until the specified element is tappable (see the test cases below this one).
 - (void)testUserInteractionRequiresTappability {
-    SLAssertFalse([UIAElement(_testElement) isTappable],
-                  @"For the purposes of this test case, the test element should not be tappable.");
+    NSString *const kTestElementUIARepresentation = @"UIATarget.localTarget().frontMostApp().mainWindow().elements()['test']";
+    NSString *const kTestElementIsTappable = [NSString stringWithFormat:@"%@.hitpoint() != null", kTestElementUIARepresentation];
+
+    SLAssertFalse([[[SLTerminal sharedTerminal] eval:kTestElementIsTappable] boolValue],
+                  @"For the purposes of this test, the test element should not be tappable.");
+
     SLLog(@"*** The UIAutomation errors seen in the test output immediately below are an expected part of the tests.");
-    // force Subliminal not to wait for tappability
-    SLAssertThrowsNamed([UIAElement(_testElement) waitUntilTappable:NO thenSendMessage:@"tap()"],
+    SLAssertThrowsNamed(([[SLTerminal sharedTerminal] evalWithFormat:@"%@.tap()", kTestElementUIARepresentation]),
                         SLTerminalJavaScriptException,
                         @"Element should not have been able to be tapped.");
     // sanity check
@@ -74,9 +76,9 @@
     SLAskApp(resetTapRecognition);
 
     SLAskApp(showTestView);
-    SLAssertTrue([UIAElement(_testElement) isTappable],
-                 @"The test element should now be tappable.");
-    SLAssertNoThrow([UIAElement(_testElement) waitUntilTappable:NO thenSendMessage:@"tap()"],
+    SLAssertTrue([[[SLTerminal sharedTerminal] eval:kTestElementIsTappable] boolValue],
+                 @"For the purposes of this test, the test element should be tappable.");
+    SLAssertNoThrow(([[SLTerminal sharedTerminal] evalWithFormat:@"%@.tap()", kTestElementUIARepresentation]),
                     @"Element should have been able to be tapped.");
     SLAssertTrue(SLAskApp(tapPoint) != nil, @"Tap should have been recognized.");
 }
@@ -96,6 +98,7 @@
     SLLog(@"*** The UIAutomation errors seen in the test output immediately below are an expected part of the tests.");
 
     NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+    // because Subliminal will not wait until tappable, UIAutomation will throw an exception
     SLAssertThrowsNamed(([UIAElement(_testElement) waitUntilTappable:NO
                                                    thenPerformActionWithUIARepresentation:^(NSString *UIARepresentation) {
                             [[SLTerminal sharedTerminal] evalWithFormat:@"%@.tap()", UIARepresentation];
@@ -119,8 +122,8 @@
     NSTimeInterval expectedWaitTimeInterval = 2.0;
     NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
 
-    // it's not necessary to have the test explicitly wait for the button
-    // to become visible; -tap will wait
+    // UIAutomation should not throw an exception, because Subliminal will
+    // wait until the button becomes visible
     SLAskApp1(showTestViewAfterInterval:, @(expectedWaitTimeInterval));
     SLAssertNoThrow(([UIAElement(_testElement) waitUntilTappable:YES
                                               thenPerformActionWithUIARepresentation:^(NSString *UIARepresentation) {

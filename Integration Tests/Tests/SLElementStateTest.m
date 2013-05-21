@@ -77,16 +77,19 @@
     SLAssertTrue([UIAElement(_testElement) isTappable], @"Element should be tappable if hitpoint is not null.");
 }
 
-// UIAutomation calls which do not involve (simulated) user interaction
-// should not require tappability. Contrast to calls that do require user
-// interaction, as described by -[SLElementTapTest testUIAutomationDoesNotWaitUntilTappable].
+// UIAutomation does not throw an exception when asked to access a user interface
+// element, so long as that access does not involve simulating user interaction
+// with the element. Contrast -[SLElementTapTest testUserInteractionRequiresTappability].
 - (void)testCanRetrieveLabelEvenIfNotTappable {
-    SLAssertFalse([UIAElement(_testElement) isTappable],
-                  @"For the purposes of this test case, the test element should not be tappable.");
+    NSString *const kTestElementUIARepresentation = @"UIATarget.localTarget().frontMostApp().mainWindow().elements()['Test Element']";
+    NSString *const kTestElementIsTappable = [NSString stringWithFormat:@"%@.hitpoint() != null", kTestElementUIARepresentation];
+
+    SLAssertFalse([[[SLTerminal sharedTerminal] eval:kTestElementIsTappable] boolValue],
+                  @"For the purposes of this test, the test element should not be tappable.");
 
     NSString *expectedLabel = SLAskApp(elementLabel);
     NSString *label;
-    SLAssertNoThrow(label = [UIAElement(_testElement) label],
+    SLAssertNoThrow(label = ([[SLTerminal sharedTerminal] evalWithFormat:@"%@.label()", kTestElementUIARepresentation]),
                     @"Accessing -label should not have thrown, despite not being tappable.");
     SLAssertTrue([label isEqualToString:expectedLabel], @"-label did not return expected.");
 }
