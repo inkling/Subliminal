@@ -73,7 +73,24 @@ extern NSString *const SLTestExceptionLineNumberKey;
 
 - (id)initWithTestController:(SLTestController *)testController;
 
-- (NSUInteger)run:(NSUInteger *)casesExecuted;
+/**
+ Runs all test cases defined on the receiver's class, 
+ and reports statistics about their execution.
+ 
+ See SLTest (SLTestCase) for a discussion of test case execution.
+ 
+ @param numCasesExecuted If this is non-null, on return, this will be set to 
+ the number of test cases that were executed--which will be the number of test
+ cases defined by this SLTest.
+ @param numCasesFailed If this is non-null, on return, this will be set to the 
+ number of test cases that failed (the number of test cases that threw exceptions).
+ @param numCasesFailedUnexpectedly If this is non-null, on return, this will 
+ be set to the number of test cases that failed unexpectedly (those test cases 
+ that threw non-assertion exceptions).
+ */
+- (void)runAndReportNumExecuted:(NSUInteger *)numCasesExecuted
+                         failed:(NSUInteger *)numCasesFailed
+             failedUnexpectedly:(NSUInteger *)numCasesFailedUnexpectedly;
 
 @end
 
@@ -86,6 +103,15 @@ extern NSString *const SLTestExceptionLineNumberKey;
     * with void return types, and
     * which take no arguments.
  
+ When a test is [run](-runAndReportNumExecuted:failed:failedUnexpectedly:),
+ it discovers, sets up, executes, and tears down all its test cases.
+ The method descriptions below specify when each method will be called,
+ and -[SLTestTests testCompleteTestExecutionSequence] gives an example.
+
+ A test case "passes" if it throws no exceptions in its set-up, tear-down, or 
+ the body of the test case itself; otherwise, it "fails". That failure is 
+ "expected" if it was caused by a test assertion failing. Any other exception
+ causes an "unexpected" failure.
  */
 @interface SLTest (SLTestCase)
 
@@ -127,8 +153,8 @@ extern NSString *const SLTestExceptionLineNumberKey;
  In this method, tests should establish any state shared by all test cases, 
  including navigating to the part of the app being exercised by the test cases.
  
- In this method, tests can (and should) use SLTest assertions and SLElement "wait until..."
- methods to ensure that set-up was successful.
+ In this method, tests can (and should) use test assertions to ensure
+ that set-up was successful.
  
  @warning If set-up fails, this test will be aborted and its cases skipped. 
  However, -tearDownTest will still be executed.
@@ -148,11 +174,11 @@ extern NSString *const SLTestExceptionLineNumberKey;
  In this method, tests should clean up any state shared by all test cases, 
  such as that which was established in setUpTest.
 
- In this method, tests can (and should) use SLTest assertions and SLElement "wait until..."
- methods to ensure that tear-down was successful.
+ In this method, tests can (and should) use test assertions to ensure that
+ tear-down was successful.
  
- @warning If tear-down fails, the test will be logged as having aborted rather than finished, 
- but its test cases will have already executed, so their logs will be preserved.
+ @warning If tear-down fails, the test will be logged as having terminated 
+ abnormally rather than finished, but its test cases' logs will be preserved.
 
  @sa setUpTest
  */
@@ -163,11 +189,12 @@ extern NSString *const SLTestExceptionLineNumberKey;
  
  In this method, tests should establish any state particular to the specified test case.
  
- In this method, tests can (and should) use SLTest assertions and SLElement "wait until..."
- methods to ensure that set-up was successful.
+ In this method, tests can (and should) use test assertions to ensure that
+ set-up was successful.
  
- @warning If set-up fails, this test case will be skipped and logged as having failed.
- However, -tearDownTestCaseWithSelector: will still be executed.
+ @warning If set-up fails, the test case will be logged as having failed, 
+ and the test case itself will be skipped. However, -tearDownTestCaseWithSelector: 
+ will still be executed.
 
  @param testCaseSelector The selector identifying the test case about to be run.
 
@@ -181,11 +208,12 @@ extern NSString *const SLTestExceptionLineNumberKey;
  In this method, tests should clean up state particular to the specified test case,
  such as that which was established in setUpTestCaseWithSelector:.
 
- In this method, tests can (and should) use SLTest assertions and SLElement "wait until..."
- methods to ensure that tear-down was successful.
+ In this method, tests can (and should) use test assertions to ensure that 
+ tear-down was successful.
 
- @warning If tear-down fails, this test case will be logged as having failed even 
- if the test case itself succeeded.
+ @warning If tear-down fails, this test case will be logged as having failed 
+ even if the test case itself succeeded. However, the test case's logs 
+ will be preserved.
  
  @param testCaseSelector The selector identifying the test case that was run.
 

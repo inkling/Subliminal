@@ -44,7 +44,9 @@
                  @"For the purposes of this test, this SLTest must be abstract.");
 
     id testMock = [OCMockObject partialMockForClass:abstractTestClass];
-    [[testMock reject] run:[OCMArg anyPointer]];
+    [[testMock reject] runAndReportNumExecuted:[OCMArg anyPointer]
+                                        failed:[OCMArg anyPointer]
+                            failedUnexpectedly:[OCMArg anyPointer]];
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:abstractTestClass], nil);
     STAssertNoThrow([testMock verify], @"Test was run despite not having any test cases.");
@@ -57,13 +59,17 @@
     STAssertTrue([testSupportingCurrentPlatformClass supportsCurrentPlatform],
                  @"For the purposes of this test, this SLTest must support the current platform.");
     id testSupportingCurrentPlatformMock = [OCMockObject partialMockForClass:testSupportingCurrentPlatformClass];
-    [[testSupportingCurrentPlatformMock expect] run:[OCMArg anyPointer]];
+    [[testSupportingCurrentPlatformMock expect] runAndReportNumExecuted:[OCMArg anyPointer]
+                                                                 failed:[OCMArg anyPointer]
+                                                     failedUnexpectedly:[OCMArg anyPointer]];
 
     Class testNotSupportingCurrentPlatformClass = [TestNotSupportingCurrentPlatform class];
     STAssertFalse([testNotSupportingCurrentPlatformClass supportsCurrentPlatform],
                   @"For the purposes of this test, this SLTest must not support the current platform.");
     id testNotSupportingCurrentPlatformMock = [OCMockObject partialMockForClass:testNotSupportingCurrentPlatformClass];
-    [[testNotSupportingCurrentPlatformMock reject] run:[OCMArg anyPointer]];
+    [[testNotSupportingCurrentPlatformMock reject] runAndReportNumExecuted:[OCMArg anyPointer]
+                                                                    failed:[OCMArg anyPointer]
+                                                        failedUnexpectedly:[OCMArg anyPointer]];
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObjects:testSupportingCurrentPlatformClass, testNotSupportingCurrentPlatformClass, nil], nil);
     STAssertNoThrow([testSupportingCurrentPlatformMock verify], @"Test supporting current platform was not run as expected.");
@@ -87,10 +93,14 @@
 
     // only the focused test should run
     id testThatIsNotFocusedClassMock = [OCMockObject partialMockForClass:testThatIsNotFocusedClass];
-    [[testThatIsNotFocusedClassMock reject] run:[OCMArg anyPointer]];
+    [[testThatIsNotFocusedClassMock reject] runAndReportNumExecuted:[OCMArg anyPointer]
+                                                             failed:[OCMArg anyPointer]
+                                                 failedUnexpectedly:[OCMArg anyPointer]];
 
     id testWithSomeFocusedTestCasesClassMock = [OCMockObject partialMockForClass:testWithSomeFocusedTestCasesClass];
-    [[testWithSomeFocusedTestCasesClassMock expect] run:[OCMArg anyPointer]];
+    [[testWithSomeFocusedTestCasesClassMock expect] runAndReportNumExecuted:[OCMArg anyPointer]
+                                                                     failed:[OCMArg anyPointer]
+                                                         failedUnexpectedly:[OCMArg anyPointer]];
 
     SLRunTestsAndWaitUntilFinished(tests, nil);
     STAssertNoThrow([testThatIsNotFocusedClassMock verify], @"Un-focused tests was still run.");
@@ -121,9 +131,13 @@
 
         // expect test instances to be run only if they're focused
         if ([testClass isFocused]) {
-            [[testMock expect] run:[OCMArg anyPointer]];
+            [[testMock expect] runAndReportNumExecuted:[OCMArg anyPointer]
+                                                failed:[OCMArg anyPointer]
+                                    failedUnexpectedly:[OCMArg anyPointer]];
         } else {
-            [[testMock reject] run:[OCMArg anyPointer]];
+            [[testMock reject] runAndReportNumExecuted:[OCMArg anyPointer]
+                                                failed:[OCMArg anyPointer]
+                                    failedUnexpectedly:[OCMArg anyPointer]];
         }
 
         [testMocks addObject:testMock];
@@ -153,10 +167,14 @@
     // it doesn't support the current platform, thus isn't going to run.
     // If it's not going to run, its focus is irrelevant, and so the other test should run after all.
     id testThatIsFocusedButDoesntSupportCurrentPlatformClassMock = [OCMockObject partialMockForClass:testThatIsFocusedButDoesntSupportCurrentPlatformClass];
-    [[testThatIsFocusedButDoesntSupportCurrentPlatformClassMock reject] run:[OCMArg anyPointer]];
+    [[testThatIsFocusedButDoesntSupportCurrentPlatformClassMock reject] runAndReportNumExecuted:[OCMArg anyPointer]
+                                                                                         failed:[OCMArg anyPointer]
+                                                                             failedUnexpectedly:[OCMArg anyPointer]];
 
     id testThatIsNotFocusedClassMock = [OCMockObject partialMockForClass:testThatIsNotFocusedClass];
-    [[testThatIsNotFocusedClassMock expect] run:[OCMArg anyPointer]];
+    [[testThatIsNotFocusedClassMock expect] runAndReportNumExecuted:[OCMArg anyPointer]
+                                                             failed:[OCMArg anyPointer]
+                                                 failedUnexpectedly:[OCMArg anyPointer]];
 
     SLRunTestsAndWaitUntilFinished(tests, nil);
     STAssertNoThrow([testThatIsFocusedButDoesntSupportCurrentPlatformClassMock verify], @"Test doesn't support the current platform but was still run.");
@@ -175,11 +193,15 @@
     NSSet *testsToRun = [NSSet setWithObject:testWithSomeTestCasesClass];
 
     id testWithSomeFocusedTestCasesClassMock = [OCMockObject partialMockForClass:testWithSomeFocusedTestCasesClass];
-    [[testWithSomeFocusedTestCasesClassMock reject] run:[OCMArg anyPointer]];
+    [[testWithSomeFocusedTestCasesClassMock reject] runAndReportNumExecuted:[OCMArg anyPointer]
+                                                                     failed:[OCMArg anyPointer]
+                                                         failedUnexpectedly:[OCMArg anyPointer]];
 
     // ...and if it won't run, its focus is irrelevant, and so the other test should run after all.
     id testWithSomeTestCasesClassMock = [OCMockObject partialMockForClass:testWithSomeTestCasesClass];
-    [[testWithSomeTestCasesClassMock expect] run:[OCMArg anyPointer]];
+    [[testWithSomeTestCasesClassMock expect] runAndReportNumExecuted:[OCMArg anyPointer]
+                                                              failed:[OCMArg anyPointer]
+                                                  failedUnexpectedly:[OCMArg anyPointer]];
 
     SLRunTestsAndWaitUntilFinished(testsToRun, nil);
     STAssertNoThrow([testWithSomeFocusedTestCasesClassMock verify],
@@ -198,7 +220,9 @@
     [[_loggerMock expect] logMessage:[NSString stringWithFormat:@"Focusing on test cases in specific tests: %@.", testClass]];
     [[_loggerMock expect] logTestingStart];
 
-    [[testMock expect] run:[OCMArg anyPointer]];
+    [[testMock expect] runAndReportNumExecuted:[OCMArg anyPointer]
+                                        failed:[OCMArg anyPointer]
+                            failedUnexpectedly:[OCMArg anyPointer]];
 
     [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsFailed:0];
     

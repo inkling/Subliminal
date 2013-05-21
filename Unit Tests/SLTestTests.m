@@ -382,7 +382,9 @@
     Class testWithSomeTestCasesTest = [TestWithSomeTestCases class];
     id testMock = [OCMockObject partialMockForClass:testWithSomeTestCasesTest];
 
-    [[testMock expect] run:[OCMArg anyPointer]];
+    [[testMock expect] runAndReportNumExecuted:[OCMArg anyPointer]
+                                        failed:[OCMArg anyPointer]
+                            failedUnexpectedly:[OCMArg anyPointer]];
 
     [[testMock reject] testThatIsntATestBecauseItsReturnTypeIsNonVoid];
     [[testMock reject] testThatIsntATestBecauseItTakesAnArgument:OCMOCK_ANY];
@@ -403,8 +405,10 @@
     
     [[_loggerMock expect] logTestingStart];
 
-    [[[testMock expect] andForwardToRealObject] run:[OCMArg anyPointer]];
-    
+    [[[testMock expect] andForwardToRealObject] runAndReportNumExecuted:[OCMArg anyPointer]
+                                                                 failed:[OCMArg anyPointer]
+                                                     failedUnexpectedly:[OCMArg anyPointer]];
+
     [[testMock expect] setUpTest];
 
     [[_loggerMock expect] logTest:NSStringFromClass(testClass) caseStart:@"testOne"];
@@ -422,7 +426,8 @@
 
     // It's possible for us to get the latter values below dynamically but it would just clutter this test.
     // These values will need to be updated if the test class' definition changes.
-    [[_loggerMock expect] logTestFinish:NSStringFromClass(testClass) withNumCasesExecuted:3 numCasesFailed:0];
+    [[_loggerMock expect] logTestFinish:NSStringFromClass(testClass)
+                           withNumCasesExecuted:3 numCasesFailed:0 numCasesFailedUnexpectedly:0];
 
     [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsFailed:0];
 
@@ -562,7 +567,9 @@
     // ...the other test(s) should still run.
     Class otherTestClass = [TestWithPlatformSpecificTestCases class];
     id otherTestMock = [OCMockObject partialMockForClass:otherTestClass];
-    [[otherTestMock expect] run:[OCMArg anyPointer]];
+    [[otherTestMock expect] runAndReportNumExecuted:[OCMArg anyPointer]
+                                             failed:[OCMArg anyPointer]
+                                 failedUnexpectedly:[OCMArg anyPointer]];
 
     // *** End expected test run
 
@@ -640,12 +647,11 @@
     // ...the test catches the exception and logs an error...
     [[_loggerMock expect] logError:[OCMArg any] test:NSStringFromClass(failingTestClass) testCase:NSStringFromSelector(failingTestCase)];
 
-    // ...and logs the test case failing...
-    [[_loggerMock expect] logTest:NSStringFromClass(failingTestClass) caseFail:NSStringFromSelector(failingTestCase)];
-
-    // ...and the test controller reports the test finishing with one test case failing...
+    // ...and the test controller reports the test finishing with one test case having failed...
+    // (and that failure was "expected" because it was due to an assertion failing)
     // (these values will need to be updated if the test class' definition changes)
-    [[_loggerMock expect] logTestFinish:NSStringFromClass(failingTestClass) withNumCasesExecuted:3 numCasesFailed:1];
+    [[_loggerMock expect] logTestFinish:NSStringFromClass(failingTestClass)
+                          withNumCasesExecuted:3 numCasesFailed:1 numCasesFailedUnexpectedly:0];
 
     // ...and the test controller logs testing as finishing with one test executed, one test failing.
     [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsFailed:1];
@@ -656,7 +662,7 @@
     STAssertNoThrow([failingTestSequencer verify], @"Test did not run/messages were not logged in the expected sequence.");
 }
 
-- (void)testIfTestCaseSetupFailsAnErrorAndTestCaseAreLogged {
+- (void)testIfTestCaseSetupFailsAnErrorAndTestCaseFailAreLogged {
     [self runWithTestFailingInTestCaseSetupOrTeardownToTestAnErrorAndTestCaseFailAreLogged:YES];
 }
 
@@ -765,7 +771,8 @@
 
     // ...and the test controller reports the test finishing with no cases failing...
     // (these values will need to be updated if the test class' definition changes)
-    [[_loggerMock expect] logTestFinish:NSStringFromClass(testClass) withNumCasesExecuted:3 numCasesFailed:0];
+    [[_loggerMock expect] logTestFinish:NSStringFromClass(testClass)
+                          withNumCasesExecuted:3 numCasesFailed:0 numCasesFailedUnexpectedly:0];
 
     // ...and the test controller logs testing as finishing with one test executed, no tests failing.
     [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsFailed:0];
@@ -776,7 +783,7 @@
     STAssertNoThrow([failingTestSequencer verify], @"Test did not run/messages were not logged in the expected sequence.");
 }
 
-- (void)testIfTestCaseThrowsAnErrorAndTestCaseFailAreLogged {
+- (void)runWithFailureInTestCaseDueToAssertionException:(BOOL)failWithAssertionException {
     Class failingTestClass = [TestWithSomeTestCases class];
     SEL failingTestCase = @selector(testOne);
     id failingTestMock = [OCMockObject partialMockForClass:failingTestClass];
@@ -784,21 +791,35 @@
 
     // *** Begin expected test run
 
-    // If the test case fails...
-    NSException *exception = [NSException exceptionWithName:SLTestAssertionFailedException
-                                                     reason:@"Test case failed."
-                                                   userInfo:nil];
+    // A failure is "unexpected" unless it was caused by an assertion failing.
+    NSException *exception;
+    if (failWithAssertionException) {
+        exception = [NSException exceptionWithName:SLTestAssertionFailedException
+                                            reason:@"Test case failed due to assertion failing."
+                                          userInfo:nil];
+    } else {
+        exception = [NSException exceptionWithName:SLUIAElementNotTappableException
+                                            reason:@"Test case failed because element was not tappable."
+                                          userInfo:nil];
+    }
     [[[failingTestMock expect] andThrow:exception] testOne];
 
     // ...the test catches the exception and logs an error...
-    [[_loggerMock expect] logError:[OCMArg any] test:NSStringFromClass(failingTestClass) testCase:NSStringFromSelector(failingTestCase)];
+    [[_loggerMock expect] logError:[OCMArg any]
+                              test:NSStringFromClass(failingTestClass)
+                          testCase:NSStringFromSelector(failingTestCase)];
 
     // ...and logs the test case failing...
-    [[_loggerMock expect] logTest:NSStringFromClass(failingTestClass) caseFail:NSStringFromSelector(failingTestCase)];
+    [[_loggerMock expect] logTest:NSStringFromClass(failingTestClass)
+                         caseFail:NSStringFromSelector(failingTestCase)
+                         expected:failWithAssertionException];
 
     // ...and the test controller reports the test finishing with one case failing...
     // (these values will need to be updated if the test class' definition changes)
-    [[_loggerMock expect] logTestFinish:NSStringFromClass(failingTestClass) withNumCasesExecuted:3 numCasesFailed:1];
+    [[_loggerMock expect] logTestFinish:NSStringFromClass(failingTestClass)
+                          withNumCasesExecuted:3
+                         numCasesFailed:1
+             numCasesFailedUnexpectedly:(failWithAssertionException ? 0 : 1)];
 
     // ...and the test controller logs testing as finishing with one test executed, one test failing.
     [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsFailed:1];
@@ -807,6 +828,14 @@
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:failingTestClass], nil);
     STAssertNoThrow([failingTestSequencer verify], @"Test did not fail/messages were not logged in the expected sequence.");
+}
+
+- (void)testIfTestCaseThrowsAssertionExceptionAnErrorAndExpectedFailureAreLogged {
+    [self runWithFailureInTestCaseDueToAssertionException:YES];
+}
+
+- (void)testIfTestCaseThrowsAnotherExceptionAnErrorAndUnexpectedFailureAreLogged {
+    [self runWithFailureInTestCaseDueToAssertionException:NO];
 }
 
 - (void)testIfTestCaseFailsTestCaseTearDownStillExecutes {

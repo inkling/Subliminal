@@ -78,9 +78,11 @@ static SLLogger *__sharedLogger = nil;
 
 - (void)logTestFinish:(NSString *)test
  withNumCasesExecuted:(NSUInteger)numCasesExecuted
-       numCasesFailed:(NSUInteger)numCasesFailed {
-    [self logMessage:[NSString stringWithFormat:@"Test \"%@\" finished: executed %u case%@, with %u failures.",
-                                                test, numCasesExecuted, (numCasesExecuted == 1 ? @"" : @"s"), numCasesFailed]];
+       numCasesFailed:(NSUInteger)numCasesFailed
+       numCasesFailedUnexpectedly:(NSUInteger)numCasesFailedUnexpectedly {
+    [self logMessage:[NSString stringWithFormat:@"Test \"%@\" finished: executed %u case%@, with %u failure%@ (%u unexpected).",
+                                                test, numCasesExecuted, (numCasesExecuted == 1 ? @"" : @"s"),
+                                                      numCasesFailed, (numCasesFailed == 1 ? @"" : @"s"), numCasesFailedUnexpectedly]];
 }
 
 - (void)logTestAbort:(NSString *)test {
@@ -102,16 +104,13 @@ static SLLogger *__sharedLogger = nil;
     [self logMessage:[NSString stringWithFormat:@"Test case \"-[%@ %@]\" started.", test, testCase]];
 }
 
-- (void)logTest:(NSString *)test caseFail:(NSString *)testCase {
-    [self logError:[NSString stringWithFormat:@"Test case \"-[%@ %@]\" failed.", test, testCase]];
-}
-
 - (void)logTest:(NSString *)test casePass:(NSString *)testCase {
     [self logMessage:[NSString stringWithFormat:@"Test case \"-[%@ %@]\" passed.", test, testCase]];
 }
 
-- (void)logTest:(NSString *)test caseIssue:(NSString *)testCase {
-    [self logMessage:[NSString stringWithFormat:@"Test case \"-[%@ %@]\" terminated abnorally.", test, testCase]];
+- (void)logTest:(NSString *)test caseFail:(NSString *)testCase expected:(BOOL)expected {
+    [self logError:[NSString stringWithFormat:@"Test case \"-[%@ %@]\" failed%@.",
+                                                test, testCase, (expected ? @"" : @" unexpectedly")]];
 }
 
 - (void)logDebug:(NSString *)debug test:(NSString *)test testCase:(NSString *)testCase {

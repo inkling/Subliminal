@@ -92,15 +92,19 @@
     [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logStart('Test case \"-[%@ %@]\" started.');", test, testCase];
 }
 
-- (void)logTest:(NSString *)test caseFail:(NSString *)testCase {
+- (void)logTest:(NSString *)test caseFail:(NSString *)testCase expected:(BOOL)expected {
     if (dispatch_get_current_queue() != _loggingQueue) {
         dispatch_sync(_loggingQueue, ^{
-            [self logTest:test caseFail:testCase];
+            [self logTest:test caseFail:testCase expected:expected];
         });
         return;
     }
 
-    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logFail('Test case \"-[%@ %@]\" failed.');", test, testCase];
+    if (expected) {
+        [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logFail('Test case \"-[%@ %@]\" failed.');", test, testCase];
+    } else {
+        [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logIssue('Test case \"-[%@ %@]\" failed unexpectedly.');", test, testCase];
+    }
 }
 
 - (void)logTest:(NSString *)test casePass:(NSString *)testCase {
@@ -112,17 +116,6 @@
     }
 
     [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logPass('Test case \"-[%@ %@]\" passed.');", test, testCase];
-}
-
-- (void)logTest:(NSString *)test caseIssue:(NSString *)testCase {
-    if (dispatch_get_current_queue() != _loggingQueue) {
-        dispatch_sync(_loggingQueue, ^{
-            [self logTest:test caseIssue:testCase];
-        });
-        return;
-    }
-
-    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logIssue('Test case \"-[%@ %@]\" terminated abnorally.');", test, testCase];
 }
 
 // we don't need to log the test/test case in any of the below
