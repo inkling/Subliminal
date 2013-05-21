@@ -20,6 +20,7 @@
 #import "SLAlert.h"
 #import "SLButton.h"
 #import "SLKeyboard.h"
+#import "SLPopover.h"
 #import "SLTextField.h"
 #import "SLWebView.h"
 #import "SLWindow.h"
