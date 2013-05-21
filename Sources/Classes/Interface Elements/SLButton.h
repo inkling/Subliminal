@@ -6,8 +6,9 @@
 //  Copyright (c) 2013 Inkling. All rights reserved.
 //
 
-#import "SLControl.h"
+#import "SLElement.h"
 
-// SLButton will match any object, and only objects, with the UIAccessibilityTraitButton accessibility trait.
-@interface SLButton : SLControl
+// SLButton will match any object, and only objects,
+// with the UIAccessibilityTraitButton accessibility trait.
+@interface SLButton : SLElement
 @end

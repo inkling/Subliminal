@@ -100,8 +100,6 @@
 		F0C07A381703F95B00C93F93 /* SLAlert.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A361703F95B00C93F93 /* SLAlert.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0C07A391703F95B00C93F93 /* SLAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C07A371703F95B00C93F93 /* SLAlert.m */; };
 		F0C07A3F1703F9A900C93F93 /* SLUIAElement+Subclassing.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A3D1703F9A900C93F93 /* SLUIAElement+Subclassing.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F0C07A431703FE5200C93F93 /* SLControl.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A411703FE5200C93F93 /* SLControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F0C07A441703FE5200C93F93 /* SLControl.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C07A421703FE5200C93F93 /* SLControl.m */; };
 		F0C07A471703FEF600C93F93 /* SLButton.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A451703FEF600C93F93 /* SLButton.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0C07A481703FEF600C93F93 /* SLButton.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C07A461703FEF600C93F93 /* SLButton.m */; };
 		F0C07A4B1704002100C93F93 /* SLTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A491704002100C93F93 /* SLTextField.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -295,8 +293,6 @@
 		F0C07A361703F95B00C93F93 /* SLAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLAlert.h; sourceTree = "<group>"; };
 		F0C07A371703F95B00C93F93 /* SLAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAlert.m; sourceTree = "<group>"; };
 		F0C07A3D1703F9A900C93F93 /* SLUIAElement+Subclassing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLUIAElement+Subclassing.h"; sourceTree = "<group>"; };
-		F0C07A411703FE5200C93F93 /* SLControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLControl.h; sourceTree = "<group>"; };
-		F0C07A421703FE5200C93F93 /* SLControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLControl.m; sourceTree = "<group>"; };
 		F0C07A451703FEF600C93F93 /* SLButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLButton.h; sourceTree = "<group>"; };
 		F0C07A461703FEF600C93F93 /* SLButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLButton.m; sourceTree = "<group>"; };
 		F0C07A491704002100C93F93 /* SLTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTextField.h; sourceTree = "<group>"; };
@@ -565,8 +561,6 @@
 				F0C07A371703F95B00C93F93 /* SLAlert.m */,
 				F0C07A451703FEF600C93F93 /* SLButton.h */,
 				F0C07A461703FEF600C93F93 /* SLButton.m */,
-				F0C07A411703FE5200C93F93 /* SLControl.h */,
-				F0C07A421703FE5200C93F93 /* SLControl.m */,
 				F0C07A511704011300C93F93 /* SLKeyboard.h */,
 				F0C07A521704011300C93F93 /* SLKeyboard.m */,
 				F0C07A491704002100C93F93 /* SLTextField.h */,
@@ -763,7 +757,6 @@
 				F016493D16D42E3C000AEB50 /* SLTestController+Internal.h in Headers */,
 				F0C07A381703F95B00C93F93 /* SLAlert.h in Headers */,
 				F0C07A3F1703F9A900C93F93 /* SLUIAElement+Subclassing.h in Headers */,
-				F0C07A431703FE5200C93F93 /* SLControl.h in Headers */,
 				F0C07A471703FEF600C93F93 /* SLButton.h in Headers */,
 				F0C07A4B1704002100C93F93 /* SLTextField.h in Headers */,
 				F0C07A4F1704009E00C93F93 /* SLWindow.h in Headers */,
@@ -977,7 +970,6 @@
 				CA75E78516697C0000D57E92 /* SLDevice.m in Sources */,
 				0F21788916AE08F700C46068 /* SLMultiLogger.m in Sources */,
 				F0C07A391703F95B00C93F93 /* SLAlert.m in Sources */,
-				F0C07A441703FE5200C93F93 /* SLControl.m in Sources */,
 				F0C07A481703FEF600C93F93 /* SLButton.m in Sources */,
 				F0C07A4C1704002100C93F93 /* SLTextField.m in Sources */,
 				F0C07A501704009E00C93F93 /* SLWindow.m in Sources */,

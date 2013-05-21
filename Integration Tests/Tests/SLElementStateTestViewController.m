@@ -19,7 +19,9 @@
 @end
 
 
-@implementation SLElementStateTestViewController
+@implementation SLElementStateTestViewController {
+    UIView *_testView;
+}
 
 + (NSString *)nibNameForTestCase:(SEL)testCase {
     NSString *nibName = nil;
@@ -36,6 +38,7 @@
 - (void)loadViewForTestCase:(SEL)testCase {
     if (testCase == @selector(testLabel) ||
         testCase == @selector(testValue) ||
+        testCase == @selector(testIsEnabledMirrorsUIControlIsEnabledWhenMatchingObjectIsUIControl) ||
         testCase == @selector(testHitpointReturnsRectMidpointByDefault) ||
         testCase == @selector(testRect)) {
         UIView *view = [[UIView alloc] initWithFrame:self.navigationController.view.bounds];
@@ -48,13 +51,30 @@
         _button.center = view.center;
 
         self.view = view;
+    } else if (testCase == @selector(testIsEnabledReturnsYESByDefault)) {
+        UIView *view = [[UIView alloc] initWithFrame:self.navigationController.view.bounds];
+        view.backgroundColor = [UIColor whiteColor];
+
+        _testView = [[UIView alloc] initWithFrame:(CGRect){CGPointZero, CGSizeMake(100.0f, 50.0f)}];
+        _testView.backgroundColor = [UIColor blueColor];
+        _testView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin;
+        [view addSubview:_testView];
+        _testView.center = view.center;
+
+        self.view = view;
     }
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    NSAssert(!(_button && _testView), @"Only one test element should have been initialized.");
+    
     _button.accessibilityLabel = @"Test Element";
     _button.accessibilityValue = @"Foo";
+
+    _testView.isAccessibilityElement = YES;
+    _testView.accessibilityLabel = @"Test Element";
 }
 
 - (instancetype)initWithTestCaseWithSelector:(SEL)testCase {
@@ -63,6 +83,8 @@
         SLTestController *testController = [SLTestController sharedTestController];
         [testController registerTarget:self forAction:@selector(elementLabel)];
         [testController registerTarget:self forAction:@selector(elementValue)];
+        [testController registerTarget:self forAction:@selector(disableElement)];
+        [testController registerTarget:self forAction:@selector(enableElement)];
         [testController registerTarget:self forAction:@selector(uncoverTestView)];
         [testController registerTarget:self forAction:@selector(elementRect)];
     }
@@ -81,6 +103,14 @@
 
 - (NSString *)elementValue {
     return _button.accessibilityValue;
+}
+
+- (void)disableElement {
+    _button.enabled = NO;
+}
+
+- (void)enableElement {
+    _button.enabled = YES;
 }
 
 - (void)uncoverTestView {

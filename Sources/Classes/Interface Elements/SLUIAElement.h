@@ -81,6 +81,17 @@ extern BOOL SLCGPointIsNull(CGPoint point);
 - (BOOL)isInvalidOrInvisible;
 
 /**
+ Determines whether the specified element is enabled.
+ 
+ The matching object appears to define what "enabled" means. 
+ When the matching object is an instance of UIControl, this appears to evaluate
+ to -[UIControl isEnabled]. It otherwise appears to evaluate to YES.
+
+ @return YES if the specified element is enabled, NO otherwise.
+ */
+- (BOOL)isEnabled;
+
+/**
  Determines whether it is possible to interact with the specified element.
 
  @return YES if it is possible to tap on or otherwise interact with the element, 

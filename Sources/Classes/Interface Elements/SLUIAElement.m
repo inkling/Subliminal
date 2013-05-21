@@ -88,6 +88,10 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return ![self isValidAndVisible];
 }
 
+- (BOOL)isEnabled {
+    return [[self waitUntilTappable:NO thenSendMessage:@"isEnabled()"] boolValue];
+}
+
 + (NSString *)SLElementIsTappableFunctionName {
     static NSString *const SLElementIsTappableFunctionName = @"SLElementIsTappable";
     static dispatch_once_t onceToken;

@@ -19,7 +19,6 @@
 #import "SLElement.h"
 #import "SLAlert.h"
 #import "SLButton.h"
-#import "SLControl.h"
 #import "SLKeyboard.h"
 #import "SLTextField.h"
 #import "SLWebView.h"
