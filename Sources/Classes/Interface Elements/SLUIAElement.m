@@ -12,9 +12,9 @@
 #import <objc/runtime.h>
 
 
-// all exceptions thrown by SLElement must have names beginning with this prefix
-// so that they may be identified as "expected" throughout the testing framework
-NSString *const SLUIAElementExceptionNamePrefix    = @"SLElement";
+// all exceptions thrown by SLUIAElement must have names beginning with this prefix
+// so that -[SLTest logException:inTestCase:] uses the proper logging format
+NSString *const SLUIAElementExceptionNamePrefix    = @"SLUIAElement";
 
 NSString *const SLUIAElementInvalidException       = @"SLUIAElementInvalidException";
 NSString *const SLUIAElementNotTappableException   = @"SLUIAElementNotTappableException";

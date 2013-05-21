@@ -17,7 +17,7 @@
 
 
 // all exceptions thrown by SLTest must have names beginning with this prefix
-// so that they may be identified as "expected" throughout the testing framework
+// so that -[SLTest logException:inTestCase:] uses the proper logging format
 NSString *const SLTestExceptionNamePrefix       = @"SLTest";
 
 NSString *const SLTestAssertionFailedException  = @"SLTestCaseAssertionFailedException";
@@ -324,21 +324,22 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
 }
 
 - (void)logException:(NSException *)exception inTestCase:(NSString *)testCase {
-    NSString *message = nil;
-    // Exceptions thrown by SLTest or SLElement were likely expected
-    // --with call site information recorded by an assertion or UIAElement macro--
-    // and are logged more tersely than other exceptions.
+    // Only use the call site information if the exception was thrown by SLTest or SLElement,
+    // where the information was likely to have been recorded by an assertion or UIAElement macro.
+    // Otherwise it is likely stale.
+    NSString *callSite;
     if ([[exception name] hasPrefix:SLTestExceptionNamePrefix] ||
         [[exception name] hasPrefix:SLUIAElementExceptionNamePrefix]) {
-        message = [NSString stringWithFormat:@"%@:%d: %@", _lastKnownFilename, _lastKnownLineNumber, [exception reason]];
+        callSite = [NSString stringWithFormat:@"%@:%d", _lastKnownFilename, _lastKnownLineNumber];
     } else {
-        message = [NSString stringWithFormat:@"Unexpected exception occurred ***%@*** for reason: %@",
-                    [exception name], [exception reason]];
+        callSite = @"Unknown location";
     }
-
+    // the call site info is definitely stale at this point
     _lastKnownFilename = nil;
     _lastKnownLineNumber = 0;
 
+    NSString *exceptionDescription = [exception reason];
+    NSString *message = [NSString stringWithFormat:@"%@: %@", callSite, exceptionDescription];
     NSString *test = NSStringFromClass([self class]);
     [[SLLogger sharedLogger] logError:message test:test testCase:testCase];
 }

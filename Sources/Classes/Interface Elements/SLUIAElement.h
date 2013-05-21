@@ -12,7 +12,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 
-// all exceptions thrown by SLElement will have names beginning with this prefix
+// all exceptions thrown by SLUIAElement will have names beginning with this prefix
 extern NSString *const SLUIAElementExceptionNamePrefix;
 
 extern NSString *const SLUIAElementInvalidException;
