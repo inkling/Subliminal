@@ -8,6 +8,6 @@
 
 #import "SLLogger.h"
 
-@interface SLUIALogger : SLLogger <SLThreadSafeLogger>
+@interface SLUIALogger : SLLogger
 
 @end

@@ -19,10 +19,8 @@ void SLLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
 /**
  Asynchronously logs a message to the testing environment.
  
- This variant of SLLog is for use by the application.
- 
- @warning This may only be used if the [shared logger](+[SLLogger sharedLogger])
- conforms to the SLThreadSafeLogger protocol.
+ This variant of SLLog is for use by the application 
+ and other main thread contexts.
  */
 void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 
@@ -31,6 +29,9 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 
 + (SLLogger *)sharedLogger;
 + (void)setSharedLogger:(SLLogger *)logger;
+
+/// Returns a queue on which log messages may be serialized.
+- (dispatch_queue_t)loggingQueue;
 
 - (void)logDebug:(NSString *)debug;
 - (void)logMessage:(NSString *)message;
@@ -69,20 +70,5 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 - (void)logMessage:(NSString *)message test:(NSString *)test testCase:(NSString *)testCase;
 - (void)logWarning:(NSString *)warning test:(NSString *)test testCase:(NSString *)testCase;
 - (void)logError:(NSString *)error test:(NSString *)test testCase:(NSString *)testCase;
-
-@end
-
-
-/**
- Clients may use SLLogAsync if and only if the [shared logger](+[SLLogger sharedLogger]) 
- conforms to the SLThreadSafeLogger protocol.
- 
- Subliminal's suggested logger, the SLUIALogger, conforms to this protocol. 
- See that class for a reference implementation.
- */
-@protocol SLThreadSafeLogger <NSObject>
-
-/// Returns a queue on which log messages may be serialized.
-- (dispatch_queue_t)loggingQueue;
 
 @end

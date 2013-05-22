@@ -7,7 +7,7 @@
 //
 
 #import "SLIntegrationTest.h"
-#import "SLElement+Subclassing.h"
+#import "SLUIAElement+Subclassing.h"
 
 
 @interface SLElementMatchingTest : SLIntegrationTest
@@ -78,7 +78,7 @@
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < SLElementWaitRetryDelay,
+    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < SLUIAElementWaitRetryDelay,
                  @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
                  actualWaitTimeInterval, expectedWaitTimeInterval);
 
@@ -97,12 +97,12 @@
 
     NSString *fooButtonValue;
     SLAssertThrowsNamed(fooButtonValue = [UIAElement(fooButton) value],
-                        SLElementInvalidException,
+                        SLUIAElementInvalidException,
                         @"Should have thrown.");
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < SLElementWaitRetryDelay,
+    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < SLUIAElementWaitRetryDelay,
                  @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
                  actualWaitTimeInterval, expectedWaitTimeInterval);
 }
@@ -258,7 +258,7 @@
         SLAssertTrue([SLAskApp(barButtonIdentifier) isEqualToString:originalBarIdentifier],
                      @"If an object is not involved in the hierarchy of a matched object, \
                      its identifier should not be replaced, even if it is of the same type.");
-    }];
+    } timeout:[SLElement defaultTimeout]];
 }
 
 - (void)testSubliminalRestoresAccessibilityIdentifiersAfterMatching {
@@ -274,7 +274,7 @@
                thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         SLAssertFalse([SLAskApp(fooButtonIdentifier) isEqualToString:originalIdentifier],
                       @"While matched, an object's identifier is replaced.");
-    }];
+    } timeout:[SLElement defaultTimeout]];
 
     SLAssertTrue([SLAskApp(fooButtonIdentifier) isEqualToString:originalIdentifier],
                  @"After being matched, an object's identifier should have been restored.");
@@ -294,7 +294,7 @@
         SLAssertFalse([SLAskApp(fooButtonIdentifier) isEqualToString:originalIdentifier],
                       @"While matched, an object's identifier is replaced.");
         [NSException raise:@"TestException" format:nil];
-    }], @"Should have thrown test exception.");
+    } timeout:[SLElement defaultTimeout]], @"Should have thrown test exception.");
 
     SLAssertTrue([SLAskApp(fooButtonIdentifier) isEqualToString:originalIdentifier],
                  @"After being matched, an object's identifier should have been restored.");

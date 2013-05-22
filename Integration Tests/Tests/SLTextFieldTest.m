@@ -13,7 +13,9 @@
 @end
 
 @implementation SLTextFieldTest {
-    SLTextField *_textField;
+    // _textField is id-typed so that it can represent SLTextFields
+    // and SLWebTextFields
+    id _textField;
 }
 
 + (NSString *)testCaseViewControllerClassName {
@@ -63,7 +65,7 @@
 
 - (void)testMatchesSearchBarTextField {
     SLAssertTrue([UIAElement(_textField) isValid], @"Search bar should be valid.");
-    SLAssertTrue([[UIAElement(_textField) value] isEqualToString:@"bar"], @"Did not match expected element.");
+    SLAssertTrue([[UIAElement(_textField) text] isEqualToString:@"bar"], @"Did not match expected element.");
 }
 
 - (void)testSetSearchBarText {
@@ -82,7 +84,7 @@
 
 - (void)testMatchesWebTextField {
     SLAssertTrue([UIAElement(_textField) isValid], @"Web text field should be valid.");
-    SLAssertTrue([[UIAElement(_textField) value] isEqualToString:@"baz"], @"Did not match expected element.");
+    SLAssertTrue([[UIAElement(_textField) text] isEqualToString:@"baz"], @"Did not match expected element.");
 }
 
 - (void)testSetWebTextFieldText {

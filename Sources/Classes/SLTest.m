@@ -329,7 +329,7 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     // --with call site information recorded by an assertion or UIAElement macro--
     // and are logged more tersely than other exceptions.
     if ([[exception name] hasPrefix:SLTestExceptionNamePrefix] ||
-        [[exception name] hasPrefix:SLElementExceptionNamePrefix]) {
+        [[exception name] hasPrefix:SLUIAElementExceptionNamePrefix]) {
         message = [NSString stringWithFormat:@"%@:%d: %@", _lastKnownFilename, _lastKnownLineNumber, [exception reason]];
     } else {
         message = [NSString stringWithFormat:@"Unexpected exception occurred ***%@*** for reason: %@",

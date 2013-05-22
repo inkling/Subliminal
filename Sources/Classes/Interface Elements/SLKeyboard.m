@@ -7,35 +7,44 @@
 //
 
 #import "SLKeyboard.h"
-#import "SLElement+Subclassing.h"
+#import "SLUIAElement+Subclassing.h"
 
 @implementation SLKeyboard
 
 + (SLKeyboard *)keyboard {
-    return [SLKeyboard anyElement];
+    return [[self alloc] initWithUIARepresentation:@"UIATarget.localTarget().frontMostApp().keyboard()"];
 }
 
-- (NSString *)staticUIARepresentation {
-    return @"UIATarget.localTarget().frontMostApp().keyboard()";
+- (void)typeString:(NSString *)string { 
+    [self waitUntilTappable:YES
+            thenSendMessage:@"typeString('%@')", [string slStringByEscapingForJavaScriptLiteral]];
 }
 
 @end
+
 
 @implementation SLKeyboardKey {
     NSString *_keyLabel;
 }
 
-+ (id)elementWithAccessibilityLabel:(NSString *)label
++ (instancetype)elementWithAccessibilityLabel:(NSString *)label
 {
-    SLKeyboardKey *key = [SLKeyboardKey elementMatching:^BOOL(NSObject *obj) {
-        return YES;
-    } withDescription:[NSString stringWithFormat:@"Keyboard Key: %@", label]];
-    key->_keyLabel = label;
-    return key;
+    return [[self alloc] initWithAccessibilityLabel:label];
 }
 
-- (NSString *)staticUIARepresentation {
-    return [NSString stringWithFormat:@"UIATarget.localTarget().frontMostApp().keyboard().elements()['%@']", _keyLabel];
+- (instancetype)initWithAccessibilityLabel:(NSString *)label {
+    NSParameterAssert([label length]);
+    
+    NSString *UIARepresentation = [NSString stringWithFormat:@"UIATarget.localTarget().frontMostApp().keyboard().elements()['%@']", label];
+    self = [super initWithUIARepresentation:UIARepresentation];
+    if (self) {
+        _keyLabel = [label copy];
+    }
+    return self;
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%@ label:\"%@\">", NSStringFromClass([self class]), _keyLabel];
 }
 
 @end

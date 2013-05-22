@@ -7,7 +7,7 @@
 //
 
 #import "SLIntegrationTest.h"
-#import "SLElement+Subclassing.h"
+#import "SLUIAElement+Subclassing.h"
 
 @interface SLElementTapTest : SLIntegrationTest
 
@@ -89,7 +89,7 @@
 // and one for SLTerminal receiving the result)), and tapping
 // (two more SLTerminalReadRetryDelays).
 - (NSTimeInterval)waitDelayVariabilityIncludingTap:(BOOL)includingTap {
-    return SLElementWaitRetryDelay + SLTerminalReadRetryDelay * (includingTap ? 4 : 2);
+    return SLUIAElementWaitRetryDelay + SLTerminalReadRetryDelay * (includingTap ? 4 : 2);
 }
 
 - (void)testWaitUntilTappableNOThenPerformActionWithUIARepresentationDoesNotWaitUntilTappable {
@@ -102,7 +102,7 @@
     SLAssertThrowsNamed(([UIAElement(_testElement) waitUntilTappable:NO
                                                    thenPerformActionWithUIARepresentation:^(NSString *UIARepresentation) {
                             [[SLTerminal sharedTerminal] evalWithFormat:@"%@.tap()", UIARepresentation];
-                        }]),
+                        } timeout:[SLElement defaultTimeout]]),
                         SLTerminalJavaScriptException,
                         @"Element should not have been able to be tapped.");
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
@@ -128,7 +128,7 @@
     SLAssertNoThrow(([UIAElement(_testElement) waitUntilTappable:YES
                                               thenPerformActionWithUIARepresentation:^(NSString *UIARepresentation) {
                         [[SLTerminal sharedTerminal] evalWithFormat:@"%@.tap()", UIARepresentation];
-                     }]),
+                     } timeout:[SLElement defaultTimeout]]),
                     @"Element should have been able to be tapped.");
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
@@ -150,8 +150,8 @@
     SLAssertThrowsNamed(([UIAElement(_testElement) waitUntilTappable:YES
                                                    thenPerformActionWithUIARepresentation:^(NSString *UIARepresentation) {
                             [[SLTerminal sharedTerminal] evalWithFormat:@"%@.tap()", UIARepresentation];
-                        }]),
-                        SLElementNotTappableException,
+                        } timeout:[SLElement defaultTimeout]]),
+                        SLUIAElementNotTappableException,
                         @"Element should not have been able to be tapped.");
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];

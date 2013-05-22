@@ -371,8 +371,8 @@ extern NSString *const SLTestExceptionLineNumberKey;
         (expr); \
     } \
     @catch (id __anException) { \
-        NSString *__reason = [NSString stringWithFormat:@"\"%@\" should not have thrown an exception: \"%@\".%@", \
-                                @(#expr), __anException, SLComposeString(@" ", description, ##__VA_ARGS__)]; \
+        NSString *__reason = [NSString stringWithFormat:@"\"%@\" should not have thrown an exception: \"%@\" (\"%@\").%@", \
+                                @(#expr), [__anException name], [__anException reason], SLComposeString(@" ", description, ##__VA_ARGS__)]; \
         @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:__reason userInfo:nil]; \
     } \
 } while (0)

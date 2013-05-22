@@ -7,7 +7,7 @@
 //
 
 #import "SLIntegrationTest.h"
-#import "SLElement+Subclassing.h"
+#import "SLUIAElement+Subclassing.h"
 
 @interface SLTerminalTest : SLIntegrationTest
 @end
@@ -226,7 +226,7 @@ static const NSTimeInterval kWaitUntilTrueRetryDelay = 0.25;
                                                         timeout:1.5],
                      @"The expression should have evaluated to true within the timeout.");
         endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
-    }];
+    } timeout:[SLElement defaultTimeout]];
 
     NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
     SLAssertTrue(waitTimeInterval < [self waitDelayVariability],
@@ -250,7 +250,7 @@ static const NSTimeInterval kWaitUntilTrueRetryDelay = 0.25;
                                                         timeout:waitTimeInterval],
                      @"The expression should have evaluated to true within the timeout.");
         endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
-    }];
+    } timeout:[SLElement defaultTimeout]];
 
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
     SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],
@@ -273,7 +273,7 @@ static const NSTimeInterval kWaitUntilTrueRetryDelay = 0.25;
                                                          timeout:expectedWaitTimeInterval],
                      @"The expression should have evaluated to true within the timeout.");
         endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
-    }];
+    } timeout:[SLElement defaultTimeout]];
 
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
     SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],
@@ -304,7 +304,7 @@ static const NSTimeInterval kWaitUntilTrueRetryDelay = 0.25;
                                                                           timeout:waitTimeInterval],
                      @"The expression should have evaluated to true within the timeout.");
         endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
-    }];
+    } timeout:[SLElement defaultTimeout]];
 
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
     SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],
