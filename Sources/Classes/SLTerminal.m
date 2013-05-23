@@ -125,6 +125,7 @@ static SLTerminal *__sharedTerminal = nil;
  *
  */
 - (id)eval:(NSString *)script {
+    NSParameterAssert(script);
     NSAssert(![NSThread isMainThread], @"-eval: must not be called from the main thread.");
 
     if (dispatch_get_current_queue() != self.evalQueue) {
@@ -194,6 +195,8 @@ static SLTerminal *__sharedTerminal = nil;
 }
 
 - (NSString *)evalWithFormat:(NSString *)script, ... {
+    NSParameterAssert(script);
+
     va_list args;
     va_start(args, script);
     NSString *statement = [[NSString alloc] initWithFormat:script arguments:args];
