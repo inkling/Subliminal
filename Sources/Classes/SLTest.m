@@ -96,14 +96,6 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     return testSupportsCurrentDevice;
 }
 
-- (id)initWithTestController:(SLTestController *)testController {
-    self = [super init];
-    if (self) {
-        _testController = testController;
-    }
-    return self;
-}
-
 - (void)setUpTest {
     // nothing to do here
 }

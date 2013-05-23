@@ -23,8 +23,6 @@ extern NSString *const SLTestExceptionLineNumberKey;
 
 @interface SLTest : NSObject
 
-@property (nonatomic, weak, readonly) SLTestController *testController;
-
 + (NSSet *)allTests;
 + (Class)testNamed:(NSString *)test;
 
@@ -70,8 +68,6 @@ extern NSString *const SLTestExceptionLineNumberKey;
  @see -testCaseWithSelectorSupportsCurrentPlatform:
  */
 + (BOOL)supportsCurrentPlatform;
-
-- (id)initWithTestController:(SLTestController *)testController;
 
 /**
  Runs all test cases defined on the receiver's class, 
