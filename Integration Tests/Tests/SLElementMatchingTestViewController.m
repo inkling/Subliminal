@@ -115,8 +115,11 @@
         (testCase == @selector(testElementsCanMatchTheSameObjectTwice)) ||
         (testCase == @selector(testElementsWaitToMatchValidObjects)) ||
         (testCase == @selector(testElementsThrowIfNoValidObjectIsFoundAtEndOfTimeout)) ||
-        (testCase == @selector(testAnyElement)) ||
         (testCase == @selector(testElementWithAccessibilityLabel)) ||
+        (testCase == @selector(testElementWithAccessibilityLabelValueTraits)) ||
+        (testCase == @selector(testElementWithAccessibilityIdentifier)) ||
+        (testCase == @selector(testElementMatchingPredicate)) ||
+        (testCase == @selector(testAnyElement)) ||
         (testCase == @selector(testSubliminalOnlyReplacesAccessibilityIdentifiersOfElementsInvolvedInMatch)) ||
         (testCase == @selector(testSubliminalRestoresAccessibilityIdentifiersAfterMatching)) ||
         (testCase == @selector(testSubliminalRestoresAccessibilityIdentifiersAfterMatchingEvenIfActionThrows)) ||
@@ -138,6 +141,7 @@
     self = [super initWithTestCaseWithSelector:testCase];
     if (self) {
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(swapButtons)];
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(applyUniqueTraitToFooButton)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(fooButtonIdentifier)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(removeFooButtonFromSuperview)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(addFooButtonToViewAfterInterval:)];
@@ -164,6 +168,7 @@
         self.view = view;
 
         UIControl *control = [[UIControl alloc] initWithFrame:CGRectMake(10, 200, 200, 100)];
+        control.backgroundColor = [UIColor redColor];
         control.accessibilityIdentifier = @"fooUIControl";
         control.isAccessibilityElement = YES;
         [self.view addSubview:control];
@@ -192,6 +197,7 @@ static NSString *TestCellIdentifier = nil;
     self.fooButton.accessibilityIdentifier = @"fooId";
     self.fooButton.accessibilityLabel = @"foo";
     self.fooButton.accessibilityValue = @"fooValue";
+    self.fooButton.accessibilityHint = @"fooHint";
 
     self.barButton.accessibilityIdentifier = @"barId";
     self.barButton.accessibilityLabel = @"bar";
@@ -309,6 +315,12 @@ static NSString *TestCellIdentifier = nil;
     newButton.accessibilityValue = @"foo2Value";
     [self.view addSubview:newButton];
     self.fooButton = newButton;
+}
+
+- (void)applyUniqueTraitToFooButton {
+    // `UIAccessibilityTraitUpdatesFrequently` is not appropriate for the button
+    // but it is a rare trait, useful in testing
+    self.fooButton.accessibilityTraits = (self.fooButton.accessibilityTraits | UIAccessibilityTraitUpdatesFrequently);
 }
 
 - (NSString *)fooButtonIdentifier {

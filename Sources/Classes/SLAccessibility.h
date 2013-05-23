@@ -20,15 +20,6 @@
  */
 @interface NSObject (SLAccessibility)
 
-/** 
- A string Subliminal will use to match this object with an SLElement.
- 
- The default implementation returns the object's accessibility identifier, 
- if the object responds to -accessibilityIdentifier and the identifier is non-empty,
- otherwise the object's accessibility label.
- */
-@property (nonatomic, readonly) NSString *slAccessibilityName;
-
 /**
  Returns the accessibility path from this object to the object [matching](-[SLElement matchesObject:]) 
  the specified element.

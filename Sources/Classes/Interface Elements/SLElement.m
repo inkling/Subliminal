@@ -10,13 +10,79 @@
 #import "SLUIAElement+Subclassing.h"
 #import "SLAccessibility.h"
 
+
+// The real value (set in `+load`) is not a compile-time constant,
+// so we provide a placeholder here.
+UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
+
+
 @implementation SLElement {
     BOOL (^_matchesObject)(NSObject*);
     NSString *_description;
 }
 
-+ (instancetype)elementMatching:(BOOL (^)(NSObject *obj))predicate withDescription:(NSString *)description
-{
++ (void)load {
+    // We create a unique `UIAccessibilityTraits` mask
+    // from a combination of traits that should never occur in reality.
+    // This value is not a compile-time constant, so we declare it as we load
+    // (which is guaranteed to be after UIKit loads, by Subliminal linking UIKit).
+    SLUIAccessibilityTraitAny = UIAccessibilityTraitNone | UIAccessibilityTraitButton;
+}
+
++ (instancetype)elementWithAccessibilityLabel:(NSString *)label {
+    return [[self alloc] initWithPredicate:^BOOL(NSObject *obj) {
+        return [obj.accessibilityLabel isEqualToString:label];
+    } description:label];
+}
+
++ (id)elementWithAccessibilityLabel:(NSString *)label value:(NSString *)value traits:(UIAccessibilityTraits)traits {
+    NSString *traitsString;
+    if (traits == SLUIAccessibilityTraitAny) {
+        traitsString = @"(any)";
+    } else {
+        NSMutableArray *traitNames = [NSMutableArray array];
+        
+        if (traits & UIAccessibilityTraitButton)                  [traitNames addObject:@"Button"];
+        if (traits & UIAccessibilityTraitLink)                    [traitNames addObject:@"Link"];
+        if (traits & UIAccessibilityTraitHeader)                  [traitNames addObject:@"Header"];
+        if (traits & UIAccessibilityTraitSearchField)             [traitNames addObject:@"Search Field"];
+        if (traits & UIAccessibilityTraitImage)                   [traitNames addObject:@"Image"];
+        if (traits & UIAccessibilityTraitSelected)                [traitNames addObject:@"Selected"];
+        if (traits & UIAccessibilityTraitPlaysSound)              [traitNames addObject:@"Plays Sound"];
+        if (traits & UIAccessibilityTraitKeyboardKey)             [traitNames addObject:@"Keyboard Key"];
+        if (traits & UIAccessibilityTraitStaticText)              [traitNames addObject:@"Static Text"];
+        if (traits & UIAccessibilityTraitSummaryElement)          [traitNames addObject:@"Summary Element"];
+        if (traits & UIAccessibilityTraitNotEnabled)              [traitNames addObject:@"Not Enabled"];
+        if (traits & UIAccessibilityTraitUpdatesFrequently)       [traitNames addObject:@"Updates Frequently"];
+        if (traits & UIAccessibilityTraitStartsMediaSession)      [traitNames addObject:@"Starts Media Session"];
+        if (traits & UIAccessibilityTraitAdjustable)              [traitNames addObject:@"Adjustable"];
+        if (traits & UIAccessibilityTraitAllowsDirectInteraction) [traitNames addObject:@"Allows Direct Interaction"];
+        if (traits & UIAccessibilityTraitCausesPageTurn)          [traitNames addObject:@"Causes Page Turn"];
+
+        if ([traitNames count]) {
+            traitsString = [NSString stringWithFormat:@"(%@)", [traitNames componentsJoinedByString:@", "]];
+        } else {
+            traitsString = @"(none)";
+        }
+    }
+
+    return [[self alloc] initWithPredicate:^BOOL(NSObject *obj) {
+        BOOL matchesLabel   = ((label == nil) || [obj.accessibilityLabel isEqualToString:label]);
+        BOOL matchesValue   = ((value == nil) || [obj.accessibilityValue isEqualToString:value]);
+        BOOL matchesTraits  = ((traits == SLUIAccessibilityTraitAny) || ((obj.accessibilityTraits & traits) == traits));
+        return (matchesLabel && matchesValue && matchesTraits);
+    } description:[NSString stringWithFormat:@"label: %@; value: %@; traits: %@", label, value, traitsString]];
+}
+
++ (instancetype)elementWithAccessibilityIdentifier:(NSString *)identifier {
+    return [[self alloc] initWithPredicate:^BOOL(NSObject *obj) {
+        if (![obj respondsToSelector:@selector(accessibilityIdentifier)]) return NO;
+
+        return [[obj performSelector:@selector(accessibilityIdentifier)] isEqualToString:identifier];
+    } description:identifier];
+}
+
++ (instancetype)elementMatching:(BOOL (^)(NSObject *obj))predicate withDescription:(NSString *)description {
     return [[self alloc] initWithPredicate:predicate description:description];
 }
 
@@ -26,26 +92,11 @@
     } description:@"any element"];
 }
 
-+ (instancetype)elementWithAccessibilityLabel:(NSString *)label {
-    return [[self alloc] initWithPredicate:^BOOL(NSObject *obj) {
-        return [obj.slAccessibilityName isEqualToString:label] || ([obj.accessibilityLabel length] > 0 && [obj.accessibilityLabel isEqualToString:label]);
-    } description:label];
-}
-
-+ (id)elementWithAccessibilityLabel:(NSString *)label value:(NSString *)value traits:(UIAccessibilityTraits)traits {
-    return [[self alloc] initWithPredicate:^BOOL(NSObject *obj) {
-        BOOL matchesLabel = (label == nil || [obj.slAccessibilityName isEqualToString:label] || ([obj.accessibilityLabel length] > 0 && [obj.accessibilityLabel isEqualToString:label]));
-        BOOL matchesValue = (value == nil || [obj.accessibilityValue isEqualToString:value]);
-        BOOL matchesTraits = (obj.accessibilityTraits & traits) == traits;
-        return (matchesLabel && matchesValue && matchesTraits);
-    } description:[NSString stringWithFormat:@"label: %@; value: %@; traits: %llu", label, value, traits]];
-}
-
 - (instancetype)initWithPredicate:(BOOL (^)(NSObject *))predicate description:(NSString *)description {
     self = [super init];
     if (self) {
         _matchesObject = predicate;
-        _description = description;
+        _description = [description copy];
     }
     return self;
 }

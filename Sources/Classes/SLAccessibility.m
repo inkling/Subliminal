@@ -337,17 +337,6 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
 
 #pragma mark -Public methods
 
-- (NSString *)slAccessibilityName {
-    if ([self respondsToSelector:@selector(accessibilityIdentifier)]) {
-        NSString *identifier = [self performSelector:@selector(accessibilityIdentifier)];
-        if ([identifier length] > 0) {
-            return identifier;
-        }
-    }
-    
-    return self.accessibilityLabel;
-}
-
 - (SLAccessibilityPath *)slAccessibilityPathToElement:(SLElement *)element {
     NSArray *accessibilityElementPath = [self rawAccessibilityPathToElement:element favoringUISubviews:NO];
     NSArray *viewPath = [self rawAccessibilityPathToElement:element favoringUISubviews:YES];
@@ -690,14 +679,6 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
 
 @implementation UIAccessibilityElement (SLAccessibility)
 
-- (NSString *)slAccessibilityName {
-    if ([self.accessibilityIdentifier length] > 0) {
-        return self.accessibilityIdentifier;
-    }
-    
-    return self.accessibilityLabel;
-}
-
 - (BOOL)slAccessibilityIsVisible {
     CGPoint testPoint = CGPointMake(CGRectGetMidX(self.accessibilityFrame),
                                     CGRectGetMidY(self.accessibilityFrame));
@@ -748,18 +729,6 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
 #pragma mark UIView overrides
 
 @implementation UIView (SLAccessibility)
-
-#pragma mark -Public methods
-
-- (NSString *)slAccessibilityName {
-    // Prioritize identifiers over labels because some UIKit objects have transient labels.
-    // For example: UIActivityIndicatorViews have label 'In progress' only while spinning.
-    if ([self.accessibilityIdentifier length] > 0) {
-        return self.accessibilityIdentifier;
-    }
-
-    return self.accessibilityLabel;
-}
 
 #pragma mark -Private methods
 
@@ -1038,23 +1007,6 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
     return YES;
 }
-@end
-
-
-@implementation UITableView (SLAccessibility)
-
-- (NSString *)slAccessibilityName {
-    NSString *accessibilityName = [super slAccessibilityName];
-    // Replace the accessibilityIdentifier with a unique string if the accessibilityName is empty *or* equal to the default 'Empty list'
-    // because the 'Empty list' label that UIKit assigns is not useful for (uniquely) identifying UITableViews in the accessibility hierarchy.
-    if ([accessibilityName length] == 0 || [accessibilityName isEqualToString:@"Empty list"]) {
-        self.accessibilityIdentifier = [NSString stringWithFormat:@"%@: %p", [self class], self];
-        return self.accessibilityIdentifier;
-    } else {
-        return accessibilityName;
-    }
-}
-
 @end
 
 

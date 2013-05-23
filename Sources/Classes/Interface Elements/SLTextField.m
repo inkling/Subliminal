@@ -54,6 +54,12 @@
     return [self anyElement];
 }
 
++ (instancetype)elementWithAccessibilityIdentifier:(NSString *)identifier {
+    SLLog(@"An %@ can't be matched by accessibility properties--see the comments on its @interface. \
+          Returning +anyElement.", NSStringFromClass(self));
+    return [self anyElement];
+}
+
 - (BOOL)matchesObject:(NSObject *)object {
     return ([super matchesObject:object] && ([object accessibilityTraits] & UIAccessibilityTraitSearchField));
 }

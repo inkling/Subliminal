@@ -27,34 +27,42 @@
 @end
 
 
+/**
+ The methods in the `SLElement (Subclassing)` category are to be called or
+ overridden by subclasses of `SLElement`. Tests should not call these methods.
+ */
 @interface SLElement (Subclassing)
 
-/** Returns YES if the instance of SLElement should 'match' object, no otherwise.
+/**
+ Determines if the specified element matches the specified object.
 
- Subclasses of SLElement can override this method to provide custom matching behavior.
+ Subclasses of `SLElement` can override this method to provide custom matching behavior.
  The default implementation evaluates the object against the predicate
  with which the element was constructed (i.e. the argument to
- +elementMatching:withDescription:, or a predicate derived from the arguments 
- to higher-level constructor).
+ `+elementMatching:withDescription:`, or a predicate derived from the arguments 
+ to a higher-level constructor).
  
  If you override this method, you must call `super` in your implementation.
 
- @param object The object to which the instance of SLElement should be compared.
- @return a BOOL indicating whether or not the instance of SLElement matches object.
+ @param object The object to which the instance of `SLElement` should be compared.
+ @return `YES` if the specified element matches `object`, `NO` otherwise.
  */
 - (BOOL)matchesObject:(NSObject *)object;
 
 /**
  Allows the caller to interact with the actual object matched by the receiving SLElement.
 
- If a matching object cannot be found, the search will be retried
- until the defaultTimeout expires.
-
  The block will be executed synchronously on the main thread.
 
- @param block A block which takes the matching object as an argument and returns void.
- @exception SLUIAElementInvalidException If no matching object has been found
- after the defaultTimeout has elapsed.
+ This method should be used only when UIAutomation offers no API providing 
+ equivalent functionality: as a user interface element, the object should be 
+ manipulated by the simulated user for the tests to be most accurate.
+
+ @param block A block which takes the matching object as an argument and returns 
+ `void`.
+ 
+ @exception SLUIAElementInvalidException Raised if the element has not matched 
+ an object by the end of the [default timeout](+defaultTimeout).
  */
 - (void)examineMatchingObject:(void (^)(NSObject *object))block;
 
