@@ -115,7 +115,7 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
  hierarchy between the receiver and the object [matching](-[SLElement matchesObject:]) 
  the specified element.
 
- If favoringUISubviews is YES, the method will construct a path that is, as much 
+ If favoringSubviews is YES, the method will construct a path that is, as much 
  as is possible, comprised of UIViews; otherwise, it will construct a path that is,
  as much as is possible, comprised of UIAccessibilityElements.
  
@@ -125,13 +125,13 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
  
  @param element The element to which corresponds the object that is to be
  the terminus of the path.
- @param favoringUISubviews YES if the search for a path should favor UIViews;
+ @param favoringSubviews YES if the search for a path should favor UIViews;
  otherwise, the search should favor UIAccessibilityElements.
  @return A path between the receiver and the object matching element,
  or `nil` if an object matching element is not found within the accessibility hierarchy
  rooted in the receiver.
  */
-- (NSArray *)rawAccessibilityPathToElement:(SLElement *)element favoringUISubviews:(BOOL)favoringUISubviews;
+- (NSArray *)rawAccessibilityPathToElement:(SLElement *)element favoringSubviews:(BOOL)favoringSubviews;
 
 /// ----------------------------------------
 /// @name Filtering paths
@@ -338,8 +338,8 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
 #pragma mark -Public methods
 
 - (SLAccessibilityPath *)slAccessibilityPathToElement:(SLElement *)element {
-    NSArray *accessibilityElementPath = [self rawAccessibilityPathToElement:element favoringUISubviews:NO];
-    NSArray *viewPath = [self rawAccessibilityPathToElement:element favoringUISubviews:YES];
+    NSArray *accessibilityElementPath = [self rawAccessibilityPathToElement:element favoringSubviews:NO];
+    NSArray *viewPath = [self rawAccessibilityPathToElement:element favoringSubviews:YES];
 
     return [[SLAccessibilityPath alloc] initWithRawAccessibilityElementPath:accessibilityElementPath
                                                                 rawViewPath:viewPath];
@@ -458,13 +458,13 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
 
 #pragma mark -Private methods
 
-- (NSArray *)rawAccessibilityPathToElement:(SLElement *)element favoringUISubviews:(BOOL)favoringUISubviews {
+- (NSArray *)rawAccessibilityPathToElement:(SLElement *)element favoringSubviews:(BOOL)favoringSubviews {
     if ([element matchesObject:self]) {
         return [NSArray arrayWithObject:self];
     }
 
-    for (NSObject *child in [self slChildAccessibilityElementsFavoringUISubviews:favoringUISubviews]) {
-        NSArray *path = [child rawAccessibilityPathToElement:element favoringUISubviews:favoringUISubviews];
+    for (NSObject *child in [self slChildAccessibilityElementsFavoringSubviews:favoringSubviews]) {
+        NSArray *path = [child rawAccessibilityPathToElement:element favoringSubviews:favoringSubviews];
         if (path) {
             NSMutableArray *pathWithSelf = [path mutableCopy];
             [pathWithSelf insertObject:self atIndex:0];
@@ -474,7 +474,7 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
     return nil;
 }
 
-- (NSArray *)slChildAccessibilityElementsFavoringUISubviews:(BOOL)favoringUISubviews {
+- (NSArray *)slChildAccessibilityElementsFavoringSubviews:(BOOL)favoringSubviews {
     NSMutableArray *children = [NSMutableArray array];
     NSInteger count = [self accessibilityElementCount];
     if (count != NSNotFound && count > 0) {
@@ -886,16 +886,16 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
     }
 }
 
-- (NSArray *)slChildAccessibilityElementsFavoringUISubviews:(BOOL)favoringUISubViews {
-    if (favoringUISubViews) {
+- (NSArray *)slChildAccessibilityElementsFavoringSubviews:(BOOL)favoringSubviews {
+    if (favoringSubviews) {
         NSMutableArray *children = [[NSMutableArray alloc] init];
         for (UIView *view in [self.subviews reverseObjectEnumerator]) {
             [children addObject:view];
         }
-        [children addObjectsFromArray:[super slChildAccessibilityElementsFavoringUISubviews:NO]];
+        [children addObjectsFromArray:[super slChildAccessibilityElementsFavoringSubviews:NO]];
         return children;
     } else {
-        NSMutableArray *children = [[super slChildAccessibilityElementsFavoringUISubviews:NO] mutableCopy];
+        NSMutableArray *children = [[super slChildAccessibilityElementsFavoringSubviews:NO] mutableCopy];
         for (UIView *view in [self.subviews reverseObjectEnumerator]) {
             [children addObject:view];
         }
