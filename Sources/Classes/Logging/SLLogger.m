@@ -46,14 +46,15 @@ static SLLogger *__sharedLogger = nil;
     return NULL;
 }
 
-- (void)logDebug:(NSString *)debug {
-    [self logMessage:[NSString stringWithFormat:@"Debug: %@", debug]];
-}
-
 - (void)logMessage:(NSString *)message {
     NSLog(@"Concrete SLLogger subclass (%@) must implement %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd));
     [self doesNotRecognizeSelector:_cmd];
 }
+
+- (void)logDebug:(NSString *)debug {
+    [self logMessage:[NSString stringWithFormat:@"Debug: %@", debug]];
+}
+
 
 - (void)logWarning:(NSString *)warning {
     [self logMessage:[NSString stringWithFormat:@"Warning: %@", warning]];
