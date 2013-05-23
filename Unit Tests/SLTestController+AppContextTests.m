@@ -1,5 +1,5 @@
 //
-//  SLTestController+AppContextTests.m
+//  SLTestController+AppHooksTests.m
 //  Subliminal
 //
 //  Created by Jeffrey Wear on 1/5/13.
@@ -74,11 +74,11 @@
 
 #pragma mark - Tests
 
-@interface SLTestController_AppContextTests : SenTestCase
+@interface SLTestController_AppHooksTests : SenTestCase
 
 @end
 
-@implementation SLTestController_AppContextTests {
+@implementation SLTestController_AppHooksTests {
     id _loggerMock, _terminalMock;
 
     SLTestController *_controller;

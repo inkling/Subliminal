@@ -1,5 +1,5 @@
 //
-//  SLTestController+AppContext.h
+//  SLTestController+AppHooks.h
 //  Subliminal
 //
 //  Created by Jeffrey Wear on 10/16/12.
@@ -9,7 +9,7 @@
 #import <Subliminal/Subliminal.h>
 
 /**
- Tests execute on a background queue. The methods in the `SLTestController (AppContext)` 
+ Tests execute on a background queue. The methods in the `SLTestController (AppHooks)` 
  category allow tests to access and manipulate application state in a structured,
  thread-safe manner.
  
@@ -42,7 +42,7 @@
  Target actions may be conditionally defined (and registered) only when 
  integration testing by using the INTEGRATION_TESTING preprocessor macro.
  */
-@interface SLTestController (AppContext)
+@interface SLTestController (AppHooks)
 
 /**
  Allows application objects to register themselves as being able to perform 

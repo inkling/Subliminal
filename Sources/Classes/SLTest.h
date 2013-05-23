@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "SLTestController+AppContext.h"
+#import "SLTestController+AppHooks.h"
 #import "SLStringUtilities.h"
 
 
