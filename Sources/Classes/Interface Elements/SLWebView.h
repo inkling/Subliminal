@@ -8,6 +8,9 @@
 
 #import <Subliminal/Subliminal.h>
 
+/**
+ SLWebView matches instances of `UIWebView`.
+ */
 @interface SLWebView : SLElement
 
 @end
