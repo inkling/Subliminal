@@ -134,6 +134,7 @@
 		F0C27CDF1741694900335A41 /* SLElementStateTestMidpointCovered.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C27CDE1741694900335A41 /* SLElementStateTestMidpointCovered.xib */; };
 		F0C27CE917416EC400335A41 /* SLElementStateTestCompletelyCovered.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C27CE817416EC400335A41 /* SLElementStateTestCompletelyCovered.xib */; };
 		F0C4DB4817388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C4DB4717388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib */; };
+		F0C59ED81752B1D40051FEF0 /* SLStringUtilitiesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C59ED71752B1D40051FEF0 /* SLStringUtilitiesTests.m */; };
 		F0CC759A173B097800E8F94A /* SLElementTapTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CC7598173B097800E8F94A /* SLElementTapTest.m */; };
 		F0CC759B173B097800E8F94A /* SLElementTapTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CC7599173B097800E8F94A /* SLElementTapTestViewController.m */; };
 		F0CE9FFD16D60E2C008A3B4A /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F08B86DB16859C4000C4FE44 /* libOCMock.a */; };
@@ -334,6 +335,7 @@
 		F0C27CDE1741694900335A41 /* SLElementStateTestMidpointCovered.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementStateTestMidpointCovered.xib; sourceTree = "<group>"; };
 		F0C27CE817416EC400335A41 /* SLElementStateTestCompletelyCovered.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementStateTestCompletelyCovered.xib; sourceTree = "<group>"; };
 		F0C4DB4717388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestSuperviewWithVisibleSubview.xib; sourceTree = "<group>"; };
+		F0C59ED71752B1D40051FEF0 /* SLStringUtilitiesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLStringUtilitiesTests.m; sourceTree = "<group>"; };
 		F0CC7598173B097800E8F94A /* SLElementTapTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementTapTest.m; sourceTree = "<group>"; };
 		F0CC7599173B097800E8F94A /* SLElementTapTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementTapTestViewController.m; sourceTree = "<group>"; };
 		F0CE9FFF16D60EAD008A3B4A /* SLDeviceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDeviceTest.m; sourceTree = "<group>"; };
@@ -771,6 +773,7 @@
 				F08B87F41685A07B00C4FE44 /* SLTestTests.m */,
 				F0A040121698ECDE009D8157 /* SLTestController+AppContextTests.m */,
 				F05C51EB171C90B000A381BC /* SLMainThreadRefTests.m */,
+				F0C59ED71752B1D40051FEF0 /* SLStringUtilitiesTests.m */,
 			);
 			path = "Unit Tests";
 			sourceTree = "<group>";
@@ -1101,6 +1104,7 @@
 				F024BE33168BD70900708350 /* TestUtilities.m in Sources */,
 				F0A040131698ECDE009D8157 /* SLTestController+AppContextTests.m in Sources */,
 				F05C51EC171C90B000A381BC /* SLMainThreadRefTests.m in Sources */,
+				F0C59ED81752B1D40051FEF0 /* SLStringUtilitiesTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
