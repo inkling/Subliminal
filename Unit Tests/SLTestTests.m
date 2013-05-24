@@ -396,7 +396,7 @@
 // this test verifies the complete order in which testing normally executes,
 // but is mostly for illustration--it makes too many assertions
 // traditional "unit" tests follow
-- (void)testCompleteTestExecutionSequence {
+- (void)testCompleteTestRunSequence {
     Class testClass = [TestWithSomeTestCases class];
     id testMock = [OCMockObject partialMockForClass:testClass];
     OCMExpectationSequencer *testSequencer = [OCMExpectationSequencer sequencerWithMocks:@[ testMock, _loggerMock ]];
