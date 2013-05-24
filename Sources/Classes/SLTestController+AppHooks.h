@@ -29,20 +29,24 @@
  
  This technique has two main benefits:
  
-    1.  It increases the independence of the tests: while one test could (and should)
-        test logging in as a user would, using the UI, the other tests could 
-        use the programmatic interface, and not be crippled should the log-in 
-        UI break.
-    2.  It encourages re-use of your application's code, while not making the 
-        tests dependent on your application's structure: in the example above, 
-        the tests need not know which object implements the `logInWithInfo:` 
-        action. And, actions can only return objects that can be copied into the 
-        testing context, preventing the application and tests from sharing state.
- 
- Target actions may be conditionally defined (and registered) only when 
- integration testing by using the INTEGRATION_TESTING preprocessor macro.
+ 1. It increases the independence of the tests: while one test could (and should)
+    test logging in as a user would, using the UI, the other tests could
+    use the programmatic interface, and not be crippled should the log-in
+    UI break.
+ 2. It encourages re-use of your application's code, while not making the
+    tests dependent on your application's structure: in the example above,
+    the tests need not know which object implements the `logInWithInfo:`
+    action. And, actions can only return objects that can be copied into the
+    testing context, preventing the application and tests from sharing state.
+
+ Target actions may be conditionally defined (and registered) only when
+ integration testing by using the `INTEGRATION_TESTING` preprocessor macro.
  */
 @interface SLTestController (AppHooks)
+
+/// ------------------------------------------------------
+/// @name Registering and Deregistering App Hooks
+/// ------------------------------------------------------
 
 /**
  Allows application objects to register themselves as being able to perform 
@@ -92,6 +96,10 @@
  @param target The object to be deregistered.
  */
 - (void)deregisterTarget:(id)target;
+
+/// ----------------------------------------
+/// @name Calling App Hooks
+/// ----------------------------------------
 
 /**
  Sends a specified action message to its registered target and returns the result of the message.
@@ -180,6 +188,5 @@
 @end
 
 
-/// This exception is thrown if the test controller
-/// is asked to send an action for which no target is registered.
+/// Thrown if the test controller is asked to send an action for which no target is registered.
 extern NSString *const SLAppActionTargetDoesNotExistException;
