@@ -24,7 +24,7 @@
 		F00800C7174B3349001927AC /* SLButtonTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800C4174B3349001927AC /* SLButtonTest.m */; };
 		F00800C8174B3349001927AC /* SLButtonTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800C5174B3349001927AC /* SLButtonTestViewController.m */; };
 		F00800C9174B3349001927AC /* SLButtonTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00800C6174B3349001927AC /* SLButtonTestViewController.xib */; };
-		F00800CE174C1C64001927AC /* SLPopover.h in Headers */ = {isa = PBXBuildFile; fileRef = F00800CC174C1C64001927AC /* SLPopover.h */; };
+		F00800CE174C1C64001927AC /* SLPopover.h in Headers */ = {isa = PBXBuildFile; fileRef = F00800CC174C1C64001927AC /* SLPopover.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F00800CF174C1C64001927AC /* SLPopover.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800CD174C1C64001927AC /* SLPopover.m */; };
 		F00800E2174C2E0A001927AC /* SLPopoverTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800E0174C2E0A001927AC /* SLPopoverTest.m */; };
 		F00800E3174C2E0A001927AC /* SLPopoverTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800E1174C2E0A001927AC /* SLPopoverTestViewController.m */; };
