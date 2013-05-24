@@ -13,15 +13,97 @@
 #import "SLTerminal+ConvenienceFunctions.h"
 #import "SLStringUtilities.h"
 
+/**
+ The methods in the `SLUIAElement (Subclassing)` category are to be called 
+ or overridden by subclasses of `SLUIAElement`. Tests should not call these 
+ methods.
+ */
 @interface SLUIAElement (Subclassing)
 
+/**
+ Forwards an action message to the `UIAElement` corresponding to the 
+ specified element and returns the result.
+ 
+ The "message" is a formatted function call. For instance, `SLUIAElement` calls 
+ `tap()` on its corresponding `UIAElement` by invoking
+ 
+    [self waitUntilTappable:YES thenSendMessage:@"tap()"]
+ 
+ This method automatically waits until the element [is valid](-isValid) before
+ attempting to access the `UIAElement`, for not more than the [default timeout](+defaultTimeout).
+ If `waitUntilTappable` is `YES`, the method will also wait, for the remainder 
+ of the timeout, for the element to become [tappable](-isTappable).
+ 
+ @warning All methods that involve user interaction must pass `YES` for 
+ `waitUntilTappable`.
+ 
+ @warning Variable arguments that are strings need to be escaped,
+ using `-[NSString slStringByEscapingForJavaScriptLiteral]`,
+ if they are to be substituted into a JavaScript string literal.
+
+ @param waitUntilTappable If `YES`, this method will wait for the remainder 
+ of the default timeout after the element becomes valid for the element to 
+ become tappable.
+ @param action A format string (in the manner of `-[NSString stringWithFormat:]`) 
+ representing a JavaScript function to be called on the corresponding `UIAElement`.
+ @param ... (Optional) A comma-separated list of arguments to substitute into 
+ `action`.
+ @return The value returned by the function, as an `Objective-C` object. See 
+ `-[SLTerminal eval:]` for more infomation.
+ 
+ @exception SLUIAElementInvalidException Raised if the element is not valid
+ by the end of the default timeout.
+
+ @exception SLUIAElementNotTappableException Raised if the element is not 
+ tappable when whatever amount of time remains of the default timeout after 
+ the element becomes valid elapses.
+ */
 - (id)waitUntilTappable:(BOOL)waitUntilTappable
         thenSendMessage:(NSString *)action, ... NS_FORMAT_FUNCTION(2, 3);
 
+/**
+ Provides access to the UIAutomation representation of the specified element 
+ within a specified block.
+ 
+ The UIAutomation representation identifies the `UIAElement` corresponding to 
+ the specified element to UIAutomation.
+
+ This method allows an element to evaluate more complex JavaScript expressions 
+ involving its corresponding `UIAElement` than simple function calls (for which
+ `-waitUntilTappable:thenSendMessage:` may be used); or to use a non-standard
+ timeout for resolving the corresponding `UIAElement`.
+
+ This method waits until the element [is valid](-isValid) before attempting to 
+ access the `UIAElement`, for not more than `timeout. If `waitUntilTappable` 
+ is `YES`, the method will also wait, for the remainder of `timeout`, for the 
+ element to become [tappable](-isTappable).
+
+ @warning If the expression to be evaluated by `block` involves user interaction,
+ the caller must pass `YES` for `waitUntilTappable`.
+
+ @param waitUntilTappable If `YES`, this method will wait for the remainder
+ of `timeout` after the element becomes valid for the element to become tappable.
+ @param block A block which takes the UIAutomation representation of the specified 
+ element as an argument and returns `void`.
+ @param timeout The timeout for which this method should wait for the specified 
+ element to become valid (and tappable, if `waitUntilTappable` is YES). Clients 
+ should generally call this method with `+[SLUIAElement defaultTimeout]`.
+ */
 - (void)waitUntilTappable:(BOOL)waitUntilTappable
         thenPerformActionWithUIARepresentation:(void(^)(NSString *UIARepresentation))block
                                        timeout:(NSTimeInterval)timeout;
 
+/**
+ Returns the name of the JavaScript function used to evaluate whether a
+ `UIAElement` is tappable, loading it into the terminal's namespace if necessary.
+ 
+ This method is used internally by `SLUIAElement` and its subclasses 
+ `SLElement` and `SLStaticElement`. It should not need to be used by additional 
+ descendants of `SLUIAElement`.
+ 
+ @return The name of the JavaScript function used to evaluate whether a 
+ `UIAElement` is tappable.
+ */
 + (NSString *)SLElementIsTappableFunctionName;
 
 @end
@@ -39,7 +121,7 @@
  Subclasses of `SLElement` can override this method to provide custom matching behavior.
  The default implementation evaluates the object against the predicate
  with which the element was constructed (i.e. the argument to
- `+elementMatching:withDescription:`, or a predicate derived from the arguments 
+ `+elementMatching:withDescription:`, or a predicate derived from the arguments
  to a higher-level constructor).
  
  If you override this method, you must call `super` in your implementation.
@@ -50,7 +132,8 @@
 - (BOOL)matchesObject:(NSObject *)object;
 
 /**
- Allows the caller to interact with the actual object matched by the receiving SLElement.
+ Allows the caller to interact with the actual object matched by the specified 
+ `SLElement`.
 
  The block will be executed synchronously on the main thread.
 
