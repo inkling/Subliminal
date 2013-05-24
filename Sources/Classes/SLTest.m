@@ -17,7 +17,7 @@
 
 
 // all exceptions thrown by SLTest must have names beginning with this prefix
-// so that they may be identified as "expected" throughout the testing framework
+// so that -[SLTest logException:inTestCase:] uses the proper logging format
 NSString *const SLTestExceptionNamePrefix       = @"SLTest";
 
 NSString *const SLTestAssertionFailedException  = @"SLTestCaseAssertionFailedException";
@@ -193,11 +193,11 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
 }
 
 + (NSSet *)testCasesToRun {
-    NSSet *baseTestCases = (([[self class] isFocused]) ? [[self class] focusedTestCases] : [[self class] testCases]);
+    NSSet *baseTestCases = (([self isFocused]) ? [self focusedTestCases] : [self testCases]);
     return [baseTestCases filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
         // pass the unfocused selector, as focus is temporary and shouldn't require modifying the test infrastructure
         SEL unfocusedTestCaseSelector = NSSelectorFromString([self unfocusedTestCaseName:evaluatedObject]);
-        return [[self class] testCaseWithSelectorSupportsCurrentPlatform:unfocusedTestCaseSelector];
+        return [self testCaseWithSelectorSupportsCurrentPlatform:unfocusedTestCaseSelector];
     }]];
 }
 
@@ -218,16 +218,18 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     return YES;
  }
 
-- (NSUInteger)run:(NSUInteger *)numCasesExecuted {
-    NSUInteger numberOfCasesExecuted = 0, numberOfCasesFailed = 0;
+- (void)runAndReportNumExecuted:(NSUInteger *)numCasesExecuted
+                         failed:(NSUInteger *)numCasesFailed
+             failedUnexpectedly:(NSUInteger *)numCasesFailedUnexpectedly {
+    NSUInteger numberOfCasesExecuted = 0, numberOfCasesFailed = 0, numberOfCasesFailedUnexpectedly = 0;
 
     NSException *setUpOrTearDownException = nil;
     @try {
         [self setUpTest];
     }
-    @catch (NSException *e) {
+    @catch (NSException *exception) {
         // save exception to throw after tearDownTest
-        setUpOrTearDownException = [self exceptionByAddingFileInfo:e];
+        setUpOrTearDownException = [self exceptionByAddingFileInfo:exception];
     }
 
     // if setUpTest failed, skip the test cases
@@ -236,44 +238,57 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
         for (NSString *testCaseName in [[self class] testCasesToRun]) {
             @autoreleasepool {
                 // all logs below use the focused name, so that the logs are consistent
-                // wit what's actually running
+                // with what's actually running
                 [[SLLogger sharedLogger] logTest:test caseStart:testCaseName];
 
                 // but pass the unfocused selector to setUp/tearDown methods,
                 // because focus is temporary and shouldn't require modifying the test infrastructure
                 SEL unfocusedTestCaseSelector = NSSelectorFromString([[self class] unfocusedTestCaseName:testCaseName]);
-                BOOL caseFailed = NO;
-                @try {            
+
+                BOOL caseFailed = NO, failureWasExpected = NO;
+                @try {
                     [self setUpTestCaseWithSelector:unfocusedTestCaseSelector];
-                    
-                    // We use objc_msgSend so that Clang won't complain about performSelector leaks
-                    // Make sure to send the actual selector
-                    ((void(*)(id, SEL))objc_msgSend)(self, NSSelectorFromString(testCaseName));
                 }
-                @catch (NSException *e) {
-                    // Catch all exceptions in test cases. If the app is in an inconsistent state then -tearDown: should abort completely.
-                    [self logException:e inTestCase:testCaseName];
+                @catch (NSException *exception) {
                     caseFailed = YES;
+                    failureWasExpected = [[self class] exceptionWasExpected:exception];
+                    [self logException:exception inTestCase:testCaseName asExpected:failureWasExpected];
                 }
-                @finally {
-                    // tear-down test case last so that it always executes, regardless of earlier failures
+
+                // Only execute the test case if set-up succeeded.
+                if (!caseFailed) {
                     @try {
-                        [self tearDownTestCaseWithSelector:unfocusedTestCaseSelector];
+                        // We use objc_msgSend so that Clang won't complain about performSelector leaks
+                        // Make sure to send the actual test case selector
+                        ((void(*)(id, SEL))objc_msgSend)(self, NSSelectorFromString(testCaseName));
                     }
-                    @catch (NSException *e) {
-                        [self logException:e inTestCase:testCaseName];
+                    @catch (NSException *exception) {
                         caseFailed = YES;
+                        failureWasExpected = [[self class] exceptionWasExpected:exception];
+                        [self logException:exception inTestCase:testCaseName asExpected:failureWasExpected];
                     }
-
-                    if (caseFailed) {
-                        [[SLLogger sharedLogger] logTest:test caseFail:testCaseName];
-                        numberOfCasesFailed++;
-                    } else {
-                        [[SLLogger sharedLogger] logTest:test casePass:testCaseName];
-                    }
-
-                    numberOfCasesExecuted++;
                 }
+
+                // Still perform tear-down even if set-up failed.
+                // If the app is in an inconsistent state, then tear-down should fail.
+                @try {
+                    [self tearDownTestCaseWithSelector:unfocusedTestCaseSelector];
+                }
+                @catch (NSException *exception) {
+                    caseFailed = YES;
+                    // don't override failureWasExpected if we've already had an unexpected failure
+                    if (!failureWasExpected) failureWasExpected = [[self class] exceptionWasExpected:exception];
+                    [self logException:exception inTestCase:testCaseName asExpected:failureWasExpected];
+                }
+
+                if (caseFailed) {
+                    [[SLLogger sharedLogger] logTest:test caseFail:testCaseName expected:failureWasExpected];
+                    numberOfCasesFailed++;
+                    if (!failureWasExpected) numberOfCasesFailedUnexpectedly++;
+                } else {
+                    [[SLLogger sharedLogger] logTest:test casePass:testCaseName];
+                }
+                numberOfCasesExecuted++;
             }
         }
     }
@@ -282,10 +297,10 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     @try {
         [self tearDownTest];
     }
-    @catch (NSException *e) {
+    @catch (NSException *exception) {
         // ignore the exception if we already failed during setUpTest
         if (!setUpOrTearDownException) {
-            setUpOrTearDownException = [self exceptionByAddingFileInfo:e];
+            setUpOrTearDownException = [self exceptionByAddingFileInfo:exception];
         }
     }
 
@@ -295,7 +310,8 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     }
 
     if (numCasesExecuted) *numCasesExecuted = numberOfCasesExecuted;
-    return numberOfCasesFailed;
+    if (numCasesFailed) *numCasesFailed = numberOfCasesFailed;
+    if (numCasesFailedUnexpectedly) *numCasesFailedUnexpectedly = numberOfCasesFailedUnexpectedly;
 }
 
 - (void)wait:(NSTimeInterval)interval {
@@ -323,22 +339,35 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     }
 }
 
-- (void)logException:(NSException *)exception inTestCase:(NSString *)testCase {
-    NSString *message = nil;
-    // Exceptions thrown by SLTest or SLElement were likely expected
-    // --with call site information recorded by an assertion or UIAElement macro--
-    // and are logged more tersely than other exceptions.
++ (BOOL)exceptionWasExpected:(NSException *)exception {
+    return [[exception name] isEqualToString:SLTestAssertionFailedException];
+}
+
+- (void)logException:(NSException *)exception inTestCase:(NSString *)testCase asExpected:(BOOL)expected {
+    // Only use the call site information if the exception was thrown by SLTest or SLElement,
+    // where the information was likely to have been recorded by an assertion or UIAElement macro.
+    // Otherwise it is likely stale.
+    NSString *callSite;
     if ([[exception name] hasPrefix:SLTestExceptionNamePrefix] ||
         [[exception name] hasPrefix:SLUIAElementExceptionNamePrefix]) {
-        message = [NSString stringWithFormat:@"%@:%d: %@", _lastKnownFilename, _lastKnownLineNumber, [exception reason]];
+        callSite = [NSString stringWithFormat:@"%@:%d", _lastKnownFilename, _lastKnownLineNumber];
     } else {
-        message = [NSString stringWithFormat:@"Unexpected exception occurred ***%@*** for reason: %@",
-                    [exception name], [exception reason]];
+        callSite = @"Unknown location";
     }
-
+    // the call site info is definitely stale at this point
     _lastKnownFilename = nil;
     _lastKnownLineNumber = 0;
 
+    NSString *exceptionDescription;
+    if (expected) {
+        exceptionDescription = [exception reason];
+    } else {
+        exceptionDescription = [NSString stringWithFormat:@"Unexpected exception occurred ***%@*** for reason: %@",
+
+                                                            [exception name], [exception reason]];
+    }
+
+    NSString *message = [NSString stringWithFormat:@"%@: %@", callSite, exceptionDescription];
     NSString *test = NSStringFromClass([self class]);
     [[SLLogger sharedLogger] logError:message test:test testCase:testCase];
 }

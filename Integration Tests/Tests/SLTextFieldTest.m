@@ -37,7 +37,7 @@
                testSelector == @selector(testSetWebTextFieldText) ||
                testSelector == @selector(testGetWebTextFieldText)) {
         _textField = [SLWebTextField elementWithAccessibilityLabel:@"Test"];
-        SLWaitUntilTrue(SLAskAppYesNo(webViewDidFinishLoad), 5.0, @"Webview did not load test HTML.");
+        SLAssertTrueWithTimeout(SLAskAppYesNo(webViewDidFinishLoad), 5.0, @"Webview did not load test HTML.");
     }
 }
 

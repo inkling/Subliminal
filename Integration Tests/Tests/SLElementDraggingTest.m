@@ -37,13 +37,13 @@ static const CGFloat kBottomLabelYOffset = 0.2;
 
     // Drag bottom to top to scroll down and show the bottom label, hiding the top label.
     [_scrollView dragWithStartPoint:CGPointMake(0.75, kTopLabelYOffset) endPoint:CGPointMake(0.75, kBottomLabelYOffset)];
-    SLWaitUntilInvisibleOrInvalid(UIAElement(topLabel), 3.0, @"The top label failed to become invisible after scrolling.");
-    SLWaitUntilVisible(UIAElement(bottomLabel), 3.0, @"The bottom label failed to become visible after scrolling.");
+    SLAssertTrueWithTimeout([UIAElement(topLabel) isInvalidOrInvisible], 3.0, @"The top label failed to become invisible after scrolling.");
+    SLAssertTrueWithTimeout([UIAElement(bottomLabel) isValidAndVisible], 3.0, @"The bottom label failed to become visible after scrolling.");
 
     // Drag top to bottom to scroll up and show the top label again, hiding the bottom label.
     [_scrollView dragWithStartPoint:CGPointMake(0.75, kBottomLabelYOffset) endPoint:CGPointMake(0.75, kTopLabelYOffset)];
-    SLWaitUntilVisible(UIAElement(topLabel), 3.0, @"The top label failed to become visible after scrolling.");
-    SLWaitUntilInvisibleOrInvalid(UIAElement(bottomLabel), 3.0, @"The bottom label failed to become invisible after scrolling.");
+    SLAssertTrueWithTimeout([UIAElement(topLabel) isValidAndVisible], 3.0, @"The top label failed to become visible after scrolling.");
+    SLAssertTrueWithTimeout([UIAElement(bottomLabel) isInvalidOrInvisible], 3.0, @"The bottom label failed to become invisible after scrolling.");
 }
 
 /// This test demonstrates exactly what it means to drag between two points,

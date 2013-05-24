@@ -190,12 +190,16 @@ static SLTestController *__sharedController = nil;
                 [[SLLogger sharedLogger] logTestStart:testName];
 
                 @try {
-                    NSUInteger numCasesExecuted = 0;
-                    NSUInteger numCasesFailed = [test run:&numCasesExecuted];
+                    NSUInteger numCasesExecuted = 0, numCasesFailed = 0, numCasesFailedUnexpectedly = 0;
+
+                    [test runAndReportNumExecuted:&numCasesExecuted
+                                           failed:&numCasesFailed
+                               failedUnexpectedly:&numCasesFailedUnexpectedly];
 
                     [[SLLogger sharedLogger] logTestFinish:testName
                                       withNumCasesExecuted:numCasesExecuted
-                                            numCasesFailed:numCasesFailed];
+                                            numCasesFailed:numCasesFailed
+                                numCasesFailedUnexpectedly:numCasesFailedUnexpectedly];
                     if (numCasesFailed > 0) _numTestsFailed++;
                 }
                 @catch (NSException *e) {

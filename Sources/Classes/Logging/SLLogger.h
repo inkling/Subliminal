@@ -49,7 +49,8 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 
 - (void)logTestFinish:(NSString *)test
  withNumCasesExecuted:(NSUInteger)numCasesExecuted
-       numCasesFailed:(NSUInteger)numCasesFailed;
+       numCasesFailed:(NSUInteger)numCasesFailed
+       numCasesFailedUnexpectedly:(NSUInteger)numCasesFailedUnexpectedly;
 
 - (void)logTestAbort:(NSString *)test;
 
@@ -62,9 +63,8 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 @interface SLLogger (SLTest)
 
 - (void)logTest:(NSString *)test caseStart:(NSString *)testCase;
-- (void)logTest:(NSString *)test caseFail:(NSString *)testCase;
 - (void)logTest:(NSString *)test casePass:(NSString *)testCase;
-- (void)logTest:(NSString *)test caseIssue:(NSString *)testCase;
+- (void)logTest:(NSString *)test caseFail:(NSString *)testCase expected:(BOOL)expected;
 
 - (void)logDebug:(NSString *)debug test:(NSString *)test testCase:(NSString *)testCase;
 - (void)logMessage:(NSString *)message test:(NSString *)test testCase:(NSString *)testCase;

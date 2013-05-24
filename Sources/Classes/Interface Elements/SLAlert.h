@@ -9,23 +9,6 @@
 #import <UIKit/UIKit.h>
 
 
-/// The amount of time it generally takes for an alert to be fully dismissed
-/// by a manual or automatic alert handler (including the alert's dismissal animation,
-/// and the alert's delegate receiving the alertView:didDismissWithButtonIndex: callback),
-/// as measured from the time the alert appears.
-///
-/// This timeout should suffice to dismiss alerts of all alertViewStyles
-/// (using handlers which simply dismiss the alerts, as well as those that enter text).
-extern const NSTimeInterval SLAlertHandlerDefaultTimeout;
-
-/// The interval that elapses between SLAlertHandler checking whether
-/// a waited-for alert has shown.
-extern const NSTimeInterval SLAlertHandlerWaitRetryDelay;
-
-/// Thrown by -[SLAlertHandler waitUntilAlertHandled:] if a corresponding
-/// alert was not shown before the wait timed-out.
-extern NSString *const SLAlertDidNotShowException;
-
 /// Types of textfields contained by UIAlertViews, as determined by the
 /// alert view's alertViewStyle.
 typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
@@ -59,7 +42,7 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
 
     // test causes an alert with title "foo" to appear
 
-    [handler waitUntilAlertHandled:SLAlertHandlerDefaultTimeout];
+    SLAssertTrue([handler didHandleAlert], @"Alert did not appear.");
 
  @warning If a test wishes to manually handle an alert, it must register 
  a handler _before_ that alert appears.
@@ -167,6 +150,10 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
 /**
  Returns YES if the receiver has dismissed an alert, NO otherwise.
  
+ Tests may assert that this is true immediately after a corresponding alert
+ has been shown, without using a timeout: -didHandleAlert will block until 
+ the alert has been handled.
+
  @return YES if the receiver has dismissed an alert, NO otherwise.
  
  @exception NSInternalInconsistencyException If the receiver has not been added.
@@ -174,25 +161,6 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
  @see +addHandler:
  */
 - (BOOL)didHandleAlert;
-
-/**
- Waits for the specified timeout for the receiver to handle an alert.
-
- @param timeout The interval to wait for a corresponding alert to be shown.
- SLAlertHandlerDefaultTimeout is a reasonable default.
- 
- This method will only wait timeout for the alert to be shown--but will not return 
- until an interval at least as long as SLAlertHandlerDefaultTimeout has elapsed, 
- to ensure that the alert's delegate has received the dismissal callbacks 
- before the tests proceed.
- 
- @exception NSInternalInconsistencyException If the receiver has not been added.
- @exception SLAlertDidNotShowException If the receiver has not handled an alert
- at the end of timeout.
- 
- @see +addHandler:
- */
-- (void)waitUntilAlertHandled:(NSTimeInterval)timeout;
 
 /**
  Creates and returns an alert handler which handles a corresponding alert 
@@ -218,6 +186,21 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
 - (SLAlertHandler *)andThen:(SLAlertHandler *)nextHandler;
 
 @end
+
+
+/**
+ If tests assert that a manual handler handled an alert after that alert is shown, 
+ it is _not_ necessary to have the tests wait: -didHandleAlert will block until
+ the alert has been handled.
+ 
+ However, _if_ the tests need to wait for the automatic handler to take effect,
+ they may use this timeout, which measures the amount of time it generally takes
+ for an alert to be fully dismissed by the automatic handler (including the alert's 
+ dismissal animation, and the alert's delegate receiving the 
+ alertView:didDismissWithButtonIndex: callback), as measured from the time
+ the alert appears.
+ */
+extern const NSTimeInterval SLAlertHandlerAutomaticDelay;
 
 
 /**

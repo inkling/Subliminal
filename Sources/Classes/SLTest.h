@@ -73,7 +73,24 @@ extern NSString *const SLTestExceptionLineNumberKey;
 
 - (id)initWithTestController:(SLTestController *)testController;
 
-- (NSUInteger)run:(NSUInteger *)casesExecuted;
+/**
+ Runs all test cases defined on the receiver's class, 
+ and reports statistics about their execution.
+ 
+ See SLTest (SLTestCase) for a discussion of test case execution.
+ 
+ @param numCasesExecuted If this is non-null, on return, this will be set to 
+ the number of test cases that were executed--which will be the number of test
+ cases defined by this SLTest.
+ @param numCasesFailed If this is non-null, on return, this will be set to the 
+ number of test cases that failed (the number of test cases that threw exceptions).
+ @param numCasesFailedUnexpectedly If this is non-null, on return, this will 
+ be set to the number of test cases that failed unexpectedly (those test cases 
+ that threw non-assertion exceptions).
+ */
+- (void)runAndReportNumExecuted:(NSUInteger *)numCasesExecuted
+                         failed:(NSUInteger *)numCasesFailed
+             failedUnexpectedly:(NSUInteger *)numCasesFailedUnexpectedly;
 
 @end
 
@@ -86,6 +103,15 @@ extern NSString *const SLTestExceptionLineNumberKey;
     * with void return types, and
     * which take no arguments.
  
+ When a test is [run](-runAndReportNumExecuted:failed:failedUnexpectedly:),
+ it discovers, sets up, executes, and tears down all its test cases.
+ The method descriptions below specify when each method will be called,
+ and -[SLTestTests testCompleteTestExecutionSequence] gives an example.
+
+ A test case "passes" if it throws no exceptions in its set-up, tear-down, or 
+ the body of the test case itself; otherwise, it "fails". That failure is 
+ "expected" if it was caused by a test assertion failing. Any other exception
+ causes an "unexpected" failure.
  */
 @interface SLTest (SLTestCase)
 
@@ -127,8 +153,8 @@ extern NSString *const SLTestExceptionLineNumberKey;
  In this method, tests should establish any state shared by all test cases, 
  including navigating to the part of the app being exercised by the test cases.
  
- In this method, tests can (and should) use SLTest assertions and SLElement "wait until..."
- methods to ensure that set-up was successful.
+ In this method, tests can (and should) use test assertions to ensure
+ that set-up was successful.
  
  @warning If set-up fails, this test will be aborted and its cases skipped. 
  However, -tearDownTest will still be executed.
@@ -148,11 +174,11 @@ extern NSString *const SLTestExceptionLineNumberKey;
  In this method, tests should clean up any state shared by all test cases, 
  such as that which was established in setUpTest.
 
- In this method, tests can (and should) use SLTest assertions and SLElement "wait until..."
- methods to ensure that tear-down was successful.
+ In this method, tests can (and should) use test assertions to ensure that
+ tear-down was successful.
  
- @warning If tear-down fails, the test will be logged as having aborted rather than finished, 
- but its test cases will have already executed, so their logs will be preserved.
+ @warning If tear-down fails, the test will be logged as having terminated 
+ abnormally rather than finished, but its test cases' logs will be preserved.
 
  @sa setUpTest
  */
@@ -163,11 +189,12 @@ extern NSString *const SLTestExceptionLineNumberKey;
  
  In this method, tests should establish any state particular to the specified test case.
  
- In this method, tests can (and should) use SLTest assertions and SLElement "wait until..."
- methods to ensure that set-up was successful.
+ In this method, tests can (and should) use test assertions to ensure that
+ set-up was successful.
  
- @warning If set-up fails, this test case will be skipped and logged as having failed.
- However, -tearDownTestCaseWithSelector: will still be executed.
+ @warning If set-up fails, the test case will be logged as having failed, 
+ and the test case itself will be skipped. However, -tearDownTestCaseWithSelector: 
+ will still be executed.
 
  @param testCaseSelector The selector identifying the test case about to be run.
 
@@ -181,11 +208,12 @@ extern NSString *const SLTestExceptionLineNumberKey;
  In this method, tests should clean up state particular to the specified test case,
  such as that which was established in setUpTestCaseWithSelector:.
 
- In this method, tests can (and should) use SLTest assertions and SLElement "wait until..."
- methods to ensure that tear-down was successful.
+ In this method, tests can (and should) use test assertions to ensure that 
+ tear-down was successful.
 
- @warning If tear-down fails, this test case will be logged as having failed even 
- if the test case itself succeeded.
+ @warning If tear-down fails, this test case will be logged as having failed 
+ even if the test case itself succeeded. However, the test case's logs 
+ will be preserved.
  
  @param testCaseSelector The selector identifying the test case that was run.
 
@@ -233,48 +261,12 @@ extern NSString *const SLTestExceptionLineNumberKey;
  You can use this method to provide enough time for lengthy operations to complete.
  
  If you have a specific condition on which you're waiting, it is more appropriate 
- to use the SLWaitUntilTrue macro or the the SLElement "waitUntil..." methods.
+ to use the SLAssertTrueWithTimeout macro.
  
  @param interval The time interval for which to wait.
  */
 - (void)wait:(NSTimeInterval)interval;
 
-/**
- The SLWaitUntilTrue macro allows an SLTest to wait for an arbitrary
- condition to become true within a specified timeout.
- 
- The macro polls the condition at small intervals. 
- If the condition is not true when the timeout elapses, the macro
- will throw an exception.
-
- This macro should be used to wait on conditions that can be evaluated
- entirely within the application. To wait on conditions that involve
- user interface elements, it will likely be more efficient and declarative to use 
- the SLElement "waitUntil..." methods.
- 
- @param expr A boolean expression on whose truth the test should wait.
- @param timeout The interval for which to wait.
- @param description A description of the wait's failure should that occur. 
- This may be a format string taking variable arguments.
- @exception SLTestAssertionFailedException if expr does not evaluate to true 
- within the specified timeout.
- */
-#define SLWaitUntilTrue(expr, timeout, description, ...) do {\
-    [self recordLastKnownFile:__FILE__ line:__LINE__]; \
-    NSTimeInterval _retryDelay = 0.25; \
-    \
-    NSDate *_startDate = [NSDate date]; \
-    BOOL _exprTrue = NO; \
-    while (!(_exprTrue = (expr)) && \
-            ([[NSDate date] timeIntervalSinceDate:_startDate] < timeout)) { \
-        [NSThread sleepForTimeInterval:_retryDelay]; \
-    } \
-    if (!_exprTrue) { \
-        NSString *reason = [NSString stringWithFormat:@"\"%@\" did not become true within %g seconds.%@", \
-                                @(#expr), timeout, SLComposeString(@" ", description, ##__VA_ARGS__)]; \
-        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
-    } \
-} while (0)
 
 #pragma mark - SLElement Use
 
@@ -309,6 +301,38 @@ extern NSString *const SLTestExceptionLineNumberKey;
         NSString *__reason = [NSString stringWithFormat:@"\"%@\" should be true.%@", \
                                 @(#expr), SLComposeString(@" ", description, ##__VA_ARGS__)]; \
         @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:__reason userInfo:nil]; \
+    } \
+} while (0)
+
+/**
+ The SLAssertTrueWithTimeout macro allows an SLTest to wait for an arbitrary
+ condition to become true within a specified timeout.
+
+ The macro polls the condition at small intervals.
+ If the condition is not true when the timeout elapses, the macro
+ will throw an exception.
+
+ @param expr A boolean expression on whose truth the test should wait.
+ @param timeout The interval for which to wait.
+ @param description A description of the wait's failure should that occur.
+ This may be a format string taking variable arguments.
+ @exception SLTestAssertionFailedException if expr does not evaluate to true
+ within the specified timeout.
+ */
+#define SLAssertTrueWithTimeout(expr, timeout, description, ...) do {\
+    [self recordLastKnownFile:__FILE__ line:__LINE__]; \
+    NSTimeInterval _retryDelay = 0.25; \
+    \
+    NSDate *_startDate = [NSDate date]; \
+    BOOL _exprTrue = NO; \
+    while (!(_exprTrue = (expr)) && \
+        ([[NSDate date] timeIntervalSinceDate:_startDate] < timeout)) { \
+        [NSThread sleepForTimeInterval:_retryDelay]; \
+    } \
+    if (!_exprTrue) { \
+        NSString *reason = [NSString stringWithFormat:@"\"%@\" did not become true within %g seconds.%@", \
+        @(#expr), timeout, SLComposeString(@" ", description, ##__VA_ARGS__)]; \
+        @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
     } \
 } while (0)
 
