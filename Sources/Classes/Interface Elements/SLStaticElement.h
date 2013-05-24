@@ -9,7 +9,7 @@
 #import "SLUIAElement.h"
 
 /**
- Instances of SLStaticElement represent user interface elements
+ Instances of `SLStaticElement` represent user interface elements
  which cannot be dynamically matched to elements within the element hierarchy,
  but which elements have well-defined ("static") UIAutomation representations.
 
@@ -27,7 +27,7 @@
  
  For more information, see ["Understanding the Element Hierarchy"](https://developer.apple.com/library/ios/#documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/UsingtheAutomationInstrument/UsingtheAutomationInstrument.html#//apple_ref/doc/uid/TP40004652-CH20-SW88 ).
 
- @warning SLStaticElement does not support the ability of SLElement to dynamically 
+ @warning `SLStaticElement` does not support the ability of `SLElement` to dynamically
  match objects within the element hierarchy and so is completely dependent 
  on UIAutomation to access and manipulate those elements.
 
@@ -35,7 +35,7 @@
  representation cannot be guaranteed to continue to identify a particular
  user interface element if the application's element hierarchy changes.
 
- For these reasons, use of SLStaticElement (instead of SLElement)
+ For these reasons, use of `SLStaticElement` (instead of `SLElement`)
  should be avoided unless absolutely necessary (i.e. a user interface element 
  does not have any properties that can be described by Subliminal without 
  referencing private APIs).
