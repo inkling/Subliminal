@@ -21,6 +21,13 @@
 		CAC388061641CD7500F995F9 /* SLStringUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC388041641CD7500F995F9 /* SLStringUtilities.m */; };
 		CAC3883F1643503C00F995F9 /* SLAccessibility.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC3883D1643503C00F995F9 /* SLAccessibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CAC388401643503C00F995F9 /* SLAccessibility.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC3883E1643503C00F995F9 /* SLAccessibility.m */; };
+		F00800C7174B3349001927AC /* SLButtonTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800C4174B3349001927AC /* SLButtonTest.m */; };
+		F00800C8174B3349001927AC /* SLButtonTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800C5174B3349001927AC /* SLButtonTestViewController.m */; };
+		F00800C9174B3349001927AC /* SLButtonTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00800C6174B3349001927AC /* SLButtonTestViewController.xib */; };
+		F00800CE174C1C64001927AC /* SLPopover.h in Headers */ = {isa = PBXBuildFile; fileRef = F00800CC174C1C64001927AC /* SLPopover.h */; };
+		F00800CF174C1C64001927AC /* SLPopover.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800CD174C1C64001927AC /* SLPopover.m */; };
+		F00800E2174C2E0A001927AC /* SLPopoverTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800E0174C2E0A001927AC /* SLPopoverTest.m */; };
+		F00800E3174C2E0A001927AC /* SLPopoverTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800E1174C2E0A001927AC /* SLPopoverTestViewController.m */; };
 		F016493D16D42E3C000AEB50 /* SLTestController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = F016493B16D42E3C000AEB50 /* SLTestController+Internal.h */; };
 		F01B2B6D16D2C55900DBA391 /* SLElementMatchingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F01B2B6A16D2C55900DBA391 /* SLElementMatchingTest.m */; };
 		F01B2B6E16D2C55900DBA391 /* SLElementMatchingTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F01B2B6B16D2C55900DBA391 /* SLElementMatchingTestViewController.m */; };
@@ -100,8 +107,6 @@
 		F0C07A381703F95B00C93F93 /* SLAlert.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A361703F95B00C93F93 /* SLAlert.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0C07A391703F95B00C93F93 /* SLAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C07A371703F95B00C93F93 /* SLAlert.m */; };
 		F0C07A3F1703F9A900C93F93 /* SLUIAElement+Subclassing.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A3D1703F9A900C93F93 /* SLUIAElement+Subclassing.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F0C07A431703FE5200C93F93 /* SLControl.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A411703FE5200C93F93 /* SLControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F0C07A441703FE5200C93F93 /* SLControl.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C07A421703FE5200C93F93 /* SLControl.m */; };
 		F0C07A471703FEF600C93F93 /* SLButton.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A451703FEF600C93F93 /* SLButton.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0C07A481703FEF600C93F93 /* SLButton.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C07A461703FEF600C93F93 /* SLButton.m */; };
 		F0C07A4B1704002100C93F93 /* SLTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A491704002100C93F93 /* SLTextField.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -207,6 +212,13 @@
 		CAC388041641CD7500F995F9 /* SLStringUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SLStringUtilities.m; path = Categories/SLStringUtilities.m; sourceTree = "<group>"; };
 		CAC3883D1643503C00F995F9 /* SLAccessibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLAccessibility.h; sourceTree = "<group>"; };
 		CAC3883E1643503C00F995F9 /* SLAccessibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAccessibility.m; sourceTree = "<group>"; };
+		F00800C4174B3349001927AC /* SLButtonTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLButtonTest.m; sourceTree = "<group>"; };
+		F00800C5174B3349001927AC /* SLButtonTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLButtonTestViewController.m; sourceTree = "<group>"; };
+		F00800C6174B3349001927AC /* SLButtonTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLButtonTestViewController.xib; sourceTree = "<group>"; };
+		F00800CC174C1C64001927AC /* SLPopover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLPopover.h; sourceTree = "<group>"; };
+		F00800CD174C1C64001927AC /* SLPopover.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLPopover.m; sourceTree = "<group>"; };
+		F00800E0174C2E0A001927AC /* SLPopoverTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLPopoverTest.m; sourceTree = "<group>"; };
+		F00800E1174C2E0A001927AC /* SLPopoverTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLPopoverTestViewController.m; sourceTree = "<group>"; };
 		F016493B16D42E3C000AEB50 /* SLTestController+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLTestController+Internal.h"; sourceTree = "<group>"; };
 		F01B2B6A16D2C55900DBA391 /* SLElementMatchingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementMatchingTest.m; sourceTree = "<group>"; };
 		F01B2B6B16D2C55900DBA391 /* SLElementMatchingTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementMatchingTestViewController.m; sourceTree = "<group>"; };
@@ -295,8 +307,6 @@
 		F0C07A361703F95B00C93F93 /* SLAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLAlert.h; sourceTree = "<group>"; };
 		F0C07A371703F95B00C93F93 /* SLAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAlert.m; sourceTree = "<group>"; };
 		F0C07A3D1703F9A900C93F93 /* SLUIAElement+Subclassing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLUIAElement+Subclassing.h"; sourceTree = "<group>"; };
-		F0C07A411703FE5200C93F93 /* SLControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLControl.h; sourceTree = "<group>"; };
-		F0C07A421703FE5200C93F93 /* SLControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLControl.m; sourceTree = "<group>"; };
 		F0C07A451703FEF600C93F93 /* SLButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLButton.h; sourceTree = "<group>"; };
 		F0C07A461703FEF600C93F93 /* SLButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLButton.m; sourceTree = "<group>"; };
 		F0C07A491704002100C93F93 /* SLTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTextField.h; sourceTree = "<group>"; };
@@ -392,6 +402,25 @@
 				F08B87F11685A00400C4FE44 /* SharedSLTests.m */,
 			);
 			name = Utilities;
+			sourceTree = "<group>";
+		};
+		F00800BF174B2CB0001927AC /* SLButton Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F00800C4174B3349001927AC /* SLButtonTest.m */,
+				F00800C5174B3349001927AC /* SLButtonTestViewController.m */,
+				F00800C6174B3349001927AC /* SLButtonTestViewController.xib */,
+			);
+			name = "SLButton Tests";
+			sourceTree = "<group>";
+		};
+		F00800D3174C2871001927AC /* SLPopover Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F00800E0174C2E0A001927AC /* SLPopoverTest.m */,
+				F00800E1174C2E0A001927AC /* SLPopoverTestViewController.m */,
+			);
+			name = "SLPopover Tests";
 			sourceTree = "<group>";
 		};
 		F013798E16D0843B009BAF22 /* SLTerminal Tests */ = {
@@ -565,8 +594,6 @@
 				F0C07A371703F95B00C93F93 /* SLAlert.m */,
 				F0C07A451703FEF600C93F93 /* SLButton.h */,
 				F0C07A461703FEF600C93F93 /* SLButton.m */,
-				F0C07A411703FE5200C93F93 /* SLControl.h */,
-				F0C07A421703FE5200C93F93 /* SLControl.m */,
 				F0C07A511704011300C93F93 /* SLKeyboard.h */,
 				F0C07A521704011300C93F93 /* SLKeyboard.m */,
 				F0C07A491704002100C93F93 /* SLTextField.h */,
@@ -575,6 +602,8 @@
 				F0C07A56170401E500C93F93 /* SLWebView.m */,
 				F0C07A4D1704009E00C93F93 /* SLWindow.h */,
 				F0C07A4E1704009E00C93F93 /* SLWindow.m */,
+				F00800CC174C1C64001927AC /* SLPopover.h */,
+				F00800CD174C1C64001927AC /* SLPopover.m */,
 			);
 			name = "User Interface Elements";
 			sourceTree = "<group>";
@@ -662,12 +691,14 @@
 			isa = PBXGroup;
 			children = (
 				F07DA31F16E439B7004C2282 /* SLAlert Tests */,
+				F00800BF174B2CB0001927AC /* SLButton Tests */,
 				F0CE9FFE16D60E61008A3B4A /* SLDevice Tests */,
 				F0AE4C8716F7F8ED00B2BB2B /* SLElement State Tests */,
 				F077D70016D9D71E00908FF5 /* SLElement Visibility Tests */,
 				F05263C316D2C2CF0090174F /* SLElement Matching Tests */,
 				0696BA5E16E013DF00DD70CF /* SLElement Gestures and Actions Tests */,
 				F089F9DC1745FB3800DF1F25 /* SLKeyboard Tests */,
+				F00800D3174C2871001927AC /* SLPopover Tests */,
 				F089F9FD1746B1D200DF1F25 /* SLStaticElement Tests */,
 				F01EBC951701150E00FF6A7C /* SLTextField Tests */,
 				F013798E16D0843B009BAF22 /* SLTerminal Tests */,
@@ -763,7 +794,6 @@
 				F016493D16D42E3C000AEB50 /* SLTestController+Internal.h in Headers */,
 				F0C07A381703F95B00C93F93 /* SLAlert.h in Headers */,
 				F0C07A3F1703F9A900C93F93 /* SLUIAElement+Subclassing.h in Headers */,
-				F0C07A431703FE5200C93F93 /* SLControl.h in Headers */,
 				F0C07A471703FEF600C93F93 /* SLButton.h in Headers */,
 				F0C07A4B1704002100C93F93 /* SLTextField.h in Headers */,
 				F0C07A4F1704009E00C93F93 /* SLWindow.h in Headers */,
@@ -773,6 +803,7 @@
 				F05C51E5171C8AE000A381BC /* SLMainThreadRef.h in Headers */,
 				F0A04E1D1749F70F002C7520 /* SLElement.h in Headers */,
 				F089F98617445D9A00DF1F25 /* SLStaticElement.h in Headers */,
+				F00800CE174C1C64001927AC /* SLPopover.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -931,6 +962,7 @@
 				064B6FC7173DCE9A004AB1BF /* SLElementVisibilityWithSubviews.xib in Resources */,
 				F0C27CDF1741694900335A41 /* SLElementStateTestMidpointCovered.xib in Resources */,
 				F0C27CE917416EC400335A41 /* SLElementStateTestCompletelyCovered.xib in Resources */,
+				F00800C9174B3349001927AC /* SLButtonTestViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -977,7 +1009,6 @@
 				CA75E78516697C0000D57E92 /* SLDevice.m in Sources */,
 				0F21788916AE08F700C46068 /* SLMultiLogger.m in Sources */,
 				F0C07A391703F95B00C93F93 /* SLAlert.m in Sources */,
-				F0C07A441703FE5200C93F93 /* SLControl.m in Sources */,
 				F0C07A481703FEF600C93F93 /* SLButton.m in Sources */,
 				F0C07A4C1704002100C93F93 /* SLTextField.m in Sources */,
 				F0C07A501704009E00C93F93 /* SLWindow.m in Sources */,
@@ -987,6 +1018,7 @@
 				F05C51E6171C8AE000A381BC /* SLMainThreadRef.m in Sources */,
 				F0A04E1E1749F70F002C7520 /* SLElement.m in Sources */,
 				F089F98717445D9A00DF1F25 /* SLStaticElement.m in Sources */,
+				F00800CF174C1C64001927AC /* SLPopover.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1024,6 +1056,10 @@
 				F089F9E31745FB7E00DF1F25 /* SLKeyboardTestViewController.m in Sources */,
 				F05D2B061746B55C0089DB9E /* SLStaticElementTest.m in Sources */,
 				F05D2B071746B55C0089DB9E /* SLStaticElementTestViewController.m in Sources */,
+				F00800C7174B3349001927AC /* SLButtonTest.m in Sources */,
+				F00800C8174B3349001927AC /* SLButtonTestViewController.m in Sources */,
+				F00800E2174C2E0A001927AC /* SLPopoverTest.m in Sources */,
+				F00800E3174C2E0A001927AC /* SLPopoverTestViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

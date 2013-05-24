@@ -34,12 +34,29 @@
     // and assign the root view of the hierarchy to self.view.
 }
 
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    // Do any additional setup after loading the view from its nib.
+    // Test case specific configuration is best done using app hooks
+    // triggered from -[___FILEBASENAMEASIDENTIFIER___ setUpTestCaseWithSelector:].
+}
+
 - (instancetype)initWithTestCaseWithSelector:(SEL)testCase {
     self = [super initWithTestCaseWithSelector:testCase];
     if (self) {
-        // Custom initialization
+        // Register for app hooks, e.g.
+        // [[SLTestController sharedTestController] registerTarget:<#(id)#> forAction:<#(SEL)#>];
     }
     return self;
 }
+
+// Deregister for app hooks, if any
+//- (void)dealloc {
+//    [[SLTestController sharedTestController] deregisterTarget:self];
+//}
+
+//#pragma mark - App hooks
+//Put any app hooks below here
 
 @end

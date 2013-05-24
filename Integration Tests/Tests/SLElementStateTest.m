@@ -37,6 +37,20 @@
     SLAssertTrue([value isEqualToString:expectedValue], @"-value did not return expected.");
 }
 
+- (void)testIsEnabledReturnsYESByDefault {
+    SLAssertTrue([UIAElement(_testElement) isEnabled],
+                 @"UIAElement.isEnabled() should return true for arbitrary elements.");
+}
+
+- (void)testIsEnabledMirrorsUIControlIsEnabledWhenMatchingObjectIsUIControl {
+    // the matching object here is a UIButton
+    SLAskApp(disableElement);
+    SLAssertFalse([UIAElement(_testElement) isEnabled], @"isEnabled() should return false.");
+
+    SLAskApp(enableElement);
+    SLAssertTrue([UIAElement(_testElement) isEnabled], @"isEnabled() should return true.");
+}
+
 - (void)testHitpointReturnsRectMidpointByDefault {
     CGRect elementRect = [SLAskApp(elementRect) CGRectValue];
     CGPoint expectedHitpoint = CGPointMake(CGRectGetMidX(elementRect), CGRectGetMidY(elementRect));
