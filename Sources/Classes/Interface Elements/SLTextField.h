@@ -9,52 +9,63 @@
 #import "SLElement.h"
 
 /**
- SLTextField allows access to, and control of, text field elements in your app.
+ `SLTextField` matches instances of `UITextField`.
  */
 @interface SLTextField : SLElement
 
 /** 
  The text displayed by the text field.
  
- -setText: requires that the element be [tappable](-isTappable), and will wait
- for it to become so, for the amount of time remaining (of SLElement's
- [default timeout](+defaultTimeout)) after the element becomes valid.
- 
- @exception SLJavaScriptException (thrown by -setText:) if the element is not 
- [tappable](-isTappable).
+ @exception SLUIAElementInvalidException Raised by both `-text` and `-setText:`
+ if the element is not valid by the end of the [default timeout](+defaultTimeout).
+
+ @exception SLUIAElementNotTappableException Raised, only by `setText:`, if the 
+ element is not tappable when whatever amount of time remains of the default 
+ timeout after the element becomes valid elapses.
  */
 @property (nonatomic, strong) NSString *text;
 
 @end
 
 /**
- SLSearchBarTextField allows access to, and control of, search bar elements in your app.
+ `SLSearchField` matches objects that have the `UIAccessibilityTraitSearchField`
+ accessibility trait.
 
- @warning For reasons out of Subliminal's control, it is not possible to match
- accessibility properties on search bars. Search bars can only be matched
- using +anyElement.
+ Such as the text field of a `UISearchBar`.
 
- (The text field inside a UISearchBar is the accessible element, not the
- search bar itself. This means that the accessibility properties of the search bar
- don't matter--and unfortunately, you can't set accessibility properties on the
- text field because it's private.)
+ @warning A search field can be matched only by using `+anyElement`,
+ as it is a private member of `UISearchBar` and so it is not possible for the 
+ application to configure its accessibility information.
  */
-@interface SLSearchBar : SLTextField
+@interface SLSearchField : SLTextField
 @end
 
 /**
  SLWebTextField matches text fields displayed in UIWebViews.
 
  Such as form inputs.
+ 
+ #### Configuring web text fields' accessibility information
 
- A web text field's value is its text (i.e. the value of a form input's "value"
- attribute). A web text field's label is the text of an element specified by the
- "aria-labelled-by" attribute, if present. See SLWebTextField.html and the
- SLWebTextField test cases of SLTextFieldTest.
+ A web text field's `[-label](-[SLUIAElement label])` is the text of a `DOM` 
+ element specified by the "aria-labelled-by" attribute, if present. 
+ See `SLWebTextField.html` and the `SLWebTextField` test cases of `SLTextFieldTest`.
  */
 @interface SLWebTextField : SLElement
 
-/** The text displayed by the text field. */
+/**
+ The text displayed by the text field.
+ 
+ `-text` returns the web text field's value (i.e. the value of the form input's
+ "value" attribute).
+
+ @exception SLUIAElementInvalidException Raised by both `-text` and `-setText:`
+ if the element is not valid by the end of the [default timeout](+defaultTimeout).
+
+ @exception SLUIAElementNotTappableException Raised, only by `-setText:`, if the
+ element is not tappable when whatever amount of time remains of the default
+ timeout after the element becomes valid elapses.
+ */
 @property (nonatomic, strong) NSString *text;
 
 @end

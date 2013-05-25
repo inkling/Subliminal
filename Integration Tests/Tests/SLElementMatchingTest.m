@@ -154,9 +154,9 @@
 }
 
 - (void)testAnyElement {
-    SLSearchBar *anySearchBar = [SLSearchBar anyElement];
-    SLAssertTrue([[UIAElement(anySearchBar) text] isEqualToString:@"barText"],
-                 @"SLSearchBar should have matched the search bar onscreen.");
+    SLSearchField *anySearchField = [SLSearchField anyElement];
+    SLAssertTrue([[UIAElement(anySearchField) text] isEqualToString:@"barText"],
+                 @"SLSearchField should have matched the search field onscreen.");
 }
 
 // The remaining cases in this test verify particulars of element matching
