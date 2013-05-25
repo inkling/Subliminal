@@ -368,8 +368,7 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     }
 
     NSString *message = [NSString stringWithFormat:@"%@: %@", callSite, exceptionDescription];
-    NSString *test = NSStringFromClass([self class]);
-    [[SLLogger sharedLogger] logError:message test:test testCase:testCase];
+    [[SLLogger sharedLogger] logError:message];
 }
 
 @end

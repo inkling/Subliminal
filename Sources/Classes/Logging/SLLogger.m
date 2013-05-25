@@ -114,20 +114,4 @@ static SLLogger *__sharedLogger = nil;
                                                 test, testCase, (expected ? @"" : @" unexpectedly")]];
 }
 
-- (void)logDebug:(NSString *)debug test:(NSString *)test testCase:(NSString *)testCase {
-    [self logDebug:[NSString stringWithFormat:@"-[%@ %@]: %@", test, testCase, debug]];
-}
-
-- (void)logMessage:(NSString *)message test:(NSString *)test testCase:(NSString *)testCase {
-    [self logMessage:[NSString stringWithFormat:@"-[%@ %@]: %@", test, testCase, message]];
-}
-
-- (void)logWarning:(NSString *)warning test:(NSString *)test testCase:(NSString *)testCase {
-    [self logWarning:[NSString stringWithFormat:@"-[%@ %@]: %@", test, testCase, warning]];
-}
-
-- (void)logError:(NSString *)error test:(NSString *)test testCase:(NSString *)testCase {
-    [self logError:[NSString stringWithFormat:@"-[%@ %@]: %@", test, testCase, error]];
-}
-
 @end
