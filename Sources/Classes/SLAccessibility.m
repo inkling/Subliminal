@@ -496,13 +496,6 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
 }
 
 - (BOOL)willAppearInAccessibilityHierarchy {
-    // An object will not appear in the accessibility hierarchy
-    // if its direct parent is an accessibility element.
-    NSObject *parent = [self slAccessibilityParent];
-    if ([parent isAccessibilityElement]) {
-        return NO;
-    }
-
     if ([self accessibilityAncestorPreventsPresenceInAccessibilityHierarchy]) {
         return NO;
     }
@@ -532,6 +525,8 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
 
 
 - (BOOL)accessibilityAncestorPreventsPresenceInAccessibilityHierarchy {
+    // An object will not appear in the accessibility hierarchy
+    // if an ancestor is an accessibility element.
     id parent = [self slAccessibilityParent];
     while (parent) {
         if ([parent isAccessibilityElement]) {

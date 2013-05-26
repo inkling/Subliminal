@@ -159,14 +159,23 @@
                  @"SLSearchBar should have matched the search bar onscreen.");
 }
 
-#pragma mark - UIControls
+// The remaining cases in this test verify particulars of element matching
+// which are internal to `NSObject(SLAccessibility)` and yet may serve
+// as guides to developers in setting accessibility properties.
+//
+// Developers need peruse these only if they are curious exactly why they can or
+// cannot match an element, as the Accessibility Inspector always shows
+// the ground truth: an element can be matched only if the Inspector displays
+// that element's information when the element is tapped upon.
 
-- (void)testCannotMatchUIControlDescendant {
-    SLElement *uiControl = [SLElement elementWithAccessibilityIdentifier:@"fooUIControl"];
-    SLAssertTrue([uiControl isValid], @"Should be able to match the UIControl");
+#pragma mark - Children of accessible elements
 
-    SLElement *uiControlDescendant = [SLElement elementWithAccessibilityLabel:@"fooTestView"];
-    SLAssertFalse([uiControlDescendant isValid], @"Should not be able to match descendant of UIControl.");
+- (void)testCannotMatchDescendantOfAccessibleElement {
+    SLElement *otherView = [SLElement elementWithAccessibilityLabel:@"parentView"];
+    SLAssertTrue([otherView isValid], @"Should be able to match the parent view.");
+
+    SLElement *uiControlDescendant = [SLElement elementWithAccessibilityLabel:@"childView"];
+    SLAssertFalse([uiControlDescendant isValid], @"Should not be able to match descendant of accessible element.");
 }
 
 #pragma mark - Table views
