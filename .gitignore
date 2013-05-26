@@ -1,3 +1,4 @@
 *.xcworkspace
 xcuserdata
 .DS_Store
+Documentation/Documentation

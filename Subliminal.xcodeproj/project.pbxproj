@@ -6,6 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		F0080141174D7A9E001927AC /* Subliminal Documentation */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = F0080147174D7A9E001927AC /* Build configuration list for PBXAggregateTarget "Subliminal Documentation" */;
+			buildPhases = (
+				F008014A174D7AC1001927AC /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Subliminal Documentation";
+			productName = "Subliminal Documentation";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		064B6F55173B13E9004AB1BF /* SLElementVisibilityTestCoveredByClearRegion.xib in Resources */ = {isa = PBXBuildFile; fileRef = 064B6F54173B13E9004AB1BF /* SLElementVisibilityTestCoveredByClearRegion.xib */; };
 		064B6FC7173DCE9A004AB1BF /* SLElementVisibilityWithSubviews.xib in Resources */ = {isa = PBXBuildFile; fileRef = 064B6FC6173DCE9A004AB1BF /* SLElementVisibilityWithSubviews.xib */; };
@@ -896,6 +910,7 @@
 				F0695D8A16011515000B05D0 /* Subliminal */,
 				F0D240511683F7130031B67C /* Subliminal Unit Tests */,
 				F0AC809316BB299500C5D5C0 /* Subliminal Integration Tests */,
+				F0080141174D7A9E001927AC /* Subliminal Documentation */,
 			);
 		};
 /* End PBXProject section */
@@ -977,6 +992,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		F008014A174D7AC1001927AC /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/appledoc \\\n--clean-output \\\n--project-name \"Subliminal\" \\\n--project-version 1.0 \\\n--project-company \"Inkling\" \\\n--company-id \"com.inkling\" \\\n--docset-platform-family \"iphoneos\" \\\n--logformat xcode \\\n--keep-merged-sections \\\n--keep-undocumented-objects \\\n--keep-undocumented-members \\\n--no-repeat-first-par \\\n--no-warn-invalid-crossref \\\n--ignore \"*.m\" \\\n--index-desc \"${PROJECT_DIR}/README.md\" \\\n--output \"${PROJECT_DIR}/Documentation/Documentation\" \\\n--keep-intermediate-files \\\n\"${PROJECT_DIR}/Sources\"";
+		};
 		F0D240501683F7130031B67C /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1121,6 +1149,20 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		F0080142174D7A9E001927AC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		F0080143174D7A9E001927AC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		F0695D9716011515000B05D0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1303,6 +1345,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		F0080147174D7A9E001927AC /* Build configuration list for PBXAggregateTarget "Subliminal Documentation" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F0080142174D7A9E001927AC /* Debug */,
+				F0080143174D7A9E001927AC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		F0695D8516011515000B05D0 /* Build configuration list for PBXProject "Subliminal" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
