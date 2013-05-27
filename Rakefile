@@ -8,6 +8,51 @@ DOCSET_NAME = "com.inkling.Subliminal.docset"
 DOCSET_VERSION = "1.0"
 
 
+task :default => :usage
+
+### Usage
+
+desc "Prints usage statement for people unfamiliar with Rake or this particular Rakefile"
+task :usage, :task_name do |t, args|
+	task_name = args[:task_name] ||= ""
+
+	if !task_name.empty?
+		case task_name
+		when "usage"
+			puts """
+rake usage\tPrints usage statement for people unfamiliar with Rake or this particular Rakefile
+
+rake usage[[<task>]]
+
+Arguments:
+  task\tThe name of the task to describe."""
+		when "uninstall"
+			puts "rake uninstall\tUninstalls supporting files"
+		when "install"
+			puts """
+rake install\tInstalls supporting files
+
+rake install [docs=no] [dev=yes]
+
+Options:
+  docs=no\tSkips the download and installation of Subliminal's documentation.
+  dev=yes\tInstalls files supporting the development of Subliminal."""
+  	else
+  		fail "Unrecognized task name."
+		end
+	else
+		puts """
+rake <task> [<opt>=<value>[ <opt2>=<value2>...]]
+
+Tasks:
+  uninstall\tUninstalls supporting files
+  install\tInstalls supporting files
+
+See 'rake usage[<task>]' for more information on a specific task."""
+	end
+end
+
+
 ### Uninstallation
 
 desc "Uninstalls supporting files"
