@@ -1,17 +1,39 @@
+PROJECT_DIR = File.dirname(__FILE__)
+
+FILE_TEMPLATE_DIR = "#{ENV['HOME']}/Library/Developer/Xcode/Templates/File Templates/Subliminal"
+TRACE_TEMPLATE_DIR = "#{ENV['HOME']}/Library/Application Support/Instruments/Templates/Subliminal"
+
 DOCSET_DIR = "#{ENV['HOME']}/Library/Developer/Shared/Documentation/DocSets"
 DOCSET_NAME = "com.inkling.Subliminal.docset"
 DOCSET_VERSION = "1.0"
+
 
 ### Uninstallation
 
 desc "Uninstalls supporting files"
 task :uninstall do
-	puts "Uninstalling supporting files..."
+	puts "\nUninstalling old supporting files..."
 
+	uninstall_file_templates
+	uninstall_trace_template
 	fail "Could not uninstall docs" if !uninstall_docs
 end
 
+def uninstall_file_templates
+	puts "- Uninstalling file templates..."
+
+	`rm -rf "#{FILE_TEMPLATE_DIR}"`
+end
+
+def uninstall_trace_template
+	puts "- Uninstalling trace template..."
+
+	`rm -rf "#{TRACE_TEMPLATE_DIR}"`
+end
+
 def uninstall_docs
+	puts "- Uninstalling docs..."
+
 	docset_file = "#{DOCSET_DIR}/#{DOCSET_NAME}"
 	
 	if File.exists?(docset_file)
@@ -45,16 +67,45 @@ def uninstall_docs
 	true
 end
 
+
 ### Installation
 
 desc "Installs supporting files"
 task :install => :uninstall do
-	puts "Installing supporting files..."
+	puts "\nInstalling supporting files..."
 
+	install_file_templates(ENV["dev"] == "yes")
+	install_trace_template
 	install_docs unless ENV["docs"] == "no"
 end
 
+def install_file_templates(install_dev_templates)
+	puts "- Installing file templates..."
+
+	local_template_dir = "#{PROJECT_DIR}/Supporting Files/Xcode/File Templates/"
+
+	`mkdir -p "#{FILE_TEMPLATE_DIR}" && \
+	cp -r "#{local_template_dir}/Integration test class.xctemplate" "#{FILE_TEMPLATE_DIR}"`
+
+	# install developer templates
+	if $? == 0 && install_dev_templates
+		`cp -r "#{local_template_dir}/Subliminal integration test class.xctemplate" "#{FILE_TEMPLATE_DIR}"`
+	end
+end
+
+def install_trace_template
+	puts "- Installing trace template..."
+
+  # It appears that the trace template actually caches `SLTerminal.js` when created,
+  # but it also refers to the file at the pre-cached path (inside the template directory), 
+  # so we might as well move it to that path
+	`mkdir -p "#{TRACE_TEMPLATE_DIR}" && \
+	cp "#{PROJECT_DIR}/Supporting Files/Instruments/"* "#{TRACE_TEMPLATE_DIR}"`
+end
+
 def install_docs
+	puts "- Installing docs..."
+
 	# download the latest docs
 	docset_xar_name = "com.inkling.Subliminal-#{DOCSET_VERSION}.xar"
 
