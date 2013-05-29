@@ -18,6 +18,7 @@ task :usage, :task_name do |t, args|
 
 	if !task_name.empty?
 		case task_name
+
 		when "usage"
 			puts """
 rake usage\tPrints usage statement for people unfamiliar with Rake or this particular Rakefile
@@ -26,8 +27,10 @@ rake usage[[<task>]]
 
 Arguments:
   task\tThe name of the task to describe."""
+
 		when "uninstall"
 			puts "rake uninstall\tUninstalls supporting files"
+
 		when "install"
 			puts """
 rake install\tInstalls supporting files
@@ -37,8 +40,22 @@ rake install [docs=no] [dev=yes]
 Options:
   docs=no\tSkips the download and installation of Subliminal's documentation.
   dev=yes\tInstalls files supporting the development of Subliminal."""
+
+    when "test", "test:unit"
+      puts """
+rake test\tRuns Subliminal's tests
+
+rake test[:unit]
+
+Sub-tasks:
+  :unit\tRuns the unit tests"""
+
+    when "build_docs"
+      puts "rake build_docs\tBuilds Subliminal's documentation"
+
   	else
   		fail "Unrecognized task name."
+
 		end
 	else
 		puts """
@@ -47,6 +64,8 @@ rake <task> [<opt>=<value>[ <opt2>=<value2>...]]
 Tasks:
   uninstall\tUninstalls supporting files
   install\tInstalls supporting files
+  test\t\tRuns Subliminal's tests
+  build_docs\tBuilds Subliminal's documentation
 
 See 'rake usage[<task>]' for more information on a specific task."""
 	end
@@ -173,4 +192,45 @@ def install_docs
 
 	# load them
 	`osascript -e 'tell application "Xcode" to load documentation set with path "#{installed_docset_file}"'`
+end
+
+
+### Testing
+
+desc "Runs Subliminal's tests"
+task :test do
+  puts "\nRunning tests..."
+
+  Rake::Task['test:unit'].invoke
+
+  puts "Tests passed.\n\n"
+end
+
+namespace :test do
+  desc "Runs the unit tests"
+  task :unit do    
+    puts "- Running unit tests..."
+
+    # Use system so we see the tests' output
+    if system('xctool -project Subliminal.xcodeproj/ -scheme "Subliminal Unit Tests" test')
+      puts "Unit tests passed.\n\n"
+    else      
+      fail "Unit tests failed."
+    end
+  end
+end
+
+
+### Building documentation
+
+desc "Builds the documentation"
+task :build_docs do    
+  puts "\nBuilding documentation..."
+
+    # Use system so we see the build's output
+  if system('xctool -project Subliminal.xcodeproj/ -scheme "Subliminal Documentation" build')
+    puts "Documentation built successfully.\n\n"
+  else
+    fail "Documentation failed to build."
+  end
 end
