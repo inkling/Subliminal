@@ -1,0 +1,269 @@
+#!/bin/sh
+#
+# `subliminal-test` builds a scheme contained in an Xcode project or Xcode workspace, 
+# then tests the product using Subliminal.
+#
+# Execute `subliminal-test` with no arguments to print usage.
+
+
+print_usage_and_exit () {
+	echo """
+subliminal-test (-project <project_path> | -workspace <workspace_path>) -device <device_type>
+		[-scheme <scheme_name>] [-sdk <sdk>] [-timeout <timeout>] [-output <output_dir>] [-replacement_bundle_id <id>]
+		[-e <variable> <value>]
+
+\`subliminal-test\` builds a scheme contained in an Xcode project or Xcode workspace,
+then tests the product using Subliminal.
+
+\`subliminal-test\` expects to be run:
+  * alongside the other scripts that were originally in \`/Supporting Files/CI\`
+  * with Subliminal having been installed on the test machine, using \`rake install docs=no\`
+  * with tests using an \`SLUIALogger\` to log their status (though it, and other loggers, may be attached using an \`SLMultiLogger\`).
+
+Required arguments:
+	-project <project_path>		
+	-workspace <workspace_path>	Build the project or workspace at the specified path.
+					Only one of these values must be specified.
+
+	-device <device_type>		The device to simulate.
+					Acceptable values are listed in the iPhone Simulator's \"Hardware -> Device\" menu.
+
+Optional arguments:
+	-build_tool <toolname>		The tool to use to build the scheme. Should be either \"xcrun xcodebuild\" 
+					or \"xctool\". Defaults to \"xcrun xcodebuild\".
+
+	-scheme <scheme_name>		The scheme to use to build the specified project or workspace.
+					Defaults to \"Integration Tests\".
+
+	-sdk <sdk>			The SDK to use to build the specified project or workspace.
+					Defaults to \"iphonesimulator\" (the latest iPhone Simulator SDK).
+
+	-timeout <timeout>		The maximum duration for which to run the tests before aborting.
+					Specified in milliseconds and as a number rather than a string. Defaults to infinite.
+
+	-output <output_dir>		The directory to which to save Instruments' output, to aid in debugging test failures:
+					  * the run log, as an XML plist;
+					  * screenshots taken when warnings or errors are logged;
+					  * and the run's .trace file, which can be opened in the Instruments GUI to view the run log and the screenshots.
+					Has no default value.
+
+	-replacement_bundle_id <id>	The identifier to use to overwrite the product's bundle identifier.
+					Has no default value.
+
+					When testing in-app purchase, this must be the identifier of your main app.
+					If this is set, the Simulator will be reset both before _and_ after testing,
+					as the Simulator cannot have two applications with the same identifier installed simultaneously.
+
+	-e <variable> <value>		An environment variable setting. You may specify more than one.
+	"""
+	exit 1
+}
+
+# If we were invoked with no arguments, just print usage and exit
+if [[ -z $1 ]]; then
+	print_usage_and_exit
+fi
+
+
+### Parse arguments
+
+# Defaults
+BUILD_TOOL="xcrun xcodebuild"
+SCHEME="Integration Tests"
+SDK="iphonesimulator"
+
+while :
+do
+case $1 in
+	# Set argument, wait for value
+    -project|-workspace|-device|-build_tool|-scheme|-sdk|-timeout|-output|-replacement_bundle_id|-e)
+		if [[ -n "$CURRENT_ARG" ]]; then
+			echo "Missing value for argument: $CURRENT_ARG"
+			print_usage_and_exit
+		fi
+		case $1 in
+			# Set a placeholder for the real arg (the env var)
+			-e) CURRENT_ARG="$1";;
+			# Variables (apart from env vars) are capitalized in this script
+			*)	CURRENT_ARG=`echo ${1#-} | tr [[:lower:]] [[:upper:]]`;;
+		esac
+	    shift 1;;
+
+    -*)	
+		echo "Unrecognized argument: $1"
+    	print_usage_and_exit;;
+
+	# Set value for argument (unless end of command)
+	*)
+		if [[ -n "$1" ]]; then
+			if [[ -z "$CURRENT_ARG" ]]; then
+				echo "Value \"$1\" is missing argument"
+				print_usage_and_exit
+			elif [[ "$CURRENT_ARG" == "-e" ]]; then
+				# Replace the env var placeholder
+				CURRENT_ARG="export $1"
+			else
+				eval $CURRENT_ARG=\"$1\"
+				unset CURRENT_ARG;
+			fi
+		else
+			# end of command
+			break
+		fi
+		shift 1;;
+esac
+done
+
+# We reached the end of the command while still expecting an argument
+if [[ -n "$CURRENT_ARG" ]]; then
+	echo "Missing value for argument: $CURRENT_ARG"
+	print_usage_and_exit
+fi
+
+# Enforce required args
+if [[ ( -z "$PROJECT" && -z "$WORKSPACE" ) || -z "$DEVICE" ]]; then
+	echo "Missing required arguments"
+	print_usage_and_exit
+fi
+
+### Build app
+echo "\nBuilding app...\n"
+
+# Instruments always uses the iPad simulator for universal binaries,
+# so to choose a device type we've got to override the TARGETED_DEVICE_FAMILY at build.
+# http://openradar.appspot.com/13607967
+case $DEVICE in
+	iPhone*)
+		DEVICE_FAMILY=1
+		;;
+	iPad*)
+		DEVICE_FAMILY=2
+		;;
+	*)
+		echo "\nERROR: Unrecognized device type."
+		exit 1
+		;;
+esac
+
+# Controlling where Xcode builds the app lets us determine where to point Instruments to
+BUILD_DIR=`mktemp -d /tmp/subliminal-test.build.XXXXXX`
+if [ $? -ne 0 ]; then
+	echo "\nERROR: Could not create build directory."
+	exit 1
+fi
+
+$BUILD_TOOL\
+	-project "$PROJECT"\
+	-scheme "$SCHEME"\
+	-configuration Release\
+	-sdk "$SDK"\
+	TARGETED_DEVICE_FAMILY="$DEVICE_FAMILY"\
+	SYMROOT="$BUILD_DIR"\
+	build
+
+if [ $? -ne 0 ]; then
+	echo "\nERROR: Could not build application."
+	exit 1
+fi
+
+# Note that Instruments will install the app in the Simulator when launched
+APP=`find "$BUILD_DIR" -name "*.app"`
+
+# Change the app's bundle identifier if a replacement was specified
+if [[ -n "$REPLACEMENT_BUNDLE_ID" ]]; then
+	INFO_PLIST=`find "$APP" -name "*Info.plist"`
+	defaults write "$INFO_PLIST" CFBundleIdentifier "$REPLACEMENT_BUNDLE_ID"
+fi
+
+### Prepare to install app
+echo "\nPreparing to install app...\n"
+
+# Reset the simulator
+SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
+
+echo "\nResetting simulator content and settings..."
+if [ `osascript "$SCRIPT_DIR/reset_simulator"` ]; then
+	echo "Successfully reset iOS Simulator."
+else
+	echo "\nERROR: Could not reset the simulator."
+	exit 1
+fi
+
+# Set the simulator's device type
+echo "\nSetting simulator device type..."
+if [ `osascript "$SCRIPT_DIR/set_simulator_device" "$DEVICE"` ]; then
+	echo "Successfully set simulator device type."
+else
+	echo "\nERROR: Could not set the simulator's device type."
+	exit 1
+fi
+
+# Set paths to save Instruments' output (at least temporarily)
+RUN_DIR=`mktemp -d /tmp/subliminal-test.run.XXXXXX`
+if [ $? -ne 0 ]; then
+	echo "\nERROR: Could not create temporary test results directory."
+	exit 1
+fi
+TRACE_FILE="$RUN_DIR/Integration Tests.trace"
+RESULTS_DIR="$RUN_DIR/Automation Results"
+mkdir "$RESULTS_DIR"
+
+### Launch tests
+echo "\nLaunching tests...\n"
+
+# Note that the Subliminal trace template includes the UIASCRIPT
+TIMEOUT_ARG=`[[ -n "$TIMEOUT" ]] && echo "-l $TIMEOUT" || echo ""`
+xcrun instruments\
+	-t "${HOME}/Library/Application Support/Instruments/Templates/Subliminal/Subliminal.tracetemplate"\
+	-D "$TRACE_FILE"\
+	$TIMEOUT_ARG\
+	"$APP"\
+	-e UIARESULTSPATH "$RESULTS_DIR"
+
+# Reset the simulator again if the bundle identifier was replaced
+# due to the risk of collision
+if [[ -n "$REPLACEMENT_BUNDLE_ID" ]]; then
+	echo "\nResetting simulator content and settings again because bundle identifier was replaced..."
+	if [ `osascript "$SCRIPT_DIR/reset_simulator.scpt"` ]; then
+		echo "Successfully reset iOS Simulator."
+	else
+		echo "\nERROR: Could not reset the simulator."
+		# Don't fail at this point, since the tests ran
+	fi
+fi
+
+### Process results
+echo "\nProcessing results...\n"
+
+# Parse test success or failure out of the run .plist
+RESULT_LOG="$RESULTS_DIR/Run 1/Automation Results.plist"
+TEST_STATUS=0
+grep -q "This was a focused run." "$RESULT_LOG"
+if [ $? -eq 0 ]; then
+	echo "\nERROR: Tests were committed with focus--fewer test cases may have run than normal."
+	TEST_STATUS=1
+else
+	OVERALL_RESULT=`grep "Testing finished" "$RESULT_LOG"`
+	if [[ -z "$OVERALL_RESULT" ]]; then
+		echo "\nERROR: Tests did not finish."
+		TEST_STATUS=1
+	else
+		NUMBER_OF_FAILURES=`echo "$OVERALL_RESULT" | sed -E 's|.+with ([0-9]+) failure.+|\1|'`
+		if [ "$NUMBER_OF_FAILURES" -gt "0" ]; then
+			TEST_STATUS=1
+		fi
+	fi
+fi
+
+# Archive Instruments' output if the user specified an output directory
+if [[ -d "${OUTPUT}" ]]; then
+	echo "\nArchiving output to $OUTPUT..."
+	mv "$TRACE_FILE" "$OUTPUT"
+	mv "$RESULTS_DIR/Run 1" "$OUTPUT/Run Data"
+fi
+
+rm -rf "$RUN_DIR"
+rm -rf "$BUILD_DIR"
+
+echo "\nRun complete."
+exit $TEST_STATUS
