@@ -158,7 +158,7 @@ static SLTerminal *__sharedTerminal = nil;
 #else
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:@( _commandIndex ) forKey:SLTerminalPreferencesKeyCommandIndex];
-    [defaults setObject:javascript forKey:SLTerminalPreferencesKeyCommand];
+    [defaults setObject:script forKey:SLTerminalPreferencesKeyCommand];
     [defaults removeObjectForKey:SLTerminalPreferencesKeyResultIndex];
     [defaults removeObjectForKey:SLTerminalPreferencesKeyResult];
     [defaults removeObjectForKey:SLTerminalPreferencesKeyException];
