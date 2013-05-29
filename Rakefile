@@ -1,4 +1,5 @@
 PROJECT_DIR = File.dirname(__FILE__)
+SCRIPT_DIR = "#{PROJECT_DIR}/Supporting Files/CI"
 
 FILE_TEMPLATE_DIR = "#{ENV['HOME']}/Library/Developer/Xcode/Templates/File Templates/Subliminal"
 TRACE_TEMPLATE_DIR = "#{ENV['HOME']}/Library/Application Support/Instruments/Templates/Subliminal"
@@ -41,14 +42,17 @@ Options:
   docs=no\tSkips the download and installation of Subliminal's documentation.
   dev=yes\tInstalls files supporting the development of Subliminal."""
 
-    when "test", "test:unit"
+    when "test", "test:unit", "test:integration", "test:integration:iphone", "test:integration:ipad"
       puts """
 rake test\tRuns Subliminal's tests
 
-rake test[:unit]
+rake test[:unit, :integration[:iphone, :ipad]]
 
 Sub-tasks:
-  :unit\tRuns the unit tests"""
+  :unit\tRuns the unit tests
+  :integration\tRuns the integration tests
+    :iphone\tFor iPhone
+    :ipad\tFor iPad"""
 
     when "build_docs"
       puts "rake build_docs\tBuilds Subliminal's documentation"
@@ -201,7 +205,10 @@ desc "Runs Subliminal's tests"
 task :test do
   puts "\nRunning tests..."
 
+  # The unit tests guarantee the integrity of the integration tests
+  # So no point in running the latter if the unit tests break the build
   Rake::Task['test:unit'].invoke
+  Rake::Task['test:integration'].invoke
 
   puts "Tests passed.\n\n"
 end
@@ -216,6 +223,75 @@ namespace :test do
       puts "Unit tests passed.\n\n"
     else      
       fail "Unit tests failed."
+    end
+  end
+
+  desc "Runs the integration tests"
+  task :integration do    
+    puts "- Running integration tests..."
+
+    # When the tests are running separately, 
+    # we want them to (individually) fail rake
+    # But here we want to run them both
+    begin
+      Rake::Task['test:integration:iphone'].invoke
+    rescue Exception => e
+      puts e
+      iPhone_succeeded = false
+    else
+      iPhone_succeeded = true
+    end
+
+    begin
+      Rake::Task['test:integration:ipad'].invoke      
+    rescue Exception => e
+      puts e
+      iPad_succeeded = false
+    else
+      iPad_succeeded = true
+    end
+
+    if iPhone_succeeded && iPad_succeeded
+      puts "\nIntegration tests passed.\n\n"
+    else
+      fail "\nIntegration tests failed.\n\n"
+    end
+  end
+
+  namespace :integration do
+    TEST_COMMAND="\"#{SCRIPT_DIR}/subliminal-test\"\
+                      -build_tool xctool\
+                      -project Subliminal.xcodeproj\
+                      -scheme 'Subliminal Integration Tests'"
+
+    desc "Runs the integration tests on iPhone"
+    task :iphone do
+      puts "-- Running iPhone integration tests..."
+
+      results_dir = "#{SCRIPT_DIR}/results/iphone"
+      `rm -rf "#{results_dir}" && mkdir -p "#{results_dir}"`
+
+      # Use system so we see the tests' output
+      if system("#{TEST_COMMAND} -output \"#{results_dir}\" -device 'iPhone'")
+        puts "\niPhone integration tests passed.\n\n"
+      else
+        fail "\niPhone integration tests failed.\n\n"
+      end
+    end
+
+    desc "Runs the integration tests on iPad"
+    task :ipad do
+      puts "-- Running iPad integration tests..."
+
+      results_dir = "#{SCRIPT_DIR}/results/ipad"
+      `rm -rf "#{results_dir}" && mkdir -p "#{results_dir}"`
+
+      # Use system so we see the tests' output
+      if system("#{TEST_COMMAND} -output \"#{results_dir}\" -device 'iPad'")
+        puts "\niPad integration tests passed.\n\n"
+      else
+        fail "\niPad integration tests failed.\n\n"
+      end
     end
   end
 end
