@@ -464,6 +464,22 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
     return recursiveDescription;
 }
 
+
+- (NSUInteger)slIndexOfChildAccessibilityElement:(NSObject *)object favoringUISubviews:(BOOL)favoringUISubviews {
+    NSArray *children = [self slChildAccessibilityElementsFavoringUISubviews:favoringUISubviews];
+    return [children indexOfObject:object];
+}
+
+
+- (NSObject *)slChildAccessibilityElementAtIndex:(NSUInteger)index favoringUISubviews:(BOOL)favoringUISubviews {
+    NSArray *children = [self slChildAccessibilityElementsFavoringUISubviews:favoringUISubviews];
+    if ([children count] > index) {
+        return children[index];
+    }
+    return nil;
+}
+
+
 #pragma mark -Private methods
 
 - (NSArray *)rawAccessibilityPathToElement:(SLElement *)element favoringUISubviews:(BOOL)favoringUISubviews {
