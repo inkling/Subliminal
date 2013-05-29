@@ -512,7 +512,7 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
 - (NSObject *)slAccessibilityParent {
     if ([self isKindOfClass:[UIView class]]) {
         return [(UIView *)self superview];
-    } else if ([self isKindOfClass:[UIAccessibilityElement class]]) {
+    } else if ([self respondsToSelector:@selector(accessibilityContainer)]) {
         return [(UIAccessibilityElement *)self accessibilityContainer];
     } else {
         return nil;
