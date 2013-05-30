@@ -20,6 +20,11 @@ then tests the product using Subliminal.
   * with Subliminal having been installed on the test machine, using \`rake install docs=no\`
   * with tests using an \`SLUIALogger\` to log their status (though it, and other loggers, may be attached using an \`SLMultiLogger\`).
 
+In addition, a bug in instruments (http://openradar.appspot.com/radar?id=1544403) 
+requires that this script be run by an user with admin privileges, who has 
+executed \`sudo /usr/libexec/PlistBuddy -c \"Set :rights:system.privilege.taskport:allow-root true\" /etc/authorization\` 
+on the host machine. See http://stackoverflow.com/a/11416025/495611 for more details.
+
 Required arguments:
 	-project <project_path>		
 	-workspace <workspace_path>	Build the project or workspace at the specified path.
