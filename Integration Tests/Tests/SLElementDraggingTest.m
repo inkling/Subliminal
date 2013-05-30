@@ -67,4 +67,18 @@ static const CGFloat kBottomLabelYOffset = 0.2;
                  dragDistance, expectedDragDistance);
 }
 
+
+- (void)testScrollToVisible {
+    // Make sure the labels start out the way we expect (top is visible, bottom is not).
+    SLElement *topLabel = [SLElement elementWithAccessibilityLabel:@"Top"];
+    SLElement *bottomLabel = [SLElement elementWithAccessibilityLabel:@"Bottom"];
+    SLAssertTrue([UIAElement(topLabel) isVisible], @"Top label should be visible at this point in the test.");
+    SLAssertFalse([UIAElement(bottomLabel) isVisible], @"Bottom label should not be visible at this point in the test.");
+
+    [bottomLabel scrollToVisible];
+
+    SLAssertTrueWithTimeout([UIAElement(topLabel) isInvalidOrInvisible], 3.0, @"The top label failed to become invisible after scrolling.");
+    SLAssertTrueWithTimeout([UIAElement(bottomLabel) isValidAndVisible], 3.0, @"The bottom label failed to become visible after scrolling.");
+}
+
 @end
