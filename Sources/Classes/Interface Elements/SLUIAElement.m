@@ -138,6 +138,10 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
                              startPoint.x, startPoint.y, endPoint.x, endPoint.y];
 }
 
+- (void)scrollToVisible {
+    [self waitUntilTappable:NO thenSendMessage:@"scrollToVisible()"];
+}
+
 - (NSString *)label {
     return [self waitUntilTappable:NO thenSendMessage:@"label()"];
 }

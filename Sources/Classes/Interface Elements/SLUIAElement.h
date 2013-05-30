@@ -220,8 +220,18 @@
 /// ----------------------------------------
 
 /**
+ If this element has a UIScrollView or UIWebview ancestor, then that ancestor will be
+ scrolled until this element is visible.
+ 
+ @warning This method should only be called on elements that are within a UIScrollView or UIWebView.
+ 
+ @exception SLJavaScriptException if the element is not within a UIScrollView or UIWebView
+ */
+- (void)scrollToVisible;
+
+/**
  Returns the element's label.
-  
+
  @return The accessibility label of the user interface element represented by
  the specified element.
 
