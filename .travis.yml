@@ -1,0 +1,20 @@
+language: objective-c
+
+# These tasks run before cd'ing into Subliminal's repo
+before_install:
+    - brew update
+# Used as build tool for test and documentation targets
+    - brew install xctool --HEAD
+# Used to build documentation
+    - brew install appledoc
+# Initialize test dependencies (OCMock)
+    - git submodule update --init --recursive
+
+# These tasks run inside Subliminal's repo
+before_script:
+# Install trace template used by integration tests
+# Other supporting files, specifically docs, are not necessary
+    - rake install docs=no
+
+# Run unit and integration tests and build docs
+script: rake test build_docs
