@@ -96,42 +96,36 @@
  */
 - (NSArray *)slChildAccessibilityElementsFavoringSubviews:(BOOL)favoringSubviews;
 
-
 /**
- Returns the index of the specified child element within an array of the receiver's child accessibility
- elements.
+ Returns the index of the specified child element in the array of the
+ child accessibility elements of the receiver.
 
- @param childElement A child accessibility element of the receiver, whose index in the receivers
- child accessibility elements will be returned.
-
- @param favoringUISubViews If YES, subviews should be placed before
- UIAccessibilityElements in the array of the receivers child accessibility elements;
- otherwise, they will be placed afterwards.
-
- @return The index of the child element in an array of objects that are child accessibility elements of the receiver.
+ @param childElement A child accessibility element of the receiver.
+ @param favoringSubviews If `YES`, subviews should be ordered before
+ accessibility elements among the receiver's child accessibility elements;
+ otherwise, they will be ordered afterwards.
+ @return The index of the child element in the array of child accessibility 
+ elements of the receiver.
  
-  @see -slAccessibilityParent
- */
-- (NSUInteger)slIndexOfChildAccessibilityElement:(NSObject *)childElement favoringUISubviews:(BOOL)favoringUISubview;
-
-
-/**
- Returns the child accessibiltiy element of the receiver at the specified index.
-
- @param index The index of the child accessibility element to return in an array of the 
- receivers child accessibility elements
-
- @param favoringUISubViews If YES, subviews should be placed before
- UIAccessibilityElements in the array of the receiver's child accessibility elements;
- otherwise, they will be placed afterwards.
-
- @return The child accessibility element at the specified index within an array of the recievers
- child accessibility elements.
- 
+ @see -slChildAccessibilityElementsFavoringSubviews:
  @see -slAccessibilityParent
  */
-- (NSObject *)slChildAccessibilityElementAtIndex:(NSUInteger)index favoringUISubviews:(BOOL)favoringUISubviews;
+- (NSUInteger)slIndexOfChildAccessibilityElement:(NSObject *)childElement favoringSubviews:(BOOL)favoringSubviews;
 
+/**
+ Returns the child accessibility element of the receiver at the specified index.
+
+ @param index The index of the child accessibility element to be returned.
+ @param favoringSubviews If `YES`, subviews should be ordered before
+ accessibility elements among the receiver's child accessibility elements;
+ otherwise, they will be ordered afterwards.
+ @return The child accessibility element at the specified index in the array 
+ of the child accessibility elements of the receiver.
+ 
+ @see -slChildAccessibilityElementsFavoringSubviews:
+ @see -slAccessibilityParent
+ */
+- (NSObject *)slChildAccessibilityElementAtIndex:(NSUInteger)index favoringSubviews:(BOOL)favoringSubviews;
 
 /// ----------------------------------------
 /// @name Debug methods
