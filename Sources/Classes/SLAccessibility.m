@@ -115,7 +115,7 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
  hierarchy between the receiver and the object [matching](-[SLElement matchesObject:]) 
  the specified element.
 
- If favoringUISubviews is YES, the method will construct a path that is, as much 
+ If favoringSubviews is YES, the method will construct a path that is, as much 
  as is possible, comprised of UIViews; otherwise, it will construct a path that is,
  as much as is possible, comprised of UIAccessibilityElements.
  
@@ -125,13 +125,13 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
  
  @param element The element to which corresponds the object that is to be
  the terminus of the path.
- @param favoringUISubviews YES if the search for a path should favor UIViews;
+ @param favoringSubviews YES if the search for a path should favor UIViews;
  otherwise, the search should favor UIAccessibilityElements.
  @return A path between the receiver and the object matching element,
  or `nil` if an object matching element is not found within the accessibility hierarchy
  rooted in the receiver.
  */
-- (NSArray *)rawAccessibilityPathToElement:(SLElement *)element favoringUISubviews:(BOOL)favoringUISubviews;
+- (NSArray *)rawAccessibilityPathToElement:(SLElement *)element favoringSubviews:(BOOL)favoringSubviews;
 
 /// ----------------------------------------
 /// @name Filtering paths
@@ -337,20 +337,9 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
 
 #pragma mark -Public methods
 
-- (NSString *)slAccessibilityName {
-    if ([self respondsToSelector:@selector(accessibilityIdentifier)]) {
-        NSString *identifier = [self performSelector:@selector(accessibilityIdentifier)];
-        if ([identifier length] > 0) {
-            return identifier;
-        }
-    }
-    
-    return self.accessibilityLabel;
-}
-
 - (SLAccessibilityPath *)slAccessibilityPathToElement:(SLElement *)element {
-    NSArray *accessibilityElementPath = [self rawAccessibilityPathToElement:element favoringUISubviews:NO];
-    NSArray *viewPath = [self rawAccessibilityPathToElement:element favoringUISubviews:YES];
+    NSArray *accessibilityElementPath = [self rawAccessibilityPathToElement:element favoringSubviews:NO];
+    NSArray *viewPath = [self rawAccessibilityPathToElement:element favoringSubviews:YES];
 
     return [[SLAccessibilityPath alloc] initWithRawAccessibilityElementPath:accessibilityElementPath
                                                                 rawViewPath:viewPath];
@@ -485,13 +474,13 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
 
 #pragma mark -Private methods
 
-- (NSArray *)rawAccessibilityPathToElement:(SLElement *)element favoringUISubviews:(BOOL)favoringUISubviews {
+- (NSArray *)rawAccessibilityPathToElement:(SLElement *)element favoringSubviews:(BOOL)favoringSubviews {
     if ([element matchesObject:self]) {
         return [NSArray arrayWithObject:self];
     }
 
-    for (NSObject *child in [self slChildAccessibilityElementsFavoringUISubviews:favoringUISubviews]) {
-        NSArray *path = [child rawAccessibilityPathToElement:element favoringUISubviews:favoringUISubviews];
+    for (NSObject *child in [self slChildAccessibilityElementsFavoringSubviews:favoringSubviews]) {
+        NSArray *path = [child rawAccessibilityPathToElement:element favoringSubviews:favoringSubviews];
         if (path) {
             NSMutableArray *pathWithSelf = [path mutableCopy];
             [pathWithSelf insertObject:self atIndex:0];
@@ -501,7 +490,7 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
     return nil;
 }
 
-- (NSArray *)slChildAccessibilityElementsFavoringUISubviews:(BOOL)favoringUISubviews {
+- (NSArray *)slChildAccessibilityElementsFavoringSubviews:(BOOL)favoringSubviews {
     NSMutableArray *children = [NSMutableArray array];
     NSInteger count = [self accessibilityElementCount];
     if (count != NSNotFound && count > 0) {
@@ -523,13 +512,6 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
 }
 
 - (BOOL)willAppearInAccessibilityHierarchy {
-    // An object will not appear in the accessibility hierarchy
-    // if its direct parent is an accessibility element.
-    NSObject *parent = [self slAccessibilityParent];
-    if ([parent isAccessibilityElement]) {
-        return NO;
-    }
-
     if ([self accessibilityAncestorPreventsPresenceInAccessibilityHierarchy]) {
         return NO;
     }
@@ -559,6 +541,8 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
 
 
 - (BOOL)accessibilityAncestorPreventsPresenceInAccessibilityHierarchy {
+    // An object will not appear in the accessibility hierarchy
+    // if an ancestor is an accessibility element.
     id parent = [self slAccessibilityParent];
     while (parent) {
         if ([parent isAccessibilityElement]) {
@@ -706,14 +690,6 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
 
 @implementation UIAccessibilityElement (SLAccessibility)
 
-- (NSString *)slAccessibilityName {
-    if ([self.accessibilityIdentifier length] > 0) {
-        return self.accessibilityIdentifier;
-    }
-    
-    return self.accessibilityLabel;
-}
-
 - (BOOL)slAccessibilityIsVisible {
     CGPoint testPoint = CGPointMake(CGRectGetMidX(self.accessibilityFrame),
                                     CGRectGetMidY(self.accessibilityFrame));
@@ -764,18 +740,6 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
 #pragma mark UIView overrides
 
 @implementation UIView (SLAccessibility)
-
-#pragma mark -Public methods
-
-- (NSString *)slAccessibilityName {
-    // Prioritize identifiers over labels because some UIKit objects have transient labels.
-    // For example: UIActivityIndicatorViews have label 'In progress' only while spinning.
-    if ([self.accessibilityIdentifier length] > 0) {
-        return self.accessibilityIdentifier;
-    }
-
-    return self.accessibilityLabel;
-}
 
 #pragma mark -Private methods
 
@@ -938,16 +902,16 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
     }
 }
 
-- (NSArray *)slChildAccessibilityElementsFavoringUISubviews:(BOOL)favoringUISubViews {
-    if (favoringUISubViews) {
+- (NSArray *)slChildAccessibilityElementsFavoringSubviews:(BOOL)favoringSubviews {
+    if (favoringSubviews) {
         NSMutableArray *children = [[NSMutableArray alloc] init];
         for (UIView *view in [self.subviews reverseObjectEnumerator]) {
             [children addObject:view];
         }
-        [children addObjectsFromArray:[super slChildAccessibilityElementsFavoringUISubviews:NO]];
+        [children addObjectsFromArray:[super slChildAccessibilityElementsFavoringSubviews:NO]];
         return children;
     } else {
-        NSMutableArray *children = [[super slChildAccessibilityElementsFavoringUISubviews:NO] mutableCopy];
+        NSMutableArray *children = [[super slChildAccessibilityElementsFavoringSubviews:NO] mutableCopy];
         for (UIView *view in [self.subviews reverseObjectEnumerator]) {
             [children addObject:view];
         }
@@ -1054,23 +1018,6 @@ static const void *const kUseSLReplacementIdentifierKey = &kUseSLReplacementIden
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
     return YES;
 }
-@end
-
-
-@implementation UITableView (SLAccessibility)
-
-- (NSString *)slAccessibilityName {
-    NSString *accessibilityName = [super slAccessibilityName];
-    // Replace the accessibilityIdentifier with a unique string if the accessibilityName is empty *or* equal to the default 'Empty list'
-    // because the 'Empty list' label that UIKit assigns is not useful for (uniquely) identifying UITableViews in the accessibility hierarchy.
-    if ([accessibilityName length] == 0 || [accessibilityName isEqualToString:@"Empty list"]) {
-        self.accessibilityIdentifier = [NSString stringWithFormat:@"%@: %p", [self class], self];
-        return self.accessibilityIdentifier;
-    } else {
-        return accessibilityName;
-    }
-}
-
 @end
 
 

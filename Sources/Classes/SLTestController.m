@@ -65,7 +65,7 @@ static void SLUncaughtExceptionHandler(NSException *exception)
 }
 
 static SLTestController *__sharedController = nil;
-+ (id)sharedTestController {
++ (instancetype)sharedTestController {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         __sharedController = [[SLTestController alloc] init];
@@ -184,7 +184,7 @@ static SLTestController *__sharedController = nil;
 
         for (Class testClass in _testsToRun) {
             @autoreleasepool {
-                SLTest *test = (SLTest *)[[testClass alloc] initWithTestController:self];
+                SLTest *test = (SLTest *)[[testClass alloc] init];
 
                 NSString *testName = NSStringFromClass(testClass);
                 [[SLLogger sharedLogger] logTestStart:testName];

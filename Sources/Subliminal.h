@@ -9,7 +9,7 @@
 #import "SLAccessibility.h"
 
 #import "SLTestController.h"
-#import "SLTestController+AppContext.h"
+#import "SLTestController+AppHooks.h"
 #import "SLTest.h"
 
 #import "SLTerminal.h"

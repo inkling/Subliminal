@@ -26,6 +26,8 @@
     if (testCaseSelector == @selector(testElementsWaitToMatchValidObjects) ||
         testCaseSelector == @selector(testElementsThrowIfNoValidObjectIsFoundAtEndOfTimeout)) {
         SLAskApp(removeFooButtonFromSuperview);
+    } else if (testCaseSelector == @selector(testElementWithAccessibilityLabelValueTraits)) {
+        SLAskApp(applyUniqueTraitToFooButton);
     }
 }
 
@@ -109,30 +111,72 @@
 
 #pragma mark - Matching criteria
 
-- (void)testAnyElement {
-    SLSearchBar *anySearchBar = [SLSearchBar anyElement];
-    SLAssertTrue([[UIAElement(anySearchBar) text] isEqualToString:@"barText"],
-                 @"SLSearchBar should have matched the search bar onscreen.");
-}
-
 - (void)testElementWithAccessibilityLabel {
     SLElement *fooButton = [SLElement elementWithAccessibilityLabel:@"foo"];
     SLAssertTrue([[UIAElement(fooButton) value] isEqualToString:@"fooValue"],
                  @"Should have matched the button with label 'foo'.");
 }
 
+- (void)testElementWithAccessibilityLabelValueTraits {
+    for (unsigned char useLabel = 0; useLabel < 2; useLabel++) {
+        for (unsigned char useValue = 0; useValue < 2; useValue++) {
+            for (unsigned char useTrait = 0; useTrait < 2; useTrait++) {
+                NSString *label = useLabel ? @"foo" : nil;
+                NSString *value = useValue ? @"fooValue" : nil;
+                UIAccessibilityTraits traits = useTrait ? UIAccessibilityTraitUpdatesFrequently : SLUIAccessibilityTraitAny;
+                SLElement *fooElement = [SLElement elementWithAccessibilityLabel:label value:value traits:traits];
 
-#pragma mark - UIControls
-
-
-- (void)testCannotMatchUIControlDescendant {
-    SLElement *uiControl = [SLElement elementWithAccessibilityLabel:@"fooUIControl"];
-    SLAssertTrue([uiControl isValid], @"Should be able to match the UIControl");
-
-    SLElement *uiControlDescendant = [SLElement elementWithAccessibilityLabel:@"fooTestView"];
-    SLAssertFalse([uiControlDescendant isValid], @"Should not be able to match descendant of UIControl.");
+                // if we don't provide any information, we might match any element
+                if (!useLabel && !useValue && (traits == SLUIAccessibilityTraitAny)) {
+                    SLAssertTrue([UIAElement(fooElement) isValid], @"Should have matched some element.");
+                } else {
+                    // otherwise, every attribute above uniquely identifies fooButton
+                    SLAssertTrue([[UIAElement(fooElement) value] isEqualToString:@"fooValue"],
+                                 @"Should have matched the button with the specified properties (%@).", fooElement);
+                }
+            }
+        }
+    }
 }
 
+- (void)testElementWithAccessibilityIdentifier {
+    SLElement *fooButton = [SLElement elementWithAccessibilityIdentifier:@"fooId"];
+    SLAssertTrue([[UIAElement(fooButton) value] isEqualToString:@"fooValue"],
+                 @"Should have matched the button with identifier 'fooId'.");
+}
+
+- (void)testElementMatchingPredicate {
+    SLElement *fooButton = [SLElement elementMatching:^BOOL(NSObject *obj) {
+        return [obj.accessibilityHint isEqualToString:@"fooHint"];
+    } withDescription:@"hint = 'fooHint'"];
+    SLAssertTrue([[UIAElement(fooButton) value] isEqualToString:@"fooValue"],
+                 @"Should have matched the button with hint 'fooHint'.");
+}
+
+- (void)testAnyElement {
+    SLSearchField *anySearchField = [SLSearchField anyElement];
+    SLAssertTrue([[UIAElement(anySearchField) text] isEqualToString:@"barText"],
+                 @"SLSearchField should have matched the search field onscreen.");
+}
+
+// The remaining cases in this test verify particulars of element matching
+// which are internal to `NSObject(SLAccessibility)` and yet may serve
+// as guides to developers in setting accessibility properties.
+//
+// Developers need peruse these only if they are curious exactly why they can or
+// cannot match an element, as the Accessibility Inspector always shows
+// the ground truth: an element can be matched only if the Inspector displays
+// that element's information when the element is tapped upon.
+
+#pragma mark - Children of accessible elements
+
+- (void)testCannotMatchDescendantOfAccessibleElement {
+    SLElement *otherView = [SLElement elementWithAccessibilityLabel:@"parentView"];
+    SLAssertTrue([otherView isValid], @"Should be able to match the parent view.");
+
+    SLElement *uiControlDescendant = [SLElement elementWithAccessibilityLabel:@"childView"];
+    SLAssertFalse([uiControlDescendant isValid], @"Should not be able to match descendant of accessible element.");
+}
 
 #pragma mark - Table views
 

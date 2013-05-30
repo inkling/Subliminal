@@ -32,7 +32,7 @@
     } else if (testSelector == @selector(testMatchesSearchBarTextField) ||
                testSelector == @selector(testSetSearchBarText) ||
                testSelector == @selector(testGetSearchBarText)) {
-        _textField = [SLSearchBar anyElement];
+        _textField = [SLSearchField anyElement];
     } else if (testSelector == @selector(testMatchesWebTextField) ||
                testSelector == @selector(testSetWebTextFieldText) ||
                testSelector == @selector(testGetWebTextFieldText)) {
@@ -61,7 +61,7 @@
     SLAssertTrue([text isEqualToString:@"foo"], @"Retrieved unexpected text: %@.", text);
 }
 
-#pragma mark - SLSearchBar test cases
+#pragma mark - SLSearchField test cases
 
 - (void)testMatchesSearchBarTextField {
     SLAssertTrue([UIAElement(_textField) isValid], @"Search bar should be valid.");

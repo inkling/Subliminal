@@ -46,14 +46,15 @@ static SLLogger *__sharedLogger = nil;
     return NULL;
 }
 
-- (void)logDebug:(NSString *)debug {
-    [self logMessage:[NSString stringWithFormat:@"Debug: %@", debug]];
-}
-
 - (void)logMessage:(NSString *)message {
     NSLog(@"Concrete SLLogger subclass (%@) must implement %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd));
     [self doesNotRecognizeSelector:_cmd];
 }
+
+- (void)logDebug:(NSString *)debug {
+    [self logMessage:[NSString stringWithFormat:@"Debug: %@", debug]];
+}
+
 
 - (void)logWarning:(NSString *)warning {
     [self logMessage:[NSString stringWithFormat:@"Warning: %@", warning]];
@@ -111,22 +112,6 @@ static SLLogger *__sharedLogger = nil;
 - (void)logTest:(NSString *)test caseFail:(NSString *)testCase expected:(BOOL)expected {
     [self logError:[NSString stringWithFormat:@"Test case \"-[%@ %@]\" failed%@.",
                                                 test, testCase, (expected ? @"" : @" unexpectedly")]];
-}
-
-- (void)logDebug:(NSString *)debug test:(NSString *)test testCase:(NSString *)testCase {
-    [self logDebug:[NSString stringWithFormat:@"-[%@ %@]: %@", test, testCase, debug]];
-}
-
-- (void)logMessage:(NSString *)message test:(NSString *)test testCase:(NSString *)testCase {
-    [self logMessage:[NSString stringWithFormat:@"-[%@ %@]: %@", test, testCase, message]];
-}
-
-- (void)logWarning:(NSString *)warning test:(NSString *)test testCase:(NSString *)testCase {
-    [self logWarning:[NSString stringWithFormat:@"-[%@ %@]: %@", test, testCase, warning]];
-}
-
-- (void)logError:(NSString *)error test:(NSString *)test testCase:(NSString *)testCase {
-    [self logError:[NSString stringWithFormat:@"-[%@ %@]: %@", test, testCase, error]];
 }
 
 @end

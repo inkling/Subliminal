@@ -53,7 +53,7 @@
 
 #pragma mark - Command evaluation tests
 
-// Note: the fundamental ability to communicate with UIAutomation
+// Note: the fundamental ability to communicate with the Automation instrument
 // has been verified by the app delegate at startup time.
 
 - (void)testEvalReturnsValuesOfCommandsThatEvaluateToStringsBooleansOrNumbersElseNil {
@@ -85,13 +85,34 @@
 
 - (void)testRethrowsJavascriptExceptions {
     // throws because the script could not be evaluated
-    SLAssertThrowsNamed([[SLTerminal sharedTerminal] eval:@"var"], SLTerminalJavaScriptException,
+    SLAssertThrowsNamed([[SLTerminal sharedTerminal] eval:@"var"],
+                        SLTerminalJavaScriptException,
                         @"Terminal should have rethrown Javascript exception.");
 
     // throws because the script threw an exception when evaluated
     SLAssertThrowsNamed([[SLTerminal sharedTerminal] eval:@"throw 'test'"],
                         SLTerminalJavaScriptException,
                         @"Terminal should have rethrown Javascript exception.");
+}
+
+- (void)testStringVarargsMustBeEscaped {
+    // single-quoted literal
+    NSString *messageWithSingleQuotes = @"This framework is called 'Subliminal.'";
+    SLAssertThrowsNamed(([[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logMessage('%@');",
+                                                                        messageWithSingleQuotes]),
+                        SLTerminalJavaScriptException,
+                        @"Command should not have been able to be parsed.");
+    SLAssertNoThrow(([[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logMessage('%@');",
+                                                                    [messageWithSingleQuotes slStringByEscapingForJavaScriptLiteral]]),
+                    @"Command should have been able to be parsed.");
+
+    // double-quoted literal
+    NSString *messageWithDoubleQuotes = @"This framework is called \"Subliminal.\"";
+    SLAssertThrowsNamed(([[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logMessage(\"%@\");", messageWithDoubleQuotes]),
+                        SLTerminalJavaScriptException,
+                        @"Command should not have been able to be parsed.");
+    SLAssertNoThrow(([[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logMessage(\"%@\");", [messageWithDoubleQuotes slStringByEscapingForJavaScriptLiteral]]),
+                    @"Command should have been able to be parsed.");
 }
 
 #pragma mark - Function evaluation tests

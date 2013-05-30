@@ -8,34 +8,65 @@
 
 #import <Foundation/Foundation.h>
 
-#import "SLTestController+AppContext.h"
+#import "SLTestController+AppHooks.h"
 #import "SLStringUtilities.h"
 
-
-// all exceptions thrown by SLTest will have names beginning with this prefix
-extern NSString *const SLTestExceptionNamePrefix;
-
-extern NSString *const SLTestAssertionFailedException;
-
-extern NSString *const SLTestExceptionFilenameKey;
-extern NSString *const SLTestExceptionLineNumberKey;
-
-
+/**
+ `SLTest` is the abstract superclass of Subliminal integration tests.
+ 
+ To write a test, developers create a new subclass of `SLTest`. They then add 
+ test case methods and implement set-up and tear-down methods as necessary.
+ */
 @interface SLTest : NSObject
 
-@property (nonatomic, weak, readonly) SLTestController *testController;
-
-+ (NSSet *)allTests;
-+ (Class)testNamed:(NSString *)test;
+/// ----------------------------------------
+/// @name Retrieving Tests to Run
+/// ----------------------------------------
 
 /**
- Returns YES if this class does not define test cases.
+ Returns all tests linked against the current target.
+ 
+ The recommended way to run Subliminal tests is to invoke `-[SLTestController runTests:withCompletionBlock:]`
+ with the set returned by this method. That way, new tests will automatically 
+ be discovered and run. 
+ 
+ Without modifying the argument to `-[SLTestController runTests:withCompletionBlock:]`, 
+ tests may be conditionalized to run only in certain circumstances using APIs
+ like `+isAbstract`, `+supportsCurrentPlatform`, and `+isFocused`.
+
+ @return All tests (`SLTest` subclasses) linked against the current target.
+ */
++ (NSSet *)allTests;
+
+/**
+ Returns the `SLTest` subclass with the specified name.
+ 
+ This method may be used to retrieve a single `SLTest`, e.g. to pass to 
+ `-[SLTestController runTests:withCompletionBlock:]`, without having to import
+ that test's interface.
+ 
+ Note that it may be easier to run a single test by [focusing](+isFocused) that test
+ than by modifying the arguments to `-[SLTestController runTests:withCompletionBlock:]`.
+
+ @param name The name of the test (`SLTest` subclass) to return.
+
+ @return The `SLTest` subclass with the specified name, or `nil` if no `SLTest`
+ subclass with that name is linked against the current target.
+ */
++ (Class)testNamed:(NSString *)name;
+
+/// ----------------------------------------
+/// @name Conditionalizing Test Runs
+/// ----------------------------------------
+
+/**
+ Returns `YES` if this class does not define test cases.
  
  An abstract test will not itself be run. Subclasses which do define test cases
  will be run, however, allowing a single base class to define set-up and tear-down 
  work shared among related subclasses.
 
- @return YES if the class is without test cases, otherwise NO.
+ @return `YES` if the class is without test cases, otherwise `NO`.
  */
 + (BOOL)isAbstract;
 
@@ -43,7 +74,7 @@ extern NSString *const SLTestExceptionLineNumberKey;
  Returns YES if this test has at least one test case which can be run
  given the current device, screen, etc.
  
- Subclasses of SLTest should override this method if some run-time condition 
+ Subclasses of `SLTest` should override this method if some run-time condition
  should determine whether or not all test cases should run. 
  Typical checks might include checking the user interface idiom (phone or pad) 
  of the current device, or checking the scale of the main screen.
@@ -51,42 +82,76 @@ extern NSString *const SLTestExceptionLineNumberKey;
  As a convenience, test writers may specify the device type(s) on which a
  test can run by suffixing tests' names in the following fashion:
 
-     * A test whose name has the suffix "_iPhone," like "TestFoo_iPhone",
-     will be executed only when [[UIDevice currentDevice] userInterfaceIdiom] ==
-     UIUserInterfaceIdiomPhone.
-     * A test whose name has the suffix "_iPad" will be executed only
-     when the current device user interface idiom is UIUserInterfaceIdiomPad.
-     * A test whose name has neither the "_iPhone" nor the "_iPad"
-     suffix will be executed on all devices regardless of the user interface idiom.
+ *  A test whose name has the suffix "`_iPhone`," like "`TestFoo_iPhone`",
+    will be executed only when `([[UIDevice currentDevice] userInterfaceIdiom] ==
+    UIUserInterfaceIdiomPhone)` is true.
+ *  A test whose name has the suffix "`_iPad`" will be executed only
+    when the current device user interface idiom is `UIUserInterfaceIdiomPad`.
+ *  A test whose name has neither the "`_iPhone`" nor the "`_iPad`"
+    suffix will be executed on all devices regardless of the user interface idiom.
 
  The default implementation of this method checks that the class is suffixed 
  appropriately and that there is at least one test case for which
- testCaseWithSelectorSupportsCurrentPlatform: returns YES.
+ `+testCaseWithSelectorSupportsCurrentPlatform:` returns `YES`.
 
- If this method returns NO, none of this test's cases will run.
+ If this method returns `NO`, none of this test's cases will run.
 
- @return YES if this class has test cases that can currently run, NO otherwise.
+ @return `YES` if this class has test cases that can currently run, `NO` otherwise.
  
- @see -testCaseWithSelectorSupportsCurrentPlatform:
+ @see +testCaseWithSelectorSupportsCurrentPlatform:
  */
 + (BOOL)supportsCurrentPlatform;
 
-- (id)initWithTestController:(SLTestController *)testController;
+/**
+ Returns YES if the test has at least one test case which is focused
+ and which can run on the current platform.
+
+ When a test is run, if any of its test cases are focused, only those test cases will run.
+ This may be useful when writing or debugging tests.
+
+ A test case is focused by prefixing its name with "`focus_`", like so:
+
+    - (void)focus_testFoo;
+
+ It is also possible to implicitly focus all test cases by prefixing
+ their test's name with "`Focus_`". But if some test cases are explicitly focused
+ (as above), only those test cases will run--the narrowest focus applies.
+
+ If a test is focused, that focus will apply to any tests which descend from it.
+
+ @warning Methods that take test case selectors as arguments (like
+ `-setUpTestCaseWithSelector:`) are invoked with the unfocused form of the selectors
+ --they need not (and should not) be modified when a test case is focused.
+
+ @warning Focused test cases will not be run if their test is not run (e.g. if
+ it is not included in the set of tests to be run, or if it does not support
+ the current platform).
+
+ @return `YES` if any test cases are focused and can be run on the current platform, 
+ `NO` otherwise.
+
+ @see -[SLTestController runTests:withCompletionBlock:]
+ */
++ (BOOL)isFocused;
+
+/// ----------------------------------------
+/// @name Running a Test
+/// ----------------------------------------
 
 /**
  Runs all test cases defined on the receiver's class, 
  and reports statistics about their execution.
  
- See SLTest (SLTestCase) for a discussion of test case execution.
+ See `SLTest (SLTestCase)` for a discussion of test case execution.
  
- @param numCasesExecuted If this is non-null, on return, this will be set to 
+ @param numCasesExecuted If this is non-`NULL`, on return, this will be set to
  the number of test cases that were executed--which will be the number of test
- cases defined by this SLTest.
- @param numCasesFailed If this is non-null, on return, this will be set to the 
+ cases defined by the receiver's class.
+ @param numCasesFailed If this is non-`NULL`, on return, this will be set to the
  number of test cases that failed (the number of test cases that threw exceptions).
- @param numCasesFailedUnexpectedly If this is non-null, on return, this will 
+ @param numCasesFailedUnexpectedly If this is non-`NULL`, on return, this will
  be set to the number of test cases that failed unexpectedly (those test cases 
- that threw non-assertion exceptions).
+ that threw exceptions for other reasons than test assertion failures).
  */
 - (void)runAndReportNumExecuted:(NSUInteger *)numCasesExecuted
                          failed:(NSUInteger *)numCasesFailed
@@ -96,17 +161,18 @@ extern NSString *const SLTestExceptionLineNumberKey;
 
 
 /**
- The following methods are used to set up before and clean up after individual 
- test case methods. Test case methods are methods, defined on a subclass of SLTest:
+ The methods in the `SLTest (SLTestCase)` category are used to set up before 
+ and clean up after individual test case methods. Test case methods are methods, 
+ defined on a subclass of SLTest:
  
-    * whose names have the prefix "test",
-    * with void return types, and
-    * which take no arguments.
- 
+ * whose names have the prefix "test",
+ * with `void` return types, and
+ * which take no arguments.
+
  When a test is [run](-runAndReportNumExecuted:failed:failedUnexpectedly:),
- it discovers, sets up, executes, and tears down all its test cases.
+ it discovers, sets up, runs, and tears down all its test cases.
  The method descriptions below specify when each method will be called,
- and -[SLTestTests testCompleteTestExecutionSequence] gives an example.
+ and `-[SLTestTests testCompleteTestRunSequence]` gives an example.
 
  A test case "passes" if it throws no exceptions in its set-up, tear-down, or 
  the body of the test case itself; otherwise, it "fails". That failure is 
@@ -115,35 +181,39 @@ extern NSString *const SLTestExceptionLineNumberKey;
  */
 @interface SLTest (SLTestCase)
 
+/// ----------------------------------------
+/// @name Running Test Cases
+/// ----------------------------------------
+
 /**
  Returns YES if this test case can be run given the current device, screen, etc.
 
- Subclasses of SLTest should override if they need to do any run time checks
- to determine whether or not specific test cases can run.  Typical checks might include
- checking the user interface idiom (phone or pad) of the current device, or
- checking the scale of the main screen.
+ Subclasses of SLTest should override this method if they need to do any run-time 
+ checks to determine whether or not specific test cases can run. Typical checks 
+ might include checking the user interface idiom (phone or pad) of the current 
+ device, or checking the scale of the main screen.
 
  As a convenience, test writers may specify the device type(s) on which a 
  test case can run by suffixing test cases' names in the following fashion:
 
-     * A test case whose name has the suffix "_iPhone," like "testFoo_iPhone",
-     will be executed only when [[UIDevice currentDevice] userInterfaceIdiom] ==
-     UIUserInterfaceIdiomPhone.
-     * A test case whose name has the suffix "_iPad" will be executed only
-     when the current device user interface idiom is UIUserInterfaceIdiomPad.
-     * A test case whose name has neither the "_iPhone" nor the "_iPad"
-     suffix will be executed on all devices regardless of the user interface idiom.
+ *  A test case whose name has the suffix "`_iPhone`," like "`testFoo_iPhone`",
+    will be executed only when `([[UIDevice currentDevice] userInterfaceIdiom] ==
+    UIUserInterfaceIdiomPhone)` is true.
+ *  A test case whose name has the suffix "`_iPad`" will be executed only
+    when the current device user interface idiom is `UIUserInterfaceIdiomPad`.
+ *  A test case whose name has neither the "`_iPhone`" nor the "`_iPad`"
+    suffix will be executed on all devices regardless of the user interface idiom.
 
  The default implementation of this method checks that the selector is suffixed 
  appropriately.
  
- @warning If the test does not support the current platform, test cases
- will not be run regardless of what this method returns.
+ @warning If the test does not support the current platform, that test's cases
+ will not be run regardless of this method's return value.
 
  @param testCaseSelector A selector identifying a test case.
- @return YES if the test case can be run.
+ @return `YES` if the test case can be run, `NO` otherwise.
  
- @see -supportsCurrentPlatform
+ @see +supportsCurrentPlatform
  */
 + (BOOL)testCaseWithSelectorSupportsCurrentPlatform:(SEL)testCaseSelector;
 
@@ -157,14 +227,12 @@ extern NSString *const SLTestExceptionLineNumberKey;
  that set-up was successful.
  
  @warning If set-up fails, this test will be aborted and its cases skipped. 
- However, -tearDownTest will still be executed.
+ However, `-tearDownTest` will still be executed.
 
- Users of OCUnit (or other JUnit-inspired frameworks) may wonder why there's no -setUp.
- The reason is that Subliminal distinguishes between setting up the whole test and
- setting up individual test cases (OCUnit's -setUp is called for every test case).
- The same consideration holds for the tear-down methods.
+ @warning Unlike the `-setUp` method found in OCUnit and other JUnit-inspired 
+ frameworks, `-setUpTest` is called only once per test.
 
- @sa -tearDownTest
+ @see -tearDownTest
  */
 - (void)setUpTest;
 
@@ -180,7 +248,10 @@ extern NSString *const SLTestExceptionLineNumberKey;
  @warning If tear-down fails, the test will be logged as having terminated 
  abnormally rather than finished, but its test cases' logs will be preserved.
 
- @sa setUpTest
+ @warning Unlike the `-setUp` method found in OCUnit and other JUnit-inspired 
+ frameworks, `-setUpTest` is called only once per test.
+
+ @see setUpTest
  */
 - (void)tearDownTest;
 
@@ -198,7 +269,7 @@ extern NSString *const SLTestExceptionLineNumberKey;
 
  @param testCaseSelector The selector identifying the test case about to be run.
 
- @sa -tearDownTestCaseWithSelector:
+ @see -tearDownTestCaseWithSelector:
  */
 - (void)setUpTestCaseWithSelector:(SEL)testCaseSelector;
 
@@ -217,51 +288,30 @@ extern NSString *const SLTestExceptionLineNumberKey;
  
  @param testCaseSelector The selector identifying the test case that was run.
 
- @sa -setUpTestCaseWithSelector:
+ @see -setUpTestCaseWithSelector:
  */
 - (void)tearDownTestCaseWithSelector:(SEL)testCaseSelector;
-
-/**
- Returns YES if the test has at least one test case which is focused
- and which can run on the current platform.
-
- When a test is run, if any of its test cases are focused, only those test cases will run.
- This may be useful when writing or debugging tests.
-
- A test case is focused by prefixing its name with "focus_", like so:
-
-     - (void)focus_testFoo;
-
- It is also possible to implicitly focus all test cases by prefixing
- their test's name with "Focus_". But if some test cases are explicitly focused 
- (as above), only those test cases will run--the narrowest focus applies.
- 
- If a test is focused, that focus will apply to any tests which descend from it.
-
- @warning Methods that take test case selectors as arguments (like 
- -setUpTestCaseWithSelector:) are invoked with the unfocused form of the selectors
- --they need not (and should not) be modified when a test case is focused.
-
- @warning Focused test cases will not be run if their test is not run (e.g. if
- it is not included in the set of tests to be run, or if it does not support 
- the current platform).
-
- @return YES if any test cases are focused and can be run on the current platform.
-
- @see -[SLTestController runTests:withCompletionBlock:]
- */
-+ (BOOL)isFocused;
 
 
 #pragma mark - Utilities
 
 /**
- Delays test execution for the specified time interval.
+ Suspends test execution for the specified time interval.
  
- You can use this method to provide enough time for lengthy operations to complete.
+ Only use this method to wait (for the UI to update, or for the application
+ to complete some operation) if a delay is found to be necessary, and
+ it is not possible to describe a specific condition on which to wait.
  
- If you have a specific condition on which you're waiting, it is more appropriate 
- to use the SLAssertTrueWithTimeout macro.
+ It should not be necessary to wait before attempting to access interface elements 
+ when the delay would be less than the [default timeout](-[SLTestController defaultTimeout]): 
+ elements automatically [wait to become valid and/or tappable](-[SLUIAElement defaultTimeout])
+ if access requires waiting.
+
+ Where the delay would be more than the default timeout, or where the condition 
+ on which to wait involves application state not made apparent by the UI,
+ using the `SLAssertTrueWithTimeout` macro will result in a clearer, more
+ efficient test than using `-wait:`. See the definition of `SLAssertTrueWithTimeout` 
+ for examples.
  
  @param interval The time interval for which to wait.
  */
@@ -270,22 +320,32 @@ extern NSString *const SLTestExceptionLineNumberKey;
 
 #pragma mark - SLElement Use
 
+/**
+ Records a filename and line number to attach to an exception thrown at that 
+ source line.
+ 
+ Used by the `UIAElement` and test assertion macros so that exceptions thrown 
+ by `SLUIAElement` methods and/or test assertions may be traced to their origins.
+ 
+ @param filename A filename, i.e. the last component of the `__FILE__` macro's expansion.
+ @param lineNumber A line number, i.e. the `__LINE__` macro's expansion.
+ */
 - (void)recordLastKnownFile:(char *)filename line:(int)lineNumber;
 
 /**
- Wrap an SLElement in the UIAElement macro whenever calling an SLElement method 
- that might throw an exception.
+ Records the current filename and line number and returns its argument.
 
- The macro records the filename and line number, so that if the call throws, 
- and the test fails, the test logs will report where the failure occurred.
+ Wrap a `SLUIAElement` in the `UIAElement` macro whenever sending it a message
+ that might throw an exception. If the call throws, and the test case fails, the 
+ logs will report where the failure occurred.
  
  Use the macro like:
     
     SLButton *fooButton = ...
     [UIAElement(fooButton) tap];
  
- It may help to think that you're preparing to send a message to the 
- UIAutomation element corresponding to the wrapped SLElement.
+ It may help to think that "you're preparing to send a message to the
+ UIAutomation element corresponding to the wrapped `SLUIAElement`."
  */
 #define UIAElement(slElement) ({ \
     [self recordLastKnownFile:__FILE__ line:__LINE__]; \
@@ -294,84 +354,148 @@ extern NSString *const SLTestExceptionLineNumberKey;
 
 #pragma mark - Test Assertions
 
-#define SLAssertTrue(expr, description, ...) do { \
+/**
+ Fails the test case if the specified expression is false.
+ 
+ @param expression The expression to test.
+ @param failureDescription A format string specifying the error message 
+ to be logged if the test fails. Can be `nil`.
+ @param ... (Optional) A comma-separated list of arguments to substitute into 
+ `failureDescription`.
+ */
+#define SLAssertTrue(expression, failureDescription, ...) do { \
     [self recordLastKnownFile:__FILE__ line:__LINE__]; \
-    BOOL __result = (expr); \
+    BOOL __result = (expression); \
     if (!__result) { \
         NSString *__reason = [NSString stringWithFormat:@"\"%@\" should be true.%@", \
-                                @(#expr), SLComposeString(@" ", description, ##__VA_ARGS__)]; \
+                                @(#expression), SLComposeString(@" ", failureDescription, ##__VA_ARGS__)]; \
         @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:__reason userInfo:nil]; \
     } \
 } while (0)
 
 /**
- The SLAssertTrueWithTimeout macro allows an SLTest to wait for an arbitrary
- condition to become true within a specified timeout.
+ Fails the test case if the specified expression does not become true
+ within a specified timeout.
 
- The macro polls the condition at small intervals.
- If the condition is not true when the timeout elapses, the macro
- will throw an exception.
+ The macro re-evaluates the condition at small intervals.
 
- @param expr A boolean expression on whose truth the test should wait.
+ There are two great advantages to using `SLAssertTrueWithTimeout` instead of `-wait:`:
+
+ *  `SLAssertTrueWithTimeout` need not wait for the entirety of the specified timeout
+    if the condition becomes true before the timeout elapses. This can lead
+    to faster tests, and makes it feasible to allow even longer timeouts
+    when using `SLAssertTrueWithTimeout` than when using `-wait:`.
+ *  `SLAssertTrueWithTimeout` encourages test writers to describe specifically 
+    why they are waiting, not only by specifying an expression on which to wait 
+    but by specifying an error message. If waiting is not successful, this information 
+    will be used to produce a rich error message at the site of the failure. By 
+    contrast, if `-wait:` is "unsuccessful" (in the sense that the app does not
+    change as expected while waiting), that failure will manifest later in ways
+    that may be difficult to debug.
+
+ `SLAssertTrueWithTimeout` may be used to wait for the UI to change as well as 
+ for the application to complete some lengthy operation. Some examples follow:
+ 
+    // wait for a confirmation message to appear, e.g. after logging in
+    SLAssertTrueWithTimeout([UIAElement(confirmationLabel) isValidAndVisible], 10.0,
+                            @"User did not successfully log in.");
+ 
+    // wait for a progress indicator to disappear, e.g. after search results have loaded
+    SLAssertTrueWithTimeout([UIAElement(progressIndicator) isInvalidOrInvisible], 10.0,
+                            @"Search results did not load.");
+ 
+    // log in programmatically, then wait until the log-in operation succeeds
+    // using app hooks (see SLTestController+AppHooks.h
+    SLAskApp(logInWithInfo:, (@{ @"username": @"john@foo.com", @"password": @"Hello1234" }));
+    SLAssertTrueWithTimeout(SLAskAppYesNo(isLoggedIn), 5.0, @"Log-in did not succeed.");
+
+ @param expression A boolean expression on whose truth the test should wait.
  @param timeout The interval for which to wait.
- @param description A description of the wait's failure should that occur.
- This may be a format string taking variable arguments.
- @exception SLTestAssertionFailedException if expr does not evaluate to true
- within the specified timeout.
+ @param failureDescription A format string specifying the error message
+ to be logged if the test fails. Can be `nil`.
  */
-#define SLAssertTrueWithTimeout(expr, timeout, description, ...) do {\
+#define SLAssertTrueWithTimeout(expression, timeout, failureDescription, ...) do {\
     [self recordLastKnownFile:__FILE__ line:__LINE__]; \
     NSTimeInterval _retryDelay = 0.25; \
     \
     NSDate *_startDate = [NSDate date]; \
-    BOOL _exprTrue = NO; \
-    while (!(_exprTrue = (expr)) && \
+    BOOL _expressionTrue = NO; \
+    while (!(_expressionTrue = (expression)) && \
         ([[NSDate date] timeIntervalSinceDate:_startDate] < timeout)) { \
         [NSThread sleepForTimeInterval:_retryDelay]; \
     } \
-    if (!_exprTrue) { \
+    if (!_expressionTrue) { \
         NSString *reason = [NSString stringWithFormat:@"\"%@\" did not become true within %g seconds.%@", \
-        @(#expr), timeout, SLComposeString(@" ", description, ##__VA_ARGS__)]; \
+        @(#expression), timeout, SLComposeString(@" ", failureDescription, ##__VA_ARGS__)]; \
         @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
     } \
 } while (0)
 
-#define SLAssertFalse(expr, description, ...) do { \
+/**
+ Fails the test case if the specified expression is true.
+
+ @param expression The expression to test.
+ @param failureDescription A format string specifying the error message
+ to be logged if the test fails. Can be `nil`.
+ @param ... (Optional) A comma-separated list of arguments to substitute into
+ `failureDescription`.
+ */
+#define SLAssertFalse(expression, failureDescription, ...) do { \
     [self recordLastKnownFile:__FILE__ line:__LINE__]; \
-    BOOL __result = (expr); \
+    BOOL __result = (expression); \
     if (__result) { \
         NSString *__reason = [NSString stringWithFormat:@"\"%@\" should be false.%@", \
-                                @(#expr), SLComposeString(@" ", description, ##__VA_ARGS__)]; \
+                                @(#expression), SLComposeString(@" ", failureDescription, ##__VA_ARGS__)]; \
         @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:__reason userInfo:nil]; \
     } \
 } while (0)
 
-#define SLAssertThrows(expr, description, ...) do { \
+/**
+ Fails the test case if the specified expression doesn't raise an exception.
+
+ @param expression The expression to test.
+ @param failureDescription A format string specifying the error message
+ to be logged if the test fails. Can be `nil`.
+ @param ... (Optional) A comma-separated list of arguments to substitute into
+ `failureDescription`.
+ */
+#define SLAssertThrows(expression, failureDescription, ...) do { \
     [self recordLastKnownFile:__FILE__ line:__LINE__]; \
     BOOL __caughtException = NO; \
     @try { \
-        (expr); \
+        (expression); \
     } \
     @catch (id __anException) { \
         __caughtException = YES; \
     } \
     if (!__caughtException) { \
         NSString *__reason = [NSString stringWithFormat:@"\"%@\" should have thrown an exception.%@", \
-                                @(#expr), SLComposeString(@" ", description, ##__VA_ARGS__)]; \
+                                @(#expression), SLComposeString(@" ", failureDescription, ##__VA_ARGS__)]; \
         @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:__reason userInfo:nil]; \
     } \
 } while (0)
 
-#define SLAssertThrowsNamed(expr, exceptionName, description, ...) do { \
+/**
+ Fails the test case if the specified expression doesn't raise an exception 
+ with a particular name.
+
+ @param expression The expression to test.
+ @param exceptionName The name of the exception that should be thrown by `expression`.
+ @param failureDescription A format string specifying the error message
+ to be logged if the test fails. Can be `nil`.
+ @param ... (Optional) A comma-separated list of arguments to substitute into
+ `failureDescription`.
+ */
+#define SLAssertThrowsNamed(expression, exceptionName, failureDescription, ...) do { \
     [self recordLastKnownFile:__FILE__ line:__LINE__]; \
     BOOL __caughtException = NO; \
     @try { \
-        (expr); \
+        (expression); \
     } \
     @catch (NSException *__anException) { \
         if (![[__anException name] isEqualToString:exceptionName]) { \
             NSString *__reason = [NSString stringWithFormat:@"\"%@\" threw an exception named \"%@\" (\"%@\"), but not an exception named \"%@\". %@", \
-                                    @(#expr), [__anException name], [__anException reason], exceptionName, SLComposeString(@" ", description, ##__VA_ARGS__)]; \
+                                    @(#expression), [__anException name], [__anException reason], exceptionName, SLComposeString(@" ", failureDescription, ##__VA_ARGS__)]; \
             @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:__reason userInfo:nil]; \
         } else {\
             __caughtException = YES; \
@@ -379,27 +503,50 @@ extern NSString *const SLTestExceptionLineNumberKey;
     } \
     @catch (id __anException) { \
         NSString *__reason = [NSString stringWithFormat:@"\"%@\" threw an exception, but not an exception named \"%@\". %@", \
-                                @(#expr), exceptionName, SLComposeString(@" ", description, ##__VA_ARGS__)]; \
+                                @(#expression), exceptionName, SLComposeString(@" ", failureDescription, ##__VA_ARGS__)]; \
         @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:__reason userInfo:nil]; \
     } \
     if (!__caughtException) { \
         NSString *__reason = [NSString stringWithFormat:@"\"%@\" should have thrown an exception named \"%@\".%@", \
-                                @(#expr), exceptionName, SLComposeString(@" ", description, ##__VA_ARGS__)]; \
+                                @(#expression), exceptionName, SLComposeString(@" ", failureDescription, ##__VA_ARGS__)]; \
         @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:__reason userInfo:nil]; \
     } \
 } while (0)
 
-#define SLAssertNoThrow(expr, description, ...) do { \
+/**
+ Fails the test case if the specified expression raises an exception.
+
+ @param expression The expression to test.
+ @param failureDescription A format string specifying the error message
+ to be logged if the test fails. Can be `nil`.
+ @param ... (Optional) A comma-separated list of arguments to substitute into
+ `failureDescription`.
+ */
+#define SLAssertNoThrow(expression, failureDescription, ...) do { \
     [self recordLastKnownFile:__FILE__ line:__LINE__]; \
     @try { \
-        (expr); \
+        (expression); \
     } \
     @catch (id __anException) { \
         NSString *__reason = [NSString stringWithFormat:@"\"%@\" should not have thrown an exception: \"%@\" (\"%@\").%@", \
-                                @(#expr), [__anException name], [__anException reason], SLComposeString(@" ", description, ##__VA_ARGS__)]; \
+                                @(#expression), [__anException name], [__anException reason], SLComposeString(@" ", failureDescription, ##__VA_ARGS__)]; \
         @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:__reason userInfo:nil]; \
     } \
 } while (0)
 
 @end
 
+
+/// Thrown if a test assertion fails.
+extern NSString *const SLTestAssertionFailedException;
+
+/// Keys for the `userInfo` dictionary of exceptions thrown by, and not caught by,
+/// `SLTest`, i.e. assertion failures in `-setUpTest` and `-tearDownTest` which
+/// should cause the tests to abort.
+
+/// Object is an `NSString` representing the name of the file in which
+/// the exception occurred.
+extern NSString *const SLTestExceptionFilenameKey;
+/// Object is an `NSNumber` whose `integerValue` represents the line number on
+/// which the exception occurred.
+extern NSString *const SLTestExceptionLineNumberKey;

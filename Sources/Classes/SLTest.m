@@ -16,9 +16,9 @@
 #import <objc/message.h>
 
 
-// all exceptions thrown by SLTest must have names beginning with this prefix
-// so that -[SLTest logException:inTestCase:] uses the proper logging format
-NSString *const SLTestExceptionNamePrefix       = @"SLTest";
+// All exceptions thrown by SLTest must have names beginning with this prefix
+// so that `-[SLTest logException:inTestCase:]` uses the proper logging format.
+static NSString *const SLTestExceptionNamePrefix       = @"SLTest";
 
 NSString *const SLTestAssertionFailedException  = @"SLTestCaseAssertionFailedException";
 
@@ -55,8 +55,8 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     return tests;
 }
 
-+ (Class)testNamed:(NSString *)test {
-    Class klass = NSClassFromString(test);
++ (Class)testNamed:(NSString *)name {
+    Class klass = NSClassFromString(name);
     BOOL classIsTestClass = (class_respondsToSelector(object_getClass(klass), @selector(isSubclassOfClass:)) &&
                              [klass isSubclassOfClass:[SLTest class]]);
     return (classIsTestClass ? klass : nil);
@@ -94,14 +94,6 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     }
 
     return testSupportsCurrentDevice;
-}
-
-- (id)initWithTestController:(SLTestController *)testController {
-    self = [super init];
-    if (self) {
-        _testController = testController;
-    }
-    return self;
 }
 
 - (void)setUpTest {
@@ -368,8 +360,7 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     }
 
     NSString *message = [NSString stringWithFormat:@"%@: %@", callSite, exceptionDescription];
-    NSString *test = NSStringFromClass([self class]);
-    [[SLLogger sharedLogger] logError:message test:test testCase:testCase];
+    [[SLLogger sharedLogger] logError:message];
 }
 
 @end

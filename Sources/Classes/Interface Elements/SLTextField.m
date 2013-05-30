@@ -38,9 +38,9 @@
 @end
 
 
-#pragma mark - SLSearchBar
+#pragma mark - SLSearchField
 
-@implementation SLSearchBar
+@implementation SLSearchField
 
 + (instancetype)elementWithAccessibilityLabel:(NSString *)label {
     SLLog(@"An %@ can't be matched by accessibility properties--see the comments on its @interface. \
@@ -49,6 +49,12 @@
 }
 
 + (instancetype)elementWithAccessibilityLabel:(NSString *)label value:(NSString *)value traits:(UIAccessibilityTraits)traits {
+    SLLog(@"An %@ can't be matched by accessibility properties--see the comments on its @interface. \
+          Returning +anyElement.", NSStringFromClass(self));
+    return [self anyElement];
+}
+
++ (instancetype)elementWithAccessibilityIdentifier:(NSString *)identifier {
     SLLog(@"An %@ can't be matched by accessibility properties--see the comments on its @interface. \
           Returning +anyElement.", NSStringFromClass(self));
     return [self anyElement];

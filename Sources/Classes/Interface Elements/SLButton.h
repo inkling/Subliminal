@@ -9,10 +9,10 @@
 #import "SLElement.h"
 
 /**
- SLButton allows access to, and control of, button elements in your app.
+ `SLButton` matches objects that have the `UIAccessibilityTraitButton` 
+ accessibility trait.
  
- SLButton matches not only UIButtons, but any object that has 
- the UIAccessibilityTraitButton accessibility trait.
+ Such as, but not limited to, instances of `UIButton`.
  */
 @interface SLButton : SLElement
 @end

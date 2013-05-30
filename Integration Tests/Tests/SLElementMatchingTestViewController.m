@@ -8,7 +8,7 @@
 
 #import "SLTestCaseViewController.h"
 
-#import <Subliminal/SLTestController+AppContext.h>
+#import <Subliminal/SLTestController+AppHooks.h>
 
 
 @interface SLElementMatchingTestViewController : SLTestCaseViewController
@@ -104,6 +104,7 @@
 @end
 
 @implementation SLElementMatchingTestViewController {
+    UIView *_parentView, *_childView;
     UIWebView *_webView;
     BOOL _webViewDidFinishLoad;
 
@@ -115,8 +116,11 @@
         (testCase == @selector(testElementsCanMatchTheSameObjectTwice)) ||
         (testCase == @selector(testElementsWaitToMatchValidObjects)) ||
         (testCase == @selector(testElementsThrowIfNoValidObjectIsFoundAtEndOfTimeout)) ||
-        (testCase == @selector(testAnyElement)) ||
         (testCase == @selector(testElementWithAccessibilityLabel)) ||
+        (testCase == @selector(testElementWithAccessibilityLabelValueTraits)) ||
+        (testCase == @selector(testElementWithAccessibilityIdentifier)) ||
+        (testCase == @selector(testElementMatchingPredicate)) ||
+        (testCase == @selector(testAnyElement)) ||
         (testCase == @selector(testSubliminalOnlyReplacesAccessibilityIdentifiersOfElementsInvolvedInMatch)) ||
         (testCase == @selector(testSubliminalRestoresAccessibilityIdentifiersAfterMatching)) ||
         (testCase == @selector(testSubliminalRestoresAccessibilityIdentifiersAfterMatchingEvenIfActionThrows)) ||
@@ -138,6 +142,7 @@
     self = [super initWithTestCaseWithSelector:testCase];
     if (self) {
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(swapButtons)];
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(applyUniqueTraitToFooButton)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(fooButtonIdentifier)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(removeFooButtonFromSuperview)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(addFooButtonToViewAfterInterval:)];
@@ -157,29 +162,19 @@
         _webView = [[UIWebView alloc] initWithFrame:CGRectZero];
         _webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         self.view = _webView;
-    }
-    if (testCase == @selector(testCannotMatchUIControlDescendant)) {
+    } else if (testCase == @selector(testCannotMatchDescendantOfAccessibleElement)) {
         UIView *view = [[UIView alloc] initWithFrame:CGRectZero];
         view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+
+        _parentView = [[UIView alloc] initWithFrame:CGRectMake(10, 200, 200, 100)];
+        _parentView.backgroundColor = [UIColor redColor];
+
+        _childView = [[UIView alloc] initWithFrame:_parentView.bounds];
+        _childView.backgroundColor = [UIColor blueColor];
+        [_parentView addSubview:_childView];
+
+        [view addSubview:_parentView];
         self.view = view;
-
-        UIControl *control = [[UIControl alloc] initWithFrame:CGRectMake(10, 200, 200, 100)];
-        control.accessibilityIdentifier = @"fooUIControl";
-        control.isAccessibilityElement = YES;
-        [self.view addSubview:control];
-
-        // A buffer view is placed between _uiControl and the test view. This is to ensure
-        // when the test view is not matched, it is a result of it being a descendant of a
-        // UIControl, not of because it is a direct descendant of an element that responds
-        // YES to isAccessibilityElement
-        UIView *bufferView = [[UIView alloc] initWithFrame:control.bounds];
-        bufferView.isAccessibilityElement = NO;
-        [control addSubview:bufferView];
-
-        UIView *testView = [[UIView alloc] initWithFrame:bufferView.bounds];
-        testView.isAccessibilityElement = YES;
-        testView.accessibilityIdentifier = @"fooTestView";
-        [bufferView addSubview:testView];
     }
 }
 
@@ -192,9 +187,16 @@ static NSString *TestCellIdentifier = nil;
     self.fooButton.accessibilityIdentifier = @"fooId";
     self.fooButton.accessibilityLabel = @"foo";
     self.fooButton.accessibilityValue = @"fooValue";
+    self.fooButton.accessibilityHint = @"fooHint";
 
     self.barButton.accessibilityIdentifier = @"barId";
     self.barButton.accessibilityLabel = @"bar";
+
+    _parentView.isAccessibilityElement = YES;
+    _parentView.accessibilityLabel = @"parentView";
+
+    _childView.isAccessibilityElement = YES;
+    _childView.accessibilityLabel = @"childView";
 
     if (self.tableView) {
         Class testCellClass;
@@ -309,6 +311,12 @@ static NSString *TestCellIdentifier = nil;
     newButton.accessibilityValue = @"foo2Value";
     [self.view addSubview:newButton];
     self.fooButton = newButton;
+}
+
+- (void)applyUniqueTraitToFooButton {
+    // `UIAccessibilityTraitUpdatesFrequently` is not appropriate for the button
+    // but it is a rare trait, useful in testing
+    self.fooButton.accessibilityTraits = (self.fooButton.accessibilityTraits | UIAccessibilityTraitUpdatesFrequently);
 }
 
 - (NSString *)fooButtonIdentifier {

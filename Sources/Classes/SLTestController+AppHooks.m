@@ -1,12 +1,12 @@
 //
-//  SLTestController+AppContext.m
+//  SLTestController+AppHooks.m
 //  Subliminal
 //
 //  Created by Jeffrey Wear on 10/16/12.
 //  Copyright (c) 2012 Inkling. All rights reserved.
 //
 
-#import "SLTestController+AppContext.h"
+#import "SLTestController+AppHooks.h"
 #import "SLMainThreadRef.h"
 
 #import <objc/runtime.h>
@@ -17,7 +17,7 @@ static const NSTimeInterval kTargetLookupTimeout = 5.0;
 static const NSTimeInterval kTargetLookupRetryDelay = 0.25;
 NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoesNotExistException";
 
-@implementation SLTestController (AppContext)
+@implementation SLTestController (AppHooks)
 
 + (id)actionTargetMapKeyForAction:(SEL)action {
     return NSStringFromSelector(action);
@@ -55,7 +55,7 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
             // (in case we're a second thread that got inside the if above)
             actionTargetMapQueueValue = objc_getAssociatedObject(self, kActionTargetMapQueueKey);
             if (!actionTargetMapQueueValue) {
-                NSString *queueName = [NSString stringWithFormat:@"com.subliminal.SLTestController+AppContext-%p.actionTargetMapQueue", self];
+                NSString *queueName = [NSString stringWithFormat:@"com.subliminal.SLTestController+AppHooks-%p.actionTargetMapQueue", self];
                 dispatch_queue_t actionTargetMapQueue = dispatch_queue_create([queueName UTF8String], DISPATCH_QUEUE_SERIAL);
                 // target the actionTargetMapQueue at the main thread
                 // so that we may safely access SLMainThreadRefs' targets from the queue
@@ -137,7 +137,7 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
 }
 
 // The target lookup timeout is factored as a method
-// so that the SLTestController+AppContext tests can provide different values
+// so that the SLTestController+AppHooks tests can provide different values
 // for different tests (using OCMock). It is not considered necessary or useful
 // to expose it publicly for other purposes.
 // Don't change the name of this method without updating the tests.

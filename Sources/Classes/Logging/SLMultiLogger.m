@@ -14,6 +14,7 @@
 }
 
 - (id)init {
+    // There is no -[super init], because we are a proxy
     _loggers = [[NSMutableSet alloc] init];
     _loggingQueue = dispatch_queue_create("com.subliminal.SLMultiLogger.loggingQueue", DISPATCH_QUEUE_SERIAL);
     
@@ -28,12 +29,12 @@
     return _loggingQueue;
 }
 
-- (void)addLogger:(SLLogger *)newLogger {
-    [_loggers addObject:newLogger];
+- (void)addLogger:(SLLogger *)logger {
+    [_loggers addObject:logger];
 }
 
-- (void)removeLogger:(SLLogger *)oldLogger {
-    [_loggers removeObject:oldLogger];
+- (void)removeLogger:(SLLogger *)logger {
+    [_loggers removeObject:logger];
 }
 
 - (BOOL)respondsToSelector:(SEL)aSelector {

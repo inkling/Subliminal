@@ -29,7 +29,7 @@
     _usernameField = [SLTextField elementWithAccessibilityLabel:@"username field"];
     _passwordField = [SLTextField elementWithAccessibilityLabel:@"password field"];
     _submitButton = [SLElement elementWithAccessibilityLabel:@"Submit"];
-    _loginSpinner = [SLElement elementWithAccessibilityLabel:@"Logging in..."];
+    _loginSpinner = [SLElement elementWithAccessibilityIdentifier:@"Logging in..."];
 }
 
 - (void)tearDownTestCaseWithSelector:(SEL)testSelector {
@@ -45,8 +45,9 @@
     [UIAElement(_passwordField) setText:password];
     
     [UIAElement(_submitButton) tap];
-    
-    [UIAElement(_loginSpinner) waitUntilInvisibleOrInvalid:3.0];
+
+    // the login spinner could disappear by becoming invalid or invisible
+    SLAssertTrueWithTimeout([UIAElement(_loginSpinner) isInvalidOrInvisible], 3.0, @"Log-in was not successful.");
     
     NSString *successMessage = [NSString stringWithFormat:@"Hello, %@!", username];
     SLAssertTrue([UIAElement([SLElement elementWithAccessibilityLabel:successMessage]) isValid], @"Log-in did not succeed.");
@@ -62,8 +63,8 @@
 
     [UIAElement(_submitButton) tap];
 
-    // Check isValid first because isVisible is indeterminate if the element doesn't exist
-    SLAssertFalse([_loginSpinner isValid] && [_loginSpinner isVisible],
+    // we don't care if the login spinner is valid, so long as it's not visible
+    SLAssertFalse([_loginSpinner isValidAndVisible],
                   @"The app should not try to login if the user doesn't provide a password.");
 
     SLElement *errorMessage = [SLElement elementWithAccessibilityLabel:@"Invalid username or password."];

@@ -31,11 +31,11 @@ BOOL SLCGPointIsNull(CGPoint point) {
 @implementation SLUIAElement
 
 static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
-+ (void)setDefaultTimeout:(NSTimeInterval)defaultTimeout {
-    if (defaultTimeout != [self defaultTimeout]) {
++ (void)setDefaultTimeout:(NSTimeInterval)timeout {
+    if (timeout != [self defaultTimeout]) {
         // note that we explicitly associate with SLUIAElement
         // so that subclasses can reference the timeout too
-        objc_setAssociatedObject([SLUIAElement class], kDefaultTimeoutKey, @(defaultTimeout), OBJC_ASSOCIATION_RETAIN);
+        objc_setAssociatedObject([SLUIAElement class], kDefaultTimeoutKey, @(timeout), OBJC_ASSOCIATION_RETAIN);
     }
 }
 
@@ -103,6 +103,19 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return SLElementIsTappableFunctionName;
 }
 
+/*
+ We must rely on UIAutomation to simulate user interaction, and so use 
+ UIAutomation to determine tappability. Unfortunately, UIAutomation appears 
+ to use `UIAElement.isVisible` to determine the availability of an element's 
+ `hitpoint` (which in turn determines its tappability), and so `isTappable`
+ exhibits some of the same issues as `UIAElement.isVisible` (see the class 
+ description of `SLElementVisibilityTest`).
+ 
+ Instances of `SLElement` could constrain this method's response by true visibility,
+ but that would inflict a performance penalty on every message that involved user 
+ interaction, when `UIAElement.isVisible` is mostly correct. Also, while 
+ `-isVisible` must reflect visibility as truly as possible, tappability need not.
+ */
 - (BOOL)isTappable {
     __block BOOL isTappable;
     // isTappable evaluates the current state, no waiting to resolve the element

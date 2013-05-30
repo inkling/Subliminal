@@ -396,7 +396,7 @@
 // this test verifies the complete order in which testing normally executes,
 // but is mostly for illustration--it makes too many assertions
 // traditional "unit" tests follow
-- (void)testCompleteTestExecutionSequence {
+- (void)testCompleteTestRunSequence {
     Class testClass = [TestWithSomeTestCases class];
     id testMock = [OCMockObject partialMockForClass:testClass];
     OCMExpectationSequencer *testSequencer = [OCMExpectationSequencer sequencerWithMocks:@[ testMock, _loggerMock ]];
@@ -645,7 +645,7 @@
     }
 
     // ...the test catches the exception and logs an error...
-    [[_loggerMock expect] logError:[OCMArg any] test:NSStringFromClass(failingTestClass) testCase:NSStringFromSelector(failingTestCase)];
+    [[_loggerMock expect] logError:[OCMArg any]];
 
     // ...and the test controller reports the test finishing with one test case having failed...
     // (and that failure was "expected" because it was due to an assertion failing)
@@ -805,9 +805,7 @@
     [[[failingTestMock expect] andThrow:exception] testOne];
 
     // ...the test catches the exception and logs an error...
-    [[_loggerMock expect] logError:[OCMArg any]
-                              test:NSStringFromClass(failingTestClass)
-                          testCase:NSStringFromSelector(failingTestCase)];
+    [[_loggerMock expect] logError:[OCMArg any]];
 
     // ...and logs the test case failing...
     [[_loggerMock expect] logTest:NSStringFromClass(failingTestClass)
@@ -892,7 +890,6 @@
 
 - (void)testAssertionLoggingIncludesFilenameAndLineNumber {
     Class testClass = [TestWithSomeTestCases class];
-    SEL failingTestCase = @selector(testOne);
     id testMock = [OCMockObject partialMockForClass:testClass];
 
     // verify that the test case is executed, then an error is logged
@@ -916,7 +913,7 @@
     // check that the error logged includes the filename and line number as recorded above
     [[_loggerMock expect] logError:[OCMArg checkWithBlock:^BOOL(id errorMessage) {
         return [errorMessage hasPrefix:filenameAndLineNumberPrefix];
-    }] test:NSStringFromClass(testClass) testCase:NSStringFromSelector(failingTestCase)];
+    }]];
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
     STAssertNoThrow([sequencer verify], @"Test did not run/message was not logged in expected sequence.");

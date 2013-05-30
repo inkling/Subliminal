@@ -8,7 +8,7 @@
 
 #import "SLTestCaseViewController.h"
 
-#import <Subliminal/SLTestController+AppContext.h>
+#import <Subliminal/SLTestController+AppHooks.h>
 #import <QuartzCore/QuartzCore.h>
 
 @interface SLTextFieldTestViewController : SLTestCaseViewController <UIWebViewDelegate>

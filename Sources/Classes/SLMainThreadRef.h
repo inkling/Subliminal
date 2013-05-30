@@ -9,13 +9,13 @@
 #import <Foundation/Foundation.h>
 
 /**
- An SLMainThreadRef helps a background thread to safely manage its reference to 
+ An `SLMainThreadRef` helps a background thread to safely manage its reference to
  an object that is only safe to access from the main thread (e.g. an instance 
- of a UIKit class) by:
+ of a `UIKit` class) by:
  
-    1. weakly referencing that object (the "target"), so that the background 
-    thread does not keep the target alive past its release by the main thread.
-    2. only permitting access to the target on the main thread.
+ 1. weakly referencing that object (the "target"), so that the background
+    thread does not keep the target alive past its release by the main thread; and
+ 2. only permitting access to the target on the main thread.
 
  */
 @interface SLMainThreadRef : NSObject
@@ -33,8 +33,11 @@
  
  This may only be called from the main thread.
 
- @return The receiver's target, or nil if the target has been released 
+ @return The receiver's target, or `nil` if the target has been released 
  by the main thread.
+ 
+ @exception NSInternalInconsistencyException Thrown if this method is called 
+ from the main thread.
  */
 - (id)target;
 

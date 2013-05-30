@@ -24,7 +24,7 @@ static const CGFloat kBottomLabelYOffset = 0.2;
 
 - (void)setUpTest {
 	[super setUpTest];
-    _scrollView = [SLElement elementWithAccessibilityLabel:@"drag scrollview"];
+    _scrollView = [SLElement elementWithAccessibilityIdentifier:@"drag scrollview"];
 }
 
 /// This test demonstrates simply that we can drag a view.
