@@ -17,7 +17,8 @@
 		F0695DFD16013C98000B05D0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0FBC00615F1F3200081C635 /* Foundation.framework */; };
 		F0695DFE16013C98000B05D0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0FBC00815F1F3200081C635 /* CoreGraphics.framework */; };
 		F0695E0016013C98000B05D0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F0FBC00D15F1F3200081C635 /* InfoPlist.strings */; };
-		F0695E19160143A3000B05D0 /* libSubliminal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695E1616014101000B05D0 /* libSubliminal.a */; };
+		F095E85917534B8100FF653A /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F095E85817534B8100FF653A /* Default-568h@2x.png */; };
+		F095E86D17534C7100FF653A /* libSubliminal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F095E86317534BB700FF653A /* libSubliminal.a */; };
 		F0E5509F162F45FC00F54F57 /* STSimpleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E5509D162F45FC00F54F57 /* STSimpleTest.m */; };
 		F0FBC00515F1F3200081C635 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0FBC00415F1F3200081C635 /* UIKit.framework */; };
 		F0FBC00715F1F3200081C635 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0FBC00615F1F3200081C635 /* Foundation.framework */; };
@@ -29,33 +30,33 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		F024BE15168B7BE000708350 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0695E0E16014101000B05D0 /* Subliminal.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F0D240521683F7130031B67C;
-			remoteInfo = "Subliminal Unit Tests";
-		};
-		F0695E1516014101000B05D0 /* PBXContainerItemProxy */ = {
+		F095E86217534BB700FF653A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F0695E0E16014101000B05D0 /* Subliminal.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = F0695D8B16011515000B05D0;
 			remoteInfo = Subliminal;
 		};
-		F0695E171601439F000B05D0 /* PBXContainerItemProxy */ = {
+		F095E86417534BB700FF653A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0695E0E16014101000B05D0 /* Subliminal.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0D240521683F7130031B67C;
+			remoteInfo = "Subliminal Unit Tests";
+		};
+		F095E86617534BB700FF653A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0695E0E16014101000B05D0 /* Subliminal.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0AC809416BB299500C5D5C0;
+			remoteInfo = "Subliminal Integration Tests";
+		};
+		F095E86B17534C6B00FF653A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F0695E0E16014101000B05D0 /* Subliminal.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = F0695D8A16011515000B05D0;
 			remoteInfo = Subliminal;
-		};
-		F0C07A211702C0CE00C93F93 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F0695E0E16014101000B05D0 /* Subliminal.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F0AC809416BB299500C5D5C0;
-			remoteInfo = "Integration Tests";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -64,7 +65,9 @@
 		F0024D2015F5A51100476EF7 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		F0024D9215F5DF6B00476EF7 /* STLoginTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STLoginTest.m; sourceTree = "<group>"; };
 		F0695E0516013C98000B05D0 /* SubliminalTest (Integration Tests).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SubliminalTest (Integration Tests).app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		F0695E0E16014101000B05D0 /* Subliminal.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Subliminal.xcodeproj; path = ../../../../../Subliminal.xcodeproj; sourceTree = "<group>"; };
+		F0695E0E16014101000B05D0 /* Subliminal.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Subliminal.xcodeproj; path = ../../../Subliminal.xcodeproj; sourceTree = "<group>"; };
+		F095E85817534B8100FF653A /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		F095E86917534C0600FF653A /* Integration Tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Integration Tests.xcconfig"; path = "../../../Supporting Files/Xcode/Integration Tests.xcconfig"; sourceTree = "<group>"; };
 		F0E5509D162F45FC00F54F57 /* STSimpleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STSimpleTest.m; sourceTree = "<group>"; };
 		F0FBC00015F1F3200081C635 /* SubliminalTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SubliminalTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0FBC00415F1F3200081C635 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -85,7 +88,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F0695E19160143A3000B05D0 /* libSubliminal.a in Frameworks */,
+				F095E86D17534C7100FF653A /* libSubliminal.a in Frameworks */,
 				F0695DFC16013C98000B05D0 /* UIKit.framework in Frameworks */,
 				F0695DFD16013C98000B05D0 /* Foundation.framework in Frameworks */,
 				F0695DFE16013C98000B05D0 /* CoreGraphics.framework in Frameworks */,
@@ -108,6 +111,7 @@
 		F0024D2415F5A51100476EF7 /* Integration Tests */ = {
 			isa = PBXGroup;
 			children = (
+				F095E86917534C0600FF653A /* Integration Tests.xcconfig */,
 				F0695E0E16014101000B05D0 /* Subliminal.xcodeproj */,
 				F0E5509D162F45FC00F54F57 /* STSimpleTest.m */,
 				F0024D9215F5DF6B00476EF7 /* STLoginTest.m */,
@@ -116,14 +120,22 @@
 			path = "SubliminalTest/Integration Tests";
 			sourceTree = "<group>";
 		};
-		F0695E0F16014101000B05D0 /* Products */ = {
+		F095E85C17534BB700FF653A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F0695E1616014101000B05D0 /* libSubliminal.a */,
-				F024BE16168B7BE000708350 /* Subliminal Unit Tests.octest */,
-				F0C07A221702C0CE00C93F93 /* Integration Tests.app */,
+				F095E86317534BB700FF653A /* libSubliminal.a */,
+				F095E86517534BB700FF653A /* Subliminal (Unit Tests).octest */,
+				F095E86717534BB700FF653A /* Subliminal (Integration Tests).app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		F095E86817534BD100FF653A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F095E85817534B8100FF653A /* Default-568h@2x.png */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		F0FBBFF515F1F3200081C635 = {
@@ -131,6 +143,7 @@
 			children = (
 				F0FBC00A15F1F3200081C635 /* SubliminalTest */,
 				F0024D2415F5A51100476EF7 /* Integration Tests */,
+				F095E86817534BD100FF653A /* Resources */,
 				F0FBC00315F1F3200081C635 /* Frameworks */,
 				F0FBC00115F1F3200081C635 /* Products */,
 			);
@@ -195,7 +208,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				F0695E181601439F000B05D0 /* PBXTargetDependency */,
+				F095E86C17534C6B00FF653A /* PBXTargetDependency */,
 			);
 			name = "SubliminalTest Integration Tests";
 			productName = SubliminalTest;
@@ -226,7 +239,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = S9;
-				LastUpgradeCheck = 0450;
+				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = Inkling;
 			};
 			buildConfigurationList = F0FBBFFA15F1F3200081C635 /* Build configuration list for PBXProject "SubliminalTest" */;
@@ -241,7 +254,7 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = F0695E0F16014101000B05D0 /* Products */;
+					ProductGroup = F095E85C17534BB700FF653A /* Products */;
 					ProjectRef = F0695E0E16014101000B05D0 /* Subliminal.xcodeproj */;
 				},
 			);
@@ -254,25 +267,25 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		F024BE16168B7BE000708350 /* Subliminal Unit Tests.octest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "Subliminal Unit Tests.octest";
-			remoteRef = F024BE15168B7BE000708350 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F0695E1616014101000B05D0 /* libSubliminal.a */ = {
+		F095E86317534BB700FF653A /* libSubliminal.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libSubliminal.a;
-			remoteRef = F0695E1516014101000B05D0 /* PBXContainerItemProxy */;
+			remoteRef = F095E86217534BB700FF653A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		F0C07A221702C0CE00C93F93 /* Integration Tests.app */ = {
+		F095E86517534BB700FF653A /* Subliminal (Unit Tests).octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "Subliminal (Unit Tests).octest";
+			remoteRef = F095E86417534BB700FF653A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F095E86717534BB700FF653A /* Subliminal (Integration Tests).app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
-			path = "Integration Tests.app";
-			remoteRef = F0C07A211702C0CE00C93F93 /* PBXContainerItemProxy */;
+			path = "Subliminal (Integration Tests).app";
+			remoteRef = F095E86617534BB700FF653A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -284,6 +297,7 @@
 			files = (
 				F0695E0016013C98000B05D0 /* InfoPlist.strings in Resources */,
 				1F18743E1606533F000360CA /* STLoginViewController.xib in Resources */,
+				F095E85917534B8100FF653A /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -324,10 +338,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		F0695E181601439F000B05D0 /* PBXTargetDependency */ = {
+		F095E86C17534C6B00FF653A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Subliminal;
-			targetProxy = F0695E171601439F000B05D0 /* PBXContainerItemProxy */;
+			targetProxy = F095E86B17534C6B00FF653A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -345,17 +359,13 @@
 /* Begin XCBuildConfiguration section */
 		F0695E0316013C98000B05D0 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F095E86917534C0600FF653A /* Integration Tests.xcconfig */;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SubliminalTest/SubliminalTest-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"INTEGRATION_TESTING=1",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
-					"\"$(SRCROOT)/SubliminalTest/Integration\\ Tests/OCMock\"/**",
 				);
 				INFOPLIST_FILE = "SubliminalTest copy-Info.plist";
 				OTHER_LDFLAGS = (
@@ -371,17 +381,13 @@
 		};
 		F0695E0416013C98000B05D0 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F095E86917534C0600FF653A /* Integration Tests.xcconfig */;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SubliminalTest/SubliminalTest-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"INTEGRATION_TESTING=1",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
-					"\"$(SRCROOT)/SubliminalTest/Integration\\ Tests/OCMock\"/**",
 				);
 				INFOPLIST_FILE = "SubliminalTest copy-Info.plist";
 				OTHER_LDFLAGS = (
@@ -402,6 +408,9 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
@@ -430,6 +439,9 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;

@@ -92,8 +92,9 @@ static SLLogger *__sharedLogger = nil;
 
 - (void)logTestingFinishWithNumTestsExecuted:(NSUInteger)numTestsExecuted
                               numTestsFailed:(NSUInteger)numTestsFailed {
-    [self logMessage:[NSString stringWithFormat:@"Testing finished: executed %u test%@, with %u failures.",
-                                                numTestsExecuted, (numTestsExecuted == 1 ? @"" : @"s"), numTestsFailed]];
+    [self logMessage:[NSString stringWithFormat:@"Testing finished: executed %u test%@, with %u failure%@.",
+                                                numTestsExecuted, (numTestsExecuted == 1 ? @"" : @"s"),
+                                                numTestsFailed, (numTestsFailed == 1 ? @"" : @"s")]];
 }
 
 @end

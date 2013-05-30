@@ -278,7 +278,7 @@
 		F07DA32B16E43AD3004C2282 /* SLAlertTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAlertTest.m; sourceTree = "<group>"; };
 		F07DA32C16E43AD3004C2282 /* SLAlertTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAlertTestViewController.m; sourceTree = "<group>"; };
 		F08005581730762C00198F6F /* Inklings~iPhone.webarchive */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "Inklings~iPhone.webarchive"; sourceTree = "<group>"; };
-		F081539D170CBF550053B536 /* Integration Tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Integration Tests.xcconfig"; sourceTree = "<group>"; };
+		F081539D170CBF550053B536 /* Integration Tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "Integration Tests.xcconfig"; path = "Supporting Files/Xcode/Integration Tests.xcconfig"; sourceTree = "<group>"; };
 		F089F98417445D9A00DF1F25 /* SLStaticElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLStaticElement.h; sourceTree = "<group>"; };
 		F089F98517445D9A00DF1F25 /* SLStaticElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLStaticElement.m; sourceTree = "<group>"; };
 		F089F99217458BA300DF1F25 /* SLWindowTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLWindowTest.m; sourceTree = "<group>"; };
@@ -1006,7 +1006,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/appledoc \\\n--clean-output \\\n--project-name \"Subliminal\" \\\n--project-version 1.0 \\\n--project-company \"Inkling\" \\\n--company-id \"com.inkling\" \\\n--docset-platform-family \"iphoneos\" \\\n--logformat xcode \\\n--keep-merged-sections \\\n--keep-undocumented-objects \\\n--keep-undocumented-members \\\n--no-repeat-first-par \\\n--no-warn-invalid-crossref \\\n--ignore \"*.m\" \\\n--index-desc \"${PROJECT_DIR}/README.md\" \\\n--output \"${PROJECT_DIR}/Documentation/Documentation\" \\\n--keep-intermediate-files \\\n\"${PROJECT_DIR}/Sources\"";
+			shellScript = "/usr/local/bin/appledoc \\\n--clean-output \\\n--project-name \"Subliminal\" \\\n--project-version 1.0 \\\n--project-company \"Inkling\" \\\n--company-id \"com.inkling\" \\\n--docset-platform-family \"iphoneos\" \\\n--logformat xcode \\\n--keep-merged-sections \\\n--keep-undocumented-objects \\\n--keep-undocumented-members \\\n--no-repeat-first-par \\\n--no-warn-invalid-crossref \\\n--ignore \"*.m\" \\\n--index-desc \"${PROJECT_DIR}/README.md\" \\\n--output \"${PROJECT_DIR}/Documentation\" \\\n--keep-intermediate-files \\\n\"${PROJECT_DIR}/Sources\"";
 		};
 		F0D240501683F7130031B67C /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1226,7 +1226,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Sources/Subliminal-Prefix.pch";
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = usr/local/include/Subliminal;
 				SKIP_INSTALL = YES;
@@ -1240,7 +1239,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Sources/Subliminal-Prefix.pch";
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = usr/local/include/Subliminal;
 				SKIP_INSTALL = YES;
@@ -1266,7 +1264,6 @@
 				);
 				INFOPLIST_FILE = "Integration Tests/$(TARGET_NAME)-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
-				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "Subliminal (Integration Tests)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
@@ -1316,7 +1313,6 @@
 				);
 				INFOPLIST_FILE = "Unit Tests/Subliminal Unit Tests-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "Subliminal (Unit Tests)";
 				WRAPPER_EXTENSION = octest;

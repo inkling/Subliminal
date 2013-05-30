@@ -1,0 +1,16 @@
+#!/usr/bin/osascript
+
+tell application "System Events"
+	if not UI elements enabled then
+		beep
+		display dialog "GUI Scripting is not enabled" & return & return & "Open System Preferences and check Enable Access for Assistive Devices in the Accessibility (or Universal Access) preference pane, then run this script again." with icon 0 -- "stop" icon
+		if button returned of result is "OK" then
+			tell application "System Preferences"
+				activate
+				set current pane to pane "com.apple.preference.universalaccess"
+			end tell
+		end if
+		return false
+	end if
+	return true
+end tell

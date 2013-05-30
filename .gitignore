@@ -1,4 +1,5 @@
 *.xcworkspace
 xcuserdata
 .DS_Store
-Documentation/Documentation
+Documentation
+/Supporting Files/CI/results/

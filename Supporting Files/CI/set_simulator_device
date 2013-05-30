@@ -1,0 +1,39 @@
+#!/usr/bin/osascript
+
+(*
+Sets the simulator's device to the specified type.
+
+Acceptable types are listed in the iPhone Simulator's "Hardware -> Device" menu.
+*)
+
+on run argv
+	-- Ensure GUI scripting is enabled
+	tell application "Finder"
+		set scriptDir to container of (path to me) as text
+	end tell
+	
+	set enableGUIScriptingScript to (scriptDir & "enable_GUI_scripting")
+	set GUIScriptingEnabled to (run script (enableGUIScriptingScript as alias))
+	if not GUIScriptingEnabled then return false
+	
+	-- Select simulator device type
+	set deviceType to item 1 of argv
+	tell application "iPhone Simulator"
+		activate
+	end tell
+	
+	tell application "System Events"
+		tell process "iPhone Simulator"
+			tell menu bar 1
+				tell menu "Hardware" of menu bar item "Hardware"
+					tell menu "Device" of menu item "Device"
+						click menu item deviceType
+					end tell
+				end tell
+			end tell
+		end tell
+	end tell
+	
+	delay 0.1
+	return true
+end run
