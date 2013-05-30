@@ -272,7 +272,7 @@ namespace :test do
       `rm -rf "#{results_dir}" && mkdir -p "#{results_dir}"`
 
       # Use system so we see the tests' output
-      if system("#{TEST_COMMAND} -output \"#{results_dir}\" -device 'iPhone'")
+      if system("#{TEST_COMMAND} -output \"#{results_dir}\" -sim_device 'iPhone'")
         puts "\niPhone integration tests passed.\n\n"
       else
         fail "\niPhone integration tests failed.\n\n"
@@ -287,7 +287,7 @@ namespace :test do
       `rm -rf "#{results_dir}" && mkdir -p "#{results_dir}"`
 
       # Use system so we see the tests' output
-      if system("#{TEST_COMMAND} -output \"#{results_dir}\" -device 'iPad'")
+      if system("#{TEST_COMMAND} -output \"#{results_dir}\" -sim_device 'iPad'")
         puts "\niPad integration tests passed.\n\n"
       else
         fail "\niPad integration tests failed.\n\n"
