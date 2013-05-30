@@ -8,8 +8,10 @@
 
 print_usage_and_exit () {
 	echo """
-subliminal-test (-project <project_path> | -workspace <workspace_path>) -device <device_type>
-		[-scheme <scheme_name>] [-sdk <sdk>] [-timeout <timeout>] [-output <output_dir>] [-replacement_bundle_id <id>]
+subliminal-test (-project <project_path> | -workspace <workspace_path>) 
+		( -sim_device <device_type> | -hw_id <udid> )
+		[-build_tool <tool_name>] [-scheme <scheme_name>] [-sdk <sdk>] [-replacement_bundle_id <id>]
+		[-timeout <timeout>] [-output <output_dir>] 
 		[-e <variable> <value>]
 
 \`subliminal-test\` builds a scheme contained in an Xcode project or Xcode workspace,
@@ -20,23 +22,46 @@ then tests the product using Subliminal.
   * with Subliminal having been installed on the test machine, using \`rake install docs=no\`
   * with tests using an \`SLUIALogger\` to log their status (though it, and other loggers, may be attached using an \`SLMultiLogger\`).
 
-Required arguments:
-	-project <project_path>		
-	-workspace <workspace_path>	Build the project or workspace at the specified path.
-					Only one of these values must be specified.
+In addition, a bug in instruments (http://openradar.appspot.com/radar?id=1544403) 
+requires that this script be run by an user with admin privileges, who has 
+executed \`sudo /usr/libexec/PlistBuddy -c \"Set :rights:system.privilege.taskport:allow-root true\" /etc/authorization\` 
+on the host machine. See http://stackoverflow.com/a/11416025/495611 for more details.
 
-	-device <device_type>		The device to simulate.
+Required arguments:
+	-project <project_path>		Build the project at the specified path.
+					Either this or \`-workspace\` must be specified.
+
+	-workspace <workspace_path>	Build the workspace at the specified path.
+					Either this or \`-project\` must be specified.
+
+	-sim_device <device_type>	The type of device to simulate.
 					Acceptable values are listed in the iPhone Simulator's \"Hardware -> Device\" menu.
+					Either this or \`-hw_id\` must be specified.
+
+	-hw_id <udid>			The UDID of the hardware to target.
+					Either this or \`-sim_device\` must be specified.
 
 Optional arguments:
-	-build_tool <toolname>		The tool to use to build the scheme. Should be either \"xcrun xcodebuild\" 
+	-build_tool <tool_name>		The tool to use to build the scheme. Should be either \"xcrun xcodebuild\" 
 					or \"xctool\". Defaults to \"xcrun xcodebuild\".
 
 	-scheme <scheme_name>		The scheme to use to build the specified project or workspace.
 					Defaults to \"Integration Tests\".
 
 	-sdk <sdk>			The SDK to use to build the specified project or workspace.
-					Defaults to \"iphonesimulator\" (the latest iPhone Simulator SDK).
+					This should be an iPhone Simulator SDK if \`-sim_device\` is specified, 
+					or an iOS device SDK if \`-hw_id\` is specified. Defaults to \"iphonesimulator\" 
+					(the latest iPhone Simulator SDK) if \`-sim_device\` is specified, 
+					or \"iphoneos\" (the latest iOS device SDK) if \`-hw_id\` is specified.
+
+	-replacement_bundle_id <id>	The identifier to use to overwrite the product's bundle identifier.
+					When testing in-app purchase, this must be the identifier of your main app.
+					
+					This option should only be used when testing in the Simulator,
+					because two applications with the same identifier cannot be installed simultaneously, 
+					and devices cannot be programmatically reset. If this is set and tests are running 
+					in the Simulator, the Simulator will be reset after testing 
+					to avoid collisions on subsequent runs.
 
 	-timeout <timeout>		The maximum duration for which to run the tests before aborting.
 					Specified in milliseconds and as a number rather than a string. Defaults to infinite.
@@ -46,13 +71,6 @@ Optional arguments:
 					  * screenshots taken when warnings or errors are logged;
 					  * and the run's .trace file, which can be opened in the Instruments GUI to view the run log and the screenshots.
 					Has no default value.
-
-	-replacement_bundle_id <id>	The identifier to use to overwrite the product's bundle identifier.
-					Has no default value.
-
-					When testing in-app purchase, this must be the identifier of your main app.
-					If this is set, the Simulator will be reset both before _and_ after testing,
-					as the Simulator cannot have two applications with the same identifier installed simultaneously.
 
 	-e <variable> <value>		An environment variable setting. You may specify more than one.
 	"""
@@ -70,13 +88,12 @@ fi
 # Defaults
 BUILD_TOOL="xcrun xcodebuild"
 SCHEME="Integration Tests"
-SDK="iphonesimulator"
 
 while :
 do
 case $1 in
 	# Set argument, wait for value
-    -project|-workspace|-device|-build_tool|-scheme|-sdk|-timeout|-output|-replacement_bundle_id|-e)
+    -project|-workspace|-sim_device|-hw_id|-build_tool|-scheme|-sdk|-replacement_bundle_id|-timeout|-output|-e)
 		if [[ -n "$CURRENT_ARG" ]]; then
 			echo "Missing value for argument: $CURRENT_ARG"
 			print_usage_and_exit
@@ -121,7 +138,7 @@ if [[ -n "$CURRENT_ARG" ]]; then
 fi
 
 # Enforce required args
-if [[ ( -z "$PROJECT" && -z "$WORKSPACE" ) || -z "$DEVICE" ]]; then
+if [[ ( -z "$PROJECT" && -z "$WORKSPACE" ) || ( -z "$SIM_DEVICE" && -z "$HW_ID" ) ]]; then
 	echo "Missing required arguments"
 	print_usage_and_exit
 fi
@@ -129,21 +146,29 @@ fi
 ### Build app
 echo "\nBuilding app...\n"
 
+if [[ -z "$SDK" ]]; then
+	SDK=`[[ -n "$SIM_DEVICE" ]] && echo "iphonesimulator" || echo "iphoneos"`
+fi
+
 # Instruments always uses the iPad simulator for universal binaries,
-# so to choose a device type we've got to override the TARGETED_DEVICE_FAMILY at build.
+# so to choose a simulated device type we've got to override the TARGETED_DEVICE_FAMILY at build.
 # http://openradar.appspot.com/13607967
-case $DEVICE in
-	iPhone*)
-		DEVICE_FAMILY=1
-		;;
-	iPad*)
-		DEVICE_FAMILY=2
-		;;
-	*)
-		echo "\nERROR: Unrecognized device type."
-		exit 1
-		;;
-esac
+TARGETED_DEVICE_FAMILY_ARG=""
+if [[ -n "$SIM_DEVICE" ]]; then
+	case $SIM_DEVICE in
+		iPhone*)
+			DEVICE_FAMILY=1
+			;;
+		iPad*)
+			DEVICE_FAMILY=2
+			;;
+		*)
+			echo "\nERROR: Unrecognized device type."
+			exit 1
+			;;
+	esac
+	TARGETED_DEVICE_FAMILY_ARG="TARGETED_DEVICE_FAMILY=$DEVICE_FAMILY"
+fi
 
 # Controlling where Xcode builds the app lets us determine where to point Instruments to
 BUILD_DIR=`mktemp -d /tmp/subliminal-test.build.XXXXXX`
@@ -152,13 +177,17 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
+# Don't validate the product (its entitlements etc.)
+# --this should not be necessary in the simulator
+# and can cause problems when testing on device
 $BUILD_TOOL\
 	-project "$PROJECT"\
 	-scheme "$SCHEME"\
 	-configuration Release\
 	-sdk "$SDK"\
-	TARGETED_DEVICE_FAMILY="$DEVICE_FAMILY"\
+	$TARGETED_DEVICE_FAMILY_ARG\
 	SYMROOT="$BUILD_DIR"\
+	VALIDATE_PRODUCT=NO\
 	build
 
 if [ $? -ne 0 ]; then
@@ -178,24 +207,26 @@ fi
 ### Prepare to install app
 echo "\nPreparing to install app...\n"
 
-# Reset the simulator
-SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
+if [[ -n "$SIM_DEVICE" ]]; then
+	# Reset the simulator
+	SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
 
-echo "\nResetting simulator content and settings..."
-if [ `osascript "$SCRIPT_DIR/reset_simulator"` ]; then
-	echo "Successfully reset iOS Simulator."
-else
-	echo "\nERROR: Could not reset the simulator."
-	exit 1
-fi
+	echo "\nResetting simulator content and settings..."
+	if [ `osascript "$SCRIPT_DIR/reset_simulator"` ]; then
+		echo "Successfully reset iOS Simulator."
+	else
+		echo "\nERROR: Could not reset the simulator."
+		exit 1
+	fi
 
-# Set the simulator's device type
-echo "\nSetting simulator device type..."
-if [ `osascript "$SCRIPT_DIR/set_simulator_device" "$DEVICE"` ]; then
-	echo "Successfully set simulator device type."
-else
-	echo "\nERROR: Could not set the simulator's device type."
-	exit 1
+	# Set the simulator's device type
+	echo "\nSetting simulator device type..."
+	if [ `osascript "$SCRIPT_DIR/set_simulator_device" "$SIM_DEVICE"` ]; then
+		echo "Successfully set simulator device type."
+	else
+		echo "\nERROR: Could not set the simulator's device type."
+		exit 1
+	fi
 fi
 
 # Set paths to save Instruments' output (at least temporarily)
@@ -212,23 +243,29 @@ mkdir "$RESULTS_DIR"
 echo "\nLaunching tests...\n"
 
 # Note that the Subliminal trace template includes the UIASCRIPT
+# and the environment variables passed to this script
+# are passed to instruments and the app by being exported at the top of this script
 TIMEOUT_ARG=`[[ -n "$TIMEOUT" ]] && echo "-l $TIMEOUT" || echo ""`
+HARDWARE_ARG=`[[ -n "$HW_ID" ]] && echo "-w $HW_ID" || echo ""`
 xcrun instruments\
 	-t "${HOME}/Library/Application Support/Instruments/Templates/Subliminal/Subliminal.tracetemplate"\
 	-D "$TRACE_FILE"\
 	$TIMEOUT_ARG\
+	$HARDWARE_ARG\
 	"$APP"\
 	-e UIARESULTSPATH "$RESULTS_DIR"
 
-# Reset the simulator again if the bundle identifier was replaced
-# due to the risk of collision
-if [[ -n "$REPLACEMENT_BUNDLE_ID" ]]; then
-	echo "\nResetting simulator content and settings again because bundle identifier was replaced..."
-	if [ `osascript "$SCRIPT_DIR/reset_simulator.scpt"` ]; then
-		echo "Successfully reset iOS Simulator."
-	else
-		echo "\nERROR: Could not reset the simulator."
-		# Don't fail at this point, since the tests ran
+if [[ -n "$SIM_DEVICE" ]]; then
+	# Reset the simulator again if the bundle identifier was replaced
+	# due to the risk of collision
+	if [[ -n "$REPLACEMENT_BUNDLE_ID" ]]; then
+		echo "\nResetting simulator content and settings again because bundle identifier was replaced..."
+		if [ `osascript "$SCRIPT_DIR/reset_simulator.scpt"` ]; then
+			echo "Successfully reset iOS Simulator."
+		else
+			echo "\nERROR: Could not reset the simulator."
+			# Don't fail at this point, since the tests ran
+		fi
 	fi
 fi
 

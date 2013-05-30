@@ -27,7 +27,7 @@ rake usage\tPrints usage statement for people unfamiliar with Rake or this parti
 rake usage[[<task>]]
 
 Arguments:
-  task\tThe name of the task to describe."""
+  task\tThe name of the task to describe.\n\n"""
 
 		when "uninstall"
 			puts "rake uninstall\tUninstalls supporting files"
@@ -40,19 +40,37 @@ rake install [docs=no] [dev=yes]
 
 Options:
   docs=no\tSkips the download and installation of Subliminal's documentation.
-  dev=yes\tInstalls files supporting the development of Subliminal."""
+  dev=yes\tInstalls files supporting the development of Subliminal.\n\n"""
 
     when "test", "test:unit", "test:integration", "test:integration:iphone", "test:integration:ipad"
       puts """
 rake test\tRuns Subliminal's tests
 
-rake test[:unit, :integration[:iphone, :ipad]]
+rake test:unit
+rake test:integration[:iphone, :ipad]
+rake test:integration:device udid=<udid>
 
 Sub-tasks:
   :unit\tRuns the unit tests
   :integration\tRuns the integration tests
-    :iphone\tFor iPhone
-    :ipad\tFor iPad"""
+    :iphone\tFor the iPhone Simulator
+    :ipad\tFor the iPad Simulator
+    :device\tFor a device
+
+\`test\` invokes \`test:unit\` and \`test:integration\`.
+\`test:integration\` invokes \`test:integration:iphone\` and \`test:integration:ipad\`.
+\`test:integration:device\` must be explicitly invoked.
+
+To run the integration tests on a device, you will need a valid developer identity 
+and provisioning profile. If you have a wildcard profile you will be able to run 
+the tests without creating a profile specifically for the \"Subliminal Integration Tests\" app.
+
+Subliminal's integration tests are currently configured to use the automatically-selected 
+iPhone Developer identity with the wildcard \"iOS Team Provisioning Profile\" managed 
+by Xcode.
+
+`integration:device` options:
+  udid=<udid>\tThe UDID of the device to target.\n\n"""
 
     when "build_docs"
       puts "rake build_docs\tBuilds Subliminal's documentation"
@@ -71,7 +89,7 @@ Tasks:
   test\t\tRuns Subliminal's tests
   build_docs\tBuilds Subliminal's documentation
 
-See 'rake usage[<task>]' for more information on a specific task."""
+See 'rake usage[<task>]' for more information on a specific task.\n\n"""
 	end
 end
 
@@ -251,6 +269,10 @@ namespace :test do
       iPad_succeeded = true
     end
 
+    # test:integration:device must be explicitly invoked
+    # by a developer with a valid identity/provisioning profile
+    # and device attached
+
     if iPhone_succeeded && iPad_succeeded
       puts "\nIntegration tests passed.\n\n"
     else
@@ -272,7 +294,7 @@ namespace :test do
       `rm -rf "#{results_dir}" && mkdir -p "#{results_dir}"`
 
       # Use system so we see the tests' output
-      if system("#{TEST_COMMAND} -output \"#{results_dir}\" -device 'iPhone'")
+      if system("#{TEST_COMMAND} -output \"#{results_dir}\" -sim_device 'iPhone'")
         puts "\niPhone integration tests passed.\n\n"
       else
         fail "\niPhone integration tests failed.\n\n"
@@ -287,10 +309,30 @@ namespace :test do
       `rm -rf "#{results_dir}" && mkdir -p "#{results_dir}"`
 
       # Use system so we see the tests' output
-      if system("#{TEST_COMMAND} -output \"#{results_dir}\" -device 'iPad'")
+      if system("#{TEST_COMMAND} -output \"#{results_dir}\" -sim_device 'iPad'")
         puts "\niPad integration tests passed.\n\n"
       else
         fail "\niPad integration tests failed.\n\n"
+      end
+    end
+
+    desc "Runs the integration tests on a device"
+    task :device do
+      puts "-- Running the integration tests on a device"
+
+      udid = ENV["udid"]
+      if !udid || udid.length == 0
+        fail "Device UDID not specified. See 'rake usage[test]'." 
+      end
+
+      results_dir = "#{SCRIPT_DIR}/results/device"
+      `rm -rf "#{results_dir}" && mkdir -p "#{results_dir}"`
+
+      # Use system so we see the tests' output
+      if system("#{TEST_COMMAND} -output \"#{results_dir}\" -hw_id #{udid}")
+        puts "\nDevice integration tests passed.\n\n"
+      else
+        fail "\nDevice integration tests failed.\n\n"
       end
     end
   end
@@ -303,7 +345,7 @@ desc "Builds the documentation"
 task :build_docs do    
   puts "\nBuilding documentation..."
 
-    # Use system so we see the build's output
+  # Use system so we see the build's output
   if system('xctool -project Subliminal.xcodeproj/ -scheme "Subliminal Documentation" build')
     puts "Documentation built successfully.\n\n"
   else
