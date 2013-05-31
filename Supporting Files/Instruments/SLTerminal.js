@@ -5,7 +5,10 @@ var _target = UIATarget.localTarget();
 // and to avoid collisions with UIAutomation/arbitrary JS executed by/using Subliminal
 var SLTerminal = {} 
 
-SLTerminal.scriptIndex = 0;
+// private variable
+SLTerminal._scriptIndex = 0;
+
+// public variables (manipulated by SLTerminal)
 SLTerminal.hasShutDown = false;
 
 while(!SLTerminal.hasShutDown) {
@@ -13,7 +16,7 @@ while(!SLTerminal.hasShutDown) {
 	while (true) {
 		var scriptIndex = _target.frontMostApp().preferencesValueForKey("scriptIndex");
 		
-		if (scriptIndex === SLTerminal.scriptIndex) {
+		if (scriptIndex === SLTerminal._scriptIndex) {
 			break;
 		}
 		_target.delay(0.1);
@@ -22,7 +25,7 @@ while(!SLTerminal.hasShutDown) {
 	// Read the JavaScript
 	var script = _target.frontMostApp().preferencesValueForKey("script");
 	// Uncomment to better understand what UIAutomation's doing (it may take awhile)
-	//UIALogger.logMessage("script:" + SLTerminal.scriptIndex + ": " + script);
+	//UIALogger.logMessage("script:" + SLTerminal._scriptIndex + ": " + script);
 	
 	// Evaluate the script
 	var result = null;
@@ -47,6 +50,6 @@ while(!SLTerminal.hasShutDown) {
 	_target.frontMostApp().setPreferencesValueForKey(result, "result");
 
 	// Notify SLTerminal that we've finished evaluation
-	_target.frontMostApp().setPreferencesValueForKey(SLTerminal.scriptIndex, "resultIndex");
-	SLTerminal.scriptIndex++;
+	_target.frontMostApp().setPreferencesValueForKey(SLTerminal._scriptIndex, "resultIndex");
+	SLTerminal._scriptIndex++;
 }

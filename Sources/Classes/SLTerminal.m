@@ -12,11 +12,14 @@
 
 NSString *const SLTerminalJavaScriptException = @"SLTerminalJavaScriptException";
 
-static NSString *const SLTerminalPreferencesKeyScriptIndex = @"scriptIndex";
-static NSString *const SLTerminalPreferencesKeyScript      = @"script";
-static NSString *const SLTerminalPreferencesKeyResultIndex  = @"resultIndex";
-static NSString *const SLTerminalPreferencesKeyResult       = @"result";
-static NSString *const SLTerminalPreferencesKeyException    = @"exception";
+static NSString *const SLTerminalPreferencesKeyScriptIndex      = @"scriptIndex";
+static NSString *const SLTerminalPreferencesKeyScript           = @"script";
+static NSString *const SLTerminalPreferencesKeyResultIndex      = @"resultIndex";
+static NSString *const SLTerminalPreferencesKeyResult           = @"result";
+static NSString *const SLTerminalPreferencesKeyException        = @"exception";
+
+static NSString *const SLTerminalScriptLoggingEnabledVariable   = @"scriptLoggingEnabled";
+static NSString *const SLTerminalHasShutDownVariable            = @"hasShutDown";
 
 const NSTimeInterval SLTerminalReadRetryDelay = 0.1;
 
@@ -211,7 +214,7 @@ static SLTerminal *__sharedTerminal = nil;
 }
 
 - (void)shutDown {
-    [self evalWithFormat:@"%@.hasShutDown = true;", self.scriptNamespace];
+    [self evalWithFormat:@"%@.%@ = true;", self.scriptNamespace, SLTerminalHasShutDownVariable];
 }
 
 @end
