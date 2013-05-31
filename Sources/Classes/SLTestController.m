@@ -237,8 +237,13 @@ static SLTestController *__sharedController = nil;
 
     if (_completionBlock) dispatch_sync(dispatch_get_main_queue(), _completionBlock);
 
-    // NOTE: Everything below the next line will not execute when running with Instruments attached,
-    // because the UIAutomation script will terminate, and then the app.
+    // NOTE: Everything below the next line will not execute when running
+    // from the command line, because the UIAutomation script will terminate,
+    // and then the app.
+    //
+    // When running with the Instruments GUI, the script will terminate,
+    // but the app will remain open and Instruments will keep recording
+    // --the developer must explicitly stop recording to terminate the app.
     [[SLTerminal sharedTerminal] shutDown];
 
     // clear controller state (important when testing Subliminal, when the controller will test repeatedly)
