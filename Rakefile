@@ -3,6 +3,7 @@ SCRIPT_DIR = "#{PROJECT_DIR}/Supporting Files/CI"
 
 FILE_TEMPLATE_DIR = "#{ENV['HOME']}/Library/Developer/Xcode/Templates/File Templates/Subliminal"
 TRACE_TEMPLATE_DIR = "#{ENV['HOME']}/Library/Application Support/Instruments/Templates/Subliminal"
+TRACE_TEMPLATE_NAME = "Subliminal.tracetemplate"
 
 DOCSET_DIR = "#{ENV['HOME']}/Library/Developer/Shared/Documentation/DocSets"
 DOCSET_NAME = "com.inkling.Subliminal.docset"
@@ -182,11 +183,15 @@ end
 def install_trace_template
 	puts "- Installing trace template..."
 
-  # It appears that the trace template actually caches `SLTerminal.js` when created,
-  # but it also refers to the file at the pre-cached path (inside the template directory), 
-  # so we might as well move it to that path
 	`mkdir -p "#{TRACE_TEMPLATE_DIR}" && \
 	cp "#{PROJECT_DIR}/Supporting Files/Instruments/"* "#{TRACE_TEMPLATE_DIR}"`
+
+  # Update the template to reference its script correctly
+  # (as the user's home directory isn't known until now)
+  `cd "#{TRACE_TEMPLATE_DIR}" &&\
+  plutil -convert xml1 #{TRACE_TEMPLATE_NAME} &&\
+  perl -pi -e "s|~|#{ENV['HOME']}|" #{TRACE_TEMPLATE_NAME} &&\
+  plutil -convert binary1 #{TRACE_TEMPLATE_NAME}`
 end
 
 def install_docs
