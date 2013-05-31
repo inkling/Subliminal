@@ -9,6 +9,7 @@ var SLTerminal = {}
 SLTerminal._scriptIndex = 0;
 
 // public variables (manipulated by SLTerminal)
+SLTerminal.scriptLoggingEnabled = false;
 SLTerminal.hasShutDown = false;
 
 while(!SLTerminal.hasShutDown) {
@@ -24,8 +25,9 @@ while(!SLTerminal.hasShutDown) {
 	
 	// Read the JavaScript
 	var script = _target.frontMostApp().preferencesValueForKey("script");
-	// Uncomment to better understand what UIAutomation's doing (it may take awhile)
-	//UIALogger.logMessage("script:" + SLTerminal._scriptIndex + ": " + script);
+	if (SLTerminal.scriptLoggingEnabled) {
+		UIALogger.logMessage("script:" + SLTerminal._scriptIndex + ": " + script);
+	}
 	
 	// Evaluate the script
 	var result = null;

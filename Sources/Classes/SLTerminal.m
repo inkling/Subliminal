@@ -12,12 +12,18 @@
 
 NSString *const SLTerminalJavaScriptException = @"SLTerminalJavaScriptException";
 
+// do not change these values without updating `SLTerminal.js`
+// and `Subliminal.tracetemplate`
 static NSString *const SLTerminalPreferencesKeyScriptIndex      = @"scriptIndex";
 static NSString *const SLTerminalPreferencesKeyScript           = @"script";
 static NSString *const SLTerminalPreferencesKeyResultIndex      = @"resultIndex";
 static NSString *const SLTerminalPreferencesKeyResult           = @"result";
 static NSString *const SLTerminalPreferencesKeyException        = @"exception";
 
+// variables are referred to by formatting @"%@.%@", self.scriptNamespace, <variableName>
+// do not change these values without updating `SLTerminal.js`
+// and `Subliminal.tracetemplate`
+static NSString *const SLTerminalNamespace                      = @"SLTerminal";
 static NSString *const SLTerminalScriptLoggingEnabledVariable   = @"scriptLoggingEnabled";
 static NSString *const SLTerminalHasShutDownVariable            = @"hasShutDown";
 
@@ -28,6 +34,7 @@ const NSTimeInterval SLTerminalReadRetryDelay = 0.1;
     NSString *_scriptNamespace;
     dispatch_queue_t _evalQueue;
     NSUInteger _scriptIndex;
+    BOOL _scriptLoggingEnabled;
 }
 
 + (void)initialize {
@@ -54,8 +61,7 @@ static SLTerminal *__sharedTerminal = nil;
     
     self = [super init];
     if (self) {
-        // do not change this value without updating SLTerminal.js
-        _scriptNamespace = @"SLTerminal";
+        _scriptNamespace = SLTerminalNamespace;
         _evalQueue = dispatch_queue_create("com.inkling.subliminal.SLTerminal.evalQueue", DISPATCH_QUEUE_SERIAL);
     }
     return self;
@@ -211,6 +217,31 @@ static SLTerminal *__sharedTerminal = nil;
     va_end(args);
 
     return [self eval:statement];
+}
+
+- (BOOL)scriptLoggingEnabled {
+    return _scriptLoggingEnabled;
+}
+
+- (void)setScriptLoggingEnabled:(BOOL)scriptLoggingEnabled {
+    if (scriptLoggingEnabled != _scriptLoggingEnabled) {
+        [self enableScriptLogging:scriptLoggingEnabled];
+        _scriptLoggingEnabled = scriptLoggingEnabled;
+    }
+}
+
+- (void)enableScriptLogging:(BOOL)enableScriptLogging {
+    if (dispatch_get_current_queue() != self.evalQueue) {
+        // dispatch_async so that this can be called by the application
+        // before testing has started
+        dispatch_async(self.evalQueue, ^{
+            [self enableScriptLogging:enableScriptLogging];
+        });
+        return;
+    }
+    [self evalWithFormat:@"%@.%@ = %@",
+                            self.scriptNamespace, SLTerminalScriptLoggingEnabledVariable,
+                            (enableScriptLogging ? @"true" : @"false")];
 }
 
 - (void)shutDown {
