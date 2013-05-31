@@ -9,30 +9,30 @@ SLTerminal.scriptIndex = 0;
 SLTerminal.hasShutDown = false;
 
 while(!SLTerminal.hasShutDown) {
-	// Wait for a command from SLTerminal
+	// Wait for JavaScript from SLTerminal
 	while (true) {
-		var commandIndex = _target.frontMostApp().preferencesValueForKey("commandIndex");
+		var scriptIndex = _target.frontMostApp().preferencesValueForKey("scriptIndex");
 		
-		if (commandIndex === SLTerminal.scriptIndex) {
+		if (scriptIndex === SLTerminal.scriptIndex) {
 			break;
 		}
 		_target.delay(0.1);
 	}
 	
-	// Read the command
-	var command = _target.frontMostApp().preferencesValueForKey("command");
+	// Read the JavaScript
+	var script = _target.frontMostApp().preferencesValueForKey("script");
 	// Uncomment to better understand what UIAutomation's doing (it may take awhile)
-	//UIALogger.logMessage("command:" + SLTerminal.scriptIndex + ": " + command);
+	//UIALogger.logMessage("script:" + SLTerminal.scriptIndex + ": " + script);
 	
-	// Evaluate the command
+	// Evaluate the script
 	var result = null;
 	try {
-		result = eval(command);
+		result = eval(script);
 	} catch (e) {
-		// Special case SyntaxErrors so that we can examine the malformed command
+		// Special case SyntaxErrors so that we can examine the malformed script
 		var message = e.toString();
 		if ((e instanceof Error) && e.name === "SyntaxError") {
-			message += " from command: \"" + command + "\"";
+			message += " from script: \"" + script + "\"";
 		}
 		_target.frontMostApp().setPreferencesValueForKey(message, "exception");
 	}

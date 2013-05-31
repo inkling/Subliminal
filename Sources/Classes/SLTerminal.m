@@ -12,8 +12,8 @@
 
 NSString *const SLTerminalJavaScriptException = @"SLTerminalJavaScriptException";
 
-static NSString *const SLTerminalPreferencesKeyCommandIndex = @"commandIndex";
-static NSString *const SLTerminalPreferencesKeyCommand      = @"command";
+static NSString *const SLTerminalPreferencesKeyScriptIndex = @"scriptIndex";
+static NSString *const SLTerminalPreferencesKeyScript      = @"script";
 static NSString *const SLTerminalPreferencesKeyResultIndex  = @"resultIndex";
 static NSString *const SLTerminalPreferencesKeyResult       = @"result";
 static NSString *const SLTerminalPreferencesKeyException    = @"exception";
@@ -24,7 +24,7 @@ const NSTimeInterval SLTerminalReadRetryDelay = 0.1;
 @implementation SLTerminal {
     NSString *_scriptNamespace;
     dispatch_queue_t _evalQueue;
-    NSUInteger _commandIndex;
+    NSUInteger _scriptIndex;
 }
 
 + (void)initialize {
@@ -51,6 +51,7 @@ static SLTerminal *__sharedTerminal = nil;
     
     self = [super init];
     if (self) {
+        // do not change this value without updating SLTerminal.js
         _scriptNamespace = @"SLTerminal";
         _evalQueue = dispatch_queue_create("com.inkling.subliminal.SLTerminal.evalQueue", DISPATCH_QUEUE_SERIAL);
     }
@@ -105,24 +106,28 @@ static SLTerminal *__sharedTerminal = nil;
 #pragma mark - Communication
 
 /**
- * Performs a round trip to SLTerminal.js by eval'ing the javascript and returning the result of eval() or throwing an exception
- *
- * The app and script execute in lock-step order by waiting for each other to update their respective keys. The scripts polls the "commandIndex" key and
- *  waits for it to increment before eval'ing the "command" key. The app waits for the result by polling for the existence of the "resultIndex" key. The app
- *  then checks the "result" and "exception" keys for the result of eval().
- *
- * Preferences Keys
- * ----------------
- *
- * Application
- *   "commandIndex": The scripts waits for this number to increment
- *        "command": The input to eval()
- *
- * Script
- *    "resultIndex": The app waits for this number to appear
- *         "result": The output of eval(), may be empty
- *      "exception": The textual representation of a javascript exception, will be empty if no exceptions occurred.
- *
+ Performs a round trip to `SLTerminal.js` by evaluating the script and returning the
+ result of `eval()` or throwing an exception.
+
+ `SLTerminal` and `SLTerminal.js` execute in lock-step order by waiting for each other
+ to update their respective keys within the application's preferences. `SLTerminal.js`
+ polls the "scriptIndex" key and waits for it to increment before evaluating the
+ "script" key. `SLTerminal` waits for the result by polling for the existence of the
+ "resultIndex" key. `SLTerminal` then checks the "result" and "exception" keys for
+ the result of `eval()`.
+
+ Preferences Keys
+ ----------------
+
+ Application
+   "scriptIndex": SLTerminal.js waits for this number to increment
+        "script": The input to eval()
+
+ Script
+    "resultIndex": The app waits for this number to appear
+         "result": The output of eval(), may be empty
+      "exception": The textual representation of a javascript exception, will be empty if no exceptions occurred.
+
  */
 - (id)eval:(NSString *)script {
     NSParameterAssert(script);
@@ -143,22 +148,22 @@ static SLTerminal *__sharedTerminal = nil;
         return result;
     }
 
-    // Step 1: Write the command to UIAutomation
+    // Step 1: Write the script to UIAutomation
 #if TARGET_IPHONE_SIMULATOR
     NSMutableDictionary *prefs = [NSMutableDictionary dictionaryWithContentsOfFile:[self simulatorPreferencesPath]];
     if (!prefs) {
         prefs = [NSMutableDictionary dictionary];
     }
-    [prefs setObject:@( _commandIndex ) forKey:SLTerminalPreferencesKeyCommandIndex];
-    [prefs setObject:script forKey:SLTerminalPreferencesKeyCommand];
+    [prefs setObject:@( _scriptIndex ) forKey:SLTerminalPreferencesKeyScriptIndex];
+    [prefs setObject:script forKey:SLTerminalPreferencesKeyScript];
     [prefs removeObjectForKey:SLTerminalPreferencesKeyResultIndex];
     [prefs removeObjectForKey:SLTerminalPreferencesKeyResult];
     [prefs removeObjectForKey:SLTerminalPreferencesKeyException];
     [prefs writeToFile:[self simulatorPreferencesPath] atomically:YES];
 #else
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:@( _commandIndex ) forKey:SLTerminalPreferencesKeyCommandIndex];
-    [defaults setObject:script forKey:SLTerminalPreferencesKeyCommand];
+    [defaults setObject:@( _scriptIndex ) forKey:SLTerminalPreferencesKeyScriptIndex];
+    [defaults setObject:script forKey:SLTerminalPreferencesKeyScript];
     [defaults removeObjectForKey:SLTerminalPreferencesKeyResultIndex];
     [defaults removeObjectForKey:SLTerminalPreferencesKeyResult];
     [defaults removeObjectForKey:SLTerminalPreferencesKeyException];
@@ -176,12 +181,12 @@ static SLTerminal *__sharedTerminal = nil;
 #endif
 
         if (resultPrefs[SLTerminalPreferencesKeyResultIndex]) {
-            NSAssert([resultPrefs[SLTerminalPreferencesKeyResultIndex] intValue] == _commandIndex, @"Result index is out of sync with command index");
+            NSAssert([resultPrefs[SLTerminalPreferencesKeyResultIndex] intValue] == _scriptIndex, @"Result index is out of sync with script index");
             break;
         }
         [NSThread sleepForTimeInterval:SLTerminalReadRetryDelay];
     }
-    _commandIndex++;
+    _scriptIndex++;
 
     // Step 3: Rethrow the javascript exception or return the result
     NSString *exceptionMessage = resultPrefs[SLTerminalPreferencesKeyException];
