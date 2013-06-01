@@ -10,7 +10,7 @@ print_usage_and_fail () {
 	echo """
 subliminal-test (-project <project_path> | -workspace <workspace_path>) 
 		( -sim_device <device_type> | -hw_id <udid> )
-		[-build_tool <tool_name>] [-scheme <scheme_name>] [-sdk <sdk>] [-replacement_bundle_id <id>]
+		[-build_tool <tool_name>] [-scheme <scheme_name>] [-sdk <sdk>] [-replacement_bundle_id <id>] [--quiet_build]
 		[-timeout <timeout>] [-output <output_dir>] 
 		[-e <variable> <value>]
 
@@ -69,6 +69,10 @@ Optional build arguments:
 					in the Simulator, the Simulator will be reset after testing 
 					to avoid collisions on subsequent runs.
 
+	--quiet_build			If specified, the script will only log build output to the console 
+					if the build fails. Builds may be made less verbose, without hiding 
+					log output entirely, by using \`xctool\` as a build tool.
+
 Optional testing arguments:
 	-timeout <timeout>		The maximum duration for which to run the tests before aborting.
 					Specified in milliseconds and as a number rather than a string. Defaults to infinite.
@@ -100,6 +104,11 @@ CONFIGURATION="Release"
 while :
 do
 case $1 in
+	# Must check this before the single dash options (because -* would match it)
+    --quiet_build)
+		BUILD_LOG=`mktemp /tmp/subliminal-test.build-log.XXXXXX`
+		shift 1;;
+
 	# Set argument, wait for value
     -project|-workspace|-sim_device|-hw_id|-build_tool|-scheme|-configuration|-sdk|-replacement_bundle_id|-timeout|-output|-e)
 		if [[ -n "$CURRENT_ARG" ]]; then
@@ -154,12 +163,14 @@ fi
 # This function allows the script to abort at any point below without duplicating cleanup logic
 cleanup_and_exit () {
 	[[ -n "$BUILD_DIR" ]] && rm -rf "$BUILD_DIR"
+	[[ -n "$BUILD_LOG" ]] && rm -rf "$BUILD_LOG"
 	[[ -n "$RUN_DIR" ]] && rm -rf "$RUN_DIR"
 	exit $1
 }
 
 ### Build app
-echo "\n\nBuilding app..."
+QUIETLY=`[[ -e "$BUILD_LOG" ]] && echo " (quietly)" || echo ""`
+echo "\n\nBuilding app$QUIETLY..."
 
 if [[ -z "$SDK" ]]; then
 	SDK=`[[ -n "$SIM_DEVICE" ]] && echo "iphonesimulator" || echo "iphoneos"`
@@ -192,20 +203,28 @@ if [ $? -ne 0 ]; then
 	cleanup_and_exit 1
 fi
 
-# Don't validate the product (its entitlements etc.)
-# --this should not be necessary in the simulator
-# and can cause problems when testing on device
-$BUILD_TOOL\
-	-project "$PROJECT"\
-	-scheme "$SCHEME"\
-	-configuration "$CONFIGURATION"\
-	-sdk "$SDK"\
-	$TARGETED_DEVICE_FAMILY_ARG\
-	SYMROOT="$BUILD_DIR"\
-	VALIDATE_PRODUCT=NO\
-	build
+# build in a subshell to conditionally redirect its output (and only its output)
+# to the build log (if one was created because --quiet_build was specified)
+(
+	[[ -e "$BUILD_LOG" ]] && exec >"$BUILD_LOG" 2>&1
+
+	# Don't validate the product (its entitlements etc.)
+	# --this should not be necessary in the simulator
+	# and can cause problems when testing on device
+	$BUILD_TOOL\
+		-project "$PROJECT"\
+		-scheme "$SCHEME"\
+		-configuration "$CONFIGURATION"\
+		-sdk "$SDK"\
+		$TARGETED_DEVICE_FAMILY_ARG\
+		SYMROOT="$BUILD_DIR"\
+		VALIDATE_PRODUCT=NO\
+		build
+)
 
 if [ $? -ne 0 ]; then
+	[[ -e "$BUILD_LOG" ]] && cat "$BUILD_LOG"
+
 	echo "\n\nERROR: Could not build application."
 	cleanup_and_exit 1
 fi
