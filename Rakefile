@@ -226,7 +226,7 @@ end
 
 desc "Runs Subliminal's tests"
 task :test do
-  puts "\nRunning tests..."
+  puts "\nRunning tests...\n\n"
 
   # The unit tests guarantee the integrity of the integration tests
   # So no point in running the latter if the unit tests break the build
@@ -239,7 +239,7 @@ end
 namespace :test do
   desc "Runs the unit tests"
   task :unit do    
-    puts "- Running unit tests..."
+    puts "- Running unit tests...\n\n"
 
     # Use system so we see the tests' output
     if system('xctool -project Subliminal.xcodeproj/ -scheme "Subliminal Unit Tests" clean test')
@@ -251,7 +251,7 @@ namespace :test do
 
   desc "Runs the integration tests"
   task :integration do    
-    puts "- Running integration tests..."
+    puts "- Running integration tests...\n\n"
 
     # When the tests are running separately, 
     # we want them to (individually) fail rake
@@ -348,7 +348,7 @@ end
 
 desc "Builds the documentation"
 task :build_docs do    
-  puts "\nBuilding documentation..."
+  puts "\nBuilding documentation...\n\n"
 
   # Use system so we see the build's output
   if system('xctool -project Subliminal.xcodeproj/ -scheme "Subliminal Documentation" build')
