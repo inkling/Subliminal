@@ -242,7 +242,7 @@ namespace :test do
     puts "- Running unit tests..."
 
     # Use system so we see the tests' output
-    if system('xctool -project Subliminal.xcodeproj/ -scheme "Subliminal Unit Tests" test')
+    if system('xctool -project Subliminal.xcodeproj/ -scheme "Subliminal Unit Tests" clean test')
       puts "Unit tests passed.\n\n"
     else      
       fail "Unit tests failed."
