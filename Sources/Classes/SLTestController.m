@@ -47,11 +47,18 @@ static void SLUncaughtExceptionHandler(NSException *exception)
     }
 }
 
+
+@interface SLTestController () <UIAlertViewDelegate>
+@end
+
 @implementation SLTestController {
     BOOL _runningWithFocus;
     NSSet *_testsToRun;
     NSUInteger _numTestsExecuted, _numTestsFailed;
     void(^_completionBlock)(void);
+
+    dispatch_semaphore_t _startTestingSemaphore;
+    BOOL _shouldWaitToStartTesting;
 }
 
 + (void)initialize {
@@ -109,8 +116,23 @@ static SLTestController *__sharedController = nil;
     self = [super init];
     if (self) {
         _defaultTimeout = kDefaultTimeout;
+        _startTestingSemaphore = dispatch_semaphore_create(0);
     }
     return self;
+}
+
+- (void)dealloc {
+    dispatch_release(_startTestingSemaphore);
+}
+
+- (BOOL)shouldWaitToStartTesting {
+    return _shouldWaitToStartTesting;
+}
+
+- (void)setShouldWaitToStartTesting:(BOOL)shouldWaitToStartTesting {
+    if (shouldWaitToStartTesting != _shouldWaitToStartTesting) {
+        _shouldWaitToStartTesting = shouldWaitToStartTesting;
+    }
 }
 
 // Having the Accessibility Inspector enabled while tests are running
@@ -148,7 +170,6 @@ static SLTestController *__sharedController = nil;
     appsUncaughtExceptionHandler = NSGetUncaughtExceptionHandler();
     NSSetUncaughtExceptionHandler(&SLUncaughtExceptionHandler);
 
-    // register defaults
     SLLog(@"Tests are starting up... ");
 
     // we use a local element resolution timeout
@@ -157,6 +178,24 @@ static SLTestController *__sharedController = nil;
     [[SLTerminal sharedTerminal] evalWithFormat:@"UIATarget.localTarget().setTimeout(0);"];
 
     [SLAlertHandler loadUIAAlertHandling];
+
+#if DEBUG
+    if (self.shouldWaitToStartTesting) {
+        static NSString *const kWaitToStartTestingAlertTitle = @"Waiting to start testing...";
+
+        SLAlert *waitToStartTestingAlert = [SLAlert alertWithTitle:kWaitToStartTestingAlertTitle];
+        [SLAlertHandler addHandler:[waitToStartTestingAlert dismissByUser]];
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[[UIAlertView alloc] initWithTitle:kWaitToStartTestingAlertTitle
+                                        message:@"You can attach the debugger now."
+                                       delegate:self
+                              cancelButtonTitle:@"Continue"
+                              otherButtonTitles:nil] show];
+        });
+        dispatch_semaphore_wait(_startTestingSemaphore, DISPATCH_TIME_FOREVER);
+    }
+#endif
 
     if (_runningWithFocus) {
         SLLog(@"Focusing on test cases in specific tests: %@.", [[_testsToRun allObjects] componentsJoinedByString:@","]);
@@ -258,6 +297,13 @@ static SLTestController *__sharedController = nil;
     // don't treat Subliminal's handler as the app's handler,
     // which would cause Subliminal's handler to recurse (as it calls the app's handler)
     NSSetUncaughtExceptionHandler(appsUncaughtExceptionHandler);
+}
+
+
+#pragma mark - UIAlertView delegate methods
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    dispatch_semaphore_signal(_startTestingSemaphore);
 }
 
 @end
