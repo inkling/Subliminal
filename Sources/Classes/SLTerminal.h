@@ -16,8 +16,9 @@
  */
 @interface SLTerminal : NSObject
 
+#pragma mark - Getting the Shared Terminal
 /// ----------------------------------------
-/// @name Getting the Terminal Instance
+/// @name Getting the Shared Terminal
 /// ----------------------------------------
 
 /**
@@ -27,6 +28,7 @@
  */
 + (SLTerminal *)sharedTerminal;
 
+#pragma mark - Evaluating JavaScript
 /// ----------------------------------------
 /// @name Evaluating JavaScript
 /// ----------------------------------------
@@ -113,6 +115,7 @@
  */
 @interface SLTerminal (Internal)
 
+#pragma mark - Internal Methods
 /// ----------------------------------------
 /// @name Internal Methods
 /// ----------------------------------------

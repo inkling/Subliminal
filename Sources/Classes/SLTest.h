@@ -19,6 +19,7 @@
  */
 @interface SLTest : NSObject
 
+#pragma mark - Retrieving Tests to Run
 /// ----------------------------------------
 /// @name Retrieving Tests to Run
 /// ----------------------------------------
@@ -55,6 +56,7 @@
  */
 + (Class)testNamed:(NSString *)name;
 
+#pragma mark - Conditionalizing Test Runs
 /// ----------------------------------------
 /// @name Conditionalizing Test Runs
 /// ----------------------------------------
@@ -134,6 +136,7 @@
  */
 + (BOOL)isFocused;
 
+#pragma mark - Running a Test
 /// ----------------------------------------
 /// @name Running a Test
 /// ----------------------------------------
@@ -181,6 +184,7 @@
  */
 @interface SLTest (SLTestCase)
 
+#pragma mark - Running Test Cases
 /// ----------------------------------------
 /// @name Running Test Cases
 /// ----------------------------------------

@@ -15,6 +15,7 @@
  */
 @interface SLTestController : NSObject
 
+#pragma mark - Configuring the Default Timeout
 /// -------------------------------------------
 /// @name Configuring the Default Timeout
 /// -------------------------------------------
@@ -31,6 +32,7 @@
  */
 @property (nonatomic) NSTimeInterval defaultTimeout;
 
+#pragma mark - Getting the Shared Test Controller
 /// -------------------------------------------
 /// @name Getting the Shared Test Controller
 /// -------------------------------------------
@@ -42,6 +44,7 @@
  */
 + (instancetype)sharedTestController;
 
+#pragma mark - Running Tests
 /// -------------------------------------------
 /// @name Running Tests
 /// -------------------------------------------

@@ -21,6 +21,11 @@
  */
 @interface SLElement : SLUIAElement
 
+#pragma mark - Matching Interface Elements
+/// -------------------------------------------
+/// @name Matching Interface Elements
+/// -------------------------------------------
+
 /**
  Creates and returns an element that matches objects in the accessibility hierarchy
  with the specified accessibility label.

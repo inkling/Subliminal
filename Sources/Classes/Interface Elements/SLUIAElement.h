@@ -20,6 +20,7 @@
  */
 @interface SLUIAElement : NSObject
 
+#pragma mark - Configuring the Default Timeout
 /// ----------------------------------------
 /// @name Configuring the Default Timeout
 /// ----------------------------------------
@@ -60,6 +61,7 @@
  */
 + (NSTimeInterval)defaultTimeout;
 
+#pragma mark - Determining Element State
 /// ----------------------------------------
 /// @name Determining Element State
 /// ----------------------------------------
@@ -172,6 +174,7 @@
  */
 - (BOOL)isTappable;
 
+#pragma mark - Gestures and Actions
 /// ----------------------------------------
 /// @name Gestures and Actions
 /// ----------------------------------------
@@ -215,6 +218,7 @@
  */
 - (void)dragWithStartPoint:(CGPoint)startPoint endPoint:(CGPoint)endPoint;
 
+#pragma mark - Identifying Elements
 /// ----------------------------------------
 /// @name Identifying Elements
 /// ----------------------------------------
@@ -251,6 +255,7 @@
  */
 - (NSString *)value;
 
+#pragma mark - Determining Element Positioning
 /// ----------------------------------------
 /// @name Determining Element Positioning
 /// ----------------------------------------
@@ -284,6 +289,7 @@
  */
 - (CGRect)rect;
 
+#pragma mark - Logging Element Information
 /// ----------------------------------------
 /// @name Logging Element Information
 /// ----------------------------------------

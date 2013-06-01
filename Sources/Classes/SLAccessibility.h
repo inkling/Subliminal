@@ -20,6 +20,11 @@
  */
 @interface NSObject (SLAccessibility)
 
+#pragma mark - Locating Elements Within the Accessibility Hierarchy
+/// ----------------------------------------
+/// @name Locating Elements Within the Accessibility Hierarchy
+/// ----------------------------------------
+
 /**
  Returns the accessibility path from this object to the object 
  [matching](-[SLElement matchesObject:]) the specified element.
@@ -127,8 +132,9 @@
  */
 - (NSObject *)slChildAccessibilityElementAtIndex:(NSUInteger)index favoringSubviews:(BOOL)favoringSubviews;
 
+#pragma mark - Debug Methods
 /// ----------------------------------------
-/// @name Debug methods
+/// @name Debug Methods
 /// ----------------------------------------
 
 /**
@@ -179,6 +185,11 @@
  */
 @interface SLAccessibilityPath : NSObject
 
+#pragma mark - Examining the Path's Destination
+/// ----------------------------------------
+/// @name Examining the Path's Destination
+/// ----------------------------------------
+
 /**
  Allows the caller to interact with the last path component of the receiver.
  
@@ -195,6 +206,11 @@
  constructed and it receiving this message.
  */
 - (void)examineLastPathComponent:(void (^)(NSObject *lastPathComponent))block;
+
+#pragma mark - Serializing the Path
+/// ----------------------------------------
+/// @name Serializing the Path
+/// ----------------------------------------
 
 /**
  Binds the components of the receiver to unique `UIAElement` instances 

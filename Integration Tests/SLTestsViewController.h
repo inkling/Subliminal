@@ -18,6 +18,11 @@
  */
 @interface SLTestsViewController : UITableViewController
 
+#pragma mark - Initializing a Tests View Controller
+/// ---------------------------------------------
+/// @name Initializing a Tests View Controller
+/// ---------------------------------------------
+
 /**
  Returns a newly initialized view controller with the specified tests.
  
@@ -28,9 +33,10 @@
  */
 - (instancetype)initWithTests:(NSArray *)tests;
 
-///
-/// @name SLIntegrationTest app hooks
-///
+#pragma mark - SLIntegrationTest App Hooks
+/// ------------------------------------
+/// @name SLIntegrationTest App Hooks
+/// ------------------------------------
 
 /**
  Presents an SLTestViewController initialized with the specified information.

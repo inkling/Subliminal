@@ -14,6 +14,7 @@
  */
 @interface SLTestController (Internal)
 
+#pragma mark - Internal Methods
 /// ----------------------------------------
 /// @name Internal Methods
 /// ----------------------------------------
