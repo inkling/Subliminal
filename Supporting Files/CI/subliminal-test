@@ -24,8 +24,11 @@ then tests the product using Subliminal.
 
 In addition, a bug in instruments (http://openradar.appspot.com/radar?id=1544403) 
 requires that this script be run by an user with admin privileges, who has 
-executed \`sudo /usr/libexec/PlistBuddy -c \"Set :rights:system.privilege.taskport:allow-root true\" /etc/authorization\` 
-on the host machine. See http://stackoverflow.com/a/11416025/495611 for more details.
+executed the following command on the host machine:
+	
+\tsudo /usr/libexec/PlistBuddy -c \"Set :rights:system.privilege.taskport:allow-root true\" /etc/authorization
+
+See http://stackoverflow.com/a/11416025/495611 for more details.
 
 Required arguments:
 	-project <project_path>		Build the project at the specified path.
@@ -41,12 +44,15 @@ Required arguments:
 	-hw_id <udid>			The UDID of the hardware to target.
 					Either this or \`-sim_device\` must be specified.
 
-Optional arguments:
+Optional build arguments:
 	-build_tool <tool_name>		The tool to use to build the scheme. Should be either \"xcrun xcodebuild\" 
 					or \"xctool\". Defaults to \"xcrun xcodebuild\".
 
 	-scheme <scheme_name>		The scheme to use to build the specified project or workspace.
 					Defaults to \"Integration Tests\".
+
+	-configuration <configuration>	The configuration to use to build the target specified by \`-scheme\`.
+					Defaults to \"Release\".
 
 	-sdk <sdk>			The SDK to use to build the specified project or workspace.
 					This should be an iPhone Simulator SDK if \`-sim_device\` is specified, 
@@ -63,6 +69,7 @@ Optional arguments:
 					in the Simulator, the Simulator will be reset after testing 
 					to avoid collisions on subsequent runs.
 
+Optional testing arguments:
 	-timeout <timeout>		The maximum duration for which to run the tests before aborting.
 					Specified in milliseconds and as a number rather than a string. Defaults to infinite.
 
@@ -88,12 +95,13 @@ fi
 # Defaults
 BUILD_TOOL="xcrun xcodebuild"
 SCHEME="Integration Tests"
+CONFIGURATION="Release"
 
 while :
 do
 case $1 in
 	# Set argument, wait for value
-    -project|-workspace|-sim_device|-hw_id|-build_tool|-scheme|-sdk|-replacement_bundle_id|-timeout|-output|-e)
+    -project|-workspace|-sim_device|-hw_id|-build_tool|-scheme|-configuration|-sdk|-replacement_bundle_id|-timeout|-output|-e)
 		if [[ -n "$CURRENT_ARG" ]]; then
 			echo "Missing value for argument: $CURRENT_ARG"
 			print_usage_and_exit
@@ -183,7 +191,7 @@ fi
 $BUILD_TOOL\
 	-project "$PROJECT"\
 	-scheme "$SCHEME"\
-	-configuration Release\
+	-configuration "$CONFIGURATION"\
 	-sdk "$SDK"\
 	$TARGETED_DEVICE_FAMILY_ARG\
 	SYMROOT="$BUILD_DIR"\
