@@ -537,6 +537,8 @@
 @end
 
 
+#pragma mark - Constants
+
 /// Thrown if a test assertion fails.
 extern NSString *const SLTestAssertionFailedException;
 

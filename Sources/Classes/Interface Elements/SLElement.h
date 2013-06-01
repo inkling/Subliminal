@@ -114,6 +114,8 @@
 @end
 
 
+#pragma mark - Constants
+
 /// Used with `+[SLElement elementWithAccessibilityLabel:value:traits:]`
 /// to match elements with any combination of accessibility traits.
 extern UIAccessibilityTraits SLUIAccessibilityTraitAny;

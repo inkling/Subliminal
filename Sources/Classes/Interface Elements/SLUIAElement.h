@@ -316,12 +316,20 @@
 @end
 
 
-// all exceptions thrown by SLUIAElement will have names beginning with this prefix
+#pragma mark - Constants
+
+/// All exceptions thrown by SLUIAElement will have names beginning with this prefix.
 extern NSString *const SLUIAElementExceptionNamePrefix;
 
+/// Thrown if an element is messaged which it is [invalid](-isValid).
 extern NSString *const SLUIAElementInvalidException;
+
+/// Thrown if tests attempt to simulate user interaction with an element
+/// while that element is not [tappable](-isTappable).
 extern NSString *const SLUIAElementNotTappableException;
 
+/// `SLUIAElement` waits for this duration between checks of an element's
+/// validity, tappability, etc.
 extern const NSTimeInterval SLUIAElementWaitRetryDelay;
 
 /// Represents an invalid CGPoint.

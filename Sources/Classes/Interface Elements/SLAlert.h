@@ -212,6 +212,8 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
 @end
 
 
+#pragma mark - Constants
+
 /**
  If tests assert that a manual handler handled an alert after that alert is shown, 
  it is _not_ necessary to have the tests wait: `-didHandleAlert` will block until

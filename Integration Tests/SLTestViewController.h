@@ -8,11 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-/// The test case to present.
-extern NSString *const SLTestCaseKey;
-/// The name of the SLTestCaseViewController subclass to present for the test case.
-extern NSString *const SLTestCaseViewControllerClassNameKey;
-
 /**
  An SLTestViewController displays a list of SLTest test cases in a plain-style 
  table view.
@@ -71,3 +66,11 @@ extern NSString *const SLTestCaseViewControllerClassNameKey;
 - (void)dismissCurrentTestCase;
 
 @end
+
+
+#pragma mark - Constants
+
+/// The test case to present.
+extern NSString *const SLTestCaseKey;
+/// The name of the SLTestCaseViewController subclass to present for the test case.
+extern NSString *const SLTestCaseViewControllerClassNameKey;

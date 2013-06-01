@@ -8,11 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-/// The name of an SLTest subclass to present.
-extern NSString *const SLTestNameKey;
-/// An NSSet * containing the NSString * test cases of the above subclass
-/// that will be executed by Subliminal.
-extern NSString *const SLTestCasesKey;
 
 /**
  An SLTestsViewController displays a list of SLTest subclasses 
@@ -70,3 +65,12 @@ extern NSString *const SLTestCasesKey;
 - (void)dismissCurrentTest;
 
 @end
+
+
+#pragma mark - Constants
+
+/// The name of an SLTest subclass to present.
+extern NSString *const SLTestNameKey;
+/// An NSSet * containing the NSString * test cases of the above subclass
+/// that will be executed by Subliminal.
+extern NSString *const SLTestCasesKey;

@@ -9,12 +9,6 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-/// test
-extern NSString *const SLTerminalJavaScriptException;
-
-extern const NSTimeInterval SLTerminalReadRetryDelay;
-
-
 /**
  The singleton `SLTerminal` instance communicates with the Automation instrument 
  in order to evaluate arbitrary JavaScript, in particular scripts which 
@@ -142,3 +136,15 @@ extern const NSTimeInterval SLTerminalReadRetryDelay;
 - (void)shutDown;
 
 @end
+
+
+#pragma mark - Constants
+
+/// Thrown if a JavaScript script could not be [evaluated](-eval:), or if the
+/// script threw an exception when evaluated. The exception's reason will be the
+/// string representation of the JavaScript `Exception` object.
+extern NSString *const SLTerminalJavaScriptException;
+
+/// `SLTerminal` waits for this duration between checking to see if a script
+/// has finished evaluating.
+extern const NSTimeInterval SLTerminalReadRetryDelay;

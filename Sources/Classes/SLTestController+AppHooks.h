@@ -188,5 +188,7 @@
 @end
 
 
+#pragma mark - Constants
+
 /// Thrown if the test controller is asked to send an action for which no target is registered.
 extern NSString *const SLAppActionTargetDoesNotExistException;
