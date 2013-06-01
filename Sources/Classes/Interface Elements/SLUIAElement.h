@@ -194,20 +194,19 @@
 - (void)tap;
 
 /**
- Triggers the JavaScript call dragInsideWithOptions with the specified 
- start and end points.
+ Drags within the bounds of the specified element.
  
- This method passes the start and end points in floating point format.
- This causes UIAutomation to interpret the points in the normalized coordinates 
- of the specified element's view.  That is, a start or end point of {0.5, 0.5}
- is interpreted to be at the center of the target element's view.
+ Each offset specifies a pair of _x_ and _y_ values, each ranging from `0.0` to `1.0`.
+ These values represent, respectively, relative horizontal and vertical positions 
+ within the element's `-rect`, with `{0.0, 0.0}` as the top left and `{1.0, 1.0}` 
+ as the bottom right.
 
- This method uses a drag duration of 1.0 seconds because this is the documented 
- default duration for touch-and-hold gestures according to Apple's UIAElement 
- class reference.
+ This method uses a drag duration of 1.0 seconds (the documented default duration 
+ for touch-and-hold gestures according to Apple's `UIAElement` class reference).
  
- @param startPoint The start point for the drag.
- @param endPoint The end point for the drag.
+ @param startOffset The offset, within the element's rect, at which to begin 
+ dragging.
+ @param endOffset The offset, within the element's rect, at which to end dragging.
 
  @exception SLUIAElementInvalidException Raised if the element is not valid
  by the end of the [default timeout](+defaultTimeout).
@@ -216,7 +215,7 @@
  when whatever amount of time remains of the default timeout after the element
  becomes valid elapses.
  */
-- (void)dragWithStartPoint:(CGPoint)startPoint endPoint:(CGPoint)endPoint;
+- (void)dragWithStartOffset:(CGPoint)startOffset endOffset:(CGPoint)endOffset;
 
 #pragma mark - Identifying Elements
 /// ----------------------------------------
