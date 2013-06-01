@@ -287,9 +287,9 @@ namespace :test do
 
   namespace :integration do
     TEST_COMMAND="\"#{SCRIPT_DIR}/subliminal-test\"\
-                      -build_tool xctool\
                       -project Subliminal.xcodeproj\
-                      -scheme 'Subliminal Integration Tests'"
+                      -scheme 'Subliminal Integration Tests'\
+                      --quiet_build"
 
     desc "Runs the integration tests on iPhone"
     task :iphone do

@@ -219,7 +219,7 @@ fi
 		$TARGETED_DEVICE_FAMILY_ARG\
 		SYMROOT="$BUILD_DIR"\
 		VALIDATE_PRODUCT=NO\
-		build
+		clean build
 )
 
 if [ $? -ne 0 ]; then
