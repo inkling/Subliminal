@@ -6,7 +6,7 @@
 # Execute `subliminal-test` with no arguments to print usage.
 
 
-print_usage_and_exit () {
+print_usage_and_fail () {
 	echo """
 subliminal-test (-project <project_path> | -workspace <workspace_path>) 
 		( -sim_device <device_type> | -hw_id <udid> )
@@ -86,7 +86,7 @@ Optional testing arguments:
 
 # If we were invoked with no arguments, just print usage and exit
 if [[ -z $1 ]]; then
-	print_usage_and_exit
+	print_usage_and_fail
 fi
 
 
@@ -104,7 +104,7 @@ case $1 in
     -project|-workspace|-sim_device|-hw_id|-build_tool|-scheme|-configuration|-sdk|-replacement_bundle_id|-timeout|-output|-e)
 		if [[ -n "$CURRENT_ARG" ]]; then
 			echo "Missing value for argument: $CURRENT_ARG"
-			print_usage_and_exit
+			print_usage_and_fail
 		fi
 		case $1 in
 			# Set a placeholder for the real arg (the env var)
@@ -116,14 +116,14 @@ case $1 in
 
     -*)	
 		echo "Unrecognized argument: $1"
-    	print_usage_and_exit;;
+    	print_usage_and_fail;;
 
 	# Set value for argument (unless end of command)
 	*)
 		if [[ -n "$1" ]]; then
 			if [[ -z "$CURRENT_ARG" ]]; then
 				echo "Value \"$1\" is missing argument"
-				print_usage_and_exit
+				print_usage_and_fail
 			elif [[ "$CURRENT_ARG" == "-e" ]]; then
 				# Replace the env var placeholder
 				CURRENT_ARG="export $1"
@@ -142,14 +142,21 @@ done
 # We reached the end of the command while still expecting an argument
 if [[ -n "$CURRENT_ARG" ]]; then
 	echo "Missing value for argument: $CURRENT_ARG"
-	print_usage_and_exit
+	print_usage_and_fail
 fi
 
 # Enforce required args
 if [[ ( -z "$PROJECT" && -z "$WORKSPACE" ) || ( -z "$SIM_DEVICE" && -z "$HW_ID" ) ]]; then
 	echo "Missing required arguments"
-	print_usage_and_exit
+	print_usage_and_fail
 fi
+
+# This function allows the script to abort at any point below without duplicating cleanup logic
+cleanup_and_exit () {
+	[[ -n "$BUILD_DIR" ]] && rm -rf "$BUILD_DIR"
+	[[ -n "$RUN_DIR" ]] && rm -rf "$RUN_DIR"
+	exit $1
+}
 
 ### Build app
 echo "\nBuilding app...\n"
@@ -182,7 +189,7 @@ fi
 BUILD_DIR=`mktemp -d /tmp/subliminal-test.build.XXXXXX`
 if [ $? -ne 0 ]; then
 	echo "\nERROR: Could not create build directory."
-	exit 1
+	cleanup_and_exit 1
 fi
 
 # Don't validate the product (its entitlements etc.)
@@ -200,7 +207,7 @@ $BUILD_TOOL\
 
 if [ $? -ne 0 ]; then
 	echo "\nERROR: Could not build application."
-	exit 1
+	cleanup_and_exit 1
 fi
 
 # Note that Instruments will install the app in the Simulator when launched
@@ -224,7 +231,7 @@ if [[ -n "$SIM_DEVICE" ]]; then
 		echo "Successfully reset iOS Simulator."
 	else
 		echo "\nERROR: Could not reset the simulator."
-		exit 1
+		cleanup_and_exit 1
 	fi
 
 	# Set the simulator's device type
@@ -233,7 +240,7 @@ if [[ -n "$SIM_DEVICE" ]]; then
 		echo "Successfully set simulator device type."
 	else
 		echo "\nERROR: Could not set the simulator's device type."
-		exit 1
+		cleanup_and_exit 1
 	fi
 fi
 
@@ -241,7 +248,7 @@ fi
 RUN_DIR=`mktemp -d /tmp/subliminal-test.run.XXXXXX`
 if [ $? -ne 0 ]; then
 	echo "\nERROR: Could not create temporary test results directory."
-	exit 1
+	cleanup_and_exit 1
 fi
 TRACE_FILE="$RUN_DIR/Integration Tests.trace"
 RESULTS_DIR="$RUN_DIR/Automation Results"
@@ -307,8 +314,5 @@ if [[ -d "${OUTPUT}" ]]; then
 	mv "$RESULTS_DIR/Run 1" "$OUTPUT/Run Data"
 fi
 
-rm -rf "$RUN_DIR"
-rm -rf "$BUILD_DIR"
-
 echo "\nRun complete."
-exit $TEST_STATUS
+cleanup_and_exit $TEST_STATUS
