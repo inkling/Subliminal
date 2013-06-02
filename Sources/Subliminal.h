@@ -12,9 +12,6 @@
 #import "SLTestController+AppHooks.h"
 #import "SLTest.h"
 
-#import "SLTerminal.h"
-#import "SLTerminal+ConvenienceFunctions.h"
-
 #import "SLDevice.h"
 #import "SLElement.h"
 #import "NSObject+SLAccessibilityDescription.h"

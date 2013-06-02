@@ -8,6 +8,7 @@
 
 #import <SenTestingKit/SenTestingKit.h>
 #import <Subliminal/Subliminal.h>
+#import <Subliminal/SLTerminal.h>
 #import <OCMock/OCMock.h>
 
 #import "SharedSLTests.h"

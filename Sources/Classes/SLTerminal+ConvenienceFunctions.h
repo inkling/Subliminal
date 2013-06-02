@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Inkling. All rights reserved.
 //
 
-#import <Subliminal/Subliminal.h>
+#import "SLTerminal.h"
 
 /**
  The `SLTerminal (ConvenienceFunctions)` category defines APIs that structure

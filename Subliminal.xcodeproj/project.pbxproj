@@ -408,13 +408,18 @@
 			name = "SLElement Gestures and Actions Tests";
 			sourceTree = "<group>";
 		};
-		CAC388011641CD4800F995F9 /* Utilities */ = {
+		CAC388011641CD4800F995F9 /* Internal */ = {
 			isa = PBXGroup;
 			children = (
-				CAC388031641CD7500F995F9 /* SLStringUtilities.h */,
-				CAC388041641CD7500F995F9 /* SLStringUtilities.m */,
+				F043469B175ACC7A00D91F7F /* Terminal */,
+				F016493B16D42E3C000AEB50 /* SLTestController+Internal.h */,
+				F0CEDA2F16BF5FA5005FE8B9 /* SLTest+Internal.h */,
+				F04346AD175AD63E00D91F7F /* SLAccessibilityPath.h */,
+				F04346AE175AD63E00D91F7F /* SLAccessibilityPath.m */,
+				F05C51E3171C8AE000A381BC /* SLMainThreadRef.h */,
+				F05C51E4171C8AE000A381BC /* SLMainThreadRef.m */,
 			);
-			name = Utilities;
+			name = Internal;
 			sourceTree = "<group>";
 		};
 		F002BF451698ED8100819291 /* Utilities */ = {
@@ -464,6 +469,19 @@
 				F01EBC9A170115B100FF6A7C /* SLTextFieldTestViewController.m */,
 			);
 			name = "SLTextField Tests";
+			sourceTree = "<group>";
+		};
+		F043469B175ACC7A00D91F7F /* Terminal */ = {
+			isa = PBXGroup;
+			children = (
+				F0695DDE160138DF000B05D0 /* SLTerminal.h */,
+				F0695DDF160138DF000B05D0 /* SLTerminal.m */,
+				F05C4F8E171406EF00A381BC /* SLTerminal+ConvenienceFunctions.h */,
+				F05C4F8F171406EF00A381BC /* SLTerminal+ConvenienceFunctions.m */,
+				CAC388031641CD7500F995F9 /* SLStringUtilities.h */,
+				CAC388041641CD7500F995F9 /* SLStringUtilities.m */,
+			);
+			name = Terminal;
 			sourceTree = "<group>";
 		};
 		F05263C316D2C2CF0090174F /* SLElement Matching Tests */ = {
@@ -527,25 +545,15 @@
 			children = (
 				CAC3883D1643503C00F995F9 /* SLAccessibility.h */,
 				CAC3883E1643503C00F995F9 /* SLAccessibility.m */,
-				F04346AD175AD63E00D91F7F /* SLAccessibilityPath.h */,
-				F04346AE175AD63E00D91F7F /* SLAccessibilityPath.m */,
 				F0695DE2160138DF000B05D0 /* SLTestController.h */,
-				F016493B16D42E3C000AEB50 /* SLTestController+Internal.h */,
 				F0695DE3160138DF000B05D0 /* SLTestController.m */,
 				F0271AFD162E0B950098F5F2 /* SLTestController+AppHooks.h */,
 				F0271AFE162E0B950098F5F2 /* SLTestController+AppHooks.m */,
 				F0695DE0160138DF000B05D0 /* SLTest.h */,
-				F0CEDA2F16BF5FA5005FE8B9 /* SLTest+Internal.h */,
 				F0695DE1160138DF000B05D0 /* SLTest.m */,
-				F0695DDE160138DF000B05D0 /* SLTerminal.h */,
-				F0695DDF160138DF000B05D0 /* SLTerminal.m */,
-				F05C4F8E171406EF00A381BC /* SLTerminal+ConvenienceFunctions.h */,
-				F05C4F8F171406EF00A381BC /* SLTerminal+ConvenienceFunctions.m */,
-				F05C51E3171C8AE000A381BC /* SLMainThreadRef.h */,
-				F05C51E4171C8AE000A381BC /* SLMainThreadRef.m */,
 				F0695DD6160138DF000B05D0 /* UIAutomation */,
 				F0695DD9160138DF000B05D0 /* Logging */,
-				CAC388011641CD4800F995F9 /* Utilities */,
+				CAC388011641CD4800F995F9 /* Internal */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
