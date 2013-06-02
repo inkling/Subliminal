@@ -103,7 +103,7 @@ task :uninstall do
 
   uninstall_file_templates
   uninstall_trace_template
-  fail "Could not uninstall docs" if !uninstall_docs
+  fail "Could not uninstall docs" if !uninstall_docs?
 end
 
 def uninstall_file_templates
@@ -118,7 +118,7 @@ def uninstall_trace_template
   `rm -rf "#{TRACE_TEMPLATE_DIR}"`
 end
 
-def uninstall_docs
+def uninstall_docs?
   puts "- Uninstalling docs..."
 
   docset_file = "#{DOCSET_DIR}/#{DOCSET_NAME}"
