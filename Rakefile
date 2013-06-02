@@ -140,7 +140,8 @@ def uninstall_docs
 		
 		return false if reply == "Uninstall Later"
 		
-		`osascript -e 'tell application "Xcode" to quit' -e 'delay 0.1'` if reply == "Restart Xcode"
+    # The next instruction requires that Xcode has fully quit--wait before proceeding
+		`osascript -e 'tell application "Xcode" to quit' -e 'delay 1.0'` if reply == "Restart Xcode"
 
 		`rm -rf #{docset_file}`
 
