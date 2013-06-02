@@ -95,6 +95,25 @@ extern const NSTimeInterval SLTerminalReadRetryDelay;
 
 
 /**
+ The methods in the `SLTerminal (DebugSettings)` category may be useful 
+ in debugging Subliminal. They may not be of much use in debugging
+ tests because tests don't use the terminal directly.
+ */
+@interface SLTerminal (DebugSettings)
+
+/**
+ Determines whether the terminal will log scripts as it evaluates them.
+ 
+ If YES, the terminal will log each script before evaluating it.
+ This allows developers to understand exactly what UIAutomation is doing 
+ when a given Subliminal API is invoked.
+ */
+@property (nonatomic) BOOL scriptLoggingEnabled;
+
+@end
+
+
+/**
  The methods in the `SLTerminal (Internal)` category are to be used
  only within Subliminal.
  */

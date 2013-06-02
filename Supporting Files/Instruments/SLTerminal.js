@@ -5,34 +5,39 @@ var _target = UIATarget.localTarget();
 // and to avoid collisions with UIAutomation/arbitrary JS executed by/using Subliminal
 var SLTerminal = {} 
 
-SLTerminal.scriptIndex = 0;
+// private variable
+SLTerminal._scriptIndex = 0;
+
+// public variables (manipulated by SLTerminal)
+SLTerminal.scriptLoggingEnabled = false;
 SLTerminal.hasShutDown = false;
 
 while(!SLTerminal.hasShutDown) {
-	// Wait for a command from SLTerminal
+	// Wait for JavaScript from SLTerminal
 	while (true) {
-		var commandIndex = _target.frontMostApp().preferencesValueForKey("commandIndex");
+		var scriptIndex = _target.frontMostApp().preferencesValueForKey("scriptIndex");
 		
-		if (commandIndex === SLTerminal.scriptIndex) {
+		if (scriptIndex === SLTerminal._scriptIndex) {
 			break;
 		}
 		_target.delay(0.1);
 	}
 	
-	// Read the command
-	var command = _target.frontMostApp().preferencesValueForKey("command");
-	// Uncomment to better understand what UIAutomation's doing (it may take awhile)
-	//UIALogger.logMessage("command:" + SLTerminal.scriptIndex + ": " + command);
+	// Read the JavaScript
+	var script = _target.frontMostApp().preferencesValueForKey("script");
+	if (SLTerminal.scriptLoggingEnabled) {
+		UIALogger.logMessage("script:" + SLTerminal._scriptIndex + ": " + script);
+	}
 	
-	// Evaluate the command
+	// Evaluate the script
 	var result = null;
 	try {
-		result = eval(command);
+		result = eval(script);
 	} catch (e) {
-		// Special case SyntaxErrors so that we can examine the malformed command
+		// Special case SyntaxErrors so that we can examine the malformed script
 		var message = e.toString();
 		if ((e instanceof Error) && e.name === "SyntaxError") {
-			message += " from command: \"" + command + "\"";
+			message += " from script: \"" + script + "\"";
 		}
 		_target.frontMostApp().setPreferencesValueForKey(message, "exception");
 	}
@@ -47,6 +52,6 @@ while(!SLTerminal.hasShutDown) {
 	_target.frontMostApp().setPreferencesValueForKey(result, "result");
 
 	// Notify SLTerminal that we've finished evaluation
-	_target.frontMostApp().setPreferencesValueForKey(SLTerminal.scriptIndex, "resultIndex");
-	SLTerminal.scriptIndex++;
+	_target.frontMostApp().setPreferencesValueForKey(SLTerminal._scriptIndex, "resultIndex");
+	SLTerminal._scriptIndex++;
 }

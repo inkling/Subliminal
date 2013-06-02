@@ -67,3 +67,45 @@
 - (void)runTests:(NSSet *)tests withCompletionBlock:(void (^)())completionBlock;
 
 @end
+
+
+/**
+ The methods in the `SLTestController (DebugSettings)` category may be useful 
+ in debugging tests.
+ */
+@interface SLTestController (DebugSettings)
+
+/// -------------------------------------------
+/// @name Debugging tests
+/// -------------------------------------------
+
+/**
+ Determines whether the controller should wait, after `-runTests:withCompletionBlock:` 
+ is invoked, to start testing.
+ 
+ If this is YES, the test controller will show an alert after 
+ `runTests:withCompletionBlock:` is invoked and will not begin testing until 
+ the developer has dismissed that alert.
+ 
+ This allows the developer time to attach the debugger to the tests. That is done 
+ by launching the tests, then clicking the following menu items, in Xcode:
+ 
+    Product -> Attach to Process -> <name of testing target, at top>
+ 
+ This setting will only take effect if the target is built in the "Debug"
+ configuration (with the `DEBUG` preprocessor macro set). This is to prevent the 
+ alert from showing when built (in "Release") for an unattended, continuous 
+ integration run; and to ensure that debug information will be available to the 
+ debugger (whereas the Release configuration may optimize that information away).
+ 
+ To build the tests in Debug, click the the "Scheme" dropdown in the upper
+ left-hand corner, then the following menu items:
+    
+    <Manage Scheme> -> (double-click) <name of your "Integration Tests" scheme> -> 
+    "Profile" (in the left side-bar)
+ 
+ and change the "Build Configuration" to "Debug". 
+ */
+@property (nonatomic) BOOL shouldWaitToStartTesting;
+
+@end

@@ -310,11 +310,11 @@ static const NSTimeInterval SLAlertHandlerManualDelay = 0.25;
     return [NSString stringWithFormat:@"<%@ title:\"%@\">", NSStringFromClass([self class]), _title];
 }
 
-- (SLAlertHandler *)dismiss {
+- (SLAlertDismissHandler *)dismiss {
     return [[SLAlertDismissHandler alloc] initWithSLAlert:self andUIAAlertHandler:[SLAlertHandler defaultUIAAlertHandler]];
 }
 
-- (SLAlertHandler *)dismissWithButtonTitled:(NSString *)buttonTitle {
+- (SLAlertDismissHandler *)dismissWithButtonTitled:(NSString *)buttonTitle {
     NSString *UIAAlertHandler = [NSString stringWithFormat:@"\
                                      var button = alert.buttons()['%@'];\
                                      if (button.isValid()) {\
@@ -366,3 +366,20 @@ static const NSTimeInterval SLAlertHandlerManualDelay = 0.25;
 }
 
 @end
+
+
+#if DEBUG
+
+@implementation SLAlert (Debugging)
+
+- (SLAlertDismissHandler *)dismissByUser {
+    // Once we match an alert, we simply return true, suggesting that we did handle it.
+    // SLAlertHandler will then direct UIAutomation to ignore the alert
+    // --but without us tapping any buttons, the alert will remain visible,
+    // until the user dismisses it.
+    return [[SLAlertDismissHandler alloc] initWithSLAlert:self andUIAAlertHandler:@"return true;"];
+}
+
+@end
+
+#endif

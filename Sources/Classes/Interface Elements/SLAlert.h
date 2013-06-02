@@ -252,6 +252,35 @@ extern const NSTimeInterval SLAlertHandlerAutomaticDelay;
 
 @end
 
+
+#if DEBUG
+
+/**
+ The methods in the `SLAlert (Debugging)` category are to be used only to 
+ debug Subliminal tests.
+ */
+@interface SLAlert (Debugging)
+
+/// -------------------------------------------
+/// @name Debugging Tests
+/// -------------------------------------------
+
+/**
+ Creates and returns a handler that relies on a user to dismiss an alert.
+
+ @warning Subliminal will _not_ dismiss an alert handled by this handler.
+ This handler thus has a use only when debugging tests.
+
+ @return A newly created handler that does not dismiss the corresponding alert, 
+ but rather relies on a live user to dismiss the alert.
+ */
+- (SLAlertDismissHandler *)dismissByUser;
+
+@end
+
+#endif
+
+
 /**
  `SLAlertDismissHandler` is a class used solely to distinguish handlers
  that try to dismiss alerts from those that do not.
