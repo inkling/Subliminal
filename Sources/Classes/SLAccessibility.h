@@ -14,8 +14,7 @@
  The methods in the `NSObject (SLAccessibility)` category
  allow Subliminal to access and manipulate the accessibility hierarchy
  --a subset of the hierarchy formed by views and the accessibility elements
- they vend--for the purposes of describing the hierarchy to the user, for debugging;
- and to UIAutomation, in order to evaluate expressions involving the `UIAElement` 
+ they vend--to UIAutomation, in order to evaluate expressions involving the `UIAElement` 
  instances corresponding to `SLElement` instances.
  */
 @interface NSObject (SLAccessibility)
@@ -131,37 +130,6 @@
  @see -slAccessibilityParent
  */
 - (NSObject *)slChildAccessibilityElementAtIndex:(NSUInteger)index favoringSubviews:(BOOL)favoringSubviews;
-
-#pragma mark - Debug Methods
-/// ----------------------------------------
-/// @name Debug Methods
-/// ----------------------------------------
-
-/**
- Returns a string that describes the receiver in terms of its accessibility properties.
-
- @return A string that describes the receiver in terms of its accessibility properties.
- */
-- (NSString *)slAccessibilityDescription;
-
-/**
- Returns a string that recursively describes accessibility elements contained
- within the receiver.
- 
- In terms of their accessibility properties, using `-slAccessibilityDescription`.
-
- If the receiver is a `UIView`, this also enumerates the subviews of the receiver.
- 
- @warning This method describes all elements contained within the receiver,
- even if they [will not appear in the accessibility hierarchy](-willAppearInAccessibilityHierarchy). 
- That is, the set of elements described by this method is a superset of those
- elements that will appear in the accessibility hierarchy. To log only those 
- elements that will appear in the accessibility hierarchy, use `-[SLUIAElement logElementTree]`.
- 
- @return A string that recursively describes the receiver and its accessibility children
- in terms of their accessibility properties.
- */
-- (NSString *)slRecursiveAccessibilityDescription;
 
 @end
 
