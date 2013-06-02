@@ -33,8 +33,8 @@
 		CA75E78516697C0000D57E92 /* SLDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = CA75E78116697A1200D57E92 /* SLDevice.m */; };
 		CAC388051641CD7500F995F9 /* SLStringUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC388031641CD7500F995F9 /* SLStringUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CAC388061641CD7500F995F9 /* SLStringUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC388041641CD7500F995F9 /* SLStringUtilities.m */; };
-		CAC3883F1643503C00F995F9 /* SLAccessibility.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC3883D1643503C00F995F9 /* SLAccessibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CAC388401643503C00F995F9 /* SLAccessibility.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC3883E1643503C00F995F9 /* SLAccessibility.m */; };
+		CAC3883F1643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC3883D1643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CAC388401643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC3883E1643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.m */; };
 		F00800C7174B3349001927AC /* SLButtonTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800C4174B3349001927AC /* SLButtonTest.m */; };
 		F00800C8174B3349001927AC /* SLButtonTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800C5174B3349001927AC /* SLButtonTestViewController.m */; };
 		F00800C9174B3349001927AC /* SLButtonTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00800C6174B3349001927AC /* SLButtonTestViewController.xib */; };
@@ -55,10 +55,10 @@
 		F03C55E4170C32BE00079021 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0AC809716BB299500C5D5C0 /* CoreGraphics.framework */; };
 		F043469F175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = F043469D175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F04346A0175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = F043469E175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.m */; };
-		F04346AF175AD63E00D91F7F /* SLAccessibilityPath.h in Headers */ = {isa = PBXBuildFile; fileRef = F04346AD175AD63E00D91F7F /* SLAccessibilityPath.h */; };
-		F04346B0175AD63E00D91F7F /* SLAccessibilityPath.m in Sources */ = {isa = PBXBuildFile; fileRef = F04346AE175AD63E00D91F7F /* SLAccessibilityPath.m */; };
 		F04346A7175AD10200D91F7F /* NSObject+SLVisibility.h in Headers */ = {isa = PBXBuildFile; fileRef = F04346A5175AD10200D91F7F /* NSObject+SLVisibility.h */; };
 		F04346A8175AD10200D91F7F /* NSObject+SLVisibility.m in Sources */ = {isa = PBXBuildFile; fileRef = F04346A6175AD10200D91F7F /* NSObject+SLVisibility.m */; };
+		F04346AF175AD63E00D91F7F /* SLAccessibilityPath.h in Headers */ = {isa = PBXBuildFile; fileRef = F04346AD175AD63E00D91F7F /* SLAccessibilityPath.h */; };
+		F04346B0175AD63E00D91F7F /* SLAccessibilityPath.m in Sources */ = {isa = PBXBuildFile; fileRef = F04346AE175AD63E00D91F7F /* SLAccessibilityPath.m */; };
 		F043A9BE1729CFFE00A4FD1D /* SLElementVisibilityTestElementHidden.xib in Resources */ = {isa = PBXBuildFile; fileRef = F043A9BD1729CFFE00A4FD1D /* SLElementVisibilityTestElementHidden.xib */; };
 		F043A9C01729EFD100A4FD1D /* SLElementVisibilityTestUserInteractionDisabled.xib in Resources */ = {isa = PBXBuildFile; fileRef = F043A9BF1729EFD100A4FD1D /* SLElementVisibilityTestUserInteractionDisabled.xib */; };
 		F043A9C7172A160600A4FD1D /* SLElementVisibilityTest.html in Resources */ = {isa = PBXBuildFile; fileRef = F043A9C6172A160600A4FD1D /* SLElementVisibilityTest.html */; };
@@ -231,8 +231,8 @@
 		CA75E78116697A1200D57E92 /* SLDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDevice.m; sourceTree = "<group>"; };
 		CAC388031641CD7500F995F9 /* SLStringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SLStringUtilities.h; path = Categories/SLStringUtilities.h; sourceTree = "<group>"; };
 		CAC388041641CD7500F995F9 /* SLStringUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SLStringUtilities.m; path = Categories/SLStringUtilities.m; sourceTree = "<group>"; };
-		CAC3883D1643503C00F995F9 /* SLAccessibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLAccessibility.h; sourceTree = "<group>"; };
-		CAC3883E1643503C00F995F9 /* SLAccessibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAccessibility.m; sourceTree = "<group>"; };
+		CAC3883D1643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+SLAccessibilityHierarchy.h"; path = "../NSObject+SLAccessibilityHierarchy.h"; sourceTree = "<group>"; };
+		CAC3883E1643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+SLAccessibilityHierarchy.m"; path = "../NSObject+SLAccessibilityHierarchy.m"; sourceTree = "<group>"; };
 		F00800C4174B3349001927AC /* SLButtonTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLButtonTest.m; sourceTree = "<group>"; };
 		F00800C5174B3349001927AC /* SLButtonTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLButtonTestViewController.m; sourceTree = "<group>"; };
 		F00800C6174B3349001927AC /* SLButtonTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLButtonTestViewController.xib; sourceTree = "<group>"; };
@@ -253,10 +253,10 @@
 		F0271AFE162E0B950098F5F2 /* SLTestController+AppHooks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SLTestController+AppHooks.m"; sourceTree = "<group>"; };
 		F043469D175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SLAccessibilityDescription.h"; sourceTree = "<group>"; };
 		F043469E175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SLAccessibilityDescription.m"; sourceTree = "<group>"; };
-		F04346AD175AD63E00D91F7F /* SLAccessibilityPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLAccessibilityPath.h; sourceTree = "<group>"; };
-		F04346AE175AD63E00D91F7F /* SLAccessibilityPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAccessibilityPath.m; sourceTree = "<group>"; };
 		F04346A5175AD10200D91F7F /* NSObject+SLVisibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SLVisibility.h"; sourceTree = "<group>"; };
 		F04346A6175AD10200D91F7F /* NSObject+SLVisibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SLVisibility.m"; sourceTree = "<group>"; };
+		F04346AD175AD63E00D91F7F /* SLAccessibilityPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLAccessibilityPath.h; sourceTree = "<group>"; };
+		F04346AE175AD63E00D91F7F /* SLAccessibilityPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAccessibilityPath.m; sourceTree = "<group>"; };
 		F043A9BD1729CFFE00A4FD1D /* SLElementVisibilityTestElementHidden.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestElementHidden.xib; sourceTree = "<group>"; };
 		F043A9BF1729EFD100A4FD1D /* SLElementVisibilityTestUserInteractionDisabled.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestUserInteractionDisabled.xib; sourceTree = "<group>"; };
 		F043A9C6172A160600A4FD1D /* SLElementVisibilityTest.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = SLElementVisibilityTest.html; sourceTree = "<group>"; };
@@ -549,8 +549,6 @@
 		F0695DD5160138DF000B05D0 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				CAC3883D1643503C00F995F9 /* SLAccessibility.h */,
-				CAC3883E1643503C00F995F9 /* SLAccessibility.m */,
 				F0695DE2160138DF000B05D0 /* SLTestController.h */,
 				F0695DE3160138DF000B05D0 /* SLTestController.m */,
 				F0271AFD162E0B950098F5F2 /* SLTestController+AppHooks.h */,
@@ -630,6 +628,8 @@
 				F0A04E1C1749F70F002C7520 /* SLElement.m */,
 				F043469D175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.h */,
 				F043469E175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.m */,
+				CAC3883D1643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.h */,
+				CAC3883E1643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.m */,
 				F089F98417445D9A00DF1F25 /* SLStaticElement.h */,
 				F089F98517445D9A00DF1F25 /* SLStaticElement.m */,
 				F0C07A361703F95B00C93F93 /* SLAlert.h */,
@@ -830,7 +830,7 @@
 				F0695E2216014491000B05D0 /* SLUIALogger.h in Headers */,
 				F0271AFF162E0B950098F5F2 /* SLTestController+AppHooks.h in Headers */,
 				CAC388051641CD7500F995F9 /* SLStringUtilities.h in Headers */,
-				CAC3883F1643503C00F995F9 /* SLAccessibility.h in Headers */,
+				CAC3883F1643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.h in Headers */,
 				CA75E78216697A1200D57E92 /* SLDevice.h in Headers */,
 				0F21788816AE08F700C46068 /* SLMultiLogger.h in Headers */,
 				F0CEDA3116BF5FA5005FE8B9 /* SLTest+Internal.h in Headers */,
@@ -1065,7 +1065,7 @@
 				F0695DE9160138DF000B05D0 /* SLTestController.m in Sources */,
 				F0271B00162E0B950098F5F2 /* SLTestController+AppHooks.m in Sources */,
 				CAC388061641CD7500F995F9 /* SLStringUtilities.m in Sources */,
-				CAC388401643503C00F995F9 /* SLAccessibility.m in Sources */,
+				CAC388401643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.m in Sources */,
 				CA75E78516697C0000D57E92 /* SLDevice.m in Sources */,
 				0F21788916AE08F700C46068 /* SLMultiLogger.m in Sources */,
 				F0C07A391703F95B00C93F93 /* SLAlert.m in Sources */,

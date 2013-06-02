@@ -160,7 +160,7 @@
 }
 
 // The remaining cases in this test verify particulars of element matching
-// which are internal to `NSObject(SLAccessibility)` and yet may serve
+// which are internal to `NSObject(SLAccessibilityHierarchy)` and yet may serve
 // as guides to developers in setting accessibility properties.
 //
 // Developers need peruse these only if they are curious exactly why they can or

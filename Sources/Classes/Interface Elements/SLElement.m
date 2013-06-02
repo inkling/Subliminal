@@ -8,7 +8,7 @@
 
 #import "SLElement.h"
 #import "SLUIAElement+Subclassing.h"
-#import "SLAccessibility.h"
+#import "NSObject+SLAccessibilityHierarchy.h"
 #import "SLAccessibilityPath.h"
 #import "NSObject+SLVisibility.h"
 

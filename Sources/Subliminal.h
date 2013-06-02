@@ -6,8 +6,6 @@
 //  Copyright (c) 2012 Inkling. All rights reserved.
 //
 
-#import "SLAccessibility.h"
-
 #import "SLTestController.h"
 #import "SLTestController+AppHooks.h"
 #import "SLTest.h"
@@ -15,6 +13,7 @@
 #import "SLDevice.h"
 #import "SLElement.h"
 #import "NSObject+SLAccessibilityDescription.h"
+#import "NSObject+SLAccessibilityHierarchy.h"
 #import "SLStaticElement.h"
 #import "SLAlert.h"
 #import "SLButton.h"

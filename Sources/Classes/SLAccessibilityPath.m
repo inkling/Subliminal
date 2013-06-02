@@ -7,7 +7,7 @@
 //
 
 #import "SLAccessibilityPath.h"
-#import "SLAccessibility.h"
+#import "NSObject+SLAccessibilityHierarchy.h"
 #import "SLElement.h"
 #import "SLUIAElement+Subclassing.h"
 #import "SLMainThreadRef.h"

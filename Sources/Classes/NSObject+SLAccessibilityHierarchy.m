@@ -1,5 +1,5 @@
 //
-//  SLAccessibility.m
+//  NSObject+SLAccessibilityHierarchy.h
 //  Subliminal
 //
 //  Created by William Green on 11/1/12.
@@ -7,7 +7,7 @@
 //
 
 
-#import "SLAccessibility.h"
+#import "NSObject+SLAccessibilityHierarchy.h"
 #import "SLLogger.h"
 
 
@@ -61,9 +61,9 @@
 @end
 
 
-#pragma mark - NSObject (SLAccessibility) implementation
+#pragma mark - NSObject (SLAccessibilityHierarchy) implementation
 
-@implementation NSObject (SLAccessibility)
+@implementation NSObject (SLAccessibilityHierarchy)
 
 #pragma mark -Public methods
 
@@ -209,7 +209,7 @@
 
 #pragma mark UIView overrides
 
-@implementation UIView (SLAccessibility)
+@implementation UIView (SLAccessibilityHierarchy)
 
 - (NSArray *)slChildAccessibilityElementsFavoringSubviews:(BOOL)favoringSubviews {
     if (favoringSubviews) {
@@ -268,7 +268,7 @@
 
 #pragma mark UIView subclass overrides
 
-@implementation UILabel (SLAccessibility)
+@implementation UILabel (SLAccessibilityHierarchy)
 
 - (BOOL)accessibilityAncestorPreventsPresenceInAccessibilityHierarchy {
     if ([super accessibilityAncestorPreventsPresenceInAccessibilityHierarchy]) return YES;
@@ -288,49 +288,49 @@
 @end
 
 
-@implementation UITableViewCell (SLAccessibility)
+@implementation UITableViewCell (SLAccessibilityHierarchy)
 - (BOOL)classForcesPresenceOfMockingViewsInAccessibilityHierarchy {
     return YES;
 }
 @end
 
 
-@implementation UIScrollView (SLAccessibility)
+@implementation UIScrollView (SLAccessibilityHierarchy)
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
     return YES;
 }
 @end
 
 
-@implementation UIToolbar (SLAccessibility)
+@implementation UIToolbar (SLAccessibilityHierarchy)
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
     return YES;
 }
 @end
 
 
-@implementation UINavigationBar (SLAccessibility)
+@implementation UINavigationBar (SLAccessibilityHierarchy)
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
     return YES;
 }
 @end
 
 
-@implementation UIControl (SLAccessibility)
+@implementation UIControl (SLAccessibilityHierarchy)
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
     return YES;
 }
 @end
 
 
-@implementation UIAlertView (SLAccessibility)
+@implementation UIAlertView (SLAccessibilityHierarchy)
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
     return YES;
 }
 @end
 
 
-@implementation UIWindow (SLAccessibility)
+@implementation UIWindow (SLAccessibilityHierarchy)
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
     return YES;
 }

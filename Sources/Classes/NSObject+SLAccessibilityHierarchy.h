@@ -1,5 +1,5 @@
 //
-//  SLAccessibility.h
+//  NSObject+SLAccessibilityHierarchy.h
 //  Subliminal
 //
 //  Created by William Green on 11/1/12.
@@ -10,7 +10,7 @@
 #import <UIKit/UIKit.h>
 
 /**
- The methods in the `NSObject (SLAccessibility)` category
+ The methods in the `NSObject (SLAccessibilityHierarchy)` category
  allow Subliminal and 3rd-party developers to examine the accessibility hierarchy
  --a subset of the hierarchy formed by views and the accessibility elements
  they vend.
@@ -24,7 +24,7 @@
  an alternative to setting accessibility identifiers, when no other accessibility 
  information is available.
  */
-@interface NSObject (SLAccessibility)
+@interface NSObject (SLAccessibilityHierarchy)
 
 #pragma mark - Determining Whether An Element Will Appear In the Accessibility Hierarchy
 /// ----------------------------------------------------------------------------------
@@ -144,6 +144,9 @@
  the accessibility system, and UIAutomation, read/manipulate it instead of the
  real view.
  
+ @param elementObject An object which may or may not be a mock view.
+ @param viewObject An object which may or may not be a view.
+
  @param elementObject An object which may or may not be a mock view.
  @param viewObject An object which may or may not be a view.
 

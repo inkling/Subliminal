@@ -92,7 +92,7 @@
  complex predicate.
 
  To describe the element's location in the accessibility hierarchy, see the 
- methods in `NSObject (SLAccessibility)`.
+ methods in `NSObject (SLAccessibilityHierarchy)`.
 
  @param predicate The block used to evaluate objects within the accessibility 
  hierarchy. The block will be evaluated on the main thread. The block should 
@@ -102,7 +102,6 @@
  @return A newly created element that evaluates objects using predicate.
  
  @see +elementWithAccessibilityIdentifier:
- @see NSObject (SLAccessibility)
  */
 + (instancetype)elementMatching:(BOOL (^)(NSObject *obj))predicate withDescription:(NSString *)description;
 
