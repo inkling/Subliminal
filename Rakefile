@@ -103,7 +103,13 @@ task :uninstall do
 
   uninstall_file_templates
   uninstall_trace_template
-  fail "Could not uninstall docs" if !uninstall_docs?
+  # This setting may cascade from the tests;
+  # respecting it allows us to avoid restarting Xcode when running tests locally.
+  if ENV["docs"] != "no"
+    fail "Could not uninstall docs" if !uninstall_docs?
+  end
+
+  puts "Uninstallation complete.\n\n"
 end
 
 def uninstall_file_templates
@@ -234,7 +240,7 @@ end
 ### Testing
 
 desc "Runs Subliminal's tests"
-task :test do
+task :test => 'test:prepare' do
   puts "\nRunning tests...\n\n"
 
   # The unit tests guarantee the integrity of the integration tests
@@ -246,8 +252,16 @@ task :test do
 end
 
 namespace :test do
+  desc "Prepares to run Subliminal's tests"
+  task :prepare do
+    # We need to install Subliminal's trace template
+    # but can't declare install as a dependency because we have to set its env vars
+    ENV['dev'] = "yes"; ENV['docs'] = "no"
+    Rake::Task['install'].invoke
+  end
+
   desc "Runs the unit tests"
-  task :unit do    
+  task :unit => :prepare do    
     puts "- Running unit tests...\n\n"
 
     # Use system so we see the tests' output
@@ -259,7 +273,7 @@ namespace :test do
   end
 
   desc "Runs the integration tests"
-  task :integration do    
+  task :integration => :prepare do    
     puts "- Running integration tests...\n\n"
 
     # When the tests are running separately, 
@@ -301,7 +315,7 @@ namespace :test do
                       --quiet_build"
 
     desc "Runs the integration tests on iPhone"
-    task :iphone do
+    task :iphone => :prepare do
       puts "-- Running iPhone integration tests..."
 
       results_dir = "#{SCRIPT_DIR}/results/iphone"
@@ -316,7 +330,7 @@ namespace :test do
     end
 
     desc "Runs the integration tests on iPad"
-    task :ipad do
+    task :ipad => :prepare do
       puts "-- Running iPad integration tests..."
 
       results_dir = "#{SCRIPT_DIR}/results/ipad"
@@ -331,7 +345,7 @@ namespace :test do
     end
 
     desc "Runs the integration tests on a device"
-    task :device do
+    task :device => :prepare do
       puts "-- Running the integration tests on a device"
 
       udid = ENV["udid"]
