@@ -80,8 +80,8 @@
  using a specified block object.
 
  This method allows you to apply some knowledge of the target object's identity
- and/or its location in the view hierarchy, where the target object's accessibility
- information is not sufficient to distinguish the object.
+ and/or its location in the accessibility hierarchy, where the target object's 
+ accessibility information is not sufficient to distinguish the object.
 
  Consider using one of the more specialized constructors before this method.
  It is best to identify an object using information like its accessibility label, 
@@ -91,6 +91,9 @@
  accessibility identifier on a target object than for your tests to define a 
  complex predicate.
 
+ To describe the element's location in the accessibility hierarchy, see the 
+ methods in `NSObject (SLAccessibility)`.
+
  @param predicate The block used to evaluate objects within the accessibility 
  hierarchy. The block will be evaluated on the main thread. The block should 
  return YES if the element matches the object, otherwise NO.
@@ -99,6 +102,7 @@
  @return A newly created element that evaluates objects using predicate.
  
  @see +elementWithAccessibilityIdentifier:
+ @see NSObject (SLAccessibility)
  */
 + (instancetype)elementMatching:(BOOL (^)(NSObject *obj))predicate withDescription:(NSString *)description;
 

@@ -6,37 +6,30 @@
 //  Copyright (c) 2012 Inkling. All rights reserved.
 //
 
-
-@class SLElement;
-@class SLAccessibilityPath;
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 /**
  The methods in the `NSObject (SLAccessibility)` category
- allow Subliminal to access and manipulate the accessibility hierarchy
+ allow Subliminal and 3rd-party developers to examine the accessibility hierarchy
  --a subset of the hierarchy formed by views and the accessibility elements
- they vend--to UIAutomation, in order to evaluate expressions involving the `UIAElement` 
- instances corresponding to `SLElement` instances.
+ they vend.
+ 
+ 3rd-party developers might use the methods in this category to determine
+ why an interface element is not accessible: see `-willAppearInAccessibilityHierarchy`.
+ 
+ 3rd-party developers might use the methods in "Navigating the Accessibility Hierarchy" 
+ to develop [predicates](-[SLElement elementMatching:withDescription:]) that 
+ match elements at particular positions in the accessibility hierarchy, as 
+ an alternative to setting accessibility identifiers, when no other accessibility 
+ information is available.
  */
 @interface NSObject (SLAccessibility)
 
-#pragma mark - Locating Elements Within the Accessibility Hierarchy
-/// ----------------------------------------
-/// @name Locating Elements Within the Accessibility Hierarchy
-/// ----------------------------------------
-
-/**
- Returns the accessibility path from this object to the object 
- [matching](-[SLElement matchesObject:]) the specified element.
-
- The first component in the path is the receiver, and the last component 
- is an object matching the specified element.
-
- @param element The element to be matched.
- @return A path that can used by UIAutomation to access element or `nil`
- if an object matching `element` is not found within the accessibility hierarchy
- rooted in the receiver.
- */
-- (SLAccessibilityPath *)slAccessibilityPathToElement:(SLElement *)element;
+#pragma mark - Determining Whether An Element Will Appear In the Accessibility Hierarchy
+/// ----------------------------------------------------------------------------------
+/// @name Determining Whether An Element Will Appear In the Accessibility Hierarchy
+/// ----------------------------------------------------------------------------------
 
 /**
  Returns a Boolean value that indicates whether the receiver will appear
@@ -63,6 +56,11 @@
  NO otherwise.
  */
 - (BOOL)slAccessibilityIsVisible;
+
+#pragma mark - Navigating the Accessibility Hierarchy
+/// -----------------------------------------------
+/// @name Navigating the Accessibility Hierarchy
+/// -----------------------------------------------
 
 /**
  Returns the SLAccessibility-specific accessibility container of the receiver.
@@ -135,93 +133,57 @@
 
 
 /**
- `SLAccessibilityPath` represents a path through an accessibility hierarchy
- from an accessibility container to one of its (potentially distant) children.
-
- Once a path is found between a parent and child object using
- `-[NSObject slAccessibilityPathToElement:]`, it can then be 
- [serialized into Javascript](-UIARepresentation) in order to identify, 
- access, and manipulate the `UIAElement` corresponding to the child when
- [evaluated](-[SLTerminal eval:]) as part of a larger expression.
+ The methods in the `UIView (SLAccessibility_Internal)` category describe
+ criteria that determine whether mock views will appear in the accessibility 
+ hierarchy.
  
- @warning `SLAccessibilityPath` is designed for use from background threads.
- Because its components are likely `UIKit` objects, `SLAccessibilityPath`
- holds weak references to those components. Clients should be prepared
- to handle nil [path components](-examineLastPathComponent:) or invalid 
- [UIAutomation representations](-UIARepresentation) in the event that a path
- component drops out of scope.
+ Mock views are elements that UIAccessibility uses to represent certain views 
+ in the accessibility hierarchy rather than the views themselves.
+ 
+ 3rd-party developers should have no need to use these methods.
  */
-@interface SLAccessibilityPath : NSObject
-
-#pragma mark - Examining the Path's Destination
-/// ----------------------------------------
-/// @name Examining the Path's Destination
-/// ----------------------------------------
+@interface UIView (SLAccessibility_Internal)
 
 /**
- Allows the caller to interact with the last path component of the receiver.
- 
- Path components are objects at successive levels of an accessibility hierarchy 
- (where the component at index `i + 1` is the child of the component at index `i`).
- The last path component is the object at the deepest level of such a hierarchy, 
- i.e. the destination of the path.
- 
- The block will be executed synchronously on the main thread.
+ Returns a Boolean value that indicates whether an object is a mock view.
 
- @param block A block which takes the last path component of the receiver 
- as an argument and returns void. The block may invoked with a `nil` argument
- if the last path component has dropped out of scope between the receiver being
- constructed and it receiving this message.
+ Mock views are accessibility elements created by the accessibility system
+ to represent certain views like UITableViewCells. Where a mock view exists,
+ the accessibility system, and UIAutomation, read/manipulate it instead of the
+ real view.
+ 
+ @param elementObject An object which may or may not be a mock view.
+ @param viewObject An object which may or may not be a view.
+
+ @return YES if viewObject is a UIView and elementObject is mocking that view, otherwise NO.
  */
-- (void)examineLastPathComponent:(void (^)(NSObject *lastPathComponent))block;
-
-#pragma mark - Serializing the Path
-/// ----------------------------------------
-/// @name Serializing the Path
-/// ----------------------------------------
++ (BOOL)elementObject:(id)elementObject isMockingViewObject:(id)viewObject;
 
 /**
- Binds the components of the receiver to unique `UIAElement` instances 
- for the duration of the method.
- 
- This is done by modifying the components' accessibility properties in such a 
- way as to make the names (`UIAElement.name()`) of their corresponding `UIAElement` 
- instances unique. With the modifications in place, the block provided is then 
- evaluated, on the calling thread, with the receiver. The modifications are then 
- reset.
+ Returns a Boolean value that indicates whether an object mocking the receiver
+ will appear in an accessibility hierarchy.
 
- @param block A block which takes the bound receiver as an argument and returns 
- `void`.
- 
- @see -UIARepresentation
+ Experimentation reveals that a mock view will appear in the accessibility hierarchy
+ if the real object will appear in [any accessibility hierarchy]
+ (-willAppearInAccessibilityHierarchy) or is an instance of one of a [certain set
+ of classes](-classForcesPresenceOfMockingViewsInAccessibilityHierarchy).
+
+ @return YES if an object mocking the receiver will appear in an accessibility
+ hierarchy, otherwise NO.
  */
-- (void)bindPath:(void (^)(SLAccessibilityPath *boundPath))block;
+- (BOOL)elementMockingSelfWillAppearInAccessibilityHierarchy;
 
 /**
- Returns the representation of the path as understood by UIAutomation.
+ Returns a Boolean value that indicates whether the receiver's class
+ forces the presence of mock views in the accessibility hierarchy.
 
- This method operates by serializing the objects constituting the path's components
- as references into successive instances of `UIElementArray`, the outermost of 
- which is contained by the main window. That is, this method creates a JavaScript 
- expression of the form:
+ Experimentation reveals that objects mocking certain types of views will appear
+ in UIAutomation's accessibility hierarchy regardless of their accessibility
+ identification.
 
-    UIATarget.localTarget().frontMostApp().mainWindow().elements()[...].elements()[...]...
-
- Each reference into a `UIAElementArray` (within brackets) is by element name
- (`UIAElement.name()`). Any components that the receiver was unable to name 
- (e.g. components which have dropped out of scope between the receiver being 
- constructed and it receiving this message) will be serialized as `elements()["(null)"]`.
-
- @warning To guarantee that each `UIAElementArray` reference will uniquely identify
- the corresponding component of the receiver, this method must only be called 
- while the receiver is [bound](-bindPath:).
- 
- @bug This method should not assume that the path identifies elements within
- the main window.
-
- @return A JavaScript expression that represents the absolute path to the `UIAElement`
- corresponding to the last component of the receiver.
+ @return YES if the receiver's class forces the presence of objects mocking
+ instances of the class in an accessibility hierarchy, otherwise NO.
  */
-- (NSString *)UIARepresentation;
+- (BOOL)classForcesPresenceOfMockingViewsInAccessibilityHierarchy;
 
 @end
