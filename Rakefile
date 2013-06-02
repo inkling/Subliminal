@@ -4,6 +4,7 @@ SCRIPT_DIR = "#{PROJECT_DIR}/Supporting Files/CI"
 FILE_TEMPLATE_DIR = "#{ENV['HOME']}/Library/Developer/Xcode/Templates/File Templates/Subliminal"
 TRACE_TEMPLATE_DIR = "#{ENV['HOME']}/Library/Application Support/Instruments/Templates/Subliminal"
 TRACE_TEMPLATE_NAME = "Subliminal.tracetemplate"
+SCHEMES_DIR = "Subliminal.xcodeproj/xcuserdata/#{ENV['USER']}.xcuserdatad/xcschemes"
 
 DOCSET_DIR = "#{ENV['HOME']}/Library/Developer/Shared/Documentation/DocSets"
 DOCSET_NAME = "com.inkling.Subliminal.docset"
@@ -94,6 +95,47 @@ See 'rake usage[<task>]' for more information on a specific task.\n\n"""
   end
 end
 
+# Restarts Xcode (with the user's permission) if it's running, as required by several of the tasks below
+# If a block is passed, it will be executed between quitting Xcode and restarting it
+# Returns false if Xcode needed to be restarted and the user chose not to, true otherwise
+def restart_xcode?(reason)
+  frontmost_app = `osascript <<-EOT
+    tell application "System Events"
+      set app_name to name of first process whose frontmost is true
+    end tell
+EOT`.chomp
+
+  reply=`osascript <<-EOT
+    if application "Xcode" is not running then
+      set reply to "Not Running"
+    else
+      tell application "System Events"
+        activate
+        set reply to button returned of (display dialog "#{reason}" \
+                        buttons {"Uninstall Later", "Restart Xcode"} \
+                        default button "Uninstall Later")
+      end tell
+    end if
+EOT`.chomp
+    
+  return false if reply == "Uninstall Later"
+
+  # The block may require that Xcode has fully quit--wait before proceeding
+  `osascript -e 'tell application "Xcode" to quit' -e 'delay 1.0'` if reply == "Restart Xcode"
+
+  yield if block_given?
+
+  if reply == "Restart Xcode"
+    # once to restart, twice to come forward
+    `osascript -e 'tell application "Xcode" to activate'`
+    `osascript -e 'tell application "Xcode" to activate'`
+    # but leave previously frontmost app up
+    `osascript -e 'tell application "#{frontmost_app}" to activate'`
+  end
+
+  true
+end
+
 
 ### Uninstallation
 
@@ -108,6 +150,7 @@ task :uninstall do
   if ENV["docs"] != "no"
     fail "Could not uninstall docs" if !uninstall_docs?
   end
+  uninstall_schemes
 
   puts "Uninstallation complete.\n\n"
 end
@@ -131,42 +174,19 @@ def uninstall_docs?
   
   if File.exists?(docset_file)
     # Xcode will crash if a docset is deleted while the app's open
-    frontmost_app = `osascript <<-EOT
-      tell application "System Events"
-        set app_name to name of first process whose frontmost is true
-      end tell
-EOT`.chomp
-
-    reply=`osascript <<-EOT
-          if application "Xcode" is not running then
-            set reply to "Not Running"
-          else
-            tell application "System Events"
-              activate
-              set reply to button returned of (display dialog "Subliminal will need to restart Xcode to uninstall Subliminal's documentation." \
-                              buttons {"Uninstall Later", "Restart Xcode"} \
-                              default button "Uninstall Later")
-            end tell
-          end if
-EOT`.chomp
-    
-    return false if reply == "Uninstall Later"
-    
-    # The next instruction requires that Xcode has fully quit--wait before proceeding
-    `osascript -e 'tell application "Xcode" to quit' -e 'delay 1.0'` if reply == "Restart Xcode"
-
-    `rm -rf #{docset_file}`
-
-    if reply == "Restart Xcode"
-      # once to restart, twice to come forward
-      `osascript -e 'tell application "Xcode" to activate'`
-      `osascript -e 'tell application "Xcode" to activate'`
-      # but leave previously frontmost app up
-      `osascript -e 'tell application "#{frontmost_app}" to activate'`
-    end
+    restart_reason = "Subliminal will need to restart Xcode to uninstall Subliminal's documentation."
+    return false if !restart_xcode?(restart_reason) { `rm -rf #{docset_file}` }
   end
 
   true
+end
+
+def uninstall_schemes
+  puts "- Uninstalling Subliminal's schemes..."
+
+  # Though Xcode continues to show the schemes until restarted (it appears to cache working copies), 
+  # it won't wig out if the schemes are deleted while open, so we don't need to restart it here
+  `rm -f "#{SCHEMES_DIR}/"*.xcscheme`
 end
 
 
@@ -179,6 +199,11 @@ task :install => :uninstall do
   install_file_templates(ENV["dev"] == "yes")
   install_trace_template
   install_docs unless ENV["docs"] == "no"
+  if ENV["dev"] == "yes"
+    fail "Could not install Subliminal's schemes." if !install_schemes?
+  end
+
+  puts "Installation complete.\n\n"
 end
 
 def install_file_templates(install_dev_templates)
@@ -236,6 +261,28 @@ def install_docs
   `osascript -e 'tell application "Xcode" to load documentation set with path "#{installed_docset_file}"'`
 end
 
+# If Subliminal's schemes were shared, they'd show up in projects that used Subliminal
+# so we instead add them (as non-shared schemes, within the project's `.xcuserdata` 
+# directory) only when Subliminal itself is to be built, by the tests or a developer
+def install_schemes?
+  puts "- Installing Subliminal's schemes..."
+
+  # Xcode will not show the schemes until restarted,
+  # but we don't want to have to restart Xcode every time we run the tests locally,
+  # so we only (re)install if any schemes are missing or out-of-date.
+  schemes_need_reinstall = Dir["#{PROJECT_DIR}/Supporting Files/Xcode/Schemes/*"].any? { |file|
+    installed_file = "#{SCHEMES_DIR}/#{File.basename(file)}"
+    Dir[installed_file].empty? || !FileUtils.compare_file(installed_file, file)
+  }
+  if schemes_need_reinstall
+    restart_reason = "Subliminal will need to restart Xcode to install Subliminal's schemes."
+    return restart_xcode?(restart_reason) {
+      `mkdir -p "#{SCHEMES_DIR}" && \
+      cp "#{PROJECT_DIR}/Supporting Files/Xcode/Schemes/"* "#{SCHEMES_DIR}"`
+    }
+  end
+  return true
+end
 
 ### Testing
 
@@ -254,7 +301,7 @@ end
 namespace :test do
   desc "Prepares to run Subliminal's tests"
   task :prepare do
-    # We need to install Subliminal's trace template
+    # We need to install Subliminal's trace template and its schemes
     # but can't declare install as a dependency because we have to set its env vars
     ENV['dev'] = "yes"; ENV['docs'] = "no"
     Rake::Task['install'].invoke
