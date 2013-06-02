@@ -25,6 +25,7 @@
 - (void)testThatWeCanEnterSomeText {
     NSString *const kUsername = @"Jeff";
 
+    // use the UIAElement macro so Subliminal will log where this threw an exception (if it did)
     [UIAElement(_usernameField) setText:kUsername];
 
     SLAssertTrue([[UIAElement(_usernameField) text] isEqualToString:kUsername],
