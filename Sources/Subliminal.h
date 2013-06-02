@@ -17,6 +17,7 @@
 
 #import "SLDevice.h"
 #import "SLElement.h"
+#import "SLStaticElement.h"
 #import "SLAlert.h"
 #import "SLButton.h"
 #import "SLKeyboard.h"
