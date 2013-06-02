@@ -16,13 +16,13 @@ task :default => :usage
 
 desc "Prints usage statement for people unfamiliar with Rake or this particular Rakefile"
 task :usage, :task_name do |t, args|
-	task_name = args[:task_name] ||= ""
+  task_name = args[:task_name] ||= ""
 
-	if !task_name.empty?
-		case task_name
+  if !task_name.empty?
+    case task_name
 
-		when "usage"
-			puts """
+    when "usage"
+      puts """
 rake usage\tPrints usage statement for people unfamiliar with Rake or this particular Rakefile
 
 rake usage[[<task>]]
@@ -30,11 +30,11 @@ rake usage[[<task>]]
 Arguments:
   task\tThe name of the task to describe.\n\n"""
 
-		when "uninstall"
-			puts "rake uninstall\tUninstalls supporting files"
+    when "uninstall"
+      puts "rake uninstall\tUninstalls supporting files"
 
-		when "install"
-			puts """
+    when "install"
+      puts """
 rake install\tInstalls supporting files
 
 rake install [docs=no] [dev=yes]
@@ -76,12 +76,12 @@ by Xcode.
     when "build_docs"
       puts "rake build_docs\tBuilds Subliminal's documentation"
 
-  	else
-  		fail "Unrecognized task name."
+    else
+      fail "Unrecognized task name."
 
-		end
-	else
-		puts """
+    end
+  else
+    puts """
 rake <task> [<opt>=<value>[ <opt2>=<value2>...]]
 
 Tasks:
@@ -91,7 +91,7 @@ Tasks:
   build_docs\tBuilds Subliminal's documentation
 
 See 'rake usage[<task>]' for more information on a specific task.\n\n"""
-	end
+  end
 end
 
 
@@ -99,68 +99,68 @@ end
 
 desc "Uninstalls supporting files"
 task :uninstall do
-	puts "\nUninstalling old supporting files..."
+  puts "\nUninstalling old supporting files..."
 
-	uninstall_file_templates
-	uninstall_trace_template
-	fail "Could not uninstall docs" if !uninstall_docs
+  uninstall_file_templates
+  uninstall_trace_template
+  fail "Could not uninstall docs" if !uninstall_docs
 end
 
 def uninstall_file_templates
-	puts "- Uninstalling file templates..."
+  puts "- Uninstalling file templates..."
 
-	`rm -rf "#{FILE_TEMPLATE_DIR}"`
+  `rm -rf "#{FILE_TEMPLATE_DIR}"`
 end
 
 def uninstall_trace_template
-	puts "- Uninstalling trace template..."
+  puts "- Uninstalling trace template..."
 
-	`rm -rf "#{TRACE_TEMPLATE_DIR}"`
+  `rm -rf "#{TRACE_TEMPLATE_DIR}"`
 end
 
 def uninstall_docs
-	puts "- Uninstalling docs..."
+  puts "- Uninstalling docs..."
 
-	docset_file = "#{DOCSET_DIR}/#{DOCSET_NAME}"
-	
-	if File.exists?(docset_file)
-		# Xcode will crash if a docset is deleted while the app's open
+  docset_file = "#{DOCSET_DIR}/#{DOCSET_NAME}"
+  
+  if File.exists?(docset_file)
+    # Xcode will crash if a docset is deleted while the app's open
     frontmost_app = `osascript <<-EOT
       tell application "System Events"
         set app_name to name of first process whose frontmost is true
       end tell
 EOT`.chomp
 
-		reply=`osascript <<-EOT
-					if application "Xcode" is not running then
-						set reply to "Not Running"
-					else
-						tell application "System Events"
-							activate
-							set reply to button returned of (display dialog "Subliminal will need to restart Xcode to uninstall Subliminal's documentation." \
-															buttons {"Uninstall Later", "Restart Xcode"} \
-															default button "Uninstall Later")
-						end tell
-					end if
-				EOT`.chomp
-		
-		return false if reply == "Uninstall Later"
-		
+    reply=`osascript <<-EOT
+          if application "Xcode" is not running then
+            set reply to "Not Running"
+          else
+            tell application "System Events"
+              activate
+              set reply to button returned of (display dialog "Subliminal will need to restart Xcode to uninstall Subliminal's documentation." \
+                              buttons {"Uninstall Later", "Restart Xcode"} \
+                              default button "Uninstall Later")
+            end tell
+          end if
+EOT`.chomp
+    
+    return false if reply == "Uninstall Later"
+    
     # The next instruction requires that Xcode has fully quit--wait before proceeding
-		`osascript -e 'tell application "Xcode" to quit' -e 'delay 1.0'` if reply == "Restart Xcode"
+    `osascript -e 'tell application "Xcode" to quit' -e 'delay 1.0'` if reply == "Restart Xcode"
 
-		`rm -rf #{docset_file}`
+    `rm -rf #{docset_file}`
 
-		if reply == "Restart Xcode"
-			# once to restart, twice to come forward
-			`osascript -e 'tell application "Xcode" to activate'`
-			`osascript -e 'tell application "Xcode" to activate'`
+    if reply == "Restart Xcode"
+      # once to restart, twice to come forward
+      `osascript -e 'tell application "Xcode" to activate'`
+      `osascript -e 'tell application "Xcode" to activate'`
       # but leave previously frontmost app up
       `osascript -e 'tell application "#{frontmost_app}" to activate'`
-		end
-	end
+    end
+  end
 
-	true
+  true
 end
 
 
@@ -168,32 +168,32 @@ end
 
 desc "Installs supporting files"
 task :install => :uninstall do
-	puts "\nInstalling supporting files..."
+  puts "\nInstalling supporting files..."
 
-	install_file_templates(ENV["dev"] == "yes")
-	install_trace_template
-	install_docs unless ENV["docs"] == "no"
+  install_file_templates(ENV["dev"] == "yes")
+  install_trace_template
+  install_docs unless ENV["docs"] == "no"
 end
 
 def install_file_templates(install_dev_templates)
-	puts "- Installing file templates..."
+  puts "- Installing file templates..."
 
-	local_template_dir = "#{PROJECT_DIR}/Supporting Files/Xcode/File Templates/"
+  local_template_dir = "#{PROJECT_DIR}/Supporting Files/Xcode/File Templates/"
 
-	`mkdir -p "#{FILE_TEMPLATE_DIR}" && \
-	cp -r "#{local_template_dir}/Integration test class.xctemplate" "#{FILE_TEMPLATE_DIR}"`
+  `mkdir -p "#{FILE_TEMPLATE_DIR}" && \
+  cp -r "#{local_template_dir}/Integration test class.xctemplate" "#{FILE_TEMPLATE_DIR}"`
 
-	# install developer templates
-	if $? == 0 && install_dev_templates
-		`cp -r "#{local_template_dir}/Subliminal integration test class.xctemplate" "#{FILE_TEMPLATE_DIR}"`
-	end
+  # install developer templates
+  if $? == 0 && install_dev_templates
+    `cp -r "#{local_template_dir}/Subliminal integration test class.xctemplate" "#{FILE_TEMPLATE_DIR}"`
+  end
 end
 
 def install_trace_template
-	puts "- Installing trace template..."
+  puts "- Installing trace template..."
 
-	`mkdir -p "#{TRACE_TEMPLATE_DIR}" && \
-	cp "#{PROJECT_DIR}/Supporting Files/Instruments/"* "#{TRACE_TEMPLATE_DIR}"`
+  `mkdir -p "#{TRACE_TEMPLATE_DIR}" && \
+  cp "#{PROJECT_DIR}/Supporting Files/Instruments/"* "#{TRACE_TEMPLATE_DIR}"`
 
   # Update the template to reference its script correctly
   # (as the user's home directory isn't known until now)
@@ -204,30 +204,30 @@ def install_trace_template
 end
 
 def install_docs
-	puts "- Installing docs..."
+  puts "- Installing docs..."
 
-	# download the latest docs
-	docset_xar_name = "com.inkling.Subliminal-#{DOCSET_VERSION}.xar"
+  # download the latest docs
+  docset_xar_name = "com.inkling.Subliminal-#{DOCSET_VERSION}.xar"
 
-	docset_download_dir = "/tmp"
-	docset_xar_file = "#{docset_download_dir}/#{docset_xar_name}"
+  docset_download_dir = "/tmp"
+  docset_xar_file = "#{docset_download_dir}/#{docset_xar_name}"
 
   # Use a link to our GitHub repo once it goes public
-	# docset_xar_URL_root = "https://github.com/inkling/subliminal/<to be determined>"
+  # docset_xar_URL_root = "https://github.com/inkling/subliminal/<to be determined>"
   docset_xar_URL_root = "http://f.cl.ly/items/0O3Q3N062F2G2v2b010m"
   `curl --progress-bar --output #{docset_xar_file} #{docset_xar_URL_root}/#{docset_xar_name}`
 
-	# uncompress them
-	`xar -C #{docset_download_dir} -xf #{docset_xar_file}`
-	`rm #{docset_xar_file}`
+  # uncompress them
+  `xar -C #{docset_download_dir} -xf #{docset_xar_file}`
+  `rm #{docset_xar_file}`
 
-	# move them to the documentation directory
-	downloaded_docset_file = "#{docset_download_dir}/#{DOCSET_NAME}"
-	installed_docset_file = "#{DOCSET_DIR}/#{DOCSET_NAME}"
-	`mv #{downloaded_docset_file} #{installed_docset_file}`
+  # move them to the documentation directory
+  downloaded_docset_file = "#{docset_download_dir}/#{DOCSET_NAME}"
+  installed_docset_file = "#{DOCSET_DIR}/#{DOCSET_NAME}"
+  `mv #{downloaded_docset_file} #{installed_docset_file}`
 
-	# load them
-	`osascript -e 'tell application "Xcode" to load documentation set with path "#{installed_docset_file}"'`
+  # load them
+  `osascript -e 'tell application "Xcode" to load documentation set with path "#{installed_docset_file}"'`
 end
 
 
