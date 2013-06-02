@@ -49,14 +49,6 @@
  */
 - (BOOL)willAppearInAccessibilityHierarchy;
 
-/**
- Determines if the specified object is visible on the screen.
- 
- @return YES if the receiver is visible within the accessibility hierarchy, 
- NO otherwise.
- */
-- (BOOL)slAccessibilityIsVisible;
-
 #pragma mark - Navigating the Accessibility Hierarchy
 /// -----------------------------------------------
 /// @name Navigating the Accessibility Hierarchy

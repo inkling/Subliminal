@@ -57,6 +57,8 @@
 		F04346A0175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = F043469E175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.m */; };
 		F04346AF175AD63E00D91F7F /* SLAccessibilityPath.h in Headers */ = {isa = PBXBuildFile; fileRef = F04346AD175AD63E00D91F7F /* SLAccessibilityPath.h */; };
 		F04346B0175AD63E00D91F7F /* SLAccessibilityPath.m in Sources */ = {isa = PBXBuildFile; fileRef = F04346AE175AD63E00D91F7F /* SLAccessibilityPath.m */; };
+		F04346A7175AD10200D91F7F /* NSObject+SLVisibility.h in Headers */ = {isa = PBXBuildFile; fileRef = F04346A5175AD10200D91F7F /* NSObject+SLVisibility.h */; };
+		F04346A8175AD10200D91F7F /* NSObject+SLVisibility.m in Sources */ = {isa = PBXBuildFile; fileRef = F04346A6175AD10200D91F7F /* NSObject+SLVisibility.m */; };
 		F043A9BE1729CFFE00A4FD1D /* SLElementVisibilityTestElementHidden.xib in Resources */ = {isa = PBXBuildFile; fileRef = F043A9BD1729CFFE00A4FD1D /* SLElementVisibilityTestElementHidden.xib */; };
 		F043A9C01729EFD100A4FD1D /* SLElementVisibilityTestUserInteractionDisabled.xib in Resources */ = {isa = PBXBuildFile; fileRef = F043A9BF1729EFD100A4FD1D /* SLElementVisibilityTestUserInteractionDisabled.xib */; };
 		F043A9C7172A160600A4FD1D /* SLElementVisibilityTest.html in Resources */ = {isa = PBXBuildFile; fileRef = F043A9C6172A160600A4FD1D /* SLElementVisibilityTest.html */; };
@@ -253,6 +255,8 @@
 		F043469E175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SLAccessibilityDescription.m"; sourceTree = "<group>"; };
 		F04346AD175AD63E00D91F7F /* SLAccessibilityPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLAccessibilityPath.h; sourceTree = "<group>"; };
 		F04346AE175AD63E00D91F7F /* SLAccessibilityPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAccessibilityPath.m; sourceTree = "<group>"; };
+		F04346A5175AD10200D91F7F /* NSObject+SLVisibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SLVisibility.h"; sourceTree = "<group>"; };
+		F04346A6175AD10200D91F7F /* NSObject+SLVisibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SLVisibility.m"; sourceTree = "<group>"; };
 		F043A9BD1729CFFE00A4FD1D /* SLElementVisibilityTestElementHidden.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestElementHidden.xib; sourceTree = "<group>"; };
 		F043A9BF1729EFD100A4FD1D /* SLElementVisibilityTestUserInteractionDisabled.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestUserInteractionDisabled.xib; sourceTree = "<group>"; };
 		F043A9C6172A160600A4FD1D /* SLElementVisibilityTest.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = SLElementVisibilityTest.html; sourceTree = "<group>"; };
@@ -416,6 +420,8 @@
 				F0CEDA2F16BF5FA5005FE8B9 /* SLTest+Internal.h */,
 				F04346AD175AD63E00D91F7F /* SLAccessibilityPath.h */,
 				F04346AE175AD63E00D91F7F /* SLAccessibilityPath.m */,
+				F04346A5175AD10200D91F7F /* NSObject+SLVisibility.h */,
+				F04346A6175AD10200D91F7F /* NSObject+SLVisibility.m */,
 				F05C51E3171C8AE000A381BC /* SLMainThreadRef.h */,
 				F05C51E4171C8AE000A381BC /* SLMainThreadRef.m */,
 			);
@@ -843,6 +849,7 @@
 				F00800CE174C1C64001927AC /* SLPopover.h in Headers */,
 				F043469F175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.h in Headers */,
 				F04346AF175AD63E00D91F7F /* SLAccessibilityPath.h in Headers */,
+				F04346A7175AD10200D91F7F /* NSObject+SLVisibility.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1074,6 +1081,7 @@
 				F00800CF174C1C64001927AC /* SLPopover.m in Sources */,
 				F04346A0175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.m in Sources */,
 				F04346B0175AD63E00D91F7F /* SLAccessibilityPath.m in Sources */,
+				F04346A8175AD10200D91F7F /* NSObject+SLVisibility.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
