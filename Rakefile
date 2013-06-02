@@ -125,6 +125,12 @@ def uninstall_docs
 	
 	if File.exists?(docset_file)
 		# Xcode will crash if a docset is deleted while the app's open
+    frontmost_app = `osascript <<-EOT
+      tell application "System Events"
+        set app_name to name of first process whose frontmost is true
+      end tell
+EOT`.chomp
+
 		reply=`osascript <<-EOT
 					if application "Xcode" is not running then
 						set reply to "Not Running"
@@ -146,9 +152,11 @@ def uninstall_docs
 		`rm -rf #{docset_file}`
 
 		if reply == "Restart Xcode"
-			# once to restart, twice to become frontmost
+			# once to restart, twice to come forward
 			`osascript -e 'tell application "Xcode" to activate'`
 			`osascript -e 'tell application "Xcode" to activate'`
+      # but leave previously frontmost app up
+      `osascript -e 'tell application "#{frontmost_app}" to activate'`
 		end
 	end
 
