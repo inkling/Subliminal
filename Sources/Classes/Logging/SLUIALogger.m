@@ -19,7 +19,7 @@
 - (id)init {
     self = [super init];
     if (self) {
-        _loggingQueue = dispatch_queue_create("com.subliminal.SLUIALogger.loggingQueue", DISPATCH_QUEUE_SERIAL);
+        _loggingQueue = dispatch_queue_create("com.inkling.subliminal.SLUIALogger.loggingQueue", DISPATCH_QUEUE_SERIAL);
     }
     return self;
 }

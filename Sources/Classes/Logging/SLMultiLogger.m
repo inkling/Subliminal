@@ -16,7 +16,7 @@
 - (id)init {
     // There is no -[super init], because we are a proxy
     _loggers = [[NSMutableSet alloc] init];
-    _loggingQueue = dispatch_queue_create("com.subliminal.SLMultiLogger.loggingQueue", DISPATCH_QUEUE_SERIAL);
+    _loggingQueue = dispatch_queue_create("com.inkling.subliminal.SLMultiLogger.loggingQueue", DISPATCH_QUEUE_SERIAL);
     
     return self;
 }
