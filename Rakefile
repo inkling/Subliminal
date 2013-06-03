@@ -157,7 +157,8 @@ task :uninstall do
   if ENV["DOCS"] != "no"
     fail "Could not uninstall docs" if !uninstall_docs?
   end
-  uninstall_schemes
+  # Note that we don't need to uninstall the schemes here, 
+  # as they're contained within the project
 
   puts "Uninstallation complete.\n\n"
 end
