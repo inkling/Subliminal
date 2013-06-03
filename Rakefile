@@ -311,7 +311,7 @@ namespace :test do
   task :prepare do
     # We need to install Subliminal's trace template and its schemes
     # but can't declare install as a dependency because we have to set its env vars
-    ENV['dev'] = "yes"; ENV['docs'] = "no"
+    ENV['DEV'] = "yes"; ENV['DOCS'] = "no"
     Rake::Task['install'].invoke
   end
 
