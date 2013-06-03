@@ -91,19 +91,14 @@ static SLTerminal *__sharedTerminal = nil;
         NSString *plistName = [NSString stringWithFormat:@"%@.plist", [[NSBundle mainBundle] bundleIdentifier]];
 
         // 1. get into the simulator's app support directory by fetching the sandboxed Library's path
-        NSString *userDirectoryPath = [[[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject] absoluteString];
+        NSString *userDirectoryPath = [[[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject] path];
         // 2. get out of our application directory, back to the root support directory for this system version
         plistRootPath = [userDirectoryPath substringToIndex:([userDirectoryPath rangeOfString:@"Applications"].location)];
 
         // 3. locate, relative to here, /Library/Preferences/[bundle ID].plist
         relativePlistPath = [NSString stringWithFormat:@"Library/Preferences/%@", plistName];
         
-        // strip "file://localhost" at beginning of path, which will screw up file reads later
-        static NSString *const localhostPrefix = @"file://localhost";
-        if ([plistRootPath hasPrefix:localhostPrefix]) {
-            plistRootPath = [plistRootPath substringFromIndex:NSMaxRange([plistRootPath rangeOfString:localhostPrefix])];
-        }
-        // and unescape spaces, if necessary (i.e. in the simulator)
+        // 4. and unescape spaces, if necessary (i.e. in the simulator)
         NSString *unsanitizedPlistPath = [plistRootPath stringByAppendingPathComponent:relativePlistPath];
         path = [unsanitizedPlistPath stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     });

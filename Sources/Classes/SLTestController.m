@@ -52,6 +52,7 @@ static void SLUncaughtExceptionHandler(NSException *exception)
 @end
 
 @implementation SLTestController {
+    dispatch_queue_t _runQueue;
     BOOL _runningWithFocus;
     NSSet *_testsToRun;
     NSUInteger _numTestsExecuted, _numTestsFailed;
@@ -80,15 +81,6 @@ static SLTestController *__sharedController = nil;
     return __sharedController;
 }
 
-+ (dispatch_queue_t)runQueue {
-    static dispatch_queue_t __runQueue = NULL;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        __runQueue = dispatch_queue_create("com.inkling.subliminal.SLTest.runQueue", DISPATCH_QUEUE_SERIAL);
-    });
-    return __runQueue;
-}
-
 + (NSSet *)testsToRun:(NSSet *)tests withFocus:(BOOL *)withFocus {
     // only run tests that are concrete...
     NSMutableSet *testsToRun = [NSMutableSet setWithSet:tests];
@@ -115,6 +107,8 @@ static SLTestController *__sharedController = nil;
     
     self = [super init];
     if (self) {
+        NSString *runQueueName = [NSString stringWithFormat:@"com.inkling.subliminal.SLTestController-%p.runQueue", self];
+        _runQueue = dispatch_queue_create([runQueueName UTF8String], DISPATCH_QUEUE_SERIAL);
         _defaultTimeout = kDefaultTimeout;
         _startTestingSemaphore = dispatch_semaphore_create(0);
     }
@@ -122,6 +116,7 @@ static SLTestController *__sharedController = nil;
 }
 
 - (void)dealloc {
+    dispatch_release(_runQueue);
     dispatch_release(_startTestingSemaphore);
 }
 
@@ -207,7 +202,7 @@ static SLTestController *__sharedController = nil;
 }
 
 - (void)runTests:(NSSet *)tests withCompletionBlock:(void (^)())completionBlock {
-    dispatch_async([[self class] runQueue], ^{
+    dispatch_async(_runQueue, ^{
         NSAssert([SLLogger sharedLogger], @"A shared SLLogger must be set (+[SLLogger setSharedLogger:]) before SLTestController can run tests.");
         
         _completionBlock = completionBlock;

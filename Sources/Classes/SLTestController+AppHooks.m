@@ -55,7 +55,7 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
             // (in case we're a second thread that got inside the if above)
             actionTargetMapQueueValue = objc_getAssociatedObject(self, kActionTargetMapQueueKey);
             if (!actionTargetMapQueueValue) {
-                NSString *queueName = [NSString stringWithFormat:@"com.subliminal.SLTestController+AppHooks-%p.actionTargetMapQueue", self];
+                NSString *queueName = [NSString stringWithFormat:@"com.inkling.subliminal.SLTestController+AppHooks-%p.actionTargetMapQueue", self];
                 dispatch_queue_t actionTargetMapQueue = dispatch_queue_create([queueName UTF8String], DISPATCH_QUEUE_SERIAL);
                 // target the actionTargetMapQueue at the main thread
                 // so that we may safely access SLMainThreadRefs' targets from the queue

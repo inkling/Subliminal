@@ -36,12 +36,12 @@ static const CGFloat kBottomLabelYOffset = 0.2;
     SLAssertFalse([UIAElement(bottomLabel) isVisible], @"Bottom label should not be visible at this point in the test.");
 
     // Drag bottom to top to scroll down and show the bottom label, hiding the top label.
-    [_scrollView dragWithStartPoint:CGPointMake(0.75, kTopLabelYOffset) endPoint:CGPointMake(0.75, kBottomLabelYOffset)];
+    [_scrollView dragWithStartOffset:CGPointMake(0.75, kTopLabelYOffset) endOffset:CGPointMake(0.75, kBottomLabelYOffset)];
     SLAssertTrueWithTimeout([UIAElement(topLabel) isInvalidOrInvisible], 3.0, @"The top label failed to become invisible after scrolling.");
     SLAssertTrueWithTimeout([UIAElement(bottomLabel) isValidAndVisible], 3.0, @"The bottom label failed to become visible after scrolling.");
 
     // Drag top to bottom to scroll up and show the top label again, hiding the bottom label.
-    [_scrollView dragWithStartPoint:CGPointMake(0.75, kBottomLabelYOffset) endPoint:CGPointMake(0.75, kTopLabelYOffset)];
+    [_scrollView dragWithStartOffset:CGPointMake(0.75, kBottomLabelYOffset) endOffset:CGPointMake(0.75, kTopLabelYOffset)];
     SLAssertTrueWithTimeout([UIAElement(topLabel) isValidAndVisible], 3.0, @"The top label failed to become visible after scrolling.");
     SLAssertTrueWithTimeout([UIAElement(bottomLabel) isInvalidOrInvisible], 3.0, @"The bottom label failed to become invisible after scrolling.");
 }
@@ -54,7 +54,7 @@ static const CGFloat kBottomLabelYOffset = 0.2;
     CGFloat dragEndY = kBottomLabelYOffset;
 
     // Drag bottom to top to scroll down
-    [_scrollView dragWithStartPoint:CGPointMake(0.75, dragStartY) endPoint:CGPointMake(0.75, dragEndY)];
+    [_scrollView dragWithStartOffset:CGPointMake(0.75, dragStartY) endOffset:CGPointMake(0.75, dragEndY)];
 
     // Compare the drag distance to the expected distance
     // (with a tolerance because scrollviews' delegates may not receive -scrollViewWillBeginDragging:

@@ -11,6 +11,7 @@
 #import "SLTestCaseViewController.h"
 
 #import <Subliminal/Subliminal.h>
+#import <Subliminal/SLTerminal.h>
 #import "SLTestController+Internal.h"
 
 // If you wish to explore a particular test case view controller with UIAutomation attached,

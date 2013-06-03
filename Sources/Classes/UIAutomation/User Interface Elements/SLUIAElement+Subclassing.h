@@ -20,6 +20,11 @@
  */
 @interface SLUIAElement (Subclassing)
 
+#pragma mark - Methods for Subclasses
+/// -------------------------------------------
+/// @name Methods for Subclasses
+/// -------------------------------------------
+
 /**
  Forwards an action message to the `UIAElement` corresponding to the 
  specified element and returns the result.
@@ -114,6 +119,11 @@
  overridden by subclasses of `SLElement`. Tests should not call these methods.
  */
 @interface SLElement (Subclassing)
+
+#pragma mark - Methods for Subclasses
+/// -------------------------------------------
+/// @name Methods for Subclasses
+/// -------------------------------------------
 
 /**
  Determines if the specified element matches the specified object.

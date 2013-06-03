@@ -8,7 +8,9 @@
 
 #import "SLElement.h"
 #import "SLUIAElement+Subclassing.h"
-#import "SLAccessibility.h"
+#import "NSObject+SLAccessibilityHierarchy.h"
+#import "SLAccessibilityPath.h"
+#import "NSObject+SLVisibility.h"
 
 
 // The real value (set in `+load`) is not a compile-time constant,

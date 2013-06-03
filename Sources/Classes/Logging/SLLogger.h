@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+
+#pragma mark Convenience Functions
+
 /**
  Logs a message to the testing environment.
  
@@ -68,6 +71,11 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
  */
 @interface SLLogger : NSObject
 
+#pragma mark - Getting and Setting the Shared Logger
+/// ----------------------------------------------
+/// @name Getting and Setting the Shared Logger
+/// ----------------------------------------------
+
 /**
  The shared logger used by the Subliminal framework and by user-defined tests.
  
@@ -91,6 +99,11 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
  @param logger A logger to set as the shared logger.
  */
 + (void)setSharedLogger:(SLLogger *)logger;
+
+#pragma mark - Primitive Methods
+/// -------------------------------------
+/// @name Primitive Methods
+/// -------------------------------------
 
 /**
  Returns a queue on which log messages may be serialized.
@@ -120,9 +133,10 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
  */
 - (void)logMessage:(NSString *)message;
 
-/// ----------------------------------
-/// @name Logging with severity levels
-/// ----------------------------------
+#pragma mark - Logging with Severity Levels
+/// -------------------------------------
+/// @name Logging with Severity Levels
+/// -------------------------------------
 
 /**
  Logs a message as a "debug" message.
@@ -150,13 +164,18 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 
 /**
  The methods in the `SLLogger (SLTestController)` category are used by the
- shared test controller to log test progress. They should not be called 
- by a test writer.
+ shared test controller to log the progress of the test run. They should not 
+ be called by a test writer.
  
  See `-[SLTestTests testCompleteTestRunSequence]` for an illustration
  of when these methods are called.
  */
 @interface SLLogger (SLTestController)
+
+#pragma mark - Logging Run Progress
+/// -------------------------------------
+/// @name Logging Run Progress
+/// -------------------------------------
 
 /**
  Logs that testing has started.
@@ -230,6 +249,11 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
  of when these methods are called.
  */
 @interface SLLogger (SLTest)
+
+#pragma mark - Logging Test Progress
+/// -------------------------------------
+/// @name Logging Test Progress
+/// -------------------------------------
 
 /**
  Logs that the specified test case has started.

@@ -20,6 +20,7 @@
  */
 @interface SLUIAElement : NSObject
 
+#pragma mark - Configuring the Default Timeout
 /// ----------------------------------------
 /// @name Configuring the Default Timeout
 /// ----------------------------------------
@@ -60,6 +61,7 @@
  */
 + (NSTimeInterval)defaultTimeout;
 
+#pragma mark - Determining Element State
 /// ----------------------------------------
 /// @name Determining Element State
 /// ----------------------------------------
@@ -172,6 +174,7 @@
  */
 - (BOOL)isTappable;
 
+#pragma mark - Gestures and Actions
 /// ----------------------------------------
 /// @name Gestures and Actions
 /// ----------------------------------------
@@ -191,20 +194,19 @@
 - (void)tap;
 
 /**
- Triggers the JavaScript call dragInsideWithOptions with the specified 
- start and end points.
+ Drags within the bounds of the specified element.
  
- This method passes the start and end points in floating point format.
- This causes UIAutomation to interpret the points in the normalized coordinates 
- of the specified element's view.  That is, a start or end point of {0.5, 0.5}
- is interpreted to be at the center of the target element's view.
+ Each offset specifies a pair of _x_ and _y_ values, each ranging from `0.0` to `1.0`.
+ These values represent, respectively, relative horizontal and vertical positions 
+ within the element's `-rect`, with `{0.0, 0.0}` as the top left and `{1.0, 1.0}` 
+ as the bottom right.
 
- This method uses a drag duration of 1.0 seconds because this is the documented 
- default duration for touch-and-hold gestures according to Apple's UIAElement 
- class reference.
+ This method uses a drag duration of 1.0 seconds (the documented default duration 
+ for touch-and-hold gestures according to Apple's `UIAElement` class reference).
  
- @param startPoint The start point for the drag.
- @param endPoint The end point for the drag.
+ @param startOffset The offset, within the element's rect, at which to begin 
+ dragging.
+ @param endOffset The offset, within the element's rect, at which to end dragging.
 
  @exception SLUIAElementInvalidException Raised if the element is not valid
  by the end of the [default timeout](+defaultTimeout).
@@ -213,8 +215,9 @@
  when whatever amount of time remains of the default timeout after the element
  becomes valid elapses.
  */
-- (void)dragWithStartPoint:(CGPoint)startPoint endPoint:(CGPoint)endPoint;
+- (void)dragWithStartOffset:(CGPoint)startOffset endOffset:(CGPoint)endOffset;
 
+#pragma mark - Identifying Elements
 /// ----------------------------------------
 /// @name Identifying Elements
 /// ----------------------------------------
@@ -251,6 +254,7 @@
  */
 - (NSString *)value;
 
+#pragma mark - Determining Element Positioning
 /// ----------------------------------------
 /// @name Determining Element Positioning
 /// ----------------------------------------
@@ -284,6 +288,7 @@
  */
 - (CGRect)rect;
 
+#pragma mark - Logging Element Information
 /// ----------------------------------------
 /// @name Logging Element Information
 /// ----------------------------------------
@@ -316,12 +321,20 @@
 @end
 
 
-// all exceptions thrown by SLUIAElement will have names beginning with this prefix
+#pragma mark - Constants
+
+/// All exceptions thrown by SLUIAElement will have names beginning with this prefix.
 extern NSString *const SLUIAElementExceptionNamePrefix;
 
+/// Thrown if an element is messaged which it is [invalid](-isValid).
 extern NSString *const SLUIAElementInvalidException;
+
+/// Thrown if tests attempt to simulate user interaction with an element
+/// while that element is not [tappable](-isTappable).
 extern NSString *const SLUIAElementNotTappableException;
 
+/// `SLUIAElement` waits for this duration between checks of an element's
+/// validity, tappability, etc.
 extern const NSTimeInterval SLUIAElementWaitRetryDelay;
 
 /// Represents an invalid CGPoint.

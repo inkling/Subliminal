@@ -55,6 +55,7 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
  */
 @interface SLAlert : NSObject
 
+#pragma mark - Matching Alerts
 /// -----------------------------------
 /// @name Matching Alerts
 /// -----------------------------------
@@ -68,6 +69,7 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
  */
 + (instancetype)alertWithTitle:(NSString *)title;
 
+#pragma mark - Handling Alerts
 /// -----------------------------------
 /// @name Handling Alerts
 /// -----------------------------------
@@ -121,6 +123,7 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
  */
 @interface SLAlertHandler : NSObject
 
+#pragma mark - Adding and Removing Handlers
 /// ------------------------------------------------
 /// @name Adding and Removing Handlers
 /// ------------------------------------------------
@@ -163,9 +166,10 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
  */
 + (void)removeHandler:(SLAlertHandler *)handler;
 
-///
+#pragma mark - Checking Dismissal Status
+/// ------------------------------------------------
 /// @name Checking Dismissal Status
-///
+/// ------------------------------------------------
 
 /**
  Returns YES if the receiver has dismissed an alert, NO otherwise.
@@ -182,6 +186,7 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
  */
 - (BOOL)didHandleAlert;
 
+#pragma mark - Chaining Handlers
 /// -------------------------------------
 /// @name Chaining Handlers
 /// -------------------------------------
@@ -212,6 +217,8 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
 @end
 
 
+#pragma mark - Constants
+
 /**
  If tests assert that a manual handler handled an alert after that alert is shown, 
  it is _not_ necessary to have the tests wait: `-didHandleAlert` will block until
@@ -232,6 +239,11 @@ extern const NSTimeInterval SLAlertHandlerAutomaticDelay;
  subclasses of `SLAlert`.
  */
 @interface SLAlert (Subclassing)
+
+#pragma mark - Methods for Subclasses
+/// -------------------------------------------
+/// @name Methods for Subclasses
+/// -------------------------------------------
 
 /**
  Returns the body of a JS function which
@@ -296,6 +308,11 @@ extern const NSTimeInterval SLAlertHandlerAutomaticDelay;
  only within Subliminal.
  */
 @interface SLAlertHandler (Internal)
+
+#pragma mark - Internal Methods
+/// -------------------------------------------
+/// @name Internal Methods
+/// -------------------------------------------
 
 /**
  Loads Subliminal's alert-handling mechanism into UIAutomation.

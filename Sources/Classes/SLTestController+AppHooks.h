@@ -44,6 +44,7 @@
  */
 @interface SLTestController (AppHooks)
 
+#pragma mark - Registering and Deregistering App Hooks
 /// ------------------------------------------------------
 /// @name Registering and Deregistering App Hooks
 /// ------------------------------------------------------
@@ -97,6 +98,7 @@
  */
 - (void)deregisterTarget:(id)target;
 
+#pragma mark - Calling App Hooks
 /// ----------------------------------------
 /// @name Calling App Hooks
 /// ----------------------------------------
@@ -187,6 +189,8 @@
 
 @end
 
+
+#pragma mark - Constants
 
 /// Thrown if the test controller is asked to send an action for which no target is registered.
 extern NSString *const SLAppActionTargetDoesNotExistException;

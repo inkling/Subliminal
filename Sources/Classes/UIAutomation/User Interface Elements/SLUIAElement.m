@@ -131,11 +131,14 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     [self waitUntilTappable:YES thenSendMessage:@"tap()"];
 }
 
-- (void)dragWithStartPoint:(CGPoint)startPoint endPoint:(CGPoint)endPoint
+- (void)dragWithStartOffset:(CGPoint)startOffset endOffset:(CGPoint)endOffset
 {
+    // Points must be passed in floating point format for UIAutomation
+    // to interpret them as relative offsets.
+    // If they were passed as integers, it would interpret them as absolute positions.
     [self waitUntilTappable:YES
            thenSendMessage:@"dragInsideWithOptions({startOffset:{x:%f, y:%f}, endOffset:{x:%f, y:%f}, duration:1.0})",
-                             startPoint.x, startPoint.y, endPoint.x, endPoint.y];
+                             startOffset.x, startOffset.y, endOffset.x, endOffset.y];
 }
 
 - (void)scrollToVisible {

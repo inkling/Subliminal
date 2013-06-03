@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Inkling. All rights reserved.
 //
 
-#import <Subliminal/Subliminal.h>
+#import "SLTerminal.h"
 
 /**
  The `SLTerminal (ConvenienceFunctions)` category defines APIs that structure
@@ -18,6 +18,7 @@
  */
 @interface SLTerminal (ConvenienceFunctions)
 
+#pragma mark - Evaluating Functions
 /// ----------------------------------------
 /// @name Evaluating Functions
 /// ----------------------------------------
@@ -134,6 +135,7 @@
                               body:(NSString *)body
                           withArgs:(NSArray *)args;
 
+#pragma mark - Waiting on Boolean Expressions and Functions
 /// -----------------------------------------------------------
 /// @name Waiting on Boolean Expressions and Functions
 /// -----------------------------------------------------------

@@ -7,6 +7,7 @@
 //
 
 #import "SLIntegrationTest.h"
+#import <Subliminal/SLTerminal.h>
 
 @interface SLWindowTest : SLIntegrationTest
 
