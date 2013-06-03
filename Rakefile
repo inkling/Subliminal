@@ -49,8 +49,8 @@ Options:
 rake test\tRuns Subliminal's tests
 
 rake test:unit
-rake test:integration[:iphone, :ipad]
-rake test:integration:device UDID=<udid>
+rake test:integration[:iphone, :ipad] LOGIN_PASSWORD=<password>
+rake test:integration:device          LOGIN_PASSWORD=<password> UDID=<udid>
 
 Sub-tasks:
   :unit\tRuns the unit tests
@@ -71,8 +71,15 @@ Subliminal's integration tests are currently configured to use the automatically
 iPhone Developer identity with the wildcard \"iOS Team Provisioning Profile\" managed 
 by Xcode.
 
-`integration:device` options:
-  UDID=<udid>\tThe UDID of the device to target.\n\n"""
+\`integration\` options:
+  LOGIN_PASSWORD=<password> Your login password. When instruments is launched, 
+                            it may ask for permission to take control of your application 
+                            (http://openradar.appspot.com/radar?id=1544403). 
+                            In order to authorize instruments during an un-attended run,
+                            this script requires your password.
+ 
+\`integration:device\` options:
+  UDID=<udid>               The UDID of the device to target.\n\n"""
 
     when "build_docs"
       puts "rake build_docs\tBuilds Subliminal's documentation"
@@ -150,7 +157,8 @@ task :uninstall do
   if ENV["DOCS"] != "no"
     fail "Could not uninstall docs" if !uninstall_docs?
   end
-  uninstall_schemes
+  # Note that we don't need to uninstall the schemes here, 
+  # as they're contained within the project
 
   puts "Uninstallation complete.\n\n"
 end
@@ -303,7 +311,7 @@ namespace :test do
   task :prepare do
     # We need to install Subliminal's trace template and its schemes
     # but can't declare install as a dependency because we have to set its env vars
-    ENV['dev'] = "yes"; ENV['docs'] = "no"
+    ENV['DEV'] = "yes"; ENV['DOCS'] = "no"
     Rake::Task['install'].invoke
   end
 
@@ -356,10 +364,18 @@ namespace :test do
   end
 
   namespace :integration do
-    TEST_COMMAND="\"#{SCRIPT_DIR}/subliminal-test\"\
-                      -project Subliminal.xcodeproj\
-                      -scheme 'Subliminal Integration Tests'\
-                      --quiet_build"
+    def test_command
+      command = "\"#{SCRIPT_DIR}/subliminal-test\"\
+                -project Subliminal.xcodeproj\
+                -scheme 'Subliminal Integration Tests'\
+                --quiet_build"
+
+      login_password = ENV["LOGIN_PASSWORD"]
+      if !login_password || login_password.length == 0
+        fail "In order to run un-attended, the integration tests require your login password."
+      end
+      command << " -login_password \"#{login_password}\""
+    end
 
     desc "Runs the integration tests on iPhone"
     task :iphone => :prepare do
@@ -369,7 +385,7 @@ namespace :test do
       `rm -rf "#{results_dir}" && mkdir -p "#{results_dir}"`
 
       # Use system so we see the tests' output
-      if system("#{TEST_COMMAND} -output \"#{results_dir}\" -sim_device 'iPhone'")
+      if system("#{test_command} -output \"#{results_dir}\" -sim_device 'iPhone'")
         puts "\niPhone integration tests passed.\n\n"
       else
         fail "\niPhone integration tests failed.\n\n"
@@ -384,7 +400,7 @@ namespace :test do
       `rm -rf "#{results_dir}" && mkdir -p "#{results_dir}"`
 
       # Use system so we see the tests' output
-      if system("#{TEST_COMMAND} -output \"#{results_dir}\" -sim_device 'iPad'")
+      if system("#{test_command} -output \"#{results_dir}\" -sim_device 'iPad'")
         puts "\niPad integration tests passed.\n\n"
       else
         fail "\niPad integration tests failed.\n\n"
@@ -404,7 +420,7 @@ namespace :test do
       `rm -rf "#{results_dir}" && mkdir -p "#{results_dir}"`
 
       # Use system so we see the tests' output
-      if system("#{TEST_COMMAND} -output \"#{results_dir}\" -hw_id #{udid}")
+      if system("#{test_command} -output \"#{results_dir}\" -hw_id #{udid}")
         puts "\nDevice integration tests passed.\n\n"
       else
         fail "\nDevice integration tests failed.\n\n"
