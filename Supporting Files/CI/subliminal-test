@@ -18,7 +18,16 @@ subliminal-test (-project <project_path> | -workspace <workspace_path>)
 \`subliminal-test\` builds a scheme contained in an Xcode project or Xcode workspace,
 then tests the product using Subliminal.
 
+\`subliminal-test\` returns failure (non-0) if:
+
+  * the tests did not finish
+  * the tests ran in a focused state (see \`+[SLTest isFocused]\`), because then only a subset of tests may have run
+  * one or more tests failed
+
+Otherwise, it returns success (0).
+
 \`subliminal-test\` expects to be run:
+
   * alongside the other scripts that were originally in \`/Supporting Files/CI\`
   * with Subliminal having been installed on the test machine, using \`rake install docs=no\`
   * with tests using an \`SLUIALogger\` to log their status (though it, and other loggers, may be attached using an \`SLMultiLogger\`).
