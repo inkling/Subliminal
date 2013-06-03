@@ -6,11 +6,11 @@
 # Execute `subliminal-test` with no arguments to print usage.
 
 
-print_usage_and_exit () {
+print_usage_and_fail () {
 	echo """
 subliminal-test (-project <project_path> | -workspace <workspace_path>) 
 		( -sim_device <device_type> | -hw_id <udid> )
-		[-build_tool <tool_name>] [-scheme <scheme_name>] [-sdk <sdk>] [-replacement_bundle_id <id>]
+		[-build_tool <tool_name>] [-scheme <scheme_name>] [-sdk <sdk>] [-replacement_bundle_id <id>] [--quiet_build]
 		[-timeout <timeout>] [-output <output_dir>] 
 		[-e <variable> <value>]
 
@@ -24,8 +24,11 @@ then tests the product using Subliminal.
 
 In addition, a bug in instruments (http://openradar.appspot.com/radar?id=1544403) 
 requires that this script be run by an user with admin privileges, who has 
-executed \`sudo /usr/libexec/PlistBuddy -c \"Set :rights:system.privilege.taskport:allow-root true\" /etc/authorization\` 
-on the host machine. See http://stackoverflow.com/a/11416025/495611 for more details.
+executed the following command on the host machine:
+	
+\tsudo /usr/libexec/PlistBuddy -c \"Set :rights:system.privilege.taskport:allow-root true\" /etc/authorization
+
+See http://stackoverflow.com/a/11416025/495611 for more details.
 
 Required arguments:
 	-project <project_path>		Build the project at the specified path.
@@ -41,12 +44,15 @@ Required arguments:
 	-hw_id <udid>			The UDID of the hardware to target.
 					Either this or \`-sim_device\` must be specified.
 
-Optional arguments:
+Optional build arguments:
 	-build_tool <tool_name>		The tool to use to build the scheme. Should be either \"xcrun xcodebuild\" 
 					or \"xctool\". Defaults to \"xcrun xcodebuild\".
 
 	-scheme <scheme_name>		The scheme to use to build the specified project or workspace.
 					Defaults to \"Integration Tests\".
+
+	-configuration <configuration>	The configuration to use to build the target specified by \`-scheme\`.
+					Defaults to \"Release\".
 
 	-sdk <sdk>			The SDK to use to build the specified project or workspace.
 					This should be an iPhone Simulator SDK if \`-sim_device\` is specified, 
@@ -63,6 +69,11 @@ Optional arguments:
 					in the Simulator, the Simulator will be reset after testing 
 					to avoid collisions on subsequent runs.
 
+	--quiet_build			If specified, the script will only log build output to the console 
+					if the build fails. Builds may be made less verbose, without hiding 
+					log output entirely, by using \`xctool\` as a build tool.
+
+Optional testing arguments:
 	-timeout <timeout>		The maximum duration for which to run the tests before aborting.
 					Specified in milliseconds and as a number rather than a string. Defaults to infinite.
 
@@ -79,7 +90,7 @@ Optional arguments:
 
 # If we were invoked with no arguments, just print usage and exit
 if [[ -z $1 ]]; then
-	print_usage_and_exit
+	print_usage_and_fail
 fi
 
 
@@ -88,15 +99,21 @@ fi
 # Defaults
 BUILD_TOOL="xcrun xcodebuild"
 SCHEME="Integration Tests"
+CONFIGURATION="Release"
 
 while :
 do
 case $1 in
+	# Must check this before the single dash options (because -* would match it)
+    --quiet_build)
+		BUILD_LOG=`mktemp /tmp/subliminal-test.build-log.XXXXXX`
+		shift 1;;
+
 	# Set argument, wait for value
-    -project|-workspace|-sim_device|-hw_id|-build_tool|-scheme|-sdk|-replacement_bundle_id|-timeout|-output|-e)
+    -project|-workspace|-sim_device|-hw_id|-build_tool|-scheme|-configuration|-sdk|-replacement_bundle_id|-timeout|-output|-e)
 		if [[ -n "$CURRENT_ARG" ]]; then
 			echo "Missing value for argument: $CURRENT_ARG"
-			print_usage_and_exit
+			print_usage_and_fail
 		fi
 		case $1 in
 			# Set a placeholder for the real arg (the env var)
@@ -108,14 +125,14 @@ case $1 in
 
     -*)	
 		echo "Unrecognized argument: $1"
-    	print_usage_and_exit;;
+    	print_usage_and_fail;;
 
 	# Set value for argument (unless end of command)
 	*)
 		if [[ -n "$1" ]]; then
 			if [[ -z "$CURRENT_ARG" ]]; then
 				echo "Value \"$1\" is missing argument"
-				print_usage_and_exit
+				print_usage_and_fail
 			elif [[ "$CURRENT_ARG" == "-e" ]]; then
 				# Replace the env var placeholder
 				CURRENT_ARG="export $1"
@@ -134,17 +151,26 @@ done
 # We reached the end of the command while still expecting an argument
 if [[ -n "$CURRENT_ARG" ]]; then
 	echo "Missing value for argument: $CURRENT_ARG"
-	print_usage_and_exit
+	print_usage_and_fail
 fi
 
 # Enforce required args
 if [[ ( -z "$PROJECT" && -z "$WORKSPACE" ) || ( -z "$SIM_DEVICE" && -z "$HW_ID" ) ]]; then
 	echo "Missing required arguments"
-	print_usage_and_exit
+	print_usage_and_fail
 fi
 
+# This function allows the script to abort at any point below without duplicating cleanup logic
+cleanup_and_exit () {
+	[[ -n "$BUILD_DIR" ]] && rm -rf "$BUILD_DIR"
+	[[ -n "$BUILD_LOG" ]] && rm -rf "$BUILD_LOG"
+	[[ -n "$RUN_DIR" ]] && rm -rf "$RUN_DIR"
+	exit $1
+}
+
 ### Build app
-echo "\nBuilding app...\n"
+QUIETLY=`[[ -e "$BUILD_LOG" ]] && echo " (quietly)" || echo ""`
+echo "\n\nBuilding app$QUIETLY..."
 
 if [[ -z "$SDK" ]]; then
 	SDK=`[[ -n "$SIM_DEVICE" ]] && echo "iphonesimulator" || echo "iphoneos"`
@@ -174,25 +200,33 @@ fi
 BUILD_DIR=`mktemp -d /tmp/subliminal-test.build.XXXXXX`
 if [ $? -ne 0 ]; then
 	echo "\nERROR: Could not create build directory."
-	exit 1
+	cleanup_and_exit 1
 fi
 
-# Don't validate the product (its entitlements etc.)
-# --this should not be necessary in the simulator
-# and can cause problems when testing on device
-$BUILD_TOOL\
-	-project "$PROJECT"\
-	-scheme "$SCHEME"\
-	-configuration Release\
-	-sdk "$SDK"\
-	$TARGETED_DEVICE_FAMILY_ARG\
-	SYMROOT="$BUILD_DIR"\
-	VALIDATE_PRODUCT=NO\
-	build
+# build in a subshell to conditionally redirect its output (and only its output)
+# to the build log (if one was created because --quiet_build was specified)
+(
+	[[ -e "$BUILD_LOG" ]] && exec >"$BUILD_LOG" 2>&1
+
+	# Don't validate the product (its entitlements etc.)
+	# --this should not be necessary in the simulator
+	# and can cause problems when testing on device
+	$BUILD_TOOL\
+		-project "$PROJECT"\
+		-scheme "$SCHEME"\
+		-configuration "$CONFIGURATION"\
+		-sdk "$SDK"\
+		$TARGETED_DEVICE_FAMILY_ARG\
+		SYMROOT="$BUILD_DIR"\
+		VALIDATE_PRODUCT=NO\
+		clean build
+)
 
 if [ $? -ne 0 ]; then
-	echo "\nERROR: Could not build application."
-	exit 1
+	[[ -e "$BUILD_LOG" ]] && cat "$BUILD_LOG"
+
+	echo "\n\nERROR: Could not build application."
+	cleanup_and_exit 1
 fi
 
 # Note that Instruments will install the app in the Simulator when launched
@@ -205,7 +239,7 @@ if [[ -n "$REPLACEMENT_BUNDLE_ID" ]]; then
 fi
 
 ### Prepare to install app
-echo "\nPreparing to install app...\n"
+echo "\n\nPreparing to install app..."
 
 if [[ -n "$SIM_DEVICE" ]]; then
 	# Reset the simulator
@@ -215,8 +249,8 @@ if [[ -n "$SIM_DEVICE" ]]; then
 	if [ `osascript "$SCRIPT_DIR/reset_simulator"` ]; then
 		echo "Successfully reset iOS Simulator."
 	else
-		echo "\nERROR: Could not reset the simulator."
-		exit 1
+		echo "\n\nERROR: Could not reset the simulator."
+		cleanup_and_exit 1
 	fi
 
 	# Set the simulator's device type
@@ -224,23 +258,23 @@ if [[ -n "$SIM_DEVICE" ]]; then
 	if [ `osascript "$SCRIPT_DIR/set_simulator_device" "$SIM_DEVICE"` ]; then
 		echo "Successfully set simulator device type."
 	else
-		echo "\nERROR: Could not set the simulator's device type."
-		exit 1
+		echo "\n\nERROR: Could not set the simulator's device type."
+		cleanup_and_exit 1
 	fi
 fi
 
 # Set paths to save Instruments' output (at least temporarily)
 RUN_DIR=`mktemp -d /tmp/subliminal-test.run.XXXXXX`
 if [ $? -ne 0 ]; then
-	echo "\nERROR: Could not create temporary test results directory."
-	exit 1
+	echo "\n\nERROR: Could not create temporary test results directory."
+	cleanup_and_exit 1
 fi
 TRACE_FILE="$RUN_DIR/Integration Tests.trace"
 RESULTS_DIR="$RUN_DIR/Automation Results"
 mkdir "$RESULTS_DIR"
 
 ### Launch tests
-echo "\nLaunching tests...\n"
+echo "\n\nLaunching tests...\n"
 
 # Note that the Subliminal trace template includes the UIASCRIPT
 # and the environment variables passed to this script
@@ -270,19 +304,19 @@ if [[ -n "$SIM_DEVICE" ]]; then
 fi
 
 ### Process results
-echo "\nProcessing results...\n"
+echo "\n\nProcessing results..."
 
 # Parse test success or failure out of the run .plist
 RESULT_LOG="$RESULTS_DIR/Run 1/Automation Results.plist"
 TEST_STATUS=0
 grep -q "This was a focused run." "$RESULT_LOG"
 if [ $? -eq 0 ]; then
-	echo "\nERROR: Tests were committed with focus--fewer test cases may have run than normal."
+	echo "\n\nERROR: Tests were committed with focus--fewer test cases may have run than normal."
 	TEST_STATUS=1
 else
 	OVERALL_RESULT=`grep "Testing finished" "$RESULT_LOG"`
 	if [[ -z "$OVERALL_RESULT" ]]; then
-		echo "\nERROR: Tests did not finish."
+		echo "\n\nERROR: Tests did not finish."
 		TEST_STATUS=1
 	else
 		NUMBER_OF_FAILURES=`echo "$OVERALL_RESULT" | sed -E 's|.+with ([0-9]+) failure.+|\1|'`
@@ -299,8 +333,5 @@ if [[ -d "${OUTPUT}" ]]; then
 	mv "$RESULTS_DIR/Run 1" "$OUTPUT/Run Data"
 fi
 
-rm -rf "$RUN_DIR"
-rm -rf "$BUILD_DIR"
-
-echo "\nRun complete."
-exit $TEST_STATUS
+echo "\n\nRun complete."
+cleanup_and_exit $TEST_STATUS

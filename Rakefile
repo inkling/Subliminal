@@ -4,6 +4,7 @@ SCRIPT_DIR = "#{PROJECT_DIR}/Supporting Files/CI"
 FILE_TEMPLATE_DIR = "#{ENV['HOME']}/Library/Developer/Xcode/Templates/File Templates/Subliminal"
 TRACE_TEMPLATE_DIR = "#{ENV['HOME']}/Library/Application Support/Instruments/Templates/Subliminal"
 TRACE_TEMPLATE_NAME = "Subliminal.tracetemplate"
+SCHEMES_DIR = "Subliminal.xcodeproj/xcuserdata/#{ENV['USER']}.xcuserdatad/xcschemes"
 
 DOCSET_DIR = "#{ENV['HOME']}/Library/Developer/Shared/Documentation/DocSets"
 DOCSET_NAME = "com.inkling.Subliminal.docset"
@@ -16,13 +17,13 @@ task :default => :usage
 
 desc "Prints usage statement for people unfamiliar with Rake or this particular Rakefile"
 task :usage, :task_name do |t, args|
-	task_name = args[:task_name] ||= ""
+  task_name = args[:task_name] ||= ""
 
-	if !task_name.empty?
-		case task_name
+  if !task_name.empty?
+    case task_name
 
-		when "usage"
-			puts """
+    when "usage"
+      puts """
 rake usage\tPrints usage statement for people unfamiliar with Rake or this particular Rakefile
 
 rake usage[[<task>]]
@@ -30,11 +31,11 @@ rake usage[[<task>]]
 Arguments:
   task\tThe name of the task to describe.\n\n"""
 
-		when "uninstall"
-			puts "rake uninstall\tUninstalls supporting files"
+    when "uninstall"
+      puts "rake uninstall\tUninstalls supporting files"
 
-		when "install"
-			puts """
+    when "install"
+      puts """
 rake install\tInstalls supporting files
 
 rake install [docs=no] [dev=yes]
@@ -76,12 +77,12 @@ by Xcode.
     when "build_docs"
       puts "rake build_docs\tBuilds Subliminal's documentation"
 
-  	else
-  		fail "Unrecognized task name."
+    else
+      fail "Unrecognized task name."
 
-		end
-	else
-		puts """
+    end
+  else
+    puts """
 rake <task> [<opt>=<value>[ <opt2>=<value2>...]]
 
 Tasks:
@@ -91,7 +92,48 @@ Tasks:
   build_docs\tBuilds Subliminal's documentation
 
 See 'rake usage[<task>]' for more information on a specific task.\n\n"""
-	end
+  end
+end
+
+# Restarts Xcode (with the user's permission) if it's running, as required by several of the tasks below
+# If a block is passed, it will be executed between quitting Xcode and restarting it
+# Returns false if Xcode needed to be restarted and the user chose not to, true otherwise
+def restart_xcode?(reason)
+  frontmost_app = `osascript <<-EOT
+    tell application "System Events"
+      set app_name to name of first process whose frontmost is true
+    end tell
+EOT`.chomp
+
+  reply=`osascript <<-EOT
+    if application "Xcode" is not running then
+      set reply to "Not Running"
+    else
+      tell application "System Events"
+        activate
+        set reply to button returned of (display dialog "#{reason}" \
+                        buttons {"Uninstall Later", "Restart Xcode"} \
+                        default button "Uninstall Later")
+      end tell
+    end if
+EOT`.chomp
+    
+  return false if reply == "Uninstall Later"
+
+  # The block may require that Xcode has fully quit--wait before proceeding
+  `osascript -e 'tell application "Xcode" to quit' -e 'delay 1.0'` if reply == "Restart Xcode"
+
+  yield if block_given?
+
+  if reply == "Restart Xcode"
+    # once to restart, twice to come forward
+    `osascript -e 'tell application "Xcode" to activate'`
+    `osascript -e 'tell application "Xcode" to activate'`
+    # but leave previously frontmost app up
+    `osascript -e 'tell application "#{frontmost_app}" to activate'`
+  end
+
+  true
 end
 
 
@@ -99,59 +141,52 @@ end
 
 desc "Uninstalls supporting files"
 task :uninstall do
-	puts "\nUninstalling old supporting files..."
+  puts "\nUninstalling old supporting files..."
 
-	uninstall_file_templates
-	uninstall_trace_template
-	fail "Could not uninstall docs" if !uninstall_docs
+  uninstall_file_templates
+  uninstall_trace_template
+  # This setting may cascade from the tests;
+  # respecting it allows us to avoid restarting Xcode when running tests locally.
+  if ENV["docs"] != "no"
+    fail "Could not uninstall docs" if !uninstall_docs?
+  end
+  uninstall_schemes
+
+  puts "Uninstallation complete.\n\n"
 end
 
 def uninstall_file_templates
-	puts "- Uninstalling file templates..."
+  puts "- Uninstalling file templates..."
 
-	`rm -rf "#{FILE_TEMPLATE_DIR}"`
+  `rm -rf "#{FILE_TEMPLATE_DIR}"`
 end
 
 def uninstall_trace_template
-	puts "- Uninstalling trace template..."
+  puts "- Uninstalling trace template..."
 
-	`rm -rf "#{TRACE_TEMPLATE_DIR}"`
+  `rm -rf "#{TRACE_TEMPLATE_DIR}"`
 end
 
-def uninstall_docs
-	puts "- Uninstalling docs..."
+def uninstall_docs?
+  puts "- Uninstalling docs..."
 
-	docset_file = "#{DOCSET_DIR}/#{DOCSET_NAME}"
-	
-	if File.exists?(docset_file)
-		# Xcode will crash if a docset is deleted while the app's open
-		reply=`osascript <<-EOT
-					if application "Xcode" is not running then
-						set reply to "Not Running"
-					else
-						tell application "System Events"
-							activate
-							set reply to button returned of (display dialog "Subliminal will need to restart Xcode to uninstall Subliminal's documentation." \
-															buttons {"Uninstall Later", "Restart Xcode"} \
-															default button "Uninstall Later")
-						end tell
-					end if
-				EOT`.chomp
-		
-		return false if reply == "Uninstall Later"
-		
-		`osascript -e 'tell application "Xcode" to quit' -e 'delay 0.1'` if reply == "Restart Xcode"
+  docset_file = "#{DOCSET_DIR}/#{DOCSET_NAME}"
+  
+  if File.exists?(docset_file)
+    # Xcode will crash if a docset is deleted while the app's open
+    restart_reason = "Subliminal will need to restart Xcode to uninstall Subliminal's documentation."
+    return false if !restart_xcode?(restart_reason) { `rm -rf #{docset_file}` }
+  end
 
-		`rm -rf #{docset_file}`
+  true
+end
 
-		if reply == "Restart Xcode"
-			# once to restart, twice to become frontmost
-			`osascript -e 'tell application "Xcode" to activate'`
-			`osascript -e 'tell application "Xcode" to activate'`
-		end
-	end
+def uninstall_schemes
+  puts "- Uninstalling Subliminal's schemes..."
 
-	true
+  # Though Xcode continues to show the schemes until restarted (it appears to cache working copies), 
+  # it won't wig out if the schemes are deleted while open, so we don't need to restart it here
+  `rm -f "#{SCHEMES_DIR}/"*.xcscheme`
 end
 
 
@@ -159,32 +194,37 @@ end
 
 desc "Installs supporting files"
 task :install => :uninstall do
-	puts "\nInstalling supporting files..."
+  puts "\nInstalling supporting files..."
 
-	install_file_templates(ENV["dev"] == "yes")
-	install_trace_template
-	install_docs unless ENV["docs"] == "no"
+  install_file_templates(ENV["dev"] == "yes")
+  install_trace_template
+  install_docs unless ENV["docs"] == "no"
+  if ENV["dev"] == "yes"
+    fail "Could not install Subliminal's schemes." if !install_schemes?
+  end
+
+  puts "Installation complete.\n\n"
 end
 
 def install_file_templates(install_dev_templates)
-	puts "- Installing file templates..."
+  puts "- Installing file templates..."
 
-	local_template_dir = "#{PROJECT_DIR}/Supporting Files/Xcode/File Templates/"
+  local_template_dir = "#{PROJECT_DIR}/Supporting Files/Xcode/File Templates/"
 
-	`mkdir -p "#{FILE_TEMPLATE_DIR}" && \
-	cp -r "#{local_template_dir}/Integration test class.xctemplate" "#{FILE_TEMPLATE_DIR}"`
+  `mkdir -p "#{FILE_TEMPLATE_DIR}" && \
+  cp -r "#{local_template_dir}/Integration test class.xctemplate" "#{FILE_TEMPLATE_DIR}"`
 
-	# install developer templates
-	if $? == 0 && install_dev_templates
-		`cp -r "#{local_template_dir}/Subliminal integration test class.xctemplate" "#{FILE_TEMPLATE_DIR}"`
-	end
+  # install developer templates
+  if $? == 0 && install_dev_templates
+    `cp -r "#{local_template_dir}/Subliminal integration test class.xctemplate" "#{FILE_TEMPLATE_DIR}"`
+  end
 end
 
 def install_trace_template
-	puts "- Installing trace template..."
+  puts "- Installing trace template..."
 
-	`mkdir -p "#{TRACE_TEMPLATE_DIR}" && \
-	cp "#{PROJECT_DIR}/Supporting Files/Instruments/"* "#{TRACE_TEMPLATE_DIR}"`
+  `mkdir -p "#{TRACE_TEMPLATE_DIR}" && \
+  cp "#{PROJECT_DIR}/Supporting Files/Instruments/"* "#{TRACE_TEMPLATE_DIR}"`
 
   # Update the template to reference its script correctly
   # (as the user's home directory isn't known until now)
@@ -195,38 +235,60 @@ def install_trace_template
 end
 
 def install_docs
-	puts "- Installing docs..."
+  puts "- Installing docs..."
 
-	# download the latest docs
-	docset_xar_name = "com.inkling.Subliminal-#{DOCSET_VERSION}.xar"
+  # download the latest docs
+  docset_xar_name = "com.inkling.Subliminal-#{DOCSET_VERSION}.xar"
 
-	docset_download_dir = "/tmp"
-	docset_xar_file = "#{docset_download_dir}/#{docset_xar_name}"
+  docset_download_dir = "/tmp"
+  docset_xar_file = "#{docset_download_dir}/#{docset_xar_name}"
 
   # Use a link to our GitHub repo once it goes public
-	# docset_xar_URL_root = "https://github.com/inkling/subliminal/<to be determined>"
+  # docset_xar_URL_root = "https://github.com/inkling/subliminal/<to be determined>"
   docset_xar_URL_root = "http://f.cl.ly/items/0O3Q3N062F2G2v2b010m"
   `curl --progress-bar --output #{docset_xar_file} #{docset_xar_URL_root}/#{docset_xar_name}`
 
-	# uncompress them
-	`xar -C #{docset_download_dir} -xf #{docset_xar_file}`
-	`rm #{docset_xar_file}`
+  # uncompress them
+  `xar -C #{docset_download_dir} -xf #{docset_xar_file}`
+  `rm #{docset_xar_file}`
 
-	# move them to the documentation directory
-	downloaded_docset_file = "#{docset_download_dir}/#{DOCSET_NAME}"
-	installed_docset_file = "#{DOCSET_DIR}/#{DOCSET_NAME}"
-	`mv #{downloaded_docset_file} #{installed_docset_file}`
+  # move them to the documentation directory
+  downloaded_docset_file = "#{docset_download_dir}/#{DOCSET_NAME}"
+  installed_docset_file = "#{DOCSET_DIR}/#{DOCSET_NAME}"
+  `mv #{downloaded_docset_file} #{installed_docset_file}`
 
-	# load them
-	`osascript -e 'tell application "Xcode" to load documentation set with path "#{installed_docset_file}"'`
+  # load them
+  `osascript -e 'tell application "Xcode" to load documentation set with path "#{installed_docset_file}"'`
 end
 
+# If Subliminal's schemes were shared, they'd show up in projects that used Subliminal
+# so we instead add them (as non-shared schemes, within the project's `.xcuserdata` 
+# directory) only when Subliminal itself is to be built, by the tests or a developer
+def install_schemes?
+  puts "- Installing Subliminal's schemes..."
+
+  # Xcode will not show the schemes until restarted,
+  # but we don't want to have to restart Xcode every time we run the tests locally,
+  # so we only (re)install if any schemes are missing or out-of-date.
+  schemes_need_reinstall = Dir["#{PROJECT_DIR}/Supporting Files/Xcode/Schemes/*"].any? { |file|
+    installed_file = "#{SCHEMES_DIR}/#{File.basename(file)}"
+    Dir[installed_file].empty? || !FileUtils.compare_file(installed_file, file)
+  }
+  if schemes_need_reinstall
+    restart_reason = "Subliminal will need to restart Xcode to install Subliminal's schemes."
+    return restart_xcode?(restart_reason) {
+      `mkdir -p "#{SCHEMES_DIR}" && \
+      cp "#{PROJECT_DIR}/Supporting Files/Xcode/Schemes/"* "#{SCHEMES_DIR}"`
+    }
+  end
+  return true
+end
 
 ### Testing
 
 desc "Runs Subliminal's tests"
-task :test do
-  puts "\nRunning tests..."
+task :test => 'test:prepare' do
+  puts "\nRunning tests...\n\n"
 
   # The unit tests guarantee the integrity of the integration tests
   # So no point in running the latter if the unit tests break the build
@@ -237,12 +299,20 @@ task :test do
 end
 
 namespace :test do
+  desc "Prepares to run Subliminal's tests"
+  task :prepare do
+    # We need to install Subliminal's trace template and its schemes
+    # but can't declare install as a dependency because we have to set its env vars
+    ENV['dev'] = "yes"; ENV['docs'] = "no"
+    Rake::Task['install'].invoke
+  end
+
   desc "Runs the unit tests"
-  task :unit do    
-    puts "- Running unit tests..."
+  task :unit => :prepare do    
+    puts "- Running unit tests...\n\n"
 
     # Use system so we see the tests' output
-    if system('xctool -project Subliminal.xcodeproj/ -scheme "Subliminal Unit Tests" test')
+    if system('xctool -project Subliminal.xcodeproj/ -scheme "Subliminal Unit Tests" clean test')
       puts "Unit tests passed.\n\n"
     else      
       fail "Unit tests failed."
@@ -250,8 +320,8 @@ namespace :test do
   end
 
   desc "Runs the integration tests"
-  task :integration do    
-    puts "- Running integration tests..."
+  task :integration => :prepare do    
+    puts "- Running integration tests...\n\n"
 
     # When the tests are running separately, 
     # we want them to (individually) fail rake
@@ -287,12 +357,12 @@ namespace :test do
 
   namespace :integration do
     TEST_COMMAND="\"#{SCRIPT_DIR}/subliminal-test\"\
-                      -build_tool xctool\
                       -project Subliminal.xcodeproj\
-                      -scheme 'Subliminal Integration Tests'"
+                      -scheme 'Subliminal Integration Tests'\
+                      --quiet_build"
 
     desc "Runs the integration tests on iPhone"
-    task :iphone do
+    task :iphone => :prepare do
       puts "-- Running iPhone integration tests..."
 
       results_dir = "#{SCRIPT_DIR}/results/iphone"
@@ -307,7 +377,7 @@ namespace :test do
     end
 
     desc "Runs the integration tests on iPad"
-    task :ipad do
+    task :ipad => :prepare do
       puts "-- Running iPad integration tests..."
 
       results_dir = "#{SCRIPT_DIR}/results/ipad"
@@ -322,7 +392,7 @@ namespace :test do
     end
 
     desc "Runs the integration tests on a device"
-    task :device do
+    task :device => :prepare do
       puts "-- Running the integration tests on a device"
 
       udid = ENV["udid"]
@@ -348,7 +418,7 @@ end
 
 desc "Builds the documentation"
 task :build_docs do    
-  puts "\nBuilding documentation..."
+  puts "\nBuilding documentation...\n\n"
 
   # Use system so we see the build's output
   if system('xctool -project Subliminal.xcodeproj/ -scheme "Subliminal Documentation" build')

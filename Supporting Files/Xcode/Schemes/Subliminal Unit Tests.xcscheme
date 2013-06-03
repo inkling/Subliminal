@@ -9,14 +9,14 @@
          <BuildActionEntry
             buildForTesting = "YES"
             buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "F0AC809316BB299500C5D5C0"
-               BuildableName = "Subliminal (Integration Tests).app"
-               BlueprintName = "Subliminal Integration Tests"
+               BlueprintIdentifier = "F0D240511683F7130031B67C"
+               BuildableName = "Subliminal (Unit Tests).octest"
+               BlueprintName = "Subliminal Unit Tests"
                ReferencedContainer = "container:Subliminal.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,16 +28,17 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       buildConfiguration = "Debug">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "F0D240511683F7130031B67C"
+               BuildableName = "Subliminal (Unit Tests).octest"
+               BlueprintName = "Subliminal Unit Tests"
+               ReferencedContainer = "container:Subliminal.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F0AC809316BB299500C5D5C0"
-            BuildableName = "Subliminal (Integration Tests).app"
-            BlueprintName = "Subliminal Integration Tests"
-            ReferencedContainer = "container:Subliminal.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </TestAction>
    <LaunchAction
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
@@ -48,15 +49,6 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F0AC809316BB299500C5D5C0"
-            BuildableName = "Subliminal (Integration Tests).app"
-            BlueprintName = "Subliminal Integration Tests"
-            ReferencedContainer = "container:Subliminal.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -64,17 +56,8 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "F0AC809316BB299500C5D5C0"
-            BuildableName = "Subliminal (Integration Tests).app"
-            BlueprintName = "Subliminal Integration Tests"
-            ReferencedContainer = "container:Subliminal.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
