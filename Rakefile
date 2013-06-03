@@ -38,11 +38,11 @@ Arguments:
       puts """
 rake install\tInstalls supporting files
 
-rake install [docs=no] [dev=yes]
+rake install [DOCS=no] [DEV=yes]
 
 Options:
-  docs=no\tSkips the download and installation of Subliminal's documentation.
-  dev=yes\tInstalls files supporting the development of Subliminal.\n\n"""
+  DOCS=no\tSkips the download and installation of Subliminal's documentation.
+  DEV=yes\tInstalls files supporting the development of Subliminal.\n\n"""
 
     when "test", "test:unit", "test:integration", "test:integration:iphone", "test:integration:ipad"
       puts """
@@ -50,7 +50,7 @@ rake test\tRuns Subliminal's tests
 
 rake test:unit
 rake test:integration[:iphone, :ipad]
-rake test:integration:device udid=<udid>
+rake test:integration:device UDID=<udid>
 
 Sub-tasks:
   :unit\tRuns the unit tests
@@ -72,7 +72,7 @@ iPhone Developer identity with the wildcard \"iOS Team Provisioning Profile\" ma
 by Xcode.
 
 `integration:device` options:
-  udid=<udid>\tThe UDID of the device to target.\n\n"""
+  UDID=<udid>\tThe UDID of the device to target.\n\n"""
 
     when "build_docs"
       puts "rake build_docs\tBuilds Subliminal's documentation"
@@ -147,7 +147,7 @@ task :uninstall do
   uninstall_trace_template
   # This setting may cascade from the tests;
   # respecting it allows us to avoid restarting Xcode when running tests locally.
-  if ENV["docs"] != "no"
+  if ENV["DOCS"] != "no"
     fail "Could not uninstall docs" if !uninstall_docs?
   end
   uninstall_schemes
@@ -196,10 +196,10 @@ desc "Installs supporting files"
 task :install => :uninstall do
   puts "\nInstalling supporting files..."
 
-  install_file_templates(ENV["dev"] == "yes")
+  install_file_templates(ENV["DEV"] == "yes")
   install_trace_template
-  install_docs unless ENV["docs"] == "no"
-  if ENV["dev"] == "yes"
+  install_docs unless ENV["DOCS"] == "no"
+  if ENV["DEV"] == "yes"
     fail "Could not install Subliminal's schemes." if !install_schemes?
   end
 
@@ -395,7 +395,7 @@ namespace :test do
     task :device => :prepare do
       puts "-- Running the integration tests on a device"
 
-      udid = ENV["udid"]
+      udid = ENV["UDID"]
       if !udid || udid.length == 0
         fail "Device UDID not specified. See 'rake usage[test]'." 
       end
