@@ -42,7 +42,7 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
 
     // test causes an alert with title "foo" to appear
 
-    SLAssertTrue([handler didHandleAlert], @"Alert did not appear.");
+    SLAssertTrueWithTimeout([handler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, @"Alert did not appear.");
 
  @warning If a test wishes to manually handle an alert, it must register 
  a handler _before_ that alert appears.
@@ -174,9 +174,7 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
 /**
  Returns YES if the receiver has dismissed an alert, NO otherwise.
  
- Tests may assert that this is true immediately after a corresponding alert
- has been shown, without using a timeout: `-didHandleAlert` will block until
- the alert has been handled.
+ Tests should assert that this is true within a timeout of `SLAlertHandlerDidHandleAlertDelay`.
 
  @return YES if the receiver has dismissed an alert, NO otherwise.
  
@@ -220,18 +218,22 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
 #pragma mark - Constants
 
 /**
- If tests assert that a manual handler handled an alert after that alert is shown, 
- it is _not_ necessary to have the tests wait: `-didHandleAlert` will block until
- the alert has been handled.
+ The maximum amount of time it should take for an alert to be fully dismissed
+ by a manual or automatic alert handler (including the alert's dismissal animation,
+ and the alert's delegate receiving the alertView:didDismissWithButtonIndex: callback),
+ as measured from the time the alert appears.
+
+ This timeout should suffice to dismiss alerts of all alertViewStyles
+ (using handlers which simply dismiss the alerts, as well as those that enter text).
  
- However, _if_ the tests need to wait for the automatic handler to take effect,
- they may use this timeout, which measures the amount of time it generally takes
- for an alert to be fully dismissed by the automatic handler (including the alert's 
- dismissal animation, and the alert's delegate receiving the 
- `alertView:didDismissWithButtonIndex:` callback), as measured from the time
- the alert appears.
+ If using a manual handler, you need not wait for this entire time
+ 
+    `SLAssertTrueWithTimeout([handler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, ...)`
+
+ If relying on automatic handling, because you have no handler to check, 
+ your test should call `[self wait:SLAlertHandlerDidHandleAlertDelay]`.
  */
-extern const NSTimeInterval SLAlertHandlerAutomaticDelay;
+extern const NSTimeInterval SLAlertHandlerDidHandleAlertDelay;
 
 
 /**

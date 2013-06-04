@@ -14,11 +14,19 @@ set GUIScriptingEnabled to (run script (enableGUIScriptingScript as alias))
 if not GUIScriptingEnabled then return false
 
 -- Reset simulator
-tell application "iPhone Simulator"
-	activate
-end tell
-
 tell application "System Events"
+	-- Sometimes Applescript can time out trying to talk to the Simulator
+	-- (e.g. when being reset repeatedly during CI runs),
+	-- so we force quit the Simulator to start
+	if "iPhone Simulator" is in name of processes
+		do shell script "killall \"iPhone Simulator\" 2> /dev/null"
+		delay 1.0
+	end if
+
+	tell application "iPhone Simulator"
+		activate
+	end tell
+
 	tell process "iPhone Simulator"
 		tell menu bar 1
 			tell menu bar item "iOS Simulator"
@@ -38,7 +46,7 @@ end tell
 -- This is necessary when an application's bundle identifier changes.
 tell application "iPhone Simulator"
 	quit
-	delay 0.1
+	delay 1.0
 	activate
 end tell
 

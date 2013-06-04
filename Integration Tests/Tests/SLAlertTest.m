@@ -31,7 +31,7 @@
 
 - (void)testThatUnhandledAlertsAreAutomaticallyDismissed {
     SLAskApp1(showAlertWithTitle:, @"Unhandled Alert");
-    [self wait:SLAlertHandlerAutomaticDelay];
+    [self wait:SLAlertHandlerDidHandleAlertDelay];
     SLAssertFalse(SLAskAppYesNo(isAlertActive), @"The unhandled alert should have been automatically dismissed.");
 }
 
@@ -40,7 +40,7 @@
     SLAskApp1(showAlertWithInfo:, (@{   @"title": @"Foo",
                                         @"cancel": cancelButtonTitle,
                                         @"other": @"Ok" }));
-    [self wait:SLAlertHandlerAutomaticDelay];
+    [self wait:SLAlertHandlerDidHandleAlertDelay];
     SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:cancelButtonTitle],
                  @"The alert should have been dismissed using the cancel button.");
 }
@@ -49,7 +49,7 @@
     NSString *defaultButtonTitle = @"Ok";
     SLAskApp1(showAlertWithInfo:, (@{   @"title": @"Foo",
                                         @"other": defaultButtonTitle }));
-    [self wait:SLAlertHandlerAutomaticDelay];
+    [self wait:SLAlertHandlerDidHandleAlertDelay];
     SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:defaultButtonTitle],
                  @"The alert should have been dismissed using the default button.");
 }
@@ -70,7 +70,7 @@
     SLAskApp1(showAlertWithInfo:, (@{   @"title":   @"Random Alert",
                                         @"cancel":  cancelButtonTitle,
                                         @"other":   defaultButtonTitle }));
-    [self wait:SLAlertHandlerAutomaticDelay];
+    [self wait:SLAlertHandlerDidHandleAlertDelay];
     SLAssertFalse([handler didHandleAlert], @"Handler should not yet have handled an alert.");
     SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:cancelButtonTitle],
                  @"The alert should have been automatically dismissed, using the cancel button.");
@@ -79,7 +79,7 @@
     SLAskApp1(showAlertWithInfo:, (@{   @"title":   alertTitle,
                                         @"cancel":  cancelButtonTitle,
                                         @"other":   defaultButtonTitle }));
-    SLAssertTrue([handler didHandleAlert], @"Handler should have handled an alert.");
+    SLAssertTrueWithTimeout([handler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, @"Handler should have handled an alert.");
     SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:defaultButtonTitle],
                  @"The handler should have dismissed the alert using the default button.");
 }
@@ -95,7 +95,7 @@
     SLAskApp1(showAlertWithInfo:, (@{   @"title":   alertTitle,
                                         @"cancel":  cancelButtonTitle,
                                         @"other":   defaultButtonTitle }));
-    [self wait:SLAlertHandlerAutomaticDelay];
+    [self wait:SLAlertHandlerDidHandleAlertDelay];
     SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:cancelButtonTitle],
                  @"The handler should have dismissed the alert using the cancel button.");
 
@@ -108,7 +108,7 @@
                                         @"cancel":  cancelButtonTitle,
                                         @"other":   defaultButtonTitle }));
     // sanity check
-    SLAssertTrue([handler didHandleAlert], nil);
+    SLAssertTrueWithTimeout([handler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, nil);
 }
 
 - (void)testAHandlerMustNotBeAddedMultipleTimes {
@@ -123,7 +123,7 @@
     // show an alert just to remove the handler
     SLAskApp1(showAlertWithTitle:, alertTitle);
     // sanity check
-    SLAssertTrue([handler didHandleAlert], nil);
+    SLAssertTrueWithTimeout([handler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, nil);
 }
 
 // This is a variant on the above test
@@ -135,7 +135,7 @@
 
     // show an alert to remove the handler
     SLAskApp1(showAlertWithTitle:, alertTitle);
-    SLAssertTrue([handler didHandleAlert], nil);
+    SLAssertTrueWithTimeout([handler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, nil);
     
     SLAssertThrowsNamed([SLAlertHandler addHandler:handler],
                         NSInternalInconsistencyException,
@@ -155,7 +155,7 @@
     SLAskApp1(showAlertWithInfo:, (@{   @"title":   alertTitle,
                                         @"cancel":  cancelButtonTitle,
                                         @"other":   defaultButtonTitle }));
-    SLAssertTrue([handler didHandleAlert], @"The handler should have handled the alert.");
+    SLAssertTrueWithTimeout([handler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, @"The handler should have handled the alert.");
     SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:defaultButtonTitle],
                  @"The handler should have dismissed the alert using the default button.");
 
@@ -163,7 +163,7 @@
     SLAskApp1(showAlertWithInfo:, (@{   @"title":   alertTitle,
                                         @"cancel":  cancelButtonTitle,
                                         @"other":   defaultButtonTitle }));
-    [self wait:SLAlertHandlerAutomaticDelay];
+    [self wait:SLAlertHandlerDidHandleAlertDelay];
     SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:cancelButtonTitle],
                   @"Without the handler active, the alert should have been dismissed using the cancel button.");
 }
@@ -186,15 +186,15 @@
     SLAskApp1(showAlertWithInfo:, (@{   @"title":   alertTitle,
                                         @"cancel":  cancelButtonTitle, }));
     SLAssertFalse([defaultButtonHandler didHandleAlert], @"The default button handler should not have handled the alert.");
+    SLAssertTrueWithTimeout([cancelButtonHandler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, @"The cancel button handler should have handled the alert.");
     SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:cancelButtonTitle],
                  @"The alert should have been dismissed using the cancel button.");
-    SLAssertTrue([cancelButtonHandler didHandleAlert], @"The cancel button handler should have handled the alert.");
 
     // the defaultButtonHandler will handle this alert, now
     SLAskApp1(showAlertWithInfo:, (@{   @"title":   alertTitle,
                                         @"cancel":  cancelButtonTitle,
                                         @"other":   defaultButtonTitle }));
-    SLAssertTrue([defaultButtonHandler didHandleAlert], @"The default button handler should have handled the alert.");
+    SLAssertTrueWithTimeout([defaultButtonHandler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, @"The default button handler should have handled the alert.");
     SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:defaultButtonTitle],
                  @"Without the handler active, the alert should have been dismissed using the default button.");
 }
@@ -214,7 +214,7 @@
                                    @"cancel": cancelButtonTitle,
                                    @"other": otherButtonTitle }));
 
-    [self wait:SLAlertHandlerAutomaticDelay];
+    [self wait:SLAlertHandlerDidHandleAlertDelay];
     SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:cancelButtonTitle],
                  @"The alert should have been dismissed using the cancel button by default.");
 }
@@ -239,11 +239,12 @@
     [SLAlertHandler addHandler:alert2Handler];
 
     SLAskApp1(showAlertWithTitle:, alert1Title);
-    SLAssertTrue([alert1Handler didHandleAlert], @"First alert handler should have handled alert.");
+    SLAssertTrueWithTimeout([alert1Handler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, @"First alert handler should have handled alert.");
     SLAssertFalse([alert2Handler didHandleAlert], @"Second alert handler should not have handled alert.");
 
+    // showing the second alert may be slightly delayed by the first's dismissal
     SLAskApp1(showAlertWithTitle:, alert2Title);
-    SLAssertTrue([alert2Handler didHandleAlert], @"Second alert handler should have handled alert.");
+    SLAssertTrueWithTimeout([alert2Handler didHandleAlert], 1.0, @"Second alert handler should have handled alert.");
 }
 
 - (void)testHandlersAreCheckedInOrderOfAddition {
@@ -255,11 +256,11 @@
     [SLAlertHandler addHandler:secondHandler];
 
     SLAskApp1(showAlertWithTitle:, alertTitle);
-    SLAssertTrue([firstHandler didHandleAlert], @"Oldest alert handler should have handled alert.");
+    SLAssertTrueWithTimeout([firstHandler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, @"Oldest alert handler should have handled alert.");
     SLAssertFalse([secondHandler didHandleAlert], @"Newer alert handler should not have handled alert.");
 
     SLAskApp1(showAlertWithTitle:, alertTitle);
-    SLAssertTrue([secondHandler didHandleAlert], @"Oldest alert handler should have handled alert.");
+    SLAssertTrueWithTimeout([secondHandler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, @"Oldest alert handler should have handled alert.");
 }
 
 - (void)testDidHandleAlertThrowsIfHandlerHasNotBeenAdded {
@@ -286,7 +287,7 @@
                                        @"other": defaultButtonTitle,
                                        @"style": @(UIAlertViewStylePlainTextInput) }));
  
-    SLAssertTrue([alertHandler didHandleAlert], @"Handler should have handled alert.");
+    SLAssertTrueWithTimeout([alertHandler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, @"Handler should have handled alert.");
     SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:defaultButtonTitle],
                  @"Alert should have been dismissed using default button.");
     SLAssertTrue([SLAskApp1(textEnteredIntoLastTextFieldAtIndex:, @0) isEqualToString:textToEnter],
@@ -318,7 +319,7 @@
                                         @"cancel": cancelButtonTitle,
                                         @"other": @"Ok" }));
 
-    SLAssertTrue([handler didHandleAlert], @"Handler should have handled alert.");
+    SLAssertTrueWithTimeout([handler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, @"Handler should have handled alert.");
     SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:cancelButtonTitle],
                  @"The handler should dismissed the alert using the cancel button.");
 }
@@ -333,7 +334,7 @@
     SLAskApp1(showAlertWithInfo:, (@{   @"title": @"Foo",
                                         @"other": defaultButtonTitle }));
 
-    SLAssertTrue([handler didHandleAlert], @"Handler should have handled alert.");
+    SLAssertTrueWithTimeout([handler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, @"Handler should have handled alert.");
     SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:defaultButtonTitle],
                  @"The handler should dismissed the alert using the default button.");
 }
@@ -352,7 +353,7 @@
                                        @"cancel": @"Cancel",
                                        @"other": dismissButtonTitle }));
     
-    SLAssertTrue([handler didHandleAlert], @"Handler should have handled alert.");
+    SLAssertTrueWithTimeout([handler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, @"Handler should have handled alert.");
     SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:dismissButtonTitle],
                  @"The handler should dismissed the alert using the button with the specified title.");
 }
@@ -373,7 +374,7 @@
                                        @"cancel": @"Cancel",
                                        @"style": @(UIAlertViewStyleSecureTextInput) }));
 
-    SLAssertTrue([alertHandler didHandleAlert], @"Handler should have handled alert.");
+    SLAssertTrueWithTimeout([alertHandler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, @"Handler should have handled alert.");
     SLAssertTrue([SLAskApp1(textEnteredIntoLastTextFieldAtIndex:, @0) isEqualToString:textToEnter],
                  @"Alert text field should have contained the specified value.");
 }
@@ -392,7 +393,7 @@
                                        @"cancel": @"Cancel",
                                        @"style": @(UIAlertViewStylePlainTextInput) }));
 
-    SLAssertTrue([alertHandler didHandleAlert], @"Handler should have handled alert.");
+    SLAssertTrueWithTimeout([alertHandler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, @"Handler should have handled alert.");
     SLAssertTrue([SLAskApp1(textEnteredIntoLastTextFieldAtIndex:, @0) isEqualToString:textToEnter],
                  @"Alert text field should have contained the specified value.");
 }
@@ -412,7 +413,7 @@
     SLAskApp1(showAlertWithInfo:, (@{  @"title": alertTitle,
                                        @"cancel": @"Cancel",
                                        @"style": @(UIAlertViewStyleLoginAndPasswordInput) }));
-    SLAssertTrue([alertHandler didHandleAlert], @"Handler should have handled alert.");
+    SLAssertTrueWithTimeout([alertHandler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, @"Handler should have handled alert.");
     SLAssertTrue([SLAskApp1(textEnteredIntoLastTextFieldAtIndex:, @0) isEqualToString:username],
                  @"Alert text field should have contained the specified value.");
     SLAssertTrue([SLAskApp1(textEnteredIntoLastTextFieldAtIndex:, @1) isEqualToString:password],

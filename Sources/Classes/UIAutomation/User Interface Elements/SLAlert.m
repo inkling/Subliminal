@@ -12,16 +12,16 @@
 #import "SLStringUtilities.h"
 
 
-const NSTimeInterval SLAlertHandlerAutomaticDelay = 1.5;
+const NSTimeInterval SLAlertHandlerDidHandleAlertDelay = 2.0;
 
 /**
- Manual handlers delay for a small amount of time before returning, 
- so that an alert's delegate will receive its callbacks before the tests 
- continue.
+ SLAlertHandlerDidHandleAlertDelay represents the maximum amount of time that 
+ an alert might take to be dismissed.
  
- This can be less than the automatic timeout because it's assumed that 
- the tests will continue by calling -didHandleAlert on the manual handler, 
- which will block until the alert has been handled.
+ Because alerts may be dismissed much quicker than that, though, 
+ manual handlers must wait for `SLAlertHandlerManualDelay` before returning, 
+ so that their alert's delegate receives its callbacks before the tests
+ continue, assuming that the tests are waiting-with-timeout on `didHandleAlert`. 
  */
 static const NSTimeInterval SLAlertHandlerManualDelay = 0.25;
 
