@@ -434,20 +434,48 @@
  */
 #define SLAssertTrueWithTimeout(expression, timeout, failureDescription, ...) do {\
     [self recordLastKnownFile:__FILE__ line:__LINE__]; \
-    NSTimeInterval _retryDelay = 0.25; \
     \
-    NSDate *_startDate = [NSDate date]; \
-    BOOL _expressionTrue = NO; \
-    while (!(_expressionTrue = (expression)) && \
-        ([[NSDate date] timeIntervalSinceDate:_startDate] < timeout)) { \
-        [NSThread sleepForTimeInterval:_retryDelay]; \
-    } \
-    if (!_expressionTrue) { \
+    if (!SLWaitUntilTrue(expression, timeout)) { \
         NSString *reason = [NSString stringWithFormat:@"\"%@\" did not become true within %g seconds.%@", \
         @(#expression), timeout, SLComposeString(@" ", failureDescription, ##__VA_ARGS__)]; \
         @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
     } \
 } while (0)
+
+/**
+ Suspends test execution until the specified expression becomes true or the
+ specified timeout is reached, and then returns the value of the specified 
+ expression at the moment of returning.
+
+ The macro re-evaluates the condition at small intervals.
+
+ The great advantage to using `SLWaitUntilTrue` instead of `-wait:` is that `SLWaitUntilTrue`
+ need not wait for the entirety of the specified timeout if the condition becomes true
+ before the timeout elapses. This can lead to faster tests, and makes it feasible 
+ to allow even longer timeouts when using `SLWaitUntilTrue` than when using
+ `-wait:`.
+
+ `SLWaitUntilTrue` may be used to wait for any condition for which it would be
+ equally valid for the condition to return YES or NO. For example:
+
+ // wait for a confirmation message that may or may not appear, and dismiss it
+ BOOL messageDisplayed = SLWaitUntilTrue([UIAElement(messageDismissButton) isValidAndVisible], 10.0);
+ if (messageDisplayed) {
+    [UIAElement(messageDismissButton) tap];
+ }
+
+ @param expression A boolean expression on whose truth the test should wait.
+ @param timeout The interval for which to wait.
+ @return Whether or not the expression evaluated to true before the timeout was reached.
+ */
+#define SLWaitUntilTrue(expression, timeout) ({\
+    NSDate *_startDate = [NSDate date];\
+    BOOL _expressionTrue = NO;\
+    while (!(_expressionTrue = (expression)) && ([[NSDate date] timeIntervalSinceDate:_startDate] < timeout)) {\
+        [NSThread sleepForTimeInterval:0.25];\
+    }\
+    _expressionTrue;\
+})
 
 /**
  Fails the test case if the specified expression is true.
