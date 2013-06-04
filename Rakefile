@@ -13,10 +13,11 @@ DOCSET_VERSION = "1.0"
 
 task :default => :usage
 
+
 ### Usage
 
 desc "Prints usage statement for people unfamiliar with Rake or this particular Rakefile"
-task :usage, :task_name do |t, args|
+task :usage, [:task_name] do |t, args|
   task_name = args[:task_name] ||= ""
 
   if !task_name.empty?
@@ -48,9 +49,11 @@ Options:
       puts """
 rake test\tRuns Subliminal's tests
 
+rake test[[live]]
 rake test:unit
-rake test:integration[:iphone, :ipad] LOGIN_PASSWORD=<password>
-rake test:integration:device          LOGIN_PASSWORD=<password> UDID=<udid>
+rake test:integration                  LOGIN_PASSWORD=<password>
+rake test:integration[:iphone, :ipad]
+rake test:integration:device           UDID=<udid>
 
 Sub-tasks:
   :unit\tRuns the unit tests
@@ -71,12 +74,19 @@ Subliminal's integration tests are currently configured to use the automatically
 iPhone Developer identity with the wildcard \"iOS Team Provisioning Profile\" managed 
 by Xcode.
 
+\`integration\` arguments:
+  live                      Indicates that the tests are being attended by a developer who can 
+                            enter their password if instruments asks for authorization. For the tests 
+                            to run un-attended, the current user's login password must be specified
+                            by \`LOGIN_PASSWORD\`.
+
 \`integration\` options:
   LOGIN_PASSWORD=<password> Your login password. When instruments is launched, 
                             it may ask for permission to take control of your application 
                             (http://openradar.appspot.com/radar?id=1544403). 
-                            In order to authorize instruments during an un-attended run,
-                            this script requires your password.
+                            To authorize instruments during an un-attended run, the tests 
+                            require the current user's password. When running the tests live, 
+                            the test tasks may be called with \`live\` instead.
  
 \`integration:device\` options:
   UDID=<udid>               The UDID of the device to target.\n\n"""
@@ -90,7 +100,7 @@ by Xcode.
     end
   else
     puts """
-rake <task> [<opt>=<value>[ <opt2>=<value2>...]]
+rake <task>[[arg[, arg2...]]] [<opt>=<value>[ <opt2>=<value2>...]]
 
 Tasks:
   uninstall\tUninstalls supporting files
@@ -295,13 +305,13 @@ end
 ### Testing
 
 desc "Runs Subliminal's tests"
-task :test => 'test:prepare' do
+task :test, [:live] => 'test:prepare' do |t, args|
   puts "\nRunning tests...\n\n"
 
   # The unit tests guarantee the integrity of the integration tests
   # So no point in running the latter if the unit tests break the build
   Rake::Task['test:unit'].invoke
-  Rake::Task['test:integration'].invoke
+  Rake::Task['test:integration'].invoke(args[:live])
 
   puts "Tests passed.\n\n"
 end
@@ -328,14 +338,14 @@ namespace :test do
   end
 
   desc "Runs the integration tests"
-  task :integration => :prepare do    
+  task :integration, [:live] => :prepare do |t, args|
     puts "- Running integration tests...\n\n"
 
     # When the tests are running separately, 
     # we want them to (individually) fail rake
     # But here we want to run them both
     begin
-      Rake::Task['test:integration:iphone'].invoke
+      Rake::Task['test:integration:iphone'].invoke(args[:live])
     rescue Exception => e
       puts e
       iPhone_succeeded = false
@@ -344,7 +354,7 @@ namespace :test do
     end
 
     begin
-      Rake::Task['test:integration:ipad'].invoke      
+      Rake::Task['test:integration:ipad'].invoke(args[:live])  
     rescue Exception => e
       puts e
       iPad_succeeded = false
@@ -364,28 +374,35 @@ namespace :test do
   end
 
   namespace :integration do
-    def test_command
+    def test_command(for_live_run)
       command = "\"#{SCRIPT_DIR}/subliminal-test\"\
                 -project Subliminal.xcodeproj\
                 -scheme 'Subliminal Integration Tests'\
                 --quiet_build"
 
-      login_password = ENV["LOGIN_PASSWORD"]
-      if !login_password || login_password.length == 0
-        fail "In order to run un-attended, the integration tests require your login password."
+      if for_live_run
+        command << " --live"
+      else
+        login_password = ENV["LOGIN_PASSWORD"]
+        if !login_password || login_password.length == 0
+          fail "Neither \`live\` nor \`LOGIN_PASSWORD\` specified. See 'rake usage[test]`.\n\n"
+        end
+        command << " -login_password \"#{login_password}\""
       end
-      command << " -login_password \"#{login_password}\""
+
+      command
     end
 
     desc "Runs the integration tests on iPhone"
-    task :iphone => :prepare do
+    task :iphone, [:live] => :prepare do |t, args|
       puts "-- Running iPhone integration tests..."
+      live_run = (args[:live] == "live")
 
       results_dir = "#{SCRIPT_DIR}/results/iphone"
       `rm -rf "#{results_dir}" && mkdir -p "#{results_dir}"`
 
       # Use system so we see the tests' output
-      if system("#{test_command} -output \"#{results_dir}\" -sim_device 'iPhone'")
+      if system("#{test_command(live_run)} -output \"#{results_dir}\" -sim_device 'iPhone'")
         puts "\niPhone integration tests passed.\n\n"
       else
         fail "\niPhone integration tests failed.\n\n"
@@ -393,14 +410,15 @@ namespace :test do
     end
 
     desc "Runs the integration tests on iPad"
-    task :ipad => :prepare do
+    task :ipad, [:live] => :prepare do |t, args|
       puts "-- Running iPad integration tests..."
+      live_run = (args[:live] == "live")
 
       results_dir = "#{SCRIPT_DIR}/results/ipad"
       `rm -rf "#{results_dir}" && mkdir -p "#{results_dir}"`
 
       # Use system so we see the tests' output
-      if system("#{test_command} -output \"#{results_dir}\" -sim_device 'iPad'")
+      if system("#{test_command(live_run)} -output \"#{results_dir}\" -sim_device 'iPad'")
         puts "\niPad integration tests passed.\n\n"
       else
         fail "\niPad integration tests failed.\n\n"
@@ -408,19 +426,20 @@ namespace :test do
     end
 
     desc "Runs the integration tests on a device"
-    task :device => :prepare do
+    task :device, [:live] => :prepare do |t, args|
       puts "-- Running the integration tests on a device"
+      live_run = (args[:live] == "live")
 
       udid = ENV["UDID"]
       if !udid || udid.length == 0
-        fail "Device UDID not specified. See 'rake usage[test]'." 
+        fail "Device UDID not specified. See 'rake usage[test]'.\n\n" 
       end
 
       results_dir = "#{SCRIPT_DIR}/results/device"
       `rm -rf "#{results_dir}" && mkdir -p "#{results_dir}"`
 
       # Use system so we see the tests' output
-      if system("#{test_command} -output \"#{results_dir}\" -hw_id #{udid}")
+      if system("#{test_command(live_run)} -output \"#{results_dir}\" -hw_id #{udid}")
         puts "\nDevice integration tests passed.\n\n"
       else
         fail "\nDevice integration tests failed.\n\n"

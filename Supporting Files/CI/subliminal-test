@@ -10,7 +10,7 @@ print_usage_and_fail () {
 	echo """
 subliminal-test (-project <project_path> | -workspace <workspace_path>) 
 		( -sim_device <device_type> | -hw_id <udid> )
-		-login_password <password>
+		(-login_password <password> | --live)
 		[-build_tool <tool_name>] [-scheme <scheme_name>] [-sdk <sdk>] [-replacement_bundle_id <id>] [--quiet_build]
 		[-timeout <timeout>] [-output <output_dir>] 
 		[-e <variable> <value>]
@@ -46,10 +46,15 @@ Required arguments:
 	-hw_id <udid>			The UDID of the hardware to target.
 					Either this or \`-sim_device\` must be specified.
 
-	-login_password <password>	Your login password. When instruments is launched, it may ask 
+	-login_password <password>	The current user's login password. When instruments is launched, it may ask 
 					for permission to take control of your application (http://openradar.appspot.com/radar?id=1544403). 
-					In order to authorize instruments during an un-attended run, 
-					this script requires your password.
+					To authorize instruments during an un-attended run, this script requires the current user's password.
+					When running this script live, \`--live\` may be specified instead.
+
+	--live				Indicates that this script is being attended by a developer who can 
+					enter their password if instruments asks for authorization. For this script 
+					to run un-attended, the current user's login password must be specified
+					using \`-login_password\`.
 
 Optional build arguments:
 	-build_tool <tool_name>		The tool to use to build the scheme. Should be either \"xcrun xcodebuild\" 
@@ -111,7 +116,11 @@ CONFIGURATION="Release"
 while :
 do
 case $1 in
-	# Must check this before the single dash options (because -* would match it)
+	# Must check these before the single dash options (because -* would match them)
+	--live)
+		LIVE=true
+		shift 1;;
+
     --quiet_build)
 		BUILD_LOG=`mktemp /tmp/subliminal-test.build-log.XXXXXX`
 		shift 1;;
@@ -162,7 +171,9 @@ if [[ -n "$CURRENT_ARG" ]]; then
 fi
 
 # Enforce required args
-if [[ ( -z "$PROJECT" && -z "$WORKSPACE" ) || ( -z "$SIM_DEVICE" && -z "$HW_ID" ) || -z "$LOGIN_PASSWORD" ]]; then
+if [[ ( -z "$PROJECT" && -z "$WORKSPACE" ) || 
+	( -z "$SIM_DEVICE" && -z "$HW_ID" ) || 
+	( -z "$LOGIN_PASSWORD" && -z "$LIVE" )]]; then
 	echo "Missing required arguments"
 	print_usage_and_fail
 fi
@@ -283,15 +294,20 @@ mkdir "$RESULTS_DIR"
 ### Launch tests
 echo "\n\nLaunching tests...\n"
 
-# First attempt to authorize instruments to take control of the application 
-# when it is launched: in the background, monitor for, and dismiss, the dialog it shows
-osascript "$SCRIPT_DIR/authorize_instruments" "$LOGIN_PASSWORD" &
-# Kill the process when the parent script ends
-trap "kill $!" SIGINT SIGTERM EXIT
+# Attempt to authorize instruments to take control of the application
+# Unless the user indicated otherwise
+if [[ -z $LIVE ]] || ! $LIVE; then
+	# First attempt to authorize instruments when it is launched: 
+	# in the background, monitor for, and dismiss, the dialog it shows
+	osascript "$SCRIPT_DIR/authorize_instruments" "$LOGIN_PASSWORD" &
+	# Kill the process when the parent script ends
+	trap "kill $!" SIGINT SIGTERM EXIT
+fi
  
 # Second attempt (in case the dialog does not show, as in certain CI environments 
 # like Travis): enter the login password on the command line, 
-# by piping the password, followed by a newline, to instruments 
+# by piping the password, followed by a newline, to instruments
+# (If the user did not supply a login password, this will just print a newline)
 
 # Note that the Subliminal trace template includes the UIASCRIPT
 # and the environment variables passed to this script
