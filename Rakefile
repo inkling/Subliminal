@@ -115,7 +115,7 @@ end
 # Restarts Xcode (with the user's permission) if it's running, as required by several of the tasks below
 # If a block is passed, it will be executed between quitting Xcode and restarting it
 # Returns false if Xcode needed to be restarted and the user chose not to, true otherwise
-def restart_xcode?(reason)
+def restart_xcode?(reason, cancel_button_title)
   frontmost_app = `osascript <<-EOT
     tell application "System Events"
       set app_name to name of first process whose frontmost is true
@@ -129,13 +129,13 @@ EOT`.chomp
       tell application "System Events"
         activate
         set reply to button returned of (display dialog "#{reason}" \
-                        buttons {"Uninstall Later", "Restart Xcode"} \
-                        default button "Uninstall Later")
+                        buttons {"#{cancel_button_title}", "Restart Xcode"} \
+                        default button "#{cancel_button_title}")
       end tell
     end if
 EOT`.chomp
     
-  return false if reply == "Uninstall Later"
+  return false if reply == "#{cancel_button_title}"
 
   # The block may require that Xcode has fully quit--wait before proceeding
   `osascript -e 'tell application "Xcode" to quit' -e 'delay 1.0'` if reply == "Restart Xcode"
@@ -193,7 +193,7 @@ def uninstall_docs?
   if File.exists?(docset_file)
     # Xcode will crash if a docset is deleted while the app's open
     restart_reason = "Subliminal will need to restart Xcode to uninstall Subliminal's documentation."
-    return false if !restart_xcode?(restart_reason) { `rm -rf #{docset_file}` }
+    return false if !restart_xcode?(restart_reason, "Uninstall Later") { `rm -rf #{docset_file}` }
   end
 
   true
@@ -294,7 +294,7 @@ def install_schemes?
   }
   if schemes_need_reinstall
     restart_reason = "Subliminal will need to restart Xcode to install Subliminal's schemes."
-    return restart_xcode?(restart_reason) {
+    return restart_xcode?(restart_reason, "Install Later") {
       `mkdir -p "#{SCHEMES_DIR}" && \
       cp "#{PROJECT_DIR}/Supporting Files/Xcode/Schemes/"* "#{SCHEMES_DIR}"`
     }
