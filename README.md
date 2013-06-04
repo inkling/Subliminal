@@ -1,6 +1,8 @@
 Subliminal
 ==========
 
+[![Build Status](https://magnum.travis-ci.com/inkling/Subliminal.png?token=tGk36ucKTD4RKEVFUyfq&branch=master)](https://magnum.travis-ci.com/inkling/Subliminal)
+
 Subliminal is an iOS integration test framework. Subliminal provides a familiar `OCUnit/SenTest`-like interface to `UIAutomation`, with tests written entirely in Objective-C. It's thus powerful while being easy to use, understand, and maintain.
 
 Full documentation will be forthcoming, here and in the code, but for now, here's an overview of how Subliminal is structured.
