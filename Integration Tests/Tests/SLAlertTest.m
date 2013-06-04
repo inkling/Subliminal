@@ -186,9 +186,9 @@
     SLAskApp1(showAlertWithInfo:, (@{   @"title":   alertTitle,
                                         @"cancel":  cancelButtonTitle, }));
     SLAssertFalse([defaultButtonHandler didHandleAlert], @"The default button handler should not have handled the alert.");
+    SLAssertTrueWithTimeout([cancelButtonHandler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, @"The cancel button handler should have handled the alert.");
     SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:cancelButtonTitle],
                  @"The alert should have been dismissed using the cancel button.");
-    SLAssertTrueWithTimeout([cancelButtonHandler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, @"The cancel button handler should have handled the alert.");
 
     // the defaultButtonHandler will handle this alert, now
     SLAskApp1(showAlertWithInfo:, (@{   @"title":   alertTitle,
