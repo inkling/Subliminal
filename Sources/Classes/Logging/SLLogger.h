@@ -49,39 +49,40 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 
 
 /**
- `SLLogger` is the abstract superclass of loggers used by the Subliminal framework
- and user-defined tests.
- 
- A project that uses Subliminal must [set the shared logger](+setSharedLogger:) 
- before testing begins. The shared logger will then be used by Subliminal to log 
- test progress. It may be used by tests, and by the application itself, to log 
- custom messages to the test output.
- 
- Concrete subclasses of `SLLogger` provide a mechanism and a destination for log
- output. Subliminal provides several concrete subclasses:
- 
- * SLUIALogger, to log to the Automation instrument
- * SLMultiLogger, to log to multiple sources
- 
- It is also possible for clients to subclass `SLLogger` to log to other destinations.
- 
- ### Subclassing SLLogger
+ The shared `SLLogger` used by Subliminal to log test progress. It may also be
+ used by tests, and by the application itself, to log custom messages to the
+ test output.
 
- Concrete subclasses must override two methods: `-logMessage`, and `-loggingQueue`.
- 
- Subclasses override `-logMessage` to provide a mechanism and a destination for
- log output. All other log methods simply format their arguments and call
- `-logMessage`, so subclasses need override those methods only if they wish to
- define different formatting than the base class, or if they wish to use 
- distinct logging mechanisms for different types of messages.
- 
- Subclasses override `-loggingQueue` to provide a dispatch queue on which to
- serialize log messages. This allows the shared logger to be used
- both from Subliminal's testing thread and the main thread. 
- 
- See `SLUIALogger` for a reference implementation. Note that `SLUIALogger`
- overrides log methods other than `-logMessage` only because it uses distinct 
- logging mechanisms for different types of messages.
+ `SLLogger` logs messages to the Automation instrument. Its output can be viewed
+ in the Instruments application when the tests are running locally, and in the
+ console while the `instruments` command-line tool is running.
+
+ If the `instruments` command-line tool is invoked with a value for the `UIARESULTSPATH`
+ environment variable (as the `subliminal-test` script does when invoked with the
+ `-output` option), then `instruments` will also produce a `.trace` file inside
+ that directory that can be opened in the Instruments application after the tests
+ have concluded.
+
+ When [errors](-logError:) or [warnings](-logWarning:) are logged, the `SLLogger`
+ will direct the Automation instrument to take a screenshot of the application.
+ Those screenshots can be viewed in Instruments alongside log messages when the
+ tests are running locally, or by opening the `.trace` file produced by a run of
+ the `instruments` command-line tool. The `instruments` command-line tool will also
+ save such screenshots to the directory specified by the `UIARESULTSPATH` environment
+ variable.
+
+ ### Providing alternate log formats
+
+ `SLLogger` is not designed to be subclassed, because the Automation instrument
+ is the only way for tests running on a device to report their status to the
+ test runner. However, when the `instruments` command-line tool is invoked with
+ a value for the `UIARESULTSPATH` environment variable, it will save the logs
+ to that directory as a `.plist`, with all log events available as structured
+ dictionaries. That `.plist` may be parsed into other formats after testing
+ concludes.
+
+ The `subliminal_uialog_to_junit` script, for example, parses the `.plist`
+ into a JUnit report.
  */
 @interface SLLogger : NSObject
 
@@ -92,27 +93,10 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 
 /**
  The shared logger used by the Subliminal framework and by user-defined tests.
- 
- This must be set before testing begins.
 
  @return The shared logger.
- 
- @see +setSharedLogger:
  */
 + (SLLogger *)sharedLogger;
-
-/**
- Sets the shared logger used by the Subliminal framework and by user-defined tests.
- 
- This should be called from the application delegate's implementation of 
- `-applicationDidFinishLaunching:`, before `-[SLTestController runTests:withCompletionBlock:]`
- is called.
- 
- The logger should not be changed while the tests are running.
- 
- @param logger A logger to set as the shared logger.
- */
-+ (void)setSharedLogger:(SLLogger *)logger;
 
 #pragma mark - Primitive Methods
 /// -------------------------------------
@@ -121,14 +105,6 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 
 /**
  Returns a queue on which log messages may be serialized.
- 
- @warning This must be overridden by concrete subclasses of SLLogger.
- See `SLUIALogger` for a reference implementation, while noting that only methods
- _that are overridden_ need be serialized. 
- 
- By default, log methods other than `-logMessage:` format their arguments and call
- `-logMessage:`, so serializing that method would be sufficient to make a subclass
- thread-safe if that subclass only overrode `-logMessage:`.
  
  @return A custom serial dispatch queue on which to serialize log messages.
  */
@@ -139,9 +115,6 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
  
  This method is the primitive logging method used by all other logging methods 
  (by default) as well as by `SLLog` and `SLLogAsync`.
-
- @warning This must be overridden by concrete subclasses of `SLLogger` 
- to provide a mechanism and a destination for log output.
 
  @param message The message to log.
  */
@@ -177,6 +150,8 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 
 
 /**
+ #### `SLLogger (SLTestController)`
+
  The methods in the `SLLogger (SLTestController)` category are used by the
  shared test controller to log the progress of the test run. They should not 
  be called by a test writer.
@@ -256,6 +231,8 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 
 
 /**
+ #### `SLLogger (SLTest)`
+
  The methods in the `SLLogger (SLTest)` category are used by the
  tests to log test progress. They should not be called by a test writer.
 
