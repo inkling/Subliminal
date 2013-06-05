@@ -1,5 +1,6 @@
-Subliminal
-==========
+<p align="center" >
+  <img src="https://raw.github.com/inkling/Subliminal/gh-pages/subliminal-hero.png" alt="Subliminal" title="Subliminal">
+</p>
 
 [![Build Status](https://magnum.travis-ci.com/inkling/Subliminal.png?token=tGk36ucKTD4RKEVFUyfq&branch=master)](https://magnum.travis-ci.com/inkling/Subliminal)
 
