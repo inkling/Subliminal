@@ -74,9 +74,6 @@
  When all tests have finished, the completion block (if provided)
  will be executed on the main queue. The test controller will then signal 
  UIAutomation to finish executing commands.
- 
- @warning The shared `SLLogger` must be [set](+[SLLogger setSharedLogger:]) before 
- tests can be run.
 
  @param tests The set of tests to run.
  @param completionBlock An optional block to execute once testing has finished. 

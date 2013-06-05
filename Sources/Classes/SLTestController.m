@@ -217,8 +217,6 @@ static SLTestController *__sharedController = nil;
 
 - (void)runTests:(NSSet *)tests withCompletionBlock:(void (^)())completionBlock {
     dispatch_async(_runQueue, ^{
-        NSAssert([SLLogger sharedLogger], @"A shared SLLogger must be set (+[SLLogger setSharedLogger:]) before SLTestController can run tests.");
-        
         _completionBlock = completionBlock;
 
         _testsToRun = [[self class] testsToRun:tests withFocus:&_runningWithFocus];
