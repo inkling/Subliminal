@@ -55,7 +55,7 @@
 		F03C55E4170C32BE00079021 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0AC809716BB299500C5D5C0 /* CoreGraphics.framework */; };
 		F043469F175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = F043469D175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F04346A0175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = F043469E175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.m */; };
-		F04346A7175AD10200D91F7F /* NSObject+SLVisibility.h in Headers */ = {isa = PBXBuildFile; fileRef = F04346A5175AD10200D91F7F /* NSObject+SLVisibility.h */; };
+		F04346A7175AD10200D91F7F /* NSObject+SLVisibility.h in Headers */ = {isa = PBXBuildFile; fileRef = F04346A5175AD10200D91F7F /* NSObject+SLVisibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F04346A8175AD10200D91F7F /* NSObject+SLVisibility.m in Sources */ = {isa = PBXBuildFile; fileRef = F04346A6175AD10200D91F7F /* NSObject+SLVisibility.m */; };
 		F04346AF175AD63E00D91F7F /* SLAccessibilityPath.h in Headers */ = {isa = PBXBuildFile; fileRef = F04346AD175AD63E00D91F7F /* SLAccessibilityPath.h */; };
 		F04346B0175AD63E00D91F7F /* SLAccessibilityPath.m in Sources */ = {isa = PBXBuildFile; fileRef = F04346AE175AD63E00D91F7F /* SLAccessibilityPath.m */; };
