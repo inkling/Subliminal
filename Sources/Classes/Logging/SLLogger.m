@@ -22,7 +22,9 @@
 
 #import "SLLogger.h"
 
-#import "SLUIALogger.h"
+#import "SLLogger.h"
+#import "SLTerminal.h"
+#import "SLStringUtilities.h"
 
 
 void SLLog(NSString *format, ...) {
@@ -43,7 +45,9 @@ void SLLogAsync(NSString *format, ...) {
     });
 }
 
-@implementation SLLogger
+@implementation SLLogger {
+    dispatch_queue_t _loggingQueue;
+}
 
 static SLLogger *__sharedLogger = nil;
 + (SLLogger *)sharedLogger {
@@ -54,28 +58,64 @@ static SLLogger *__sharedLogger = nil;
     __sharedLogger = logger;
 }
 
-- (dispatch_queue_t)loggingQueue {
-    NSAssert(NO, @"Concrete SLLogger subclass (%@) must implement %@",
-             NSStringFromClass([self class]), NSStringFromSelector(_cmd));
-    return NULL;
+- (id)init {
+    self = [super init];
+    if (self) {
+        _loggingQueue = dispatch_queue_create("com.inkling.subliminal.SLUIALogger.loggingQueue", DISPATCH_QUEUE_SERIAL);
+    }
+    return self;
 }
 
-- (void)logMessage:(NSString *)message {
-    NSLog(@"Concrete SLLogger subclass (%@) must implement %@", NSStringFromClass([self class]), NSStringFromSelector(_cmd));
-    [self doesNotRecognizeSelector:_cmd];
+- (void)dealloc {
+    dispatch_release(_loggingQueue);
+}
+
+- (dispatch_queue_t)loggingQueue {
+    return _loggingQueue;
 }
 
 - (void)logDebug:(NSString *)debug {
-    [self logMessage:[NSString stringWithFormat:@"Debug: %@", debug]];
+    if (dispatch_get_current_queue() != _loggingQueue) {
+        dispatch_sync(_loggingQueue, ^{
+            [self logDebug:debug];
+        });
+        return;
+    }
+
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logDebug('%@');", [debug slStringByEscapingForJavaScriptLiteral]];
 }
 
+- (void)logMessage:(NSString *)message {
+    if (dispatch_get_current_queue() != _loggingQueue) {
+        dispatch_sync(_loggingQueue, ^{
+            [self logMessage:message];
+        });
+        return;
+    }
+
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logMessage('%@');", [message slStringByEscapingForJavaScriptLiteral]];
+}
 
 - (void)logWarning:(NSString *)warning {
-    [self logMessage:[NSString stringWithFormat:@"Warning: %@", warning]];
+    if (dispatch_get_current_queue() != _loggingQueue) {
+        dispatch_sync(_loggingQueue, ^{
+            [self logWarning:warning];
+        });
+        return;
+    }
+
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logWarning('%@');", [warning slStringByEscapingForJavaScriptLiteral]];
 }
 
 - (void)logError:(NSString *)error {
-    [self logMessage:[NSString stringWithFormat:@"Error: %@", error]];
+    if (dispatch_get_current_queue() != _loggingQueue) {
+        dispatch_sync(_loggingQueue, ^{
+            [self logError:error];
+        });
+        return;
+    }
+
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logError('%@');", [error slStringByEscapingForJavaScriptLiteral]];
 }
 
 @end
@@ -117,16 +157,40 @@ static SLLogger *__sharedLogger = nil;
 @implementation SLLogger (SLTest)
 
 - (void)logTest:(NSString *)test caseStart:(NSString *)testCase {
-    [self logMessage:[NSString stringWithFormat:@"Test case \"-[%@ %@]\" started.", test, testCase]];
-}
+    if (dispatch_get_current_queue() != _loggingQueue) {
+        dispatch_sync(_loggingQueue, ^{
+            [self logTest:test caseStart:testCase];
+        });
+        return;
+    }
 
-- (void)logTest:(NSString *)test casePass:(NSString *)testCase {
-    [self logMessage:[NSString stringWithFormat:@"Test case \"-[%@ %@]\" passed.", test, testCase]];
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logStart('Test case \"-[%@ %@]\" started.');", test, testCase];
 }
 
 - (void)logTest:(NSString *)test caseFail:(NSString *)testCase expected:(BOOL)expected {
-    [self logError:[NSString stringWithFormat:@"Test case \"-[%@ %@]\" failed%@.",
-                                                test, testCase, (expected ? @"" : @" unexpectedly")]];
+    if (dispatch_get_current_queue() != _loggingQueue) {
+        dispatch_sync(_loggingQueue, ^{
+            [self logTest:test caseFail:testCase expected:expected];
+        });
+        return;
+    }
+
+    if (expected) {
+        [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logFail('Test case \"-[%@ %@]\" failed.');", test, testCase];
+    } else {
+        [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logIssue('Test case \"-[%@ %@]\" failed unexpectedly.');", test, testCase];
+    }
+}
+
+- (void)logTest:(NSString *)test casePass:(NSString *)testCase {
+    if (dispatch_get_current_queue() != _loggingQueue) {
+        dispatch_sync(_loggingQueue, ^{
+            [self logTest:test casePass:testCase];
+        });
+        return;
+    }
+
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIALogger.logPass('Test case \"-[%@ %@]\" passed.');", test, testCase];
 }
 
 @end

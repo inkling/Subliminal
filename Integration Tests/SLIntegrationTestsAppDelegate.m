@@ -102,7 +102,7 @@
     }
 
     // Otherwise, run the tests
-    [SLLogger setSharedLogger:[[SLUIALogger alloc] init]];
+    [SLLogger setSharedLogger:[[SLLogger alloc] init]];
     [[SLTestController sharedTestController] runTests:_tests withCompletionBlock:nil];
 }
 

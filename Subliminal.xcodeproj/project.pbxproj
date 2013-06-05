@@ -70,7 +70,6 @@
 		F0695D8F16011515000B05D0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8E16011515000B05D0 /* Foundation.framework */; };
 		F0695DE4160138DF000B05D0 /* SLUIAElement.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DD8160138DF000B05D0 /* SLUIAElement.m */; };
 		F0695DE5160138DF000B05D0 /* SLLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DDB160138DF000B05D0 /* SLLogger.m */; };
-		F0695DE6160138DF000B05D0 /* SLUIALogger.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DDD160138DF000B05D0 /* SLUIALogger.m */; };
 		F0695DE7160138DF000B05D0 /* SLTerminal.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DDF160138DF000B05D0 /* SLTerminal.m */; };
 		F0695DE8160138DF000B05D0 /* SLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DE1160138DF000B05D0 /* SLTest.m */; };
 		F0695DE9160138DF000B05D0 /* SLTestController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DE3160138DF000B05D0 /* SLTestController.m */; };
@@ -81,7 +80,6 @@
 		F0695E1F16014491000B05D0 /* SLTerminal.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDE160138DF000B05D0 /* SLTerminal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0695E2016014491000B05D0 /* SLUIAElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DD7160138DF000B05D0 /* SLUIAElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0695E2116014491000B05D0 /* SLLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDA160138DF000B05D0 /* SLLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F0695E2216014491000B05D0 /* SLUIALogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDC160138DF000B05D0 /* SLUIALogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F077D70D16D9D77900908FF5 /* SLElementVisibilityTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F077D70A16D9D77900908FF5 /* SLElementVisibilityTest.m */; };
 		F077D70E16D9D77900908FF5 /* SLElementVisibilityTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F077D70B16D9D77900908FF5 /* SLElementVisibilityTestViewController.m */; };
 		F077D70F16D9D77900908FF5 /* SLElementVisibilityTestCovered.xib in Resources */ = {isa = PBXBuildFile; fileRef = F077D70C16D9D77900908FF5 /* SLElementVisibilityTestCovered.xib */; };
@@ -267,10 +265,8 @@
 		F0695D8E16011515000B05D0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F0695DD7160138DF000B05D0 /* SLUIAElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLUIAElement.h; sourceTree = "<group>"; };
 		F0695DD8160138DF000B05D0 /* SLUIAElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLUIAElement.m; sourceTree = "<group>"; };
-		F0695DDA160138DF000B05D0 /* SLLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLLogger.h; sourceTree = "<group>"; };
-		F0695DDB160138DF000B05D0 /* SLLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLLogger.m; sourceTree = "<group>"; };
-		F0695DDC160138DF000B05D0 /* SLUIALogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLUIALogger.h; sourceTree = "<group>"; };
-		F0695DDD160138DF000B05D0 /* SLUIALogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLUIALogger.m; sourceTree = "<group>"; };
+		F0695DDA160138DF000B05D0 /* SLLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SLLogger.h; path = Logging/SLLogger.h; sourceTree = "<group>"; };
+		F0695DDB160138DF000B05D0 /* SLLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SLLogger.m; path = Logging/SLLogger.m; sourceTree = "<group>"; };
 		F0695DDE160138DF000B05D0 /* SLTerminal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTerminal.h; sourceTree = "<group>"; };
 		F0695DDF160138DF000B05D0 /* SLTerminal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTerminal.m; sourceTree = "<group>"; };
 		F0695DE0160138DF000B05D0 /* SLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTest.h; sourceTree = "<group>"; };
@@ -551,8 +547,9 @@
 				F0271AFE162E0B950098F5F2 /* SLTestController+AppHooks.m */,
 				F0695DE0160138DF000B05D0 /* SLTest.h */,
 				F0695DE1160138DF000B05D0 /* SLTest.m */,
+				F0695DDA160138DF000B05D0 /* SLLogger.h */,
+				F0695DDB160138DF000B05D0 /* SLLogger.m */,
 				F0695DD6160138DF000B05D0 /* UIAutomation */,
-				F0695DD9160138DF000B05D0 /* Logging */,
 				CAC388011641CD4800F995F9 /* Internal */,
 			);
 			path = Classes;
@@ -566,17 +563,6 @@
 				F089F98B17445DDA00DF1F25 /* User Interface Elements */,
 			);
 			path = UIAutomation;
-			sourceTree = "<group>";
-		};
-		F0695DD9160138DF000B05D0 /* Logging */ = {
-			isa = PBXGroup;
-			children = (
-				F0695DDA160138DF000B05D0 /* SLLogger.h */,
-				F0695DDB160138DF000B05D0 /* SLLogger.m */,
-				F0695DDC160138DF000B05D0 /* SLUIALogger.h */,
-				F0695DDD160138DF000B05D0 /* SLUIALogger.m */,
-			);
-			path = Logging;
 			sourceTree = "<group>";
 		};
 		F077D70016D9D71E00908FF5 /* SLElement Visibility Tests */ = {
@@ -820,7 +806,6 @@
 				F0695E1F16014491000B05D0 /* SLTerminal.h in Headers */,
 				F0695E2016014491000B05D0 /* SLUIAElement.h in Headers */,
 				F0695E2116014491000B05D0 /* SLLogger.h in Headers */,
-				F0695E2216014491000B05D0 /* SLUIALogger.h in Headers */,
 				F0271AFF162E0B950098F5F2 /* SLTestController+AppHooks.h in Headers */,
 				CAC388051641CD7500F995F9 /* SLStringUtilities.h in Headers */,
 				CAC3883F1643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.h in Headers */,
@@ -1051,7 +1036,6 @@
 			files = (
 				F0695DE4160138DF000B05D0 /* SLUIAElement.m in Sources */,
 				F0695DE5160138DF000B05D0 /* SLLogger.m in Sources */,
-				F0695DE6160138DF000B05D0 /* SLUIALogger.m in Sources */,
 				F0695DE7160138DF000B05D0 /* SLTerminal.m in Sources */,
 				F0695DE8160138DF000B05D0 /* SLTest.m in Sources */,
 				F0695DE9160138DF000B05D0 /* SLTestController.m in Sources */,

@@ -38,4 +38,3 @@
 #import "SLWindow.h"
 
 #import "SLLogger.h"
-#import "SLUIALogger.h"
