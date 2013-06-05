@@ -234,7 +234,7 @@ def install_trace_template
   `mkdir -p "#{TRACE_TEMPLATE_DIR}" && \
   cp "#{PROJECT_DIR}/Supporting Files/Instruments/"* "#{TRACE_TEMPLATE_DIR}"`
 
-  # Update the template to reference its script correctly
+  # Update the template to reference its script and icon correctly
   # (as the user's home directory isn't known until now)
   `cd "#{TRACE_TEMPLATE_DIR}" &&\
   plutil -convert xml1 #{TRACE_TEMPLATE_NAME} &&\
