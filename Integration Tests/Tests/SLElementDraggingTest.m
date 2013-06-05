@@ -41,6 +41,14 @@ static const CGFloat kBottomLabelYOffset = 0.2;
     _scrollView = [SLElement elementWithAccessibilityIdentifier:@"drag scrollview"];
 }
 
+- (void)tearDownTestCaseWithSelector:(SEL)testCaseSelector {
+    // Wait for a second for UIAutomation to clear its state
+    // It sometimes stutters on consecutive drags
+    [self wait:1.0];
+
+    [super tearDownTestCaseWithSelector:testCaseSelector];
+}
+
 /// This test demonstrates simply that we can drag a view.
 - (void)testDraggingSimple {
     // Make sure the labels start out the way we expect (top is visible, bottom is not).
@@ -53,6 +61,10 @@ static const CGFloat kBottomLabelYOffset = 0.2;
     [_scrollView dragWithStartOffset:CGPointMake(0.75, kTopLabelYOffset) endOffset:CGPointMake(0.75, kBottomLabelYOffset)];
     SLAssertTrueWithTimeout([UIAElement(topLabel) isInvalidOrInvisible], 3.0, @"The top label failed to become invisible after scrolling.");
     SLAssertTrueWithTimeout([UIAElement(bottomLabel) isValidAndVisible], 3.0, @"The bottom label failed to become visible after scrolling.");
+
+    // Wait for a second for UIAutomation to clear its state
+    // It sometimes stutters on consecutive drags
+    [self wait:1.0];
 
     // Drag top to bottom to scroll up and show the top label again, hiding the bottom label.
     [_scrollView dragWithStartOffset:CGPointMake(0.75, kBottomLabelYOffset) endOffset:CGPointMake(0.75, kTopLabelYOffset)];
