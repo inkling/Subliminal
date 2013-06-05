@@ -33,20 +33,25 @@
 
 @implementation SLTestControllerTests {
     id _loggerMock, _terminalMock;
+    id _loggerClassMock;
 }
 
 - (void)setUp {
-    // SLTestController will not run without a logger being set
+    // Prevent the framework from trying to talk to UIAutomation.
     _loggerMock = [OCMockObject niceMockForClass:[SLLogger class]];
-    [SLLogger setSharedLogger:_loggerMock];
+    _loggerClassMock = [OCMockObject partialMockForClassObject:[SLLogger class]];
+    [[[_loggerClassMock stub] andReturn:_loggerMock] sharedLogger];
 
     // ensure that Subliminal doesn't get hung up trying to talk to UIAutomation
     _terminalMock = [OCMockObject partialMockForObject:[SLTerminal sharedTerminal]];
     [[_terminalMock stub] eval:OCMOCK_ANY];
+    [[_terminalMock stub] shutDown];
 }
 
 - (void)tearDown {
     [_terminalMock stopMocking];
+    [_loggerMock stopMocking];
+    [_loggerClassMock stopMocking];
 }
 
 #pragma mark - Test execution
