@@ -1060,6 +1060,89 @@
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
+#pragma mark -SLWaitUntilTrue
+
+- (void)testSLWaitUntilTrueDoesNotThrowAndReturnsYESImmediatelyWhenConditionIsTrueUponWait {
+    Class testClass = [TestWithSomeTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testClass];
+
+    // have "testOne" wait on a condition that evaluates to true, thus immediately return
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+
+        BOOL slWaitUntilTrueReturnValue;
+        STAssertNoThrow(slWaitUntilTrueReturnValue = [test SLWaitUntilTrue:^BOOL{
+            return YES;
+        } withTimeout:1.5], @"Assertion should not have failed.");
+
+        STAssertTrue(slWaitUntilTrueReturnValue, @"SLWaitUntilTrue should have returned YES");
+
+        NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+        STAssertEqualsWithAccuracy(endTimeInterval, startTimeInterval, .01, @"Test should not have waited for an appreciable interval.");
+    }] testOne];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
+}
+
+- (void)testSLWaitUntilTrueDoesNotThrowAndReturnsYESImmediatelyAfterConditionBecomesTrue {
+    Class testClass = [TestWithSomeTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testClass];
+
+    // have "testThree" wait on a condition that evaluates to false initially,
+    // then to true partway through the timeout
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+
+        NSTimeInterval waitTimeout = 1.5;
+        NSTimeInterval truthTimeout = 1.0;
+        BOOL slWaitUntilTrueReturnValue;
+        STAssertNoThrow(slWaitUntilTrueReturnValue = [test SLWaitUntilTrue:^BOOL{
+            NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+            NSTimeInterval waitInterval = endTimeInterval - startTimeInterval;
+            return (waitInterval >= truthTimeout);
+        } withTimeout:waitTimeout], @"Assertion should not have failed.");
+
+        STAssertTrue(slWaitUntilTrueReturnValue, @"SLWaitUntilTrue should have returned YES");
+
+        NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+        // check that the test waited for about the amount of time for the condition to evaluate to true
+        STAssertEqualsWithAccuracy(endTimeInterval - startTimeInterval, truthTimeout, .25,
+                                   @"Test should have only waited for about the amount of time necessary for the condition to become true.");
+    }] testThree];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
+}
+
+- (void)testSLWaitUntilTrueDoesNotThrowIfConditionIsStillFalseAtEndOfTimeout {
+    Class testClass = [TestWithSomeTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testClass];
+
+    // have "testTwo" wait on a condition that evaluates to false, thus for the full timeout
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+
+        NSTimeInterval timeout = 1.5;
+        BOOL slWaitUntilTrueReturnValue;
+        STAssertNoThrow(slWaitUntilTrueReturnValue = [test SLWaitUntilTrue:^BOOL{
+            return NO;
+        } withTimeout:timeout], @"Assertion should have failed.");
+
+        STAssertFalse(slWaitUntilTrueReturnValue, @"SLWaitUntilTrue should have returned YES");
+
+        NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+        STAssertEqualsWithAccuracy(endTimeInterval - startTimeInterval, timeout, .01,
+                                   @"Test should have waited for the specified timeout.");
+    }] testTwo];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
+}
+
 #pragma mark -SLAssertThrows
 
 - (void)testSLAssertThrowsThrowsIffDoesNotThrowException {
