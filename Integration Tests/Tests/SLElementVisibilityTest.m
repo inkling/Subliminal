@@ -78,7 +78,7 @@
 - (void)setUpTestCaseWithSelector:(SEL)testSelector {
     [super setUpTestCaseWithSelector:testSelector];
 
-    if (testSelector == @selector(testDeterminingVisibilityOfWebAccessibilityElements)) {
+    if (testSelector == @selector(testCanDetermineVisibilityOfWebAccessibilityElements)) {
         SLAssertTrueWithTimeout(SLAskAppYesNo(webViewDidFinishLoad), 5.0, @"Webview did not load test HTML.");
     }
 }
