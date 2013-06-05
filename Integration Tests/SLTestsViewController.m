@@ -131,8 +131,12 @@ static NSString *TestCellIdentifier = @"SLTestCell";
         // the if condition allows for additional controllers to be pushed,
         // beyond the test controller
         if (_pendingTestInfo) {
-            _currentTestInfo = _pendingTestInfo;
-            _pendingTestInfo = nil;
+            double delayInSeconds = 1.0;
+            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+                _currentTestInfo = _pendingTestInfo;
+                _pendingTestInfo = nil;
+            });
         }
     }
 }
