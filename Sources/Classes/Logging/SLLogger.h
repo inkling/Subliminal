@@ -60,27 +60,10 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 
 /**
  The shared logger used by the Subliminal framework and by user-defined tests.
- 
- This must be set before testing begins.
 
  @return The shared logger.
- 
- @see +setSharedLogger:
  */
 + (SLLogger *)sharedLogger;
-
-/**
- Sets the shared logger used by the Subliminal framework and by user-defined tests.
- 
- This should be called from the application delegate's implementation of 
- `-applicationDidFinishLaunching:`, before `-[SLTestController runTests:withCompletionBlock:]`
- is called.
- 
- The logger should not be changed while the tests are running.
- 
- @param logger A logger to set as the shared logger.
- */
-+ (void)setSharedLogger:(SLLogger *)logger;
 
 #pragma mark - Primitive Methods
 /// -------------------------------------

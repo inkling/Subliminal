@@ -49,13 +49,13 @@ void SLLogAsync(NSString *format, ...) {
     dispatch_queue_t _loggingQueue;
 }
 
-static SLLogger *__sharedLogger = nil;
 + (SLLogger *)sharedLogger {
-    return __sharedLogger;
-}
-
-+ (void)setSharedLogger:(SLLogger *)logger {
-    __sharedLogger = logger;
+    static SLLogger *sharedLogger;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedLogger = [[SLLogger alloc] init];
+    });
+    return sharedLogger;
 }
 
 - (id)init {
