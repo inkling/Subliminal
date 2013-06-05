@@ -39,4 +39,3 @@
 
 #import "SLLogger.h"
 #import "SLUIALogger.h"
-#import "SLMultiLogger.h"
