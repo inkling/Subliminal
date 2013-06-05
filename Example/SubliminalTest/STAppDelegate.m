@@ -21,12 +21,9 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.rootViewController = [[STLoginViewController alloc] initWithNibName:@"STLoginViewController" bundle:nil];
     [self.window makeKeyAndVisible];
-    
 
 #if INTEGRATION_TESTING
-    SLTestController *testController = [SLTestController sharedTestController];
-    [SLLogger setSharedLogger:[[SLUIALogger alloc] init]];
-    [testController runTests:[SLTest allTests] withCompletionBlock:nil];
+    [[SLTestController sharedTestController] runTests:[SLTest allTests] withCompletionBlock:nil];
 #endif
     
     return YES;
