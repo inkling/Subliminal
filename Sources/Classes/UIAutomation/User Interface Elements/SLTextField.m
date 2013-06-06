@@ -30,16 +30,17 @@
 }
 
 - (void)setText:(NSString *)text {
-    // If this matches a UITextField with clearsOnBeginEditing set to YES,
-    // we must tap the field before attempting to set the text to avoid a race condition
-    // between UIKit trying to clear the text and UIAutomation trying to set the text
-    __block BOOL waitBeforeSettingText = NO;
+    // Normally we want to tap on the view that backs this SLTextField before
+    // attempting to edit the field.  That way we can be confident that the
+    // view will be first responder.  The only exception is when the backing
+    // view is a UITextField and is *already* editing, because in that case
+    // the view is already first responder and a real user would probably not
+    // tap again before typing.
+    __block BOOL tapBeforeSettingText;
     [self examineMatchingObject:^(NSObject *object) {
-        if ([object isKindOfClass:[UITextField class]]) {
-            waitBeforeSettingText = ((UITextField *)object).clearsOnBeginEditing;
-        }
+        tapBeforeSettingText = !([object isKindOfClass:[UITextField class]] && [(UITextField *)object isEditing]);
     }];
-    if (waitBeforeSettingText) {
+    if (tapBeforeSettingText) {
         [self tap];
     }
     [self waitUntilTappable:YES thenSendMessage:@"setValue('%@')", [text slStringByEscapingForJavaScriptLiteral]];
