@@ -1,0 +1,5 @@
+*.xcworkspace
+xcuserdata
+.DS_Store
+Documentation
+/Supporting Files/CI/results/

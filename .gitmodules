@@ -1,0 +1,3 @@
+[submodule "Unit Tests/OCMock"]
+	path = Unit Tests/OCMock
+	url = git://github.com/inkling/ocmock.git
