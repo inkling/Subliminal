@@ -37,7 +37,7 @@ tell application "System Events"
 	-- Sometimes Applescript can time out trying to talk to the Simulator
 	-- (e.g. when being reset repeatedly during CI runs),
 	-- so we force quit the Simulator to start
-	if "iPhone Simulator" is in name of processes
+	if "iPhone Simulator" is in name of processes then
 		do shell script "killall \"iPhone Simulator\" 2> /dev/null"
 		delay 1.0
 	end if
