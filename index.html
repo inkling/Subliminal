@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<!-- 
+		
+		Site by @aristretto
+		http://www.twitter.com/aristretto
+
+	 -->
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- facebook open graph tags -->
+	<meta property="og:title" content="Subliminal Test"/>
+	<meta property="og:image" content="http://inkling.github.io/Subliminal/css/imgs/subliminal-500x500.png"/>
+	<meta property="og:site_name" content="Subliminal Test"/>
+	<meta property="og:url" content="http://inkling.github.io/Subliminal/"/>
+	<meta property="og:description" content="Subliminal is an iOS integration test framework. It provides a familiar OCUnit/SenTest-like interface to UIAutomation, with tests written entirely in Objective-C. It's thus powerful while being easy to use, understand, and maintain."/>
+	
+	<!-- twitter card meta tags -->
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:site" content="subliminaltest">
+	<meta name="twitter:title" content="Subliminal Test">
+	<meta name="twitter:description" content="Subliminal is an iOS integration test framework. It provides a familiar OCUnit/SenTest-like interface to UIAutomation, with tests written entirely in Objective-C. It's thus powerful while being easy to use, understand, and maintain.">
+	<meta name="twitter:creator" content="@wear_here">
+
+	<!-- regular meta tags -->
+	<meta name="keywords" content="iOS test framework, OCUnit, SenTest, UIAutomation, Objective-C">
+	<meta name="description" content="Subliminal is an iOS integration test framework. It provides a familiar OCUnit/SenTest-like interface to UIAutomation, with tests written entirely in Objective-C. It's thus powerful while being easy to use, understand, and maintain.">
+
+	<!-- favicon -->
+	<link rel="icon" type="image/png" href="http://inkling.github.io/Subliminal/css/imgs/favicon.png">
+	
+	<title>Subliminal Test</title>
+	
+	<!-- code snippet syntax highlighting -->
+	<link rel="stylesheet" href="extras/google-prettify/prettify.css">
+
+	<!-- icon font -->
+	<link rel="stylesheet" href="extras/font-awesome/css/font-awesome.css">
+
+	<!-- main css file, compiled from main.scss -->
+	<link rel="stylesheet" href="css/main.css">
+
+	<!-- jquery + syntax highlighting (prettify) -->
+	<script src="scripts/jquery.min.js"></script>
+	<script src="extras/google-prettify/prettify.js"></script>
+
+	<!-- main js file - mostly for syntax highlighting + social share setup -->
+	<script src="scripts/main.js"></script>
+
+</head>
+<body>
+
+	<!-- fork me ribbon -->
+	<a class="github-ribbon" href="https://github.com/inkling/Subliminal" target="blank"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 1;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>	
+
+	<!-- big banner up top -->
+	<header class="banner">
+		<img src="css/imgs/subliminal-hero.png" alt="Subliminal"/>
+	</header>
+
+	<!-- main content -->
+	<div class="container">
+
+		<!-- intro -->
+		<section class="section no-border">
+			<h1>What is Subliminal?</h1>
+			<p class="para p-lead">Subliminal is an open-source framework for writing iOS integration tests. Subliminal provides a familiar OCUnit/SenTest-like interface on top of Apple’s UIAutomation framework, with tests written entirely in Objective-C. Subliminal also provides a powerful mechanism for your tests to manipulate your application directly.</p>
+		</section>
+		
+		<!-- WWDC Subliminal Lab Callout -->
+		<section class="section">
+			<aside class="aside">
+				<h2>Subliminal Hands-On Lab</h2>
+				<p class="small-bold-ital">Wednesday, June 12, 2013 from 6:30 PM to 8:30 PM</p>
+				<p>Come learn about Subliminal, Inkling's new open-source framework for writing iOS integration tests. Inkling will host an informal open house at our downtown San Francisco office where developers can bring their laptops and receive 1-on-1 help integrating Subliminal into their own projects. You'll also have the opportunity to meet with the developers of Subliminal and see how it is used within Inkling. All experience levels welcome. Food and drink will be provided.</p>
+				<a href="http://www.inkling.com/rsvp">RSVP Today &raquo;</a>
+			</aside>
+		</section>
+
+		<!-- follow @subliminaltest on twitter -->
+		<section class="section no-border">
+			<div class="follow">
+				<h2 class="bold"><small>For News, Tips, and Support</small></h2>
+				<a target="_blank" href="https://twitter.com/intent/user?screen_name=subliminaltest" class="flat-btn icon icon-twitter">Follow @SubliminalTest</a>
+			</div>
+		</section>
+
+		<!-- screencast -->
+		<div class="screencast-wrap">
+		   <iframe src="http://player.vimeo.com/video/67771344?byline=0&amp;portrait=0" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+		</div>
+
+		<!-- fork / star btns -->
+		<aside class="aside repo-button-wrap">
+			<h2>Subliminal on GitHub</h2>
+			
+			<div class="repo-btn-container repo-form">
+				<iframe src="http://ghbtns.com/github-btn.html?user=inkling&repo=Subliminal&type=fork&size=large" allowtransparency="true" frameborder="0" scrolling="0" width="80" height="30"></iframe>	
+			</div>
+			
+			<div class="repo-btn-container repo-watch">
+				<iframe src="http://ghbtns.com/github-btn.html?user=inkling&repo=Subliminal&type=watch&size=large" allowtransparency="true" frameborder="0" scrolling="0" width="80" height="30"></iframe>	
+			</div>
+		</aside>
+
+		<!-- usage -->
+		<section class="section">		
+			<h2>Usage</h2>
+			<p>Subliminal is designed to be instantly familiar to users of OCUnit/SenTest. In Subliminal, subclasses of SLTest define tests as methods beginning with "test". At run-time, the SLTestController discovers and runs these tests. Here's what a sample SLTest implementation looks like:</p>
+			<aside class="aside aside-code">
+				<pre>
+@implementation STLoginTest
+
+- (void)testLogInSucceedsWithUsernameAndPassword {
+        SLTextField *usernameField = [SLTextField elementWithAccessibilityLabel:@"username field"];
+        SLTextField *passwordField = [SLTextField elementWithAccessibilityLabel:@"password field" isSecure:YES];
+        SLElement *submitButton = [SLElement elementWithAccessibilityLabel:@"Submit"];
+        SLElement *loginSpinner = [SLElement elementWithAccessibilityLabel:@"Logging in..."];
+
+        NSString *username = @"Jeff", *password = @"foo";
+        [UIAElement(usernameField) setText:username];
+        [UIAElement(passwordField) setText:password];
+
+        [UIAElement(submitButton) tap];
+
+        // Wait for login to succeed
+        SLAssertTrueWithTimeout([UIAElement(loginSpinner) isInvalidOrInvisible],
+                                3.0,
+                                @"Log-in was not successful.");
+
+        NSString *successMessage = [NSString stringWithFormat:@"Hello, %@!", username];
+        SLAssertTrue([UIAElement([SLElement elementWithAccessibilityLabel:successMessage]) isValid],
+                     @"Log-in did not succeed.");
+}
+
+@end
+				</pre>
+			</aside>
+
+			<p>In the body of those tests, you do some work and then make some assertions. Because the tests live inside your application, that work can involve talking to application code. Otherwise, your tests will manipulate the user interface.</p>
+
+			<p>In Subliminal tests, you talk to UIAutomation, and manipulate the user interface, using instances of SLElement. <span class="inline-code">SLElements</span> are proxies for the "<span class="inline-code">UIAElements</span>" UIAutomation uses to represent user interface elements: when you <span class="inline-code">-tap</span> an <span class="inline-code">SLElement</span>, that <span class="inline-code">SLElement</span> causes the appropriate bit of Javascript to be executed to manipulate the corresponding <span class="inline-code">UIAElement</span>. Tests execute asynchronously, so they can block until UIAutomation is done evaluating the command, without blocking the application itself.</p>
+
+			<p>To learn more about how to use Subliminal, check out the <a href="http://github.com/inkling/Subliminal#readme">README</a> on GitHub.</p>
+		</section>
+
+		<!-- big, beautiful, flat share btns -->
+		<aside id="shareBar" class="aside share-aside">
+			<h2 class="icon icon-heart">Give us some love</h2>
+			<p>Like what you see? We'd love some support!</p>
+			<div id="shareTwitter" class="share-square">
+				<a href="" class="icon icon-twitter">
+					<span>Twitter</span>	
+				</a>
+			</div>
+			<div id="shareFacebook" class="share-square">
+				<a href="" class="icon icon-facebook">
+					<span>Facebook</span>	
+				</a>
+			</div>
+			<div id="shareGooglePlus" class="share-square">
+				<a href="" class="icon icon-google-plus">
+					<span>Google Plus</span>	
+				</a>
+			</div>
+		</aside>
+	</div>
+
+	<!-- colophon, etc -->
+	<footer class="footer">
+		<a href="https://github.com/inkling/Subliminal">Subliminal</a>, by <a target="_blank" href="http://www.twitter.com/wear_here">@wear_here</a> <span class="space"></span> Sponsored by <a target="_blank" href="http://www.twitter.com/inkling">@Inkling</a> <span class="space"></span> Site by <a target="_blank" href="http://www.twitter.com/aristretto">@aristretto</a>
+	</footer>
+	<script type="text/javascript">
+
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-41474162-1']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+
+	</script>
+</body>
+</html>

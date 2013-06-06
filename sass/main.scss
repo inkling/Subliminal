@@ -1,0 +1,369 @@
+/* SET UP */
+@import "compass/css3";
+@import "normalize.css";
+@import url("http://fonts.googleapis.com/css?family=Source+Sans+Pro");
+@import url("http://fonts.googleapis.com/css?family=Source+Code+Pro");
+
+* { @include box-sizing(border-box); }
+
+$container-blue: #56a5b1;
+$container-blue-2: $container-blue / 1.1;
+$gray-bg: #f5f5f5;
+$header-footer-border: #eee;
+$subliminal-green: #00a77e;
+
+.cf:before,
+.cf:after {
+    content: " ";
+    display: table;
+}
+
+.cf:after { clear: both; }
+.cf { *zoom: 1; }
+
+/* Main Styles */
+html {
+	-webkit-font-smoothing: antialiased;
+	font-family: 'Source Sans Pro', sans-serif;
+}
+
+h1, 
+h2, 
+h3 {
+	color: #666;
+	line-height: 1.44;
+	letter-spacing: 1px;
+	font-weight: 400;
+}
+
+h1 { color: #333;}
+
+h1 { font-size: 36px; }
+h2 { font-size: 27px; }
+h3 { font-size: 23px; }
+
+@media screen and (max-width: 480px){
+	h1 { font-size: 28px; }
+	h2 { font-size: 23px; }
+	h3 { font-size: 20px; }
+}
+
+@media screen and (max-width: 480px){
+	.github-ribbon { display: none; }
+}
+
+a {
+
+	text-decoration: none;
+	font-weight: 700;
+	color: $container-blue;
+
+	&:hover { color: $container-blue * 1.1; }
+}
+
+.small-bold-ital {
+	font-weight: 500;
+	font-size: 20px;
+	font-style: italic;
+}
+.bold { font-weight: 700; }
+
+// flat twitter follow button
+.flat-btn {
+	padding: 20px 20px 20px 0;
+	background: #eee;
+	height: 60px;
+	font-size: 20px;
+	font-weight: 300;
+	color: #888;
+	text-shadow: 0 0 1px #fff;
+	letter-spacing: 1px;	
+	text-decoration: none;
+
+	@include box-shadow(0 0 1px #eee, 1px 1px 1px #ddd, -1px 0 1px #ddd);
+	@include background-image(linear-gradient(#fefefe, #f4f4f4));
+	
+	&::before {
+		background: #bbb;
+		color: #fefefe;
+		padding: 1em;
+		margin-right: 1em;
+		@include box-shadow(0 0 0 1px #bbb);
+	}
+
+	&:hover {
+		background: #eee;
+		color: #555;
+		&::before{
+			background: #9a9a9a;
+		}
+	}
+
+	@media screen and (max-width: 480px){
+		padding: 11px 11px 11px 0;
+		font-size: 15px;
+
+		&::before {
+			padding: 11px;
+		}
+	}
+}
+
+
+.banner {
+	
+	background: $gray-bg;
+	padding: 88px 1em;
+	text-align: center;
+
+	border-bottom: 3px solid $header-footer-border;
+	margin-bottom: 1em;
+	
+	img {
+		max-width: 100%;
+	}
+
+	@media screen and (max-width: 480px){
+		padding: 50px 1em 40px;
+	}
+}
+
+.container { padding: 1em 0; }
+
+.screencast-wrap {
+	
+	max-width: 960px;
+	min-width: 320px;
+	margin: 0 auto;
+	
+
+	iframe {
+		width: 100%;
+		height: 540px;
+	}
+
+	@media screen and (max-width: 320px){
+		iframe {
+			width: 320px;
+			height: 180px;
+		}
+	}
+
+}
+
+// general aside styles
+.aside {
+	width: 100%;
+	padding: 2em;
+	margin: 0 auto 2em;
+	background: $gray-bg;
+	@extend .cf;
+
+	h2 { margin-top: 0; }
+	@media screen and (max-width: 480px){
+		margin: 0 auto 2em;	
+		padding: 1em;
+	}
+
+	
+}
+
+.repo-button-wrap {
+	text-align: center;
+	max-width: 960px;
+
+	.repo-btn-container {
+		display: inline-block;
+		padding: 0 .5em;
+
+		@media screen and (max-width: 480px){
+			display: block;
+			padding: .33em 0;
+		}
+	}
+}
+
+p {
+	font-size: 22px;
+	line-height: 1.44;
+	color: #666;
+	text-shadow: 0 0 1px rgba(0,0,0,.33);
+	font-weight: 300;
+
+	@media screen and (max-width: 480px){
+		font-size: 18px;
+		line-height: 1.6;
+	}
+}
+
+.inline-code {
+	font-family: 'Source Code Pro', monospace;
+	font-size: 80%;
+	padding: 3px 6px;
+	background: #eee;
+	color: #555;
+}
+
+.aside-code {
+	pre {
+		overflow: auto;
+		position: relative;
+		padding: 0;	
+		margin: 0;
+		color: #666;
+		font-family: 'Source Code Pro', monospace;
+	}
+}
+
+.section {
+	
+	max-width: 960px;
+	min-width: 320px;
+	padding: 0 0 2em;
+	margin: 0 auto 2em;
+	border-bottom: 2px dotted #efefef;
+
+	&.no-border { border: none; }
+
+	.p-lead {
+		padding-top: 1em;
+		margin-bottom: 0;
+		color: #333;
+		font-size: 27px;
+		border: none;
+
+		@media screen and (max-width: 480px){
+			font-size: 20px;
+			padding-top: 0;
+		}
+	}
+
+	&:last-of-type { border-bottom: none; }
+
+	@media screen and (max-width: 960px){
+		padding-left: 1em;
+		padding-right: 1em;
+	}
+}
+
+.footer {
+
+	border-top: 3px solid $header-footer-border;
+	background: $gray-bg;
+	padding: 4em;
+	font-size: 14px;
+	font-weight: 200;
+	color: #555;
+	text-align: center;
+	text-transform: lowercase;
+	letter-spacing: 1px;
+	
+	@include opacity(.88);
+
+	@media screen and (max-width: 480px){
+		text-align: left;
+		padding: 1em 2em;
+	}
+}
+
+.space {
+	
+	display: inline-block;
+	width: 1em;
+
+	@media screen and (max-width: 480px){
+		display: block;
+		width: 100%;
+		padding-bottom: .5em;
+	}
+}	
+
+.share-aside {
+	max-width: 480px;
+	padding: 1em;
+}
+
+.share-square {
+
+	width: 32.5%;
+	height: 130px;
+	margin-right: 1.25%;
+	float: left;
+	text-align: center;
+	cursor: pointer;
+
+	@include box-shadow(0 0 1px #eee, 1px 1px 1px #ddd);
+	@include background-image(linear-gradient(#fcfcfc, #fafafa));
+	
+	&:last-of-type { margin-right: 0; }
+
+	a {
+		height: 100%;
+		width: 100%;
+		display: block;
+		text-decoration: none;
+		color: #ccc;
+		background: transparent;
+		font-size: 40px;
+		line-height: 130px;
+		
+		// add a tiny bit of depth to the icons
+		// keep them a little faded until hover
+		&::before {
+			@include opacity(.66);
+			text-shadow: 0 0 1px #fff;
+		}
+
+		&.icon-twitter { color: #00aced; }
+		&.icon-facebook { color: #3B5998; }
+		&.icon-google-plus { color: #d34836; }
+	}
+
+	// dont display text at larger size
+	// let the icons speak for themselves
+	span { display: none; }
+
+	&:hover {
+
+		@include background-image(linear-gradient(#fff, #fff));
+
+		a::before {
+			@include opacity(1);
+		}
+
+	}
+
+	@media screen and (max-width: 480px){
+		display: block;
+		width: 100%;
+		height: 80px;
+		text-align: left;
+		margin-bottom: .33em;
+
+		a {
+			line-height: 80px;
+			display: block;
+			text-align: left;
+			padding-left: 30px;
+			
+			&::before {
+				width: 15%;
+			}
+		}
+				
+		span {	
+			font-size: 20px;		
+			display: inline;
+			padding-left: 1em;
+			color: #888;
+			top: -.33em;
+			position: relative;
+		}
+	}
+
+}
+
+.icon-heart::before {
+	color: #ccc;	
+	padding-right: 10px;	
+}
