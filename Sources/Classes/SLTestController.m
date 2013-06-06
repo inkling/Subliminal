@@ -40,7 +40,7 @@ static const NSTimeInterval kDefaultTimeout = 5.0;
 /// Uncaught exceptions are logged to Subliminal for visibility.
 static void SLUncaughtExceptionHandler(NSException *exception)
 {
-    NSString *exceptionMessage = [NSString stringWithFormat:@"Exception occurred: **%@** for reason: %@", [exception name], [exception reason]];
+    NSString *exceptionMessage = [NSString stringWithFormat:@"Uncaught exception occurred: ***%@*** for reason: %@", [exception name], [exception reason]];
     if ([NSThread isMainThread]) {
         // We need to wait for UIAutomation, but we can't block the main thread,
         // so we spin the run loop instead.
