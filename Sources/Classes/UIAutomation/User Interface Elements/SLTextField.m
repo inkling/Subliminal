@@ -22,6 +22,7 @@
 
 #import "SLTextField.h"
 #import "SLUIAElement+Subclassing.h"
+#import "SLKeyboard.h"
 
 @implementation SLTextField
 
@@ -43,7 +44,7 @@
     if (tapBeforeSettingText) {
         [self tap];
     }
-    [self waitUntilTappable:YES thenSendMessage:@"setValue('%@')", [text slStringByEscapingForJavaScriptLiteral]];
+    [[SLKeyboard keyboard] typeString:text];
 }
 
 - (BOOL)matchesObject:(NSObject *)object {
@@ -101,7 +102,7 @@ static const NSTimeInterval kWebviewTextfieldDelay = 1;
 - (void)setText:(NSString *)text {
     [self tap];
     [NSThread sleepForTimeInterval:kWebviewTextfieldDelay];
-    [self waitUntilTappable:YES thenSendMessage:@"setValue('%@')", [text slStringByEscapingForJavaScriptLiteral]];
+    [[SLKeyboard keyboard] typeString:text];
     [NSThread sleepForTimeInterval:kWebviewTextfieldDelay];
 }
 
