@@ -50,7 +50,7 @@ tell application "System Events"
 		tell menu bar 1
 			tell menu bar item "iOS Simulator"
 				tell menu "iOS Simulator"
-					click menu item "Reset Content and Settings‚Ä¶"
+					click menu item "Reset Content and Settings…"
 				end tell
 			end tell
 		end tell
