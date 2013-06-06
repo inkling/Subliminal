@@ -13,7 +13,137 @@ Full documentation will be forthcoming, here and in the code, but for now, here'
 Installation
 -----
 
-To be written. For now, I've done this already, on the `shared/subliminal` branch of `ios/inkling-ipad`.
+###Downloading Subliminal
+
+First, create a directory named `Integration\ Tests` in your project for 
+integration tests, and download and add Subliminal to your new directory. If
+you're using git for your project add Subliminal as a submodule:
+
+    mkdir Integration\ Tests
+    mkdir Integration\ Tests/Subliminal
+    git submodule add git@github.com:inkling/Subliminal.git Integration\ Tests/Subliminal/
+
+Otherwise manually download and add Subliminal to your 
+`Integration\ Tests/Subliminal` directory.
+
+###Installing supporting files
+
+Now, install Subliminal's supporting files, such as test file templates and 
+Subliminal's documentation:
+
+    cd Integration\ Tests/Subliminal
+    rake install
+
+If you'd rather read Subliminal's documentation online you can append `DOCS=no` 
+to this command.
+
+###Adding Subliminal to your project
+
+Open up your project, and create a group for your integration tests. Use the 
+inspector pane to make your new group represent your Integration Tests 
+directory. 
+
+![](http://inkling.github.io/Subliminal/readme-images/MakeGroupRepresentIntegrationTests.png)
+
+Next, add Subliminal to your project by dragging its project file into your new
+group.
+
+![](http://inkling.github.io/Subliminal/readme-images/AddSubliminalToProject.png)
+
+###Creating a target for your integration tests
+
+Creating a separate target for your integration tests will allow you to control
+exactly when your tests are run. To begin with, right click your application 
+target and select Duplicate.
+
+![](http://inkling.github.io/Subliminal/readme-images/CreateTarget.png)
+
+Next, rename both your new target to Integration Tests and the info.plist 
+created for it to `Integration Tests-Info.plist`. Move the reference to the 
+newly created target's info.plist into your Integration Tests group using the 
+navigator pane, and move the actual info.plist file into your 
+`Integration Tests` directory using the Finder. After this step you will need to
+update Xcode's reference to the plist.
+
+![](http://inkling.github.io/Subliminal/readme-images/UpdatePlistReference.png)
+
+Now, link Subliminal to the Integration Tests target. To do this open the 
+project inspector by selecting your project in the navigator pane. Then select 
+your Integration Tests target and then the Build Phases tab, and add 
+`libSubliminal.a` to the list titled Link Binary With Libraries.
+
+![](http://inkling.github.io/Subliminal/readme-images/LinkSubliminalBinary.png)
+
+Also add Subliminal to the list of Target Dependencies. This ensures Subliminal 
+will be built before your application.
+
+![](http://inkling.github.io/Subliminal/readme-images/AddSubliminalDependency.png)
+
+There are a few additional settings to change, however Subliminal can make these
+changes for you if you apply its xcconfig to your Integration Tests target. To 
+do this expand Subliminal's project reference in your navigator pane, then drag 
+the `Integration Tests.xcconfig` file into the base level of your Integration 
+Tests group. Now, select your project within the project inspector, navigate to 
+the Info tab, and base the configurations used to build your Integration Tests 
+target off `Integration Tests.xcconfig`.
+
+![](http://inkling.github.io/Subliminal/readme-images/SetConfigurations.png)
+
+Finally, to ensure that this xcconfig file takes effect, you must delete two 
+default build settings. Select your Integration Tests target in the project 
+inspector and then select the Build Settings tab. Search for and delete the 
+settings for Product Name and Info.plist File: these values will be provided by 
+the `Integration Tests.xcconfig` file. NOTE: to delete the Info.plist setting, 
+you must have renamed and moved your Integration Tests target's info.plist as 
+described above.
+
+![](http://inkling.github.io/Subliminal/readme-images/DeleteProductNameSetting.png)
+
+![](http://inkling.github.io/Subliminal/readme-images/DeletePlistSetting.png)
+
+###Creating a scheme for your integration tests target
+
+You're going to need to create a new scheme to run your Integration Tests 
+target. Click on the name of your active scheme above the navigator pane to open
+up the scheme dropdown, and select the Manage Schemes option. Depending on your 
+project's settings, some extra schemes may have been created during the 
+preceding steps. These schemes can be removed, but be careful not to delete the 
+schemes you use regularly.
+
+![](http://inkling.github.io/Subliminal/readme-images/DeleteExtraSchemes.png)
+
+Now, add an additional scheme to build the Integration Tests target.
+
+![](http://inkling.github.io/Subliminal/readme-images/CreateIntegrationTestsScheme.png)
+
+###Running Tests on the integration tests target
+
+Finally, you'll need to add some code to you app delegate to tell Subliminal to 
+begin running your tests. First build your Integration Tests scheme, so that 
+Xcode can provide autocomplete as you modify your app delegate. Then, import the
+Subliminal header at the top of your app delegate implementation file:
+
+    #if INTEGRATION_TESTING
+    #import <Subliminal/Subliminal.h>
+    #endif
+    
+and tell the shared test controller to run all test cases:
+
+    #if INTEGRATION_TESTING
+    [[SLTestController sharedTestController] runTests:[SLTest allTests] withCompletionBlock:nil];
+    #endif
+   
+Note that this code is conditionalized by the INTEGRATION_TESTING preprocessor 
+macro set by `Integration Tests.xcconfig`, and will not be built into your main 
+application target. Unlike many other integration test frameworks Subliminal 
+does not use private APIs, so it is safe to include this call in any target that 
+links against Subliminal. However, unless UIAutomation is running it will not do
+anything, and thus its cleaner and more efficient to include it only when
+integration testing.
+
+Also note that you do not need to direct the test controller to run specific 
+tests: Subliminal automatically discovers all tests linked against the 
+Integration Tests target.
 
 Usage
 -----
