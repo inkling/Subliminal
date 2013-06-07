@@ -37,10 +37,10 @@ How to Get Started
 ------------------
 
 * [Download Subliminal](https://github.com/inkling/Subliminal/zipball/master) 
-and try out the included example app. Instructions for running the saple app are [here](##Running the Example app)
+and try out the included example app. Instructions for running the example app are [here](#running-the-example-app)
 * Install Subliminal and write your first test in just 10 minutes (guide below, 
 screencast [here](https://vimeo.com/67765518))
-* Read the FAQ [here](##FAQ), and find support [@subliminaltest](https://twitter.com/subliminaltest) 
+* Read the FAQ [here](#faq), and find support [@subliminaltest](https://twitter.com/subliminaltest) 
 and on [Stack Overflow](http://stackoverflow.com/questions/tagged/subliminal)
 
 Installing Subliminal
