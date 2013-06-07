@@ -1,72 +1,27 @@
-#!/usr/bin/osascript
+#!/bin/bash
 
-(*
-For details and documentation:
-http://github.com/inkling/Subliminal
+# For details and documentation:
+# http://github.com/inkling/Subliminal
 
-Copyright 2013 Inkling Systems, Inc.
+# Copyright 2013 Inkling Systems, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+# Deletes all applications from the iPhone Simulator and resets its settings.
 
-  http://www.apache.org/licenses/LICENSE-2.0
+killall "iPhone Simulator" &> /dev/null
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*)
+rm -rf "$HOME/Library/Application Support/iPhone Simulator"
 
-(*
-Deletes all applications from the iPhone Simulator and resets its settings.
-*)
-
--- Ensure GUI scripting is enabled
-tell application "Finder"
-	set scriptDir to container of (path to me) as text
-end tell
-
-set enableGUIScriptingScript to (scriptDir & "enable_GUI_scripting")
-set GUIScriptingEnabled to (run script (enableGUIScriptingScript as alias))
-if not GUIScriptingEnabled then return false
-
--- Reset simulator
-tell application "System Events"
-	-- Sometimes Applescript can time out trying to talk to the Simulator
-	-- (e.g. when being reset repeatedly during CI runs),
-	-- so we force quit the Simulator to start
-	if "iPhone Simulator" is in name of processes then
-		do shell script "killall \"iPhone Simulator\" 2> /dev/null"
-		delay 1.0
-	end if
-
-	tell application "iPhone Simulator"
-		activate
-	end tell
-
-	tell process "iPhone Simulator"
-		tell menu bar 1
-			tell menu bar item "iOS Simulator"
-				tell menu "iOS Simulator"
-					click menu item "Reset Content and Settings…"
-				end tell
-			end tell
-		end tell
-		tell window 1
-			click button "Reset"
-		end tell
-	end tell
-end tell
-
--- Ensure that simulator flushes settings
--- such as the registry of installed applications.
--- This is necessary when an application's bundle identifier changes.
-tell application "iPhone Simulator"
-	quit
-	delay 1.0
-	activate
-end tell
-
-return true
+XCODE_PATH=`xcode-select --print-path`
+open "$XCODE_PATH/Platforms/iPhoneSimulator.platform/Developer/Applications/iPhone Simulator.app"
