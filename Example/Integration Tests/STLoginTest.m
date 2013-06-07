@@ -61,7 +61,7 @@
     [UIAElement(_submitButton) tap];
 
     // using -isInvalidOrInvisible allows the spinner not to exist when we start waiting
-    SLAssertTrueWithTimeout([UIAElement(_loginSpinner) isInvalidOrInvisible], 3.0, @"Log-in was not successful.");
+    SLAssertTrueWithTimeout([UIAElement(_loginSpinner) isInvalidOrInvisible], 3, @"Log-in was not successful.");
     
     NSString *successMessage = [NSString stringWithFormat:@"Hello, %@!", username];
     SLAssertTrue([UIAElement([SLElement elementWithAccessibilityLabel:successMessage]) isValid], @"Log-in did not succeed.");
