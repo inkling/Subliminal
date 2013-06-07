@@ -435,7 +435,7 @@ FAQ
 		time to attach the debugger by setting `-[SLTestController shouldWaitToStartTesting]` 
 		to `YES`.
 
-Running the Example app
+Running the Example App
 -----------------------
 
 1. Clone the Subliminal repo: `git clone git@github.com:inkling/Subliminal.git`
