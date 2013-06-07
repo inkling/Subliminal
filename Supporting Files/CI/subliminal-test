@@ -288,7 +288,7 @@ if [[ -n "$SIM_DEVICE" ]]; then
 	SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
 
 	echo "\nResetting simulator content and settings..."
-	if [ `osascript "$SCRIPT_DIR/reset_simulator"` ]; then
+	if [ `osascript "$SCRIPT_DIR/reset_simulator.scpt"` ]; then
 		echo "Successfully reset iOS Simulator."
 	else
 		echo "\n\nERROR: Could not reset the simulator."
@@ -297,7 +297,7 @@ if [[ -n "$SIM_DEVICE" ]]; then
 
 	# Set the simulator's device type
 	echo "\nSetting simulator device type..."
-	if [ `osascript "$SCRIPT_DIR/set_simulator_device" "$SIM_DEVICE"` ]; then
+	if [ `osascript "$SCRIPT_DIR/set_simulator_device.scpt" "$SIM_DEVICE"` ]; then
 		echo "Successfully set simulator device type."
 	else
 		echo "\n\nERROR: Could not set the simulator's device type."
@@ -323,7 +323,7 @@ echo "\n\nLaunching tests...\n"
 if [[ -z $LIVE ]] || ! $LIVE; then
 	# First attempt to authorize instruments when it is launched: 
 	# in the background, monitor for, and dismiss, the dialog it shows
-	osascript "$SCRIPT_DIR/authorize_instruments" "$LOGIN_PASSWORD" &
+	osascript "$SCRIPT_DIR/authorize_instruments.scpt" "$LOGIN_PASSWORD" &
 	# Kill the process when the parent script ends
 	trap "kill $!" SIGINT SIGTERM EXIT
 fi
@@ -351,7 +351,7 @@ if [[ -n "$SIM_DEVICE" ]]; then
 	# due to the risk of collision
 	if [[ -n "$REPLACEMENT_BUNDLE_ID" ]]; then
 		echo "\nResetting simulator content and settings again because bundle identifier was replaced..."
-		if [ `osascript "$SCRIPT_DIR/reset_simulator"` ]; then
+		if [ `osascript "$SCRIPT_DIR/reset_simulator.scpt"` ]; then
 			echo "Successfully reset iOS Simulator."
 		else
 			echo "\nERROR: Could not reset the simulator."
