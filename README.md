@@ -43,6 +43,16 @@ screencast [here](https://vimeo.com/67765518))
 * Read the FAQ [here](#faq), and find support [@subliminaltest](https://twitter.com/subliminaltest) 
 and on [Stack Overflow](http://stackoverflow.com/questions/tagged/subliminal)
 
+Running the Example App
+-----------------------
+
+1. Clone the Subliminal repo: `git clone git@github.com:inkling/Subliminal.git`
+2. cd into the directory: `cd Subliminal`
+3. If you haven't already, setup Subliminal: `rake install`
+4. Open the Example project: `open Example/SubliminalTest.xcodeproj`
+5. Run the tests: Using the `Integration Tests` scheme, choose Product > Profile (⌘+I).
+6. Under the User Templates, choose Subliminal
+
 Installing Subliminal
 ---------------------
 
@@ -434,17 +444,6 @@ FAQ
 		to break immediately after launch, you may find it useful to give yourself 
 		time to attach the debugger by setting `-[SLTestController shouldWaitToStartTesting]` 
 		to `YES`.
-
-Running the Example App
------------------------
-
-1. Clone the Subliminal repo: `git clone git@github.com:inkling/Subliminal.git`
-2. cd into the directory: `cd Subliminal`
-3. Create git submodules: `git submodule update --init`
-4. Setup Subliminal: `rake install`
-5. Open the Example project: `open Example/SubliminalTest.xcodeproj`
-6. Run the tests: Using the `Integration Tests` scheme, choose Product > Profile (⌘+I).
-7. Under the User Templates, choose Subliminal
 
 Contributing
 ------------
