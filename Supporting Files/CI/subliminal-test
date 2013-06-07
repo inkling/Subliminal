@@ -298,7 +298,8 @@ if [[ -n "$SIM_DEVICE" ]]; then
 
 	# Set the simulator's device type
 	echo "\nSetting simulator device type..."
-	if [ `osascript "$SCRIPT_DIR/set_simulator_device" "$SIM_DEVICE"` ]; then
+	"$SCRIPT_DIR/set_simulator_device" "$SIM_DEVICE"
+	if [ $? -eq 0 ]; then
 		echo "Successfully set simulator device type."
 	else
 		echo "\n\nERROR: Could not set the simulator's device type."
