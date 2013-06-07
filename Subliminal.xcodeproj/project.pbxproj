@@ -1272,7 +1272,6 @@
 					"\"$(BUILT_PRODUCTS_DIR)\"",
 				);
 				INFOPLIST_FILE = "Integration Tests/$(TARGET_NAME)-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				PRODUCT_NAME = "Subliminal (Integration Tests)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
@@ -1297,7 +1296,6 @@
 					"\"$(BUILT_PRODUCTS_DIR)\"",
 				);
 				INFOPLIST_FILE = "Integration Tests/$(TARGET_NAME)-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "Subliminal (Integration Tests)";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1321,7 +1319,6 @@
 					"\"$(BUILT_PRODUCTS_DIR)\"",
 				);
 				INFOPLIST_FILE = "Unit Tests/Subliminal Unit Tests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "Subliminal (Unit Tests)";
 				WRAPPER_EXTENSION = octest;
@@ -1344,7 +1341,6 @@
 					"\"$(BUILT_PRODUCTS_DIR)\"",
 				);
 				INFOPLIST_FILE = "Unit Tests/Subliminal Unit Tests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "Subliminal (Unit Tests)";
 				WRAPPER_EXTENSION = octest;
