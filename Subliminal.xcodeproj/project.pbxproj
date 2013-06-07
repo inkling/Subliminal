@@ -1,0 +1,1405 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		F0080141174D7A9E001927AC /* Subliminal Documentation */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = F0080147174D7A9E001927AC /* Build configuration list for PBXAggregateTarget "Subliminal Documentation" */;
+			buildPhases = (
+				F008014A174D7AC1001927AC /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Subliminal Documentation";
+			productName = "Subliminal Documentation";
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		064B6F55173B13E9004AB1BF /* SLElementVisibilityTestCoveredByClearRegion.xib in Resources */ = {isa = PBXBuildFile; fileRef = 064B6F54173B13E9004AB1BF /* SLElementVisibilityTestCoveredByClearRegion.xib */; };
+		064B6FC7173DCE9A004AB1BF /* SLElementVisibilityWithSubviews.xib in Resources */ = {isa = PBXBuildFile; fileRef = 064B6FC6173DCE9A004AB1BF /* SLElementVisibilityWithSubviews.xib */; };
+		068D3E4D16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 068D3E4C16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib */; };
+		0696BA5816E013D600DD70CF /* SLElementDraggingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0696BA5516E013D600DD70CF /* SLElementDraggingTest.m */; };
+		0696BA5916E013D600DD70CF /* SLElementDraggingTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0696BA5616E013D600DD70CF /* SLElementDraggingTestViewController.m */; };
+		0696BA5A16E013D600DD70CF /* SLElementDraggingTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0696BA5716E013D600DD70CF /* SLElementDraggingTestViewController.xib */; };
+		CA75E78216697A1200D57E92 /* SLDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = CA75E78016697A1200D57E92 /* SLDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CA75E78516697C0000D57E92 /* SLDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = CA75E78116697A1200D57E92 /* SLDevice.m */; };
+		CAC388051641CD7500F995F9 /* SLStringUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC388031641CD7500F995F9 /* SLStringUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CAC388061641CD7500F995F9 /* SLStringUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC388041641CD7500F995F9 /* SLStringUtilities.m */; };
+		CAC3883F1643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC3883D1643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CAC388401643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC3883E1643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.m */; };
+		F00800C7174B3349001927AC /* SLButtonTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800C4174B3349001927AC /* SLButtonTest.m */; };
+		F00800C8174B3349001927AC /* SLButtonTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800C5174B3349001927AC /* SLButtonTestViewController.m */; };
+		F00800C9174B3349001927AC /* SLButtonTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00800C6174B3349001927AC /* SLButtonTestViewController.xib */; };
+		F00800CE174C1C64001927AC /* SLPopover.h in Headers */ = {isa = PBXBuildFile; fileRef = F00800CC174C1C64001927AC /* SLPopover.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F00800CF174C1C64001927AC /* SLPopover.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800CD174C1C64001927AC /* SLPopover.m */; };
+		F00800E2174C2E0A001927AC /* SLPopoverTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800E0174C2E0A001927AC /* SLPopoverTest.m */; };
+		F00800E3174C2E0A001927AC /* SLPopoverTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800E1174C2E0A001927AC /* SLPopoverTestViewController.m */; };
+		F016493D16D42E3C000AEB50 /* SLTestController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = F016493B16D42E3C000AEB50 /* SLTestController+Internal.h */; };
+		F01B2B6D16D2C55900DBA391 /* SLElementMatchingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F01B2B6A16D2C55900DBA391 /* SLElementMatchingTest.m */; };
+		F01B2B6E16D2C55900DBA391 /* SLElementMatchingTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F01B2B6B16D2C55900DBA391 /* SLElementMatchingTestViewController.m */; };
+		F01B2B6F16D2C55900DBA391 /* SLElementMatchingTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F01B2B6C16D2C55900DBA391 /* SLElementMatchingTestViewController.xib */; };
+		F01EBC9B170115B100FF6A7C /* SLTextFieldTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F01EBC99170115B100FF6A7C /* SLTextFieldTest.m */; };
+		F01EBC9C170115B100FF6A7C /* SLTextFieldTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F01EBC9A170115B100FF6A7C /* SLTextFieldTestViewController.m */; };
+		F01EBC9E1701429400FF6A7C /* SLWebTextField.html in Resources */ = {isa = PBXBuildFile; fileRef = F01EBC9D1701429400FF6A7C /* SLWebTextField.html */; };
+		F024BE33168BD70900708350 /* TestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = F024BE32168BD70900708350 /* TestUtilities.m */; };
+		F0271AFF162E0B950098F5F2 /* SLTestController+AppHooks.h in Headers */ = {isa = PBXBuildFile; fileRef = F0271AFD162E0B950098F5F2 /* SLTestController+AppHooks.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0271B00162E0B950098F5F2 /* SLTestController+AppHooks.m in Sources */ = {isa = PBXBuildFile; fileRef = F0271AFE162E0B950098F5F2 /* SLTestController+AppHooks.m */; };
+		F03C55E4170C32BE00079021 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0AC809716BB299500C5D5C0 /* CoreGraphics.framework */; };
+		F043469F175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = F043469D175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F04346A0175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = F043469E175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.m */; };
+		F04346A7175AD10200D91F7F /* NSObject+SLVisibility.h in Headers */ = {isa = PBXBuildFile; fileRef = F04346A5175AD10200D91F7F /* NSObject+SLVisibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F04346A8175AD10200D91F7F /* NSObject+SLVisibility.m in Sources */ = {isa = PBXBuildFile; fileRef = F04346A6175AD10200D91F7F /* NSObject+SLVisibility.m */; };
+		F04346AF175AD63E00D91F7F /* SLAccessibilityPath.h in Headers */ = {isa = PBXBuildFile; fileRef = F04346AD175AD63E00D91F7F /* SLAccessibilityPath.h */; };
+		F04346B0175AD63E00D91F7F /* SLAccessibilityPath.m in Sources */ = {isa = PBXBuildFile; fileRef = F04346AE175AD63E00D91F7F /* SLAccessibilityPath.m */; };
+		F043A9BE1729CFFE00A4FD1D /* SLElementVisibilityTestElementHidden.xib in Resources */ = {isa = PBXBuildFile; fileRef = F043A9BD1729CFFE00A4FD1D /* SLElementVisibilityTestElementHidden.xib */; };
+		F043A9C01729EFD100A4FD1D /* SLElementVisibilityTestUserInteractionDisabled.xib in Resources */ = {isa = PBXBuildFile; fileRef = F043A9BF1729EFD100A4FD1D /* SLElementVisibilityTestUserInteractionDisabled.xib */; };
+		F043A9C7172A160600A4FD1D /* SLElementVisibilityTest.html in Resources */ = {isa = PBXBuildFile; fileRef = F043A9C6172A160600A4FD1D /* SLElementVisibilityTest.html */; };
+		F05C4F90171406EF00A381BC /* SLTerminal+ConvenienceFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = F05C4F8E171406EF00A381BC /* SLTerminal+ConvenienceFunctions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F05C4F91171406EF00A381BC /* SLTerminal+ConvenienceFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = F05C4F8F171406EF00A381BC /* SLTerminal+ConvenienceFunctions.m */; };
+		F05C51E5171C8AE000A381BC /* SLMainThreadRef.h in Headers */ = {isa = PBXBuildFile; fileRef = F05C51E3171C8AE000A381BC /* SLMainThreadRef.h */; settings = {ATTRIBUTES = (); }; };
+		F05C51E6171C8AE000A381BC /* SLMainThreadRef.m in Sources */ = {isa = PBXBuildFile; fileRef = F05C51E4171C8AE000A381BC /* SLMainThreadRef.m */; };
+		F05C51EC171C90B000A381BC /* SLMainThreadRefTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F05C51EB171C90B000A381BC /* SLMainThreadRefTests.m */; };
+		F05D2B061746B55C0089DB9E /* SLStaticElementTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F05D2B041746B55C0089DB9E /* SLStaticElementTest.m */; };
+		F05D2B071746B55C0089DB9E /* SLStaticElementTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F05D2B051746B55C0089DB9E /* SLStaticElementTestViewController.m */; };
+		F0695D8F16011515000B05D0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8E16011515000B05D0 /* Foundation.framework */; };
+		F0695DE4160138DF000B05D0 /* SLUIAElement.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DD8160138DF000B05D0 /* SLUIAElement.m */; };
+		F0695DE5160138DF000B05D0 /* SLLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DDB160138DF000B05D0 /* SLLogger.m */; };
+		F0695DE7160138DF000B05D0 /* SLTerminal.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DDF160138DF000B05D0 /* SLTerminal.m */; };
+		F0695DE8160138DF000B05D0 /* SLTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DE1160138DF000B05D0 /* SLTest.m */; };
+		F0695DE9160138DF000B05D0 /* SLTestController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DE3160138DF000B05D0 /* SLTestController.m */; };
+		F0695E0D16013D77000B05D0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695E0C16013D77000B05D0 /* UIKit.framework */; };
+		F0695E1C16014491000B05D0 /* Subliminal.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DEB1601391C000B05D0 /* Subliminal.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0695E1D16014491000B05D0 /* SLTestController.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DE2160138DF000B05D0 /* SLTestController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0695E1E16014491000B05D0 /* SLTest.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DE0160138DF000B05D0 /* SLTest.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0695E1F16014491000B05D0 /* SLTerminal.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDE160138DF000B05D0 /* SLTerminal.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0695E2016014491000B05D0 /* SLUIAElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DD7160138DF000B05D0 /* SLUIAElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0695E2116014491000B05D0 /* SLLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDA160138DF000B05D0 /* SLLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F077D70D16D9D77900908FF5 /* SLElementVisibilityTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F077D70A16D9D77900908FF5 /* SLElementVisibilityTest.m */; };
+		F077D70E16D9D77900908FF5 /* SLElementVisibilityTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F077D70B16D9D77900908FF5 /* SLElementVisibilityTestViewController.m */; };
+		F077D70F16D9D77900908FF5 /* SLElementVisibilityTestCovered.xib in Resources */ = {isa = PBXBuildFile; fileRef = F077D70C16D9D77900908FF5 /* SLElementVisibilityTestCovered.xib */; };
+		F07DA32D16E43AD3004C2282 /* SLAlertTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DA32B16E43AD3004C2282 /* SLAlertTest.m */; };
+		F07DA32E16E43AD3004C2282 /* SLAlertTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DA32C16E43AD3004C2282 /* SLAlertTestViewController.m */; };
+		F08005591730762C00198F6F /* Inklings~iPhone.webarchive in Resources */ = {isa = PBXBuildFile; fileRef = F08005581730762C00198F6F /* Inklings~iPhone.webarchive */; };
+		F089F98617445D9A00DF1F25 /* SLStaticElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F089F98417445D9A00DF1F25 /* SLStaticElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F089F98717445D9A00DF1F25 /* SLStaticElement.m in Sources */ = {isa = PBXBuildFile; fileRef = F089F98517445D9A00DF1F25 /* SLStaticElement.m */; };
+		F089F99417458BA300DF1F25 /* SLWindowTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F089F99217458BA300DF1F25 /* SLWindowTest.m */; };
+		F089F99517458BA300DF1F25 /* SLWindowTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F089F99317458BA300DF1F25 /* SLWindowTestViewController.m */; };
+		F089F9E21745FB7E00DF1F25 /* SLKeyboardTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F089F9E01745FB7E00DF1F25 /* SLKeyboardTest.m */; };
+		F089F9E31745FB7E00DF1F25 /* SLKeyboardTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F089F9E11745FB7E00DF1F25 /* SLKeyboardTestViewController.m */; };
+		F08B86EB16859C8D00C4FE44 /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F08B86DB16859C4000C4FE44 /* libOCMock.a */; };
+		F08B87F21685A00400C4FE44 /* SharedSLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F08B87F11685A00400C4FE44 /* SharedSLTests.m */; };
+		F08B87F51685A07B00C4FE44 /* SLTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F08B87F41685A07B00C4FE44 /* SLTestTests.m */; };
+		F090AE7016D9E01D000F0B6F /* SLElementVisibilityTestHidden.xib in Resources */ = {isa = PBXBuildFile; fileRef = F090AE6D16D9E01D000F0B6F /* SLElementVisibilityTestHidden.xib */; };
+		F090AE7116D9E01D000F0B6F /* SLElementVisibilityTestLowAlpha.xib in Resources */ = {isa = PBXBuildFile; fileRef = F090AE6E16D9E01D000F0B6F /* SLElementVisibilityTestLowAlpha.xib */; };
+		F090AE7216D9E01D000F0B6F /* SLElementVisibilityTestOffscreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = F090AE6F16D9E01D000F0B6F /* SLElementVisibilityTestOffscreen.xib */; };
+		F090AE7416D9E1D1000F0B6F /* SLElementVisibilityTestSuperviewHidden.xib in Resources */ = {isa = PBXBuildFile; fileRef = F090AE7316D9E1D1000F0B6F /* SLElementVisibilityTestSuperviewHidden.xib */; };
+		F0A040131698ECDE009D8157 /* SLTestController+AppContextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A040121698ECDE009D8157 /* SLTestController+AppContextTests.m */; };
+		F0A04E1D1749F70F002C7520 /* SLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F0A04E1B1749F70F002C7520 /* SLElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0A04E1E1749F70F002C7520 /* SLElement.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A04E1C1749F70F002C7520 /* SLElement.m */; };
+		F0AC809516BB299500C5D5C0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695E0C16013D77000B05D0 /* UIKit.framework */; };
+		F0AC809616BB299500C5D5C0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8E16011515000B05D0 /* Foundation.framework */; };
+		F0AC809816BB299500C5D5C0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0AC809716BB299500C5D5C0 /* CoreGraphics.framework */; };
+		F0AC809E16BB299500C5D5C0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F0AC809C16BB299500C5D5C0 /* InfoPlist.strings */; };
+		F0AC80A016BB299500C5D5C0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AC809F16BB299500C5D5C0 /* main.m */; };
+		F0AC80A416BB299500C5D5C0 /* SLIntegrationTestsAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AC80A316BB299500C5D5C0 /* SLIntegrationTestsAppDelegate.m */; };
+		F0AC80A616BB299500C5D5C0 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = F0AC80A516BB299500C5D5C0 /* Default.png */; };
+		F0AC80A816BB299500C5D5C0 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0AC80A716BB299500C5D5C0 /* Default@2x.png */; };
+		F0AC80AA16BB299500C5D5C0 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0AC80A916BB299500C5D5C0 /* Default-568h@2x.png */; };
+		F0AC80B316BB29B700C5D5C0 /* libSubliminal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8B16011515000B05D0 /* libSubliminal.a */; };
+		F0AC80BD16BB50FF00C5D5C0 /* SLTestsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AC80BC16BB50FF00C5D5C0 /* SLTestsViewController.m */; };
+		F0AC80C116BB559F00C5D5C0 /* SLIntegrationTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AC80C016BB559F00C5D5C0 /* SLIntegrationTest.m */; };
+		F0AC80C416BC355D00C5D5C0 /* SLTerminalTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AC80C316BC355D00C5D5C0 /* SLTerminalTest.m */; };
+		F0AC80C816BC367E00C5D5C0 /* SLTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AC80C716BC367E00C5D5C0 /* SLTestViewController.m */; };
+		F0AC80E616BCF91800C5D5C0 /* SLTestCaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AC80E516BCF91800C5D5C0 /* SLTestCaseViewController.m */; };
+		F0AE4C8D16F7F92D00B2BB2B /* SLElementStateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AE4C8B16F7F92D00B2BB2B /* SLElementStateTest.m */; };
+		F0AE4C8E16F7F92D00B2BB2B /* SLElementStateTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0AE4C8C16F7F92D00B2BB2B /* SLElementStateTestViewController.m */; };
+		F0B868EC1740A146008BDA80 /* SLTerminalTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0B868EB1740A146008BDA80 /* SLTerminalTestViewController.m */; };
+		F0C07A381703F95B00C93F93 /* SLAlert.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A361703F95B00C93F93 /* SLAlert.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0C07A391703F95B00C93F93 /* SLAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C07A371703F95B00C93F93 /* SLAlert.m */; };
+		F0C07A3F1703F9A900C93F93 /* SLUIAElement+Subclassing.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A3D1703F9A900C93F93 /* SLUIAElement+Subclassing.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0C07A471703FEF600C93F93 /* SLButton.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A451703FEF600C93F93 /* SLButton.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0C07A481703FEF600C93F93 /* SLButton.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C07A461703FEF600C93F93 /* SLButton.m */; };
+		F0C07A4B1704002100C93F93 /* SLTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A491704002100C93F93 /* SLTextField.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0C07A4C1704002100C93F93 /* SLTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C07A4A1704002100C93F93 /* SLTextField.m */; };
+		F0C07A4F1704009E00C93F93 /* SLWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A4D1704009E00C93F93 /* SLWindow.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0C07A501704009E00C93F93 /* SLWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C07A4E1704009E00C93F93 /* SLWindow.m */; };
+		F0C07A531704011400C93F93 /* SLKeyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A511704011300C93F93 /* SLKeyboard.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0C07A541704011400C93F93 /* SLKeyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C07A521704011300C93F93 /* SLKeyboard.m */; };
+		F0C07A57170401E500C93F93 /* SLWebView.h in Headers */ = {isa = PBXBuildFile; fileRef = F0C07A55170401E400C93F93 /* SLWebView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0C07A58170401E500C93F93 /* SLWebView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C07A56170401E500C93F93 /* SLWebView.m */; };
+		F0C27CDF1741694900335A41 /* SLElementStateTestMidpointCovered.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C27CDE1741694900335A41 /* SLElementStateTestMidpointCovered.xib */; };
+		F0C27CE917416EC400335A41 /* SLElementStateTestCompletelyCovered.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C27CE817416EC400335A41 /* SLElementStateTestCompletelyCovered.xib */; };
+		F0C4DB4817388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0C4DB4717388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib */; };
+		F0C59ED81752B1D40051FEF0 /* SLStringUtilitiesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C59ED71752B1D40051FEF0 /* SLStringUtilitiesTests.m */; };
+		F0CC759A173B097800E8F94A /* SLElementTapTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CC7598173B097800E8F94A /* SLElementTapTest.m */; };
+		F0CC759B173B097800E8F94A /* SLElementTapTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CC7599173B097800E8F94A /* SLElementTapTestViewController.m */; };
+		F0CE9FFD16D60E2C008A3B4A /* libOCMock.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F08B86DB16859C4000C4FE44 /* libOCMock.a */; };
+		F0CEA00216D60EAD008A3B4A /* SLDeviceTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CE9FFF16D60EAD008A3B4A /* SLDeviceTest.m */; };
+		F0CEA00316D60EAD008A3B4A /* SLDeviceTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CEA00016D60EAD008A3B4A /* SLDeviceTestViewController.m */; };
+		F0CEA00416D60EAD008A3B4A /* SLDeviceTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0CEA00116D60EAD008A3B4A /* SLDeviceTestViewController.xib */; };
+		F0CEDA3116BF5FA5005FE8B9 /* SLTest+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = F0CEDA2F16BF5FA5005FE8B9 /* SLTest+Internal.h */; };
+		F0D240541683F7130031B67C /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0D240531683F7130031B67C /* SenTestingKit.framework */; };
+		F0D240551683F7130031B67C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695E0C16013D77000B05D0 /* UIKit.framework */; };
+		F0D240561683F7130031B67C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8E16011515000B05D0 /* Foundation.framework */; };
+		F0D2405C1683F7130031B67C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F0D2405A1683F7130031B67C /* InfoPlist.strings */; };
+		F0D240671683F8520031B67C /* SLTestControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D240661683F8520031B67C /* SLTestControllerTests.m */; };
+		F0D2406A1683F9800031B67C /* libSubliminal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8B16011515000B05D0 /* libSubliminal.a */; };
+		F0E80D8816DB2CEB00945D25 /* SLElementVisibilityTestElementContainerHidden.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0E80D8516DB2CEB00945D25 /* SLElementVisibilityTestElementContainerHidden.xib */; };
+		F0E80D8916DB2CEB00945D25 /* SLElementVisibilityTestElementCovered.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0E80D8616DB2CEB00945D25 /* SLElementVisibilityTestElementCovered.xib */; };
+		F0E80D8A16DB2CEB00945D25 /* SLElementVisibilityTestElementOffscreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0E80D8716DB2CEB00945D25 /* SLElementVisibilityTestElementOffscreen.xib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F08B86D616859C4000C4FE44 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 030EF0A814632FD000B04273;
+			remoteInfo = OCMock;
+		};
+		F08B86D816859C4000C4FE44 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 030EF0C014632FD000B04273;
+			remoteInfo = OCMockTests;
+		};
+		F08B86DA16859C4000C4FE44 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 030EF0DC14632FF700B04273;
+			remoteInfo = OCMockLib;
+		};
+		F08B86DC16859C4000C4FE44 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F04D5FDD1547E14D009D1CBF;
+			remoteInfo = OCMockTestsTouch;
+		};
+		F08B86DE16859C5500C4FE44 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 030EF0DB14632FF700B04273;
+			remoteInfo = OCMockLib;
+		};
+		F0AC80B116BB29AB00C5D5C0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0695D8216011515000B05D0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F0695D8A16011515000B05D0;
+			remoteInfo = Subliminal;
+		};
+		F0CE9FF816D60E22008A3B4A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 030EF0DB14632FF700B04273;
+			remoteInfo = OCMockLib;
+		};
+		F0D240681683F97A0031B67C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F0695D8216011515000B05D0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F0695D8A16011515000B05D0;
+			remoteInfo = Subliminal;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		064B6F54173B13E9004AB1BF /* SLElementVisibilityTestCoveredByClearRegion.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestCoveredByClearRegion.xib; sourceTree = "<group>"; };
+		064B6FC6173DCE9A004AB1BF /* SLElementVisibilityWithSubviews.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityWithSubviews.xib; sourceTree = "<group>"; };
+		068D3E4C16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLTableViewChildElementMatchingTestViewController.xib; sourceTree = "<group>"; };
+		0696BA5516E013D600DD70CF /* SLElementDraggingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementDraggingTest.m; sourceTree = "<group>"; };
+		0696BA5616E013D600DD70CF /* SLElementDraggingTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementDraggingTestViewController.m; sourceTree = "<group>"; };
+		0696BA5716E013D600DD70CF /* SLElementDraggingTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementDraggingTestViewController.xib; sourceTree = "<group>"; };
+		CA75E78016697A1200D57E92 /* SLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLDevice.h; sourceTree = "<group>"; };
+		CA75E78116697A1200D57E92 /* SLDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDevice.m; sourceTree = "<group>"; };
+		CAC388031641CD7500F995F9 /* SLStringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLStringUtilities.h; sourceTree = "<group>"; };
+		CAC388041641CD7500F995F9 /* SLStringUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLStringUtilities.m; sourceTree = "<group>"; };
+		CAC3883D1643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SLAccessibilityHierarchy.h"; sourceTree = "<group>"; };
+		CAC3883E1643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SLAccessibilityHierarchy.m"; sourceTree = "<group>"; };
+		F00800C4174B3349001927AC /* SLButtonTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLButtonTest.m; sourceTree = "<group>"; };
+		F00800C5174B3349001927AC /* SLButtonTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLButtonTestViewController.m; sourceTree = "<group>"; };
+		F00800C6174B3349001927AC /* SLButtonTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLButtonTestViewController.xib; sourceTree = "<group>"; };
+		F00800CC174C1C64001927AC /* SLPopover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLPopover.h; sourceTree = "<group>"; };
+		F00800CD174C1C64001927AC /* SLPopover.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLPopover.m; sourceTree = "<group>"; };
+		F00800E0174C2E0A001927AC /* SLPopoverTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLPopoverTest.m; sourceTree = "<group>"; };
+		F00800E1174C2E0A001927AC /* SLPopoverTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLPopoverTestViewController.m; sourceTree = "<group>"; };
+		F016493B16D42E3C000AEB50 /* SLTestController+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLTestController+Internal.h"; sourceTree = "<group>"; };
+		F01B2B6A16D2C55900DBA391 /* SLElementMatchingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementMatchingTest.m; sourceTree = "<group>"; };
+		F01B2B6B16D2C55900DBA391 /* SLElementMatchingTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementMatchingTestViewController.m; sourceTree = "<group>"; };
+		F01B2B6C16D2C55900DBA391 /* SLElementMatchingTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementMatchingTestViewController.xib; sourceTree = "<group>"; };
+		F01EBC99170115B100FF6A7C /* SLTextFieldTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTextFieldTest.m; sourceTree = "<group>"; };
+		F01EBC9A170115B100FF6A7C /* SLTextFieldTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTextFieldTestViewController.m; sourceTree = "<group>"; };
+		F01EBC9D1701429400FF6A7C /* SLWebTextField.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = SLWebTextField.html; sourceTree = "<group>"; };
+		F024BE31168BD70900708350 /* TestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestUtilities.h; sourceTree = "<group>"; };
+		F024BE32168BD70900708350 /* TestUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestUtilities.m; sourceTree = "<group>"; };
+		F0271AFD162E0B950098F5F2 /* SLTestController+AppHooks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLTestController+AppHooks.h"; sourceTree = "<group>"; };
+		F0271AFE162E0B950098F5F2 /* SLTestController+AppHooks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SLTestController+AppHooks.m"; sourceTree = "<group>"; };
+		F043469D175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SLAccessibilityDescription.h"; sourceTree = "<group>"; };
+		F043469E175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SLAccessibilityDescription.m"; sourceTree = "<group>"; };
+		F04346A5175AD10200D91F7F /* NSObject+SLVisibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SLVisibility.h"; sourceTree = "<group>"; };
+		F04346A6175AD10200D91F7F /* NSObject+SLVisibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SLVisibility.m"; sourceTree = "<group>"; };
+		F04346AD175AD63E00D91F7F /* SLAccessibilityPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLAccessibilityPath.h; sourceTree = "<group>"; };
+		F04346AE175AD63E00D91F7F /* SLAccessibilityPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAccessibilityPath.m; sourceTree = "<group>"; };
+		F043A9BD1729CFFE00A4FD1D /* SLElementVisibilityTestElementHidden.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestElementHidden.xib; sourceTree = "<group>"; };
+		F043A9BF1729EFD100A4FD1D /* SLElementVisibilityTestUserInteractionDisabled.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestUserInteractionDisabled.xib; sourceTree = "<group>"; };
+		F043A9C6172A160600A4FD1D /* SLElementVisibilityTest.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = SLElementVisibilityTest.html; sourceTree = "<group>"; };
+		F05C4F8E171406EF00A381BC /* SLTerminal+ConvenienceFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLTerminal+ConvenienceFunctions.h"; sourceTree = "<group>"; };
+		F05C4F8F171406EF00A381BC /* SLTerminal+ConvenienceFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SLTerminal+ConvenienceFunctions.m"; sourceTree = "<group>"; };
+		F05C51E3171C8AE000A381BC /* SLMainThreadRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLMainThreadRef.h; sourceTree = "<group>"; };
+		F05C51E4171C8AE000A381BC /* SLMainThreadRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLMainThreadRef.m; sourceTree = "<group>"; };
+		F05C51EB171C90B000A381BC /* SLMainThreadRefTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLMainThreadRefTests.m; sourceTree = "<group>"; };
+		F05D2B041746B55C0089DB9E /* SLStaticElementTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLStaticElementTest.m; sourceTree = "<group>"; };
+		F05D2B051746B55C0089DB9E /* SLStaticElementTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLStaticElementTestViewController.m; sourceTree = "<group>"; };
+		F0695D8B16011515000B05D0 /* libSubliminal.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSubliminal.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		F0695D8E16011515000B05D0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		F0695DD7160138DF000B05D0 /* SLUIAElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLUIAElement.h; sourceTree = "<group>"; };
+		F0695DD8160138DF000B05D0 /* SLUIAElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLUIAElement.m; sourceTree = "<group>"; };
+		F0695DDA160138DF000B05D0 /* SLLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SLLogger.h; path = Logging/SLLogger.h; sourceTree = "<group>"; };
+		F0695DDB160138DF000B05D0 /* SLLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SLLogger.m; path = Logging/SLLogger.m; sourceTree = "<group>"; };
+		F0695DDE160138DF000B05D0 /* SLTerminal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTerminal.h; sourceTree = "<group>"; };
+		F0695DDF160138DF000B05D0 /* SLTerminal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTerminal.m; sourceTree = "<group>"; };
+		F0695DE0160138DF000B05D0 /* SLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTest.h; sourceTree = "<group>"; };
+		F0695DE1160138DF000B05D0 /* SLTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTest.m; sourceTree = "<group>"; };
+		F0695DE2160138DF000B05D0 /* SLTestController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTestController.h; sourceTree = "<group>"; };
+		F0695DE3160138DF000B05D0 /* SLTestController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestController.m; sourceTree = "<group>"; };
+		F0695DEA16013908000B05D0 /* Subliminal-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Subliminal-Prefix.pch"; sourceTree = "<group>"; };
+		F0695DEB1601391C000B05D0 /* Subliminal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Subliminal.h; sourceTree = "<group>"; };
+		F0695E0C16013D77000B05D0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		F077D70A16D9D77900908FF5 /* SLElementVisibilityTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementVisibilityTest.m; sourceTree = "<group>"; };
+		F077D70B16D9D77900908FF5 /* SLElementVisibilityTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementVisibilityTestViewController.m; sourceTree = "<group>"; };
+		F077D70C16D9D77900908FF5 /* SLElementVisibilityTestCovered.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestCovered.xib; sourceTree = "<group>"; };
+		F07DA32B16E43AD3004C2282 /* SLAlertTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAlertTest.m; sourceTree = "<group>"; };
+		F07DA32C16E43AD3004C2282 /* SLAlertTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAlertTestViewController.m; sourceTree = "<group>"; };
+		F08005581730762C00198F6F /* Inklings~iPhone.webarchive */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "Inklings~iPhone.webarchive"; sourceTree = "<group>"; };
+		F081539D170CBF550053B536 /* Integration Tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "Integration Tests.xcconfig"; path = "Supporting Files/Xcode/Integration Tests.xcconfig"; sourceTree = "<group>"; };
+		F089F98417445D9A00DF1F25 /* SLStaticElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLStaticElement.h; sourceTree = "<group>"; };
+		F089F98517445D9A00DF1F25 /* SLStaticElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLStaticElement.m; sourceTree = "<group>"; };
+		F089F99217458BA300DF1F25 /* SLWindowTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLWindowTest.m; sourceTree = "<group>"; };
+		F089F99317458BA300DF1F25 /* SLWindowTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLWindowTestViewController.m; sourceTree = "<group>"; };
+		F089F9E01745FB7E00DF1F25 /* SLKeyboardTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLKeyboardTest.m; sourceTree = "<group>"; };
+		F089F9E11745FB7E00DF1F25 /* SLKeyboardTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLKeyboardTestViewController.m; sourceTree = "<group>"; };
+		F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OCMock.xcodeproj; path = OCMock/Source/OCMock.xcodeproj; sourceTree = "<group>"; };
+		F08B87F01685A00400C4FE44 /* SharedSLTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedSLTests.h; sourceTree = "<group>"; };
+		F08B87F11685A00400C4FE44 /* SharedSLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharedSLTests.m; sourceTree = "<group>"; };
+		F08B87F41685A07B00C4FE44 /* SLTestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestTests.m; sourceTree = "<group>"; };
+		F090AE6D16D9E01D000F0B6F /* SLElementVisibilityTestHidden.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestHidden.xib; sourceTree = "<group>"; };
+		F090AE6E16D9E01D000F0B6F /* SLElementVisibilityTestLowAlpha.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestLowAlpha.xib; sourceTree = "<group>"; };
+		F090AE6F16D9E01D000F0B6F /* SLElementVisibilityTestOffscreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestOffscreen.xib; sourceTree = "<group>"; };
+		F090AE7316D9E1D1000F0B6F /* SLElementVisibilityTestSuperviewHidden.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestSuperviewHidden.xib; sourceTree = "<group>"; };
+		F0A040121698ECDE009D8157 /* SLTestController+AppContextTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SLTestController+AppContextTests.m"; sourceTree = "<group>"; };
+		F0A04E1B1749F70F002C7520 /* SLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLElement.h; sourceTree = "<group>"; };
+		F0A04E1C1749F70F002C7520 /* SLElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElement.m; sourceTree = "<group>"; };
+		F0AC809416BB299500C5D5C0 /* Subliminal (Integration Tests).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Subliminal (Integration Tests).app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F0AC809716BB299500C5D5C0 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		F0AC809B16BB299500C5D5C0 /* Subliminal Integration Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Subliminal Integration Tests-Info.plist"; sourceTree = "<group>"; };
+		F0AC809D16BB299500C5D5C0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F0AC809F16BB299500C5D5C0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		F0AC80A116BB299500C5D5C0 /* Subliminal Integration Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Subliminal Integration Tests-Prefix.pch"; sourceTree = "<group>"; };
+		F0AC80A216BB299500C5D5C0 /* SLIntegrationTestsAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLIntegrationTestsAppDelegate.h; sourceTree = "<group>"; };
+		F0AC80A316BB299500C5D5C0 /* SLIntegrationTestsAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLIntegrationTestsAppDelegate.m; sourceTree = "<group>"; };
+		F0AC80A516BB299500C5D5C0 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		F0AC80A716BB299500C5D5C0 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		F0AC80A916BB299500C5D5C0 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		F0AC80BB16BB50FF00C5D5C0 /* SLTestsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTestsViewController.h; sourceTree = "<group>"; };
+		F0AC80BC16BB50FF00C5D5C0 /* SLTestsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestsViewController.m; sourceTree = "<group>"; };
+		F0AC80BF16BB559F00C5D5C0 /* SLIntegrationTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLIntegrationTest.h; sourceTree = "<group>"; };
+		F0AC80C016BB559F00C5D5C0 /* SLIntegrationTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLIntegrationTest.m; sourceTree = "<group>"; };
+		F0AC80C316BC355D00C5D5C0 /* SLTerminalTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTerminalTest.m; sourceTree = "<group>"; };
+		F0AC80C616BC367E00C5D5C0 /* SLTestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTestViewController.h; sourceTree = "<group>"; };
+		F0AC80C716BC367E00C5D5C0 /* SLTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestViewController.m; sourceTree = "<group>"; };
+		F0AC80E416BCF91800C5D5C0 /* SLTestCaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTestCaseViewController.h; sourceTree = "<group>"; };
+		F0AC80E516BCF91800C5D5C0 /* SLTestCaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestCaseViewController.m; sourceTree = "<group>"; };
+		F0AE4C8B16F7F92D00B2BB2B /* SLElementStateTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementStateTest.m; sourceTree = "<group>"; };
+		F0AE4C8C16F7F92D00B2BB2B /* SLElementStateTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementStateTestViewController.m; sourceTree = "<group>"; };
+		F0B868EB1740A146008BDA80 /* SLTerminalTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTerminalTestViewController.m; sourceTree = "<group>"; };
+		F0C07A361703F95B00C93F93 /* SLAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLAlert.h; sourceTree = "<group>"; };
+		F0C07A371703F95B00C93F93 /* SLAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAlert.m; sourceTree = "<group>"; };
+		F0C07A3D1703F9A900C93F93 /* SLUIAElement+Subclassing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLUIAElement+Subclassing.h"; sourceTree = "<group>"; };
+		F0C07A451703FEF600C93F93 /* SLButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLButton.h; sourceTree = "<group>"; };
+		F0C07A461703FEF600C93F93 /* SLButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLButton.m; sourceTree = "<group>"; };
+		F0C07A491704002100C93F93 /* SLTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTextField.h; sourceTree = "<group>"; };
+		F0C07A4A1704002100C93F93 /* SLTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTextField.m; sourceTree = "<group>"; };
+		F0C07A4D1704009E00C93F93 /* SLWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLWindow.h; sourceTree = "<group>"; };
+		F0C07A4E1704009E00C93F93 /* SLWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLWindow.m; sourceTree = "<group>"; };
+		F0C07A511704011300C93F93 /* SLKeyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLKeyboard.h; sourceTree = "<group>"; };
+		F0C07A521704011300C93F93 /* SLKeyboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLKeyboard.m; sourceTree = "<group>"; };
+		F0C07A55170401E400C93F93 /* SLWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLWebView.h; sourceTree = "<group>"; };
+		F0C07A56170401E500C93F93 /* SLWebView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLWebView.m; sourceTree = "<group>"; };
+		F0C27CDE1741694900335A41 /* SLElementStateTestMidpointCovered.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementStateTestMidpointCovered.xib; sourceTree = "<group>"; };
+		F0C27CE817416EC400335A41 /* SLElementStateTestCompletelyCovered.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementStateTestCompletelyCovered.xib; sourceTree = "<group>"; };
+		F0C4DB4717388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestSuperviewWithVisibleSubview.xib; sourceTree = "<group>"; };
+		F0C59ED71752B1D40051FEF0 /* SLStringUtilitiesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLStringUtilitiesTests.m; sourceTree = "<group>"; };
+		F0CC7598173B097800E8F94A /* SLElementTapTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementTapTest.m; sourceTree = "<group>"; };
+		F0CC7599173B097800E8F94A /* SLElementTapTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementTapTestViewController.m; sourceTree = "<group>"; };
+		F0CE9FFF16D60EAD008A3B4A /* SLDeviceTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDeviceTest.m; sourceTree = "<group>"; };
+		F0CEA00016D60EAD008A3B4A /* SLDeviceTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDeviceTestViewController.m; sourceTree = "<group>"; };
+		F0CEA00116D60EAD008A3B4A /* SLDeviceTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLDeviceTestViewController.xib; sourceTree = "<group>"; };
+		F0CEDA2F16BF5FA5005FE8B9 /* SLTest+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLTest+Internal.h"; sourceTree = "<group>"; };
+		F0D240521683F7130031B67C /* Subliminal (Unit Tests).octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Subliminal (Unit Tests).octest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F0D240531683F7130031B67C /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		F0D240591683F7130031B67C /* Subliminal Unit Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Subliminal Unit Tests-Info.plist"; sourceTree = "<group>"; };
+		F0D2405B1683F7130031B67C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F0D240601683F7130031B67C /* Subliminal Unit Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Subliminal Unit Tests-Prefix.pch"; sourceTree = "<group>"; };
+		F0D240661683F8520031B67C /* SLTestControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestControllerTests.m; sourceTree = "<group>"; };
+		F0E80D8516DB2CEB00945D25 /* SLElementVisibilityTestElementContainerHidden.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestElementContainerHidden.xib; sourceTree = "<group>"; };
+		F0E80D8616DB2CEB00945D25 /* SLElementVisibilityTestElementCovered.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestElementCovered.xib; sourceTree = "<group>"; };
+		F0E80D8716DB2CEB00945D25 /* SLElementVisibilityTestElementOffscreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestElementOffscreen.xib; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F0695D8816011515000B05D0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0695D8F16011515000B05D0 /* Foundation.framework in Frameworks */,
+				F0695E0D16013D77000B05D0 /* UIKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F0AC809116BB299500C5D5C0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0CE9FFD16D60E2C008A3B4A /* libOCMock.a in Frameworks */,
+				F0AC80B316BB29B700C5D5C0 /* libSubliminal.a in Frameworks */,
+				F0AC809516BB299500C5D5C0 /* UIKit.framework in Frameworks */,
+				F0AC809616BB299500C5D5C0 /* Foundation.framework in Frameworks */,
+				F0AC809816BB299500C5D5C0 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F0D2404E1683F7130031B67C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0D2406A1683F9800031B67C /* libSubliminal.a in Frameworks */,
+				F08B86EB16859C8D00C4FE44 /* libOCMock.a in Frameworks */,
+				F0D240541683F7130031B67C /* SenTestingKit.framework in Frameworks */,
+				F03C55E4170C32BE00079021 /* CoreGraphics.framework in Frameworks */,
+				F0D240551683F7130031B67C /* UIKit.framework in Frameworks */,
+				F0D240561683F7130031B67C /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0696BA5E16E013DF00DD70CF /* SLElement Gestures and Actions Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F0CC7597173B092B00E8F94A /* Tapping */,
+				F0CC7596173B092300E8F94A /* Dragging */,
+			);
+			name = "SLElement Gestures and Actions Tests";
+			sourceTree = "<group>";
+		};
+		CAC388011641CD4800F995F9 /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				F043469B175ACC7A00D91F7F /* Terminal */,
+				F016493B16D42E3C000AEB50 /* SLTestController+Internal.h */,
+				F0CEDA2F16BF5FA5005FE8B9 /* SLTest+Internal.h */,
+				F04346AD175AD63E00D91F7F /* SLAccessibilityPath.h */,
+				F04346AE175AD63E00D91F7F /* SLAccessibilityPath.m */,
+				F04346A5175AD10200D91F7F /* NSObject+SLVisibility.h */,
+				F04346A6175AD10200D91F7F /* NSObject+SLVisibility.m */,
+				F05C51E3171C8AE000A381BC /* SLMainThreadRef.h */,
+				F05C51E4171C8AE000A381BC /* SLMainThreadRef.m */,
+			);
+			path = Internal;
+			sourceTree = "<group>";
+		};
+		F002BF451698ED8100819291 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				F024BE31168BD70900708350 /* TestUtilities.h */,
+				F024BE32168BD70900708350 /* TestUtilities.m */,
+				F08B87F01685A00400C4FE44 /* SharedSLTests.h */,
+				F08B87F11685A00400C4FE44 /* SharedSLTests.m */,
+			);
+			name = Utilities;
+			sourceTree = "<group>";
+		};
+		F00800BF174B2CB0001927AC /* SLButton Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F00800C4174B3349001927AC /* SLButtonTest.m */,
+				F00800C5174B3349001927AC /* SLButtonTestViewController.m */,
+				F00800C6174B3349001927AC /* SLButtonTestViewController.xib */,
+			);
+			name = "SLButton Tests";
+			sourceTree = "<group>";
+		};
+		F00800D3174C2871001927AC /* SLPopover Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F00800E0174C2E0A001927AC /* SLPopoverTest.m */,
+				F00800E1174C2E0A001927AC /* SLPopoverTestViewController.m */,
+			);
+			name = "SLPopover Tests";
+			sourceTree = "<group>";
+		};
+		F013798E16D0843B009BAF22 /* SLTerminal Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F0B868EB1740A146008BDA80 /* SLTerminalTestViewController.m */,
+				F0AC80C316BC355D00C5D5C0 /* SLTerminalTest.m */,
+			);
+			name = "SLTerminal Tests";
+			sourceTree = "<group>";
+		};
+		F01EBC951701150E00FF6A7C /* SLTextField Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F01EBC9D1701429400FF6A7C /* SLWebTextField.html */,
+				F01EBC99170115B100FF6A7C /* SLTextFieldTest.m */,
+				F01EBC9A170115B100FF6A7C /* SLTextFieldTestViewController.m */,
+			);
+			name = "SLTextField Tests";
+			sourceTree = "<group>";
+		};
+		F043469B175ACC7A00D91F7F /* Terminal */ = {
+			isa = PBXGroup;
+			children = (
+				F0695DDE160138DF000B05D0 /* SLTerminal.h */,
+				F0695DDF160138DF000B05D0 /* SLTerminal.m */,
+				F05C4F8E171406EF00A381BC /* SLTerminal+ConvenienceFunctions.h */,
+				F05C4F8F171406EF00A381BC /* SLTerminal+ConvenienceFunctions.m */,
+				CAC388031641CD7500F995F9 /* SLStringUtilities.h */,
+				CAC388041641CD7500F995F9 /* SLStringUtilities.m */,
+			);
+			path = Terminal;
+			sourceTree = "<group>";
+		};
+		F05263C316D2C2CF0090174F /* SLElement Matching Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F01B2B6A16D2C55900DBA391 /* SLElementMatchingTest.m */,
+				F01B2B6B16D2C55900DBA391 /* SLElementMatchingTestViewController.m */,
+				F01B2B6C16D2C55900DBA391 /* SLElementMatchingTestViewController.xib */,
+				068D3E4C16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib */,
+				F08005581730762C00198F6F /* Inklings~iPhone.webarchive */,
+			);
+			name = "SLElement Matching Tests";
+			sourceTree = "<group>";
+		};
+		F0695D8016011515000B05D0 = {
+			isa = PBXGroup;
+			children = (
+				F081539D170CBF550053B536 /* Integration Tests.xcconfig */,
+				F0695DD016013891000B05D0 /* Sources */,
+				F0D240571683F7130031B67C /* Unit Tests */,
+				F0AC809916BB299500C5D5C0 /* Integration Tests */,
+				F0695D8D16011515000B05D0 /* Frameworks */,
+				F0695D8C16011515000B05D0 /* Products */,
+			);
+			sourceTree = "<group>";
+			usesTabs = 0;
+		};
+		F0695D8C16011515000B05D0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F0695D8B16011515000B05D0 /* libSubliminal.a */,
+				F0D240521683F7130031B67C /* Subliminal (Unit Tests).octest */,
+				F0AC809416BB299500C5D5C0 /* Subliminal (Integration Tests).app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F0695D8D16011515000B05D0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F0695D8E16011515000B05D0 /* Foundation.framework */,
+				F0695E0C16013D77000B05D0 /* UIKit.framework */,
+				F0D240531683F7130031B67C /* SenTestingKit.framework */,
+				F0AC809716BB299500C5D5C0 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F0695DD016013891000B05D0 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				F0695DEB1601391C000B05D0 /* Subliminal.h */,
+				F0695DEA16013908000B05D0 /* Subliminal-Prefix.pch */,
+				F0695DD5160138DF000B05D0 /* Classes */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		F0695DD5160138DF000B05D0 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				F0695DE2160138DF000B05D0 /* SLTestController.h */,
+				F0695DE3160138DF000B05D0 /* SLTestController.m */,
+				F0271AFD162E0B950098F5F2 /* SLTestController+AppHooks.h */,
+				F0271AFE162E0B950098F5F2 /* SLTestController+AppHooks.m */,
+				F0695DE0160138DF000B05D0 /* SLTest.h */,
+				F0695DE1160138DF000B05D0 /* SLTest.m */,
+				F0695DDA160138DF000B05D0 /* SLLogger.h */,
+				F0695DDB160138DF000B05D0 /* SLLogger.m */,
+				F0695DD6160138DF000B05D0 /* UIAutomation */,
+				CAC388011641CD4800F995F9 /* Internal */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		F0695DD6160138DF000B05D0 /* UIAutomation */ = {
+			isa = PBXGroup;
+			children = (
+				CA75E78016697A1200D57E92 /* SLDevice.h */,
+				CA75E78116697A1200D57E92 /* SLDevice.m */,
+				F089F98B17445DDA00DF1F25 /* User Interface Elements */,
+			);
+			path = UIAutomation;
+			sourceTree = "<group>";
+		};
+		F077D70016D9D71E00908FF5 /* SLElement Visibility Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F077D70A16D9D77900908FF5 /* SLElementVisibilityTest.m */,
+				F077D70B16D9D77900908FF5 /* SLElementVisibilityTestViewController.m */,
+				F090AE6D16D9E01D000F0B6F /* SLElementVisibilityTestHidden.xib */,
+				F090AE7316D9E1D1000F0B6F /* SLElementVisibilityTestSuperviewHidden.xib */,
+				F0C4DB4717388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib */,
+				F043A9BF1729EFD100A4FD1D /* SLElementVisibilityTestUserInteractionDisabled.xib */,
+				F090AE6E16D9E01D000F0B6F /* SLElementVisibilityTestLowAlpha.xib */,
+				F090AE6F16D9E01D000F0B6F /* SLElementVisibilityTestOffscreen.xib */,
+				F077D70C16D9D77900908FF5 /* SLElementVisibilityTestCovered.xib */,
+				064B6F54173B13E9004AB1BF /* SLElementVisibilityTestCoveredByClearRegion.xib */,
+				F0E80D8516DB2CEB00945D25 /* SLElementVisibilityTestElementContainerHidden.xib */,
+				F043A9BD1729CFFE00A4FD1D /* SLElementVisibilityTestElementHidden.xib */,
+				F0E80D8716DB2CEB00945D25 /* SLElementVisibilityTestElementOffscreen.xib */,
+				F0E80D8616DB2CEB00945D25 /* SLElementVisibilityTestElementCovered.xib */,
+				064B6FC6173DCE9A004AB1BF /* SLElementVisibilityWithSubviews.xib */,
+				F043A9C6172A160600A4FD1D /* SLElementVisibilityTest.html */,
+			);
+			name = "SLElement Visibility Tests";
+			sourceTree = "<group>";
+		};
+		F07DA31F16E439B7004C2282 /* SLAlert Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F07DA32B16E43AD3004C2282 /* SLAlertTest.m */,
+				F07DA32C16E43AD3004C2282 /* SLAlertTestViewController.m */,
+			);
+			name = "SLAlert Tests";
+			sourceTree = "<group>";
+		};
+		F089F98B17445DDA00DF1F25 /* User Interface Elements */ = {
+			isa = PBXGroup;
+			children = (
+				F0695DD7160138DF000B05D0 /* SLUIAElement.h */,
+				F0C07A3D1703F9A900C93F93 /* SLUIAElement+Subclassing.h */,
+				F0695DD8160138DF000B05D0 /* SLUIAElement.m */,
+				F0A04E1B1749F70F002C7520 /* SLElement.h */,
+				F0A04E1C1749F70F002C7520 /* SLElement.m */,
+				F043469D175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.h */,
+				F043469E175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.m */,
+				CAC3883D1643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.h */,
+				CAC3883E1643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.m */,
+				F089F98417445D9A00DF1F25 /* SLStaticElement.h */,
+				F089F98517445D9A00DF1F25 /* SLStaticElement.m */,
+				F0C07A361703F95B00C93F93 /* SLAlert.h */,
+				F0C07A371703F95B00C93F93 /* SLAlert.m */,
+				F0C07A451703FEF600C93F93 /* SLButton.h */,
+				F0C07A461703FEF600C93F93 /* SLButton.m */,
+				F0C07A511704011300C93F93 /* SLKeyboard.h */,
+				F0C07A521704011300C93F93 /* SLKeyboard.m */,
+				F00800CC174C1C64001927AC /* SLPopover.h */,
+				F00800CD174C1C64001927AC /* SLPopover.m */,
+				F0C07A491704002100C93F93 /* SLTextField.h */,
+				F0C07A4A1704002100C93F93 /* SLTextField.m */,
+				F0C07A55170401E400C93F93 /* SLWebView.h */,
+				F0C07A56170401E500C93F93 /* SLWebView.m */,
+				F0C07A4D1704009E00C93F93 /* SLWindow.h */,
+				F0C07A4E1704009E00C93F93 /* SLWindow.m */,
+			);
+			path = "User Interface Elements";
+			sourceTree = "<group>";
+		};
+		F089F98E17458B7400DF1F25 /* SLWindow Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F089F99217458BA300DF1F25 /* SLWindowTest.m */,
+				F089F99317458BA300DF1F25 /* SLWindowTestViewController.m */,
+			);
+			name = "SLWindow Tests";
+			sourceTree = "<group>";
+		};
+		F089F9DC1745FB3800DF1F25 /* SLKeyboard Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F089F9E01745FB7E00DF1F25 /* SLKeyboardTest.m */,
+				F089F9E11745FB7E00DF1F25 /* SLKeyboardTestViewController.m */,
+			);
+			name = "SLKeyboard Tests";
+			sourceTree = "<group>";
+		};
+		F089F9FD1746B1D200DF1F25 /* SLStaticElement Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F05D2B041746B55C0089DB9E /* SLStaticElementTest.m */,
+				F05D2B051746B55C0089DB9E /* SLStaticElementTestViewController.m */,
+			);
+			name = "SLStaticElement Tests";
+			sourceTree = "<group>";
+		};
+		F08B86CA16859B1A00C4FE44 /* OCMock */ = {
+			isa = PBXGroup;
+			children = (
+				F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */,
+			);
+			name = OCMock;
+			sourceTree = "<group>";
+		};
+		F08B86CD16859C4000C4FE44 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F08B86D716859C4000C4FE44 /* OCMock.framework */,
+				F08B86D916859C4000C4FE44 /* OCMockTests.octest */,
+				F08B86DB16859C4000C4FE44 /* libOCMock.a */,
+				F08B86DD16859C4000C4FE44 /* OCMockTestsTouch.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F0AC809916BB299500C5D5C0 /* Integration Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F0AC809A16BB299500C5D5C0 /* Supporting Files */,
+				F0AC80A216BB299500C5D5C0 /* SLIntegrationTestsAppDelegate.h */,
+				F0AC80A316BB299500C5D5C0 /* SLIntegrationTestsAppDelegate.m */,
+				F0AC80BB16BB50FF00C5D5C0 /* SLTestsViewController.h */,
+				F0AC80BC16BB50FF00C5D5C0 /* SLTestsViewController.m */,
+				F0AC80C616BC367E00C5D5C0 /* SLTestViewController.h */,
+				F0AC80C716BC367E00C5D5C0 /* SLTestViewController.m */,
+				F0AC80E416BCF91800C5D5C0 /* SLTestCaseViewController.h */,
+				F0AC80E516BCF91800C5D5C0 /* SLTestCaseViewController.m */,
+				F0AC80BF16BB559F00C5D5C0 /* SLIntegrationTest.h */,
+				F0AC80C016BB559F00C5D5C0 /* SLIntegrationTest.m */,
+				F0AC80BE16BB542400C5D5C0 /* Tests */,
+			);
+			path = "Integration Tests";
+			sourceTree = "<group>";
+		};
+		F0AC809A16BB299500C5D5C0 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F0AC809B16BB299500C5D5C0 /* Subliminal Integration Tests-Info.plist */,
+				F0AC809C16BB299500C5D5C0 /* InfoPlist.strings */,
+				F0AC809F16BB299500C5D5C0 /* main.m */,
+				F0AC80A116BB299500C5D5C0 /* Subliminal Integration Tests-Prefix.pch */,
+				F0AC80A516BB299500C5D5C0 /* Default.png */,
+				F0AC80A716BB299500C5D5C0 /* Default@2x.png */,
+				F0AC80A916BB299500C5D5C0 /* Default-568h@2x.png */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F0AC80BE16BB542400C5D5C0 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F07DA31F16E439B7004C2282 /* SLAlert Tests */,
+				F00800BF174B2CB0001927AC /* SLButton Tests */,
+				F0CE9FFE16D60E61008A3B4A /* SLDevice Tests */,
+				F0AE4C8716F7F8ED00B2BB2B /* SLElement State Tests */,
+				F077D70016D9D71E00908FF5 /* SLElement Visibility Tests */,
+				F05263C316D2C2CF0090174F /* SLElement Matching Tests */,
+				0696BA5E16E013DF00DD70CF /* SLElement Gestures and Actions Tests */,
+				F089F9DC1745FB3800DF1F25 /* SLKeyboard Tests */,
+				F00800D3174C2871001927AC /* SLPopover Tests */,
+				F089F9FD1746B1D200DF1F25 /* SLStaticElement Tests */,
+				F01EBC951701150E00FF6A7C /* SLTextField Tests */,
+				F013798E16D0843B009BAF22 /* SLTerminal Tests */,
+				F089F98E17458B7400DF1F25 /* SLWindow Tests */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		F0AE4C8716F7F8ED00B2BB2B /* SLElement State Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F0AE4C8B16F7F92D00B2BB2B /* SLElementStateTest.m */,
+				F0AE4C8C16F7F92D00B2BB2B /* SLElementStateTestViewController.m */,
+				F0C27CDE1741694900335A41 /* SLElementStateTestMidpointCovered.xib */,
+				F0C27CE817416EC400335A41 /* SLElementStateTestCompletelyCovered.xib */,
+			);
+			name = "SLElement State Tests";
+			sourceTree = "<group>";
+		};
+		F0CC7596173B092300E8F94A /* Dragging */ = {
+			isa = PBXGroup;
+			children = (
+				0696BA5516E013D600DD70CF /* SLElementDraggingTest.m */,
+				0696BA5616E013D600DD70CF /* SLElementDraggingTestViewController.m */,
+				0696BA5716E013D600DD70CF /* SLElementDraggingTestViewController.xib */,
+			);
+			name = Dragging;
+			sourceTree = "<group>";
+		};
+		F0CC7597173B092B00E8F94A /* Tapping */ = {
+			isa = PBXGroup;
+			children = (
+				F0CC7598173B097800E8F94A /* SLElementTapTest.m */,
+				F0CC7599173B097800E8F94A /* SLElementTapTestViewController.m */,
+			);
+			name = Tapping;
+			sourceTree = "<group>";
+		};
+		F0CE9FFE16D60E61008A3B4A /* SLDevice Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F0CE9FFF16D60EAD008A3B4A /* SLDeviceTest.m */,
+				F0CEA00016D60EAD008A3B4A /* SLDeviceTestViewController.m */,
+				F0CEA00116D60EAD008A3B4A /* SLDeviceTestViewController.xib */,
+			);
+			name = "SLDevice Tests";
+			sourceTree = "<group>";
+		};
+		F0D240571683F7130031B67C /* Unit Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F08B86CA16859B1A00C4FE44 /* OCMock */,
+				F0D240581683F7130031B67C /* Supporting Files */,
+				F002BF451698ED8100819291 /* Utilities */,
+				F0D240661683F8520031B67C /* SLTestControllerTests.m */,
+				F08B87F41685A07B00C4FE44 /* SLTestTests.m */,
+				F0A040121698ECDE009D8157 /* SLTestController+AppContextTests.m */,
+				F05C51EB171C90B000A381BC /* SLMainThreadRefTests.m */,
+				F0C59ED71752B1D40051FEF0 /* SLStringUtilitiesTests.m */,
+			);
+			path = "Unit Tests";
+			sourceTree = "<group>";
+		};
+		F0D240581683F7130031B67C /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F0D240591683F7130031B67C /* Subliminal Unit Tests-Info.plist */,
+				F0D2405A1683F7130031B67C /* InfoPlist.strings */,
+				F0D240601683F7130031B67C /* Subliminal Unit Tests-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		F0695E1A16014463000B05D0 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0695E1C16014491000B05D0 /* Subliminal.h in Headers */,
+				F0695E1D16014491000B05D0 /* SLTestController.h in Headers */,
+				F0695E1E16014491000B05D0 /* SLTest.h in Headers */,
+				F0695E1F16014491000B05D0 /* SLTerminal.h in Headers */,
+				F0695E2016014491000B05D0 /* SLUIAElement.h in Headers */,
+				F0695E2116014491000B05D0 /* SLLogger.h in Headers */,
+				F0271AFF162E0B950098F5F2 /* SLTestController+AppHooks.h in Headers */,
+				CAC388051641CD7500F995F9 /* SLStringUtilities.h in Headers */,
+				CAC3883F1643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.h in Headers */,
+				CA75E78216697A1200D57E92 /* SLDevice.h in Headers */,
+				F0CEDA3116BF5FA5005FE8B9 /* SLTest+Internal.h in Headers */,
+				F016493D16D42E3C000AEB50 /* SLTestController+Internal.h in Headers */,
+				F0C07A381703F95B00C93F93 /* SLAlert.h in Headers */,
+				F0C07A3F1703F9A900C93F93 /* SLUIAElement+Subclassing.h in Headers */,
+				F0C07A471703FEF600C93F93 /* SLButton.h in Headers */,
+				F0C07A4B1704002100C93F93 /* SLTextField.h in Headers */,
+				F0C07A4F1704009E00C93F93 /* SLWindow.h in Headers */,
+				F0C07A531704011400C93F93 /* SLKeyboard.h in Headers */,
+				F0C07A57170401E500C93F93 /* SLWebView.h in Headers */,
+				F05C4F90171406EF00A381BC /* SLTerminal+ConvenienceFunctions.h in Headers */,
+				F05C51E5171C8AE000A381BC /* SLMainThreadRef.h in Headers */,
+				F0A04E1D1749F70F002C7520 /* SLElement.h in Headers */,
+				F089F98617445D9A00DF1F25 /* SLStaticElement.h in Headers */,
+				F00800CE174C1C64001927AC /* SLPopover.h in Headers */,
+				F043469F175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.h in Headers */,
+				F04346AF175AD63E00D91F7F /* SLAccessibilityPath.h in Headers */,
+				F04346A7175AD10200D91F7F /* NSObject+SLVisibility.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		F0695D8A16011515000B05D0 /* Subliminal */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F0695D9916011515000B05D0 /* Build configuration list for PBXNativeTarget "Subliminal" */;
+			buildPhases = (
+				F0695D8716011515000B05D0 /* Sources */,
+				F0695D8816011515000B05D0 /* Frameworks */,
+				F0695E1A16014463000B05D0 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Subliminal;
+			productName = Subliminal;
+			productReference = F0695D8B16011515000B05D0 /* libSubliminal.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		F0AC809316BB299500C5D5C0 /* Subliminal Integration Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F0AC80B016BB299500C5D5C0 /* Build configuration list for PBXNativeTarget "Subliminal Integration Tests" */;
+			buildPhases = (
+				F0AC809016BB299500C5D5C0 /* Sources */,
+				F0AC809116BB299500C5D5C0 /* Frameworks */,
+				F0AC809216BB299500C5D5C0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F0CE9FF916D60E22008A3B4A /* PBXTargetDependency */,
+				F0AC80B216BB29AB00C5D5C0 /* PBXTargetDependency */,
+			);
+			name = "Subliminal Integration Tests";
+			productName = "Integration Tests";
+			productReference = F0AC809416BB299500C5D5C0 /* Subliminal (Integration Tests).app */;
+			productType = "com.apple.product-type.application";
+		};
+		F0D240511683F7130031B67C /* Subliminal Unit Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F0D240631683F7130031B67C /* Build configuration list for PBXNativeTarget "Subliminal Unit Tests" */;
+			buildPhases = (
+				F0D2404D1683F7130031B67C /* Sources */,
+				F0D2404E1683F7130031B67C /* Frameworks */,
+				F0D2404F1683F7130031B67C /* Resources */,
+				F0D240501683F7130031B67C /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F0D240691683F97A0031B67C /* PBXTargetDependency */,
+				F08B86DF16859C5500C4FE44 /* PBXTargetDependency */,
+			);
+			name = "Subliminal Unit Tests";
+			productName = "Subliminal Unit Tests";
+			productReference = F0D240521683F7130031B67C /* Subliminal (Unit Tests).octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F0695D8216011515000B05D0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+				ORGANIZATIONNAME = Inkling;
+			};
+			buildConfigurationList = F0695D8516011515000B05D0 /* Build configuration list for PBXProject "Subliminal" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = F0695D8016011515000B05D0;
+			productRefGroup = F0695D8C16011515000B05D0 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = F08B86CD16859C4000C4FE44 /* Products */;
+					ProjectRef = F08B86CC16859C4000C4FE44 /* OCMock.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				F0695D8A16011515000B05D0 /* Subliminal */,
+				F0D240511683F7130031B67C /* Subliminal Unit Tests */,
+				F0AC809316BB299500C5D5C0 /* Subliminal Integration Tests */,
+				F0080141174D7A9E001927AC /* Subliminal Documentation */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		F08B86D716859C4000C4FE44 /* OCMock.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = OCMock.framework;
+			remoteRef = F08B86D616859C4000C4FE44 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F08B86D916859C4000C4FE44 /* OCMockTests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = OCMockTests.octest;
+			remoteRef = F08B86D816859C4000C4FE44 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F08B86DB16859C4000C4FE44 /* libOCMock.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libOCMock.a;
+			remoteRef = F08B86DA16859C4000C4FE44 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F08B86DD16859C4000C4FE44 /* OCMockTestsTouch.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = OCMockTestsTouch.octest;
+			remoteRef = F08B86DC16859C4000C4FE44 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F0AC809216BB299500C5D5C0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0AC809E16BB299500C5D5C0 /* InfoPlist.strings in Resources */,
+				F0AC80A616BB299500C5D5C0 /* Default.png in Resources */,
+				F0AC80A816BB299500C5D5C0 /* Default@2x.png in Resources */,
+				F0AC80AA16BB299500C5D5C0 /* Default-568h@2x.png in Resources */,
+				F01B2B6F16D2C55900DBA391 /* SLElementMatchingTestViewController.xib in Resources */,
+				F0CEA00416D60EAD008A3B4A /* SLDeviceTestViewController.xib in Resources */,
+				068D3E4D16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib in Resources */,
+				0696BA5A16E013D600DD70CF /* SLElementDraggingTestViewController.xib in Resources */,
+				F01EBC9E1701429400FF6A7C /* SLWebTextField.html in Resources */,
+				F077D70F16D9D77900908FF5 /* SLElementVisibilityTestCovered.xib in Resources */,
+				F090AE7016D9E01D000F0B6F /* SLElementVisibilityTestHidden.xib in Resources */,
+				F090AE7116D9E01D000F0B6F /* SLElementVisibilityTestLowAlpha.xib in Resources */,
+				F090AE7216D9E01D000F0B6F /* SLElementVisibilityTestOffscreen.xib in Resources */,
+				F090AE7416D9E1D1000F0B6F /* SLElementVisibilityTestSuperviewHidden.xib in Resources */,
+				F0E80D8816DB2CEB00945D25 /* SLElementVisibilityTestElementContainerHidden.xib in Resources */,
+				F0E80D8916DB2CEB00945D25 /* SLElementVisibilityTestElementCovered.xib in Resources */,
+				F0E80D8A16DB2CEB00945D25 /* SLElementVisibilityTestElementOffscreen.xib in Resources */,
+				F043A9BE1729CFFE00A4FD1D /* SLElementVisibilityTestElementHidden.xib in Resources */,
+				F043A9C01729EFD100A4FD1D /* SLElementVisibilityTestUserInteractionDisabled.xib in Resources */,
+				F043A9C7172A160600A4FD1D /* SLElementVisibilityTest.html in Resources */,
+				F08005591730762C00198F6F /* Inklings~iPhone.webarchive in Resources */,
+				F0C4DB4817388ACA00111149 /* SLElementVisibilityTestSuperviewWithVisibleSubview.xib in Resources */,
+				064B6F55173B13E9004AB1BF /* SLElementVisibilityTestCoveredByClearRegion.xib in Resources */,
+				064B6FC7173DCE9A004AB1BF /* SLElementVisibilityWithSubviews.xib in Resources */,
+				F0C27CDF1741694900335A41 /* SLElementStateTestMidpointCovered.xib in Resources */,
+				F0C27CE917416EC400335A41 /* SLElementStateTestCompletelyCovered.xib in Resources */,
+				F00800C9174B3349001927AC /* SLButtonTestViewController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F0D2404F1683F7130031B67C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0D2405C1683F7130031B67C /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		F008014A174D7AC1001927AC /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"${PROJECT_DIR}/Documentation\" && \\\n/usr/local/bin/appledoc \\\n--clean-output \\\n--project-name \"Subliminal\" \\\n--project-version 1.0 \\\n--project-company \"Inkling\" \\\n--company-id \"com.inkling\" \\\n--docset-platform-family \"iphoneos\" \\\n--logformat xcode \\\n--keep-merged-sections \\\n--keep-undocumented-objects \\\n--keep-undocumented-members \\\n--no-repeat-first-par \\\n--no-warn-invalid-crossref \\\n--ignore \"*.m\" \\\n--index-desc \"${PROJECT_DIR}/README.md\" \\\n--output \"${PROJECT_DIR}/Documentation\" \\\n--keep-intermediate-files \\\n\"${PROJECT_DIR}/Sources\"";
+		};
+		F0D240501683F7130031B67C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F0695D8716011515000B05D0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0695DE4160138DF000B05D0 /* SLUIAElement.m in Sources */,
+				F0695DE5160138DF000B05D0 /* SLLogger.m in Sources */,
+				F0695DE7160138DF000B05D0 /* SLTerminal.m in Sources */,
+				F0695DE8160138DF000B05D0 /* SLTest.m in Sources */,
+				F0695DE9160138DF000B05D0 /* SLTestController.m in Sources */,
+				F0271B00162E0B950098F5F2 /* SLTestController+AppHooks.m in Sources */,
+				CAC388061641CD7500F995F9 /* SLStringUtilities.m in Sources */,
+				CAC388401643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.m in Sources */,
+				CA75E78516697C0000D57E92 /* SLDevice.m in Sources */,
+				F0C07A391703F95B00C93F93 /* SLAlert.m in Sources */,
+				F0C07A481703FEF600C93F93 /* SLButton.m in Sources */,
+				F0C07A4C1704002100C93F93 /* SLTextField.m in Sources */,
+				F0C07A501704009E00C93F93 /* SLWindow.m in Sources */,
+				F0C07A541704011400C93F93 /* SLKeyboard.m in Sources */,
+				F0C07A58170401E500C93F93 /* SLWebView.m in Sources */,
+				F05C4F91171406EF00A381BC /* SLTerminal+ConvenienceFunctions.m in Sources */,
+				F05C51E6171C8AE000A381BC /* SLMainThreadRef.m in Sources */,
+				F0A04E1E1749F70F002C7520 /* SLElement.m in Sources */,
+				F089F98717445D9A00DF1F25 /* SLStaticElement.m in Sources */,
+				F00800CF174C1C64001927AC /* SLPopover.m in Sources */,
+				F04346A0175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.m in Sources */,
+				F04346B0175AD63E00D91F7F /* SLAccessibilityPath.m in Sources */,
+				F04346A8175AD10200D91F7F /* NSObject+SLVisibility.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F0AC809016BB299500C5D5C0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0AC80A016BB299500C5D5C0 /* main.m in Sources */,
+				F0AC80A416BB299500C5D5C0 /* SLIntegrationTestsAppDelegate.m in Sources */,
+				F0AC80BD16BB50FF00C5D5C0 /* SLTestsViewController.m in Sources */,
+				F0AC80C416BC355D00C5D5C0 /* SLTerminalTest.m in Sources */,
+				F0AC80C116BB559F00C5D5C0 /* SLIntegrationTest.m in Sources */,
+				F0AC80C816BC367E00C5D5C0 /* SLTestViewController.m in Sources */,
+				F0AC80E616BCF91800C5D5C0 /* SLTestCaseViewController.m in Sources */,
+				F01B2B6D16D2C55900DBA391 /* SLElementMatchingTest.m in Sources */,
+				F01B2B6E16D2C55900DBA391 /* SLElementMatchingTestViewController.m in Sources */,
+				F0CEA00216D60EAD008A3B4A /* SLDeviceTest.m in Sources */,
+				F0CEA00316D60EAD008A3B4A /* SLDeviceTestViewController.m in Sources */,
+				0696BA5816E013D600DD70CF /* SLElementDraggingTest.m in Sources */,
+				0696BA5916E013D600DD70CF /* SLElementDraggingTestViewController.m in Sources */,
+				F0AE4C8D16F7F92D00B2BB2B /* SLElementStateTest.m in Sources */,
+				F0AE4C8E16F7F92D00B2BB2B /* SLElementStateTestViewController.m in Sources */,
+				F07DA32D16E43AD3004C2282 /* SLAlertTest.m in Sources */,
+				F07DA32E16E43AD3004C2282 /* SLAlertTestViewController.m in Sources */,
+				F01EBC9B170115B100FF6A7C /* SLTextFieldTest.m in Sources */,
+				F01EBC9C170115B100FF6A7C /* SLTextFieldTestViewController.m in Sources */,
+				F077D70D16D9D77900908FF5 /* SLElementVisibilityTest.m in Sources */,
+				F077D70E16D9D77900908FF5 /* SLElementVisibilityTestViewController.m in Sources */,
+				F0B868EC1740A146008BDA80 /* SLTerminalTestViewController.m in Sources */,
+				F0CC759A173B097800E8F94A /* SLElementTapTest.m in Sources */,
+				F0CC759B173B097800E8F94A /* SLElementTapTestViewController.m in Sources */,
+				F089F99417458BA300DF1F25 /* SLWindowTest.m in Sources */,
+				F089F99517458BA300DF1F25 /* SLWindowTestViewController.m in Sources */,
+				F089F9E21745FB7E00DF1F25 /* SLKeyboardTest.m in Sources */,
+				F089F9E31745FB7E00DF1F25 /* SLKeyboardTestViewController.m in Sources */,
+				F05D2B061746B55C0089DB9E /* SLStaticElementTest.m in Sources */,
+				F05D2B071746B55C0089DB9E /* SLStaticElementTestViewController.m in Sources */,
+				F00800C7174B3349001927AC /* SLButtonTest.m in Sources */,
+				F00800C8174B3349001927AC /* SLButtonTestViewController.m in Sources */,
+				F00800E2174C2E0A001927AC /* SLPopoverTest.m in Sources */,
+				F00800E3174C2E0A001927AC /* SLPopoverTestViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F0D2404D1683F7130031B67C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0D240671683F8520031B67C /* SLTestControllerTests.m in Sources */,
+				F08B87F21685A00400C4FE44 /* SharedSLTests.m in Sources */,
+				F08B87F51685A07B00C4FE44 /* SLTestTests.m in Sources */,
+				F024BE33168BD70900708350 /* TestUtilities.m in Sources */,
+				F0A040131698ECDE009D8157 /* SLTestController+AppContextTests.m in Sources */,
+				F05C51EC171C90B000A381BC /* SLMainThreadRefTests.m in Sources */,
+				F0C59ED81752B1D40051FEF0 /* SLStringUtilitiesTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F08B86DF16859C5500C4FE44 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = OCMockLib;
+			targetProxy = F08B86DE16859C5500C4FE44 /* PBXContainerItemProxy */;
+		};
+		F0AC80B216BB29AB00C5D5C0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F0695D8A16011515000B05D0 /* Subliminal */;
+			targetProxy = F0AC80B116BB29AB00C5D5C0 /* PBXContainerItemProxy */;
+		};
+		F0CE9FF916D60E22008A3B4A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = OCMockLib;
+			targetProxy = F0CE9FF816D60E22008A3B4A /* PBXContainerItemProxy */;
+		};
+		F0D240691683F97A0031B67C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F0695D8A16011515000B05D0 /* Subliminal */;
+			targetProxy = F0D240681683F97A0031B67C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		F0AC809C16BB299500C5D5C0 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F0AC809D16BB299500C5D5C0 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		F0D2405A1683F7130031B67C /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F0D2405B1683F7130031B67C /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		F0080142174D7A9E001927AC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		F0080143174D7A9E001927AC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		F0695D9716011515000B05D0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		F0695D9816011515000B05D0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F0695D9A16011515000B05D0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/Subliminal.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Sources/Subliminal-Prefix.pch";
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = usr/local/include/Subliminal;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		F0695D9B16011515000B05D0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/Subliminal.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Sources/Subliminal-Prefix.pch";
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = usr/local/include/Subliminal;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		F0AC80AB16BB299500C5D5C0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F081539D170CBF550053B536 /* Integration Tests.xcconfig */;
+			buildSettings = {
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Integration Tests/Subliminal Integration Tests-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
+					"\"$(BUILT_PRODUCTS_DIR)\"",
+				);
+				INFOPLIST_FILE = "Integration Tests/$(TARGET_NAME)-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				PRODUCT_NAME = "Subliminal (Integration Tests)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		F0AC80AC16BB299500C5D5C0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F081539D170CBF550053B536 /* Integration Tests.xcconfig */;
+			buildSettings = {
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Integration Tests/Subliminal Integration Tests-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(BUILT_PRODUCTS_DIR)/usr/local/include\"",
+					"\"$(BUILT_PRODUCTS_DIR)\"",
+				);
+				INFOPLIST_FILE = "Integration Tests/$(TARGET_NAME)-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_CFLAGS = "";
+				PRODUCT_NAME = "Subliminal (Integration Tests)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		F0D240611683F7130031B67C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Unit Tests/Subliminal Unit Tests-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(BUILT_PRODUCTS_DIR)\"",
+				);
+				INFOPLIST_FILE = "Unit Tests/Subliminal Unit Tests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "Subliminal (Unit Tests)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		F0D240621683F7130031B67C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Unit Tests/Subliminal Unit Tests-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(BUILT_PRODUCTS_DIR)\"",
+				);
+				INFOPLIST_FILE = "Unit Tests/Subliminal Unit Tests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "Subliminal (Unit Tests)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F0080147174D7A9E001927AC /* Build configuration list for PBXAggregateTarget "Subliminal Documentation" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F0080142174D7A9E001927AC /* Debug */,
+				F0080143174D7A9E001927AC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F0695D8516011515000B05D0 /* Build configuration list for PBXProject "Subliminal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F0695D9716011515000B05D0 /* Debug */,
+				F0695D9816011515000B05D0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F0695D9916011515000B05D0 /* Build configuration list for PBXNativeTarget "Subliminal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F0695D9A16011515000B05D0 /* Debug */,
+				F0695D9B16011515000B05D0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F0AC80B016BB299500C5D5C0 /* Build configuration list for PBXNativeTarget "Subliminal Integration Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F0AC80AB16BB299500C5D5C0 /* Debug */,
+				F0AC80AC16BB299500C5D5C0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F0D240631683F7130031B67C /* Build configuration list for PBXNativeTarget "Subliminal Unit Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F0D240611683F7130031B67C /* Debug */,
+				F0D240621683F7130031B67C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F0695D8216011515000B05D0 /* Project object */;
+}

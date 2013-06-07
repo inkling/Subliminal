@@ -1,0 +1,15 @@
+language: objective-c
+
+# These tasks run before cd'ing into Subliminal's repo
+before_install:
+    - brew update
+# Used as build tool for test and documentation targets
+    - brew install xctool --HEAD
+# Used to build documentation
+    - brew install appledoc
+# Initialize test dependencies (OCMock)
+    - git submodule update --init --recursive
+
+# To work around http://openradar.appspot.com/radar?id=1544403,
+# the tests need the Travis user's password.
+script: rake test build_docs LOGIN_PASSWORD="j4K7CK4oM49ZA27y532b"
