@@ -25,3 +25,5 @@ rm -rf "$HOME/Library/Application Support/iPhone Simulator"
 
 XCODE_PATH=`xcode-select --print-path`
 open "$XCODE_PATH/Platforms/iPhoneSimulator.platform/Developer/Applications/iPhone Simulator.app"
+
+sleep 5
