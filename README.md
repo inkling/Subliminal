@@ -37,7 +37,7 @@ How to Get Started
 ------------------
 
 * [Download Subliminal](https://github.com/inkling/Subliminal/zipball/master) 
-and try out the included example app
+and try out the included example app. Instructions for running the saple app are [here](##Running the Example app)
 * Install Subliminal and write your first test in just 10 minutes (guide below, 
 screencast [here](https://vimeo.com/67765518))
 * Read the FAQ [here](##FAQ), and find support [@subliminaltest](https://twitter.com/subliminaltest) 
@@ -434,6 +434,17 @@ FAQ
 		to break immediately after launch, you may find it useful to give yourself 
 		time to attach the debugger by setting `-[SLTestController shouldWaitToStartTesting]` 
 		to `YES`.
+
+Running the Example app
+-----------------------
+
+1. Clone the Subliminal repo: `git clone git@github.com:inkling/Subliminal.git`
+2. cd into the directory: `cd Subliminal`
+3. Create git submodules: `git submodule update --init`
+4. Setup Subliminal: `rake install`
+5. Open the Example project: `open Example/SubliminalTest.xcodeproj`
+6. Run the tests: Using the `Integration Tests` scheme, choose Product > Profile (⌘+I).
+7. Under the User Templates, choose Subliminal
 
 Contributing
 ------------
