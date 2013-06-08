@@ -29,9 +29,22 @@
     return [[self alloc] initWithUIARepresentation:@"UIATarget.localTarget().frontMostApp().keyboard()"];
 }
 
-- (void)typeString:(NSString *)string { 
-    [self waitUntilTappable:YES
-            thenSendMessage:@"typeString('%@')", [string slStringByEscapingForJavaScriptLiteral]];
+- (void)typeString:(NSString *)string {
+    // There appears to be a bug in versions of iOS prior to 6.0, which prevents UIAutomation's typeString
+    // method from working correctly for strings longer than one character.  To work around this issue on
+    // older versions of iOS we send a separate typeString message for each character of the string to be
+    // typed.
+    if (kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_5_1) {
+        [self waitUntilTappable:YES
+                thenSendMessage:@"typeString('%@')", [string slStringByEscapingForJavaScriptLiteral]];
+    } else {
+        for (NSUInteger j = 0; j < [string length]; j++) {
+            @autoreleasepool {
+                [self waitUntilTappable:YES
+                        thenSendMessage:@"typeString('%@')", [[string substringWithRange:NSMakeRange(j, 1)] slStringByEscapingForJavaScriptLiteral]];
+            }
+        }
+    }
 }
 
 @end
