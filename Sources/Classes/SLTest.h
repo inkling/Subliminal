@@ -437,7 +437,7 @@
     \
     if (!SLWaitUntilTrue(expression, timeout)) { \
         NSString *reason = [NSString stringWithFormat:@"\"%@\" did not become true within %g seconds.%@", \
-        @(#expression), timeout, SLComposeString(@" ", failureDescription, ##__VA_ARGS__)]; \
+        @(#expression), (NSTimeInterval)timeout, SLComposeString(@" ", failureDescription, ##__VA_ARGS__)]; \
         @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
     } \
 } while (0)
