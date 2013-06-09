@@ -40,4 +40,24 @@
     [[SLTerminal sharedTerminal] evalWithFormat:@"UIATarget.localTarget().deactivateAppForDuration(%g)", duration];
 }
 
+#pragma mark - Device Rotation
+
+NSString * UIADeviceOrientationFromUIDeviceOrientation(UIDeviceOrientation deviceOrientation)
+{
+    switch (deviceOrientation) {
+        case UIDeviceOrientationUnknown:              return @"UIA_DEVICE_ORIENTATION_UNKNOWN";               break;
+        case UIDeviceOrientationPortrait:             return @"UIA_DEVICE_ORIENTATION_PORTRAIT";              break;
+        case UIDeviceOrientationPortraitUpsideDown:   return @"UIA_DEVICE_ORIENTATION_PORTRAIT_UPSIDEDOWN";   break;
+        case UIDeviceOrientationLandscapeLeft:        return @"UIA_DEVICE_ORIENTATION_LANDSCAPELEFT";         break;
+        case UIDeviceOrientationLandscapeRight:       return @"UIA_DEVICE_ORIENTATION_LANDSCAPERIGHT";        break;
+        case UIDeviceOrientationFaceUp:               return @"UIA_DEVICE_ORIENTATION_FACEUP";                break;
+        case UIDeviceOrientationFaceDown:             return @"UIA_DEVICE_ORIENTATION_FACEDOWN";              break;
+    }
+}
+
+- (void)rotateToOrientation:(UIDeviceOrientation)deviceOrientation
+{
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIATarget.localTarget().setDeviceOrientation(%@)", UIADeviceOrientationFromUIDeviceOrientation(deviceOrientation)];
+}
+
 @end
