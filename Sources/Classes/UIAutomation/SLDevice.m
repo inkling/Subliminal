@@ -42,7 +42,7 @@
 
 #pragma mark - Device Rotation
 
-NSString * UIADeviceOrientationFromUIDeviceOrientation(UIDeviceOrientation deviceOrientation)
+NSString * SLUIADeviceOrientationFromUIDeviceOrientation(UIDeviceOrientation deviceOrientation)
 {
     switch (deviceOrientation) {
         case UIDeviceOrientationUnknown:              return @"UIA_DEVICE_ORIENTATION_UNKNOWN";               break;
@@ -57,7 +57,7 @@ NSString * UIADeviceOrientationFromUIDeviceOrientation(UIDeviceOrientation devic
 
 - (void)rotateToOrientation:(UIDeviceOrientation)deviceOrientation
 {
-    [[SLTerminal sharedTerminal] evalWithFormat:@"UIATarget.localTarget().setDeviceOrientation(%@)", UIADeviceOrientationFromUIDeviceOrientation(deviceOrientation)];
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIATarget.localTarget().setDeviceOrientation(%@)", SLUIADeviceOrientationFromUIDeviceOrientation(deviceOrientation)];
 }
 
 @end
