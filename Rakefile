@@ -368,11 +368,28 @@ namespace :test do
   task :unit => :prepare do    
     puts "- Running unit tests...\n\n"
 
+    base_command = 'xctool -project Subliminal.xcodeproj/ -scheme "Subliminal Unit Tests" -sdk iphonesimulator'
+
     # Use system so we see the tests' output
-    if system('xctool -project Subliminal.xcodeproj/ -scheme "Subliminal Unit Tests" clean test')
-      puts "Unit tests passed.\n\n"
-    else      
-      fail "Unit tests failed."
+    fail "Unit tests failed to build." unless system("#{base_command} clean build-tests")
+
+    tests_succeeded = true
+    test_on_sdk = lambda { |sdk|
+      puts "-- Running unit tests on iOS #{sdk}..."
+      if system("#{base_command} run-tests -test-sdk iphonesimulator#{sdk}")
+        puts "Unit tests succeeded on iOS #{sdk}.\n\n"
+      else
+        puts "Unit tests failed on iOS #{sdk}.\n\n"
+        tests_succeeded = false
+      end
+    }
+    test_on_sdk.call("5.1")
+    test_on_sdk.call("6.1")
+
+    if tests_succeeded
+      puts "\nUnit tests passed.\n\n"
+    else
+      fail "\nUnit tests failed.\n\n"
     end
   end
 
