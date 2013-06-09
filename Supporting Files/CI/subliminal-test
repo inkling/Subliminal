@@ -63,8 +63,9 @@ Required arguments:
 					Either this or \`-project\` must be specified.
 
 	-sim_device <device_type>	The type of device to simulate.
-					Acceptable values are listed in the iPhone Simulator's \"Hardware -> Device\" menu.
-					Either this or \`-hw_id\` must be specified.
+					Acceptable values are listed in the iOS Simulator's 
+					\"Hardware -> Device\" menu. Either this or \`-hw_id\` must 
+					be specified.
 
 	-hw_id <udid>			The UDID of the hardware to target.
 					Either this or \`-sim_device\` must be specified.
@@ -305,7 +306,8 @@ if [[ -n "$SIM_DEVICE" ]]; then
 
 	# Set the simulator's device type
 	echo "\nSetting simulator device type..."
-	if [ `osascript "$SCRIPT_DIR/set_simulator_device.scpt" "$SIM_DEVICE"` ]; then
+	"$SCRIPT_DIR/set_simulator_device" "$SIM_DEVICE"
+	if [ $? -eq 0 ]; then
 		echo "Successfully set simulator device type."
 	else
 		echo "\n\nERROR: Could not set the simulator's device type."
