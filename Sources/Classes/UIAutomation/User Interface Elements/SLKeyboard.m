@@ -30,20 +30,25 @@
 }
 
 - (void)typeString:(NSString *)string {
-    // There appears to be a bug in versions of iOS prior to 6.0, which prevents UIAutomation's typeString
-    // method from working correctly for strings longer than one character.  To work around this issue on
-    // older versions of iOS we send a separate typeString message for each character of the string to be
-    // typed.
+    // There appears to be a bug in versions of iOS prior to 6.0 which prevents
+    // UIAKeyboard.typeString from working correctly for strings longer than one
+    // character.  To work around this issue on older versions of iOS we send a
+    // separate typeString message for each character of the string to be typed.
+    NSString *escapedString = [string slStringByEscapingForJavaScriptLiteral];
     if (kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_5_1) {
         [self waitUntilTappable:YES
-                thenSendMessage:@"typeString('%@')", [string slStringByEscapingForJavaScriptLiteral]];
+                thenSendMessage:@"typeString('%@')", escapedString];
     } else {
-        for (NSUInteger j = 0; j < [string length]; j++) {
-            @autoreleasepool {
-                [self waitUntilTappable:YES
-                        thenSendMessage:@"typeString('%@')", [[string substringWithRange:NSMakeRange(j, 1)] slStringByEscapingForJavaScriptLiteral]];
-            }
-        }
+        NSString *quotedString = [NSString stringWithFormat:@"'%@'", escapedString];
+        [self waitUntilTappable:YES thenPerformActionWithUIARepresentation:^(NSString *UIARepresentation) {
+            // execute the typeString loop entirely within JavaScript, for improved performance
+            [[SLTerminal sharedTerminal] evalFunctionWithName:@"SLKeyboardTypeString"
+                                                       params:@[ @"keyboard", @"string" ]
+                                                         body:@"for (var i = 0; i < string.length; i++) {\
+                                                                    keyboard.typeString(string[i]);\
+                                                                }"
+                                                     withArgs:@[ UIARepresentation, quotedString ]];
+        } timeout:[[self class] defaultTimeout]];
     }
 }
 
