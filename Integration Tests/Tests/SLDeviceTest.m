@@ -68,7 +68,8 @@
 {
     [[SLDevice currentDevice] rotateToOrientation:UIDeviceOrientationPortrait]; // Reset
     
-    const UIDeviceOrientation orientations[7] =
+    const int orientationCount = 7;
+    const UIDeviceOrientation orientations[orientationCount] =
     {
         UIDeviceOrientationUnknown,
         UIDeviceOrientationPortrait,
@@ -79,7 +80,7 @@
         UIDeviceOrientationFaceDown
     };
     
-    for (int i=0; i<7; i++) {
+    for (int i=0; i<orientationCount; i++) {
         [self rotateToAndCheckOrientation:orientations[i]];
     }
     
