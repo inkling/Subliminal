@@ -21,6 +21,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 
 /**
@@ -52,5 +53,14 @@
  (subject to the caveat in the discussion).
  */
 - (void)deactivateAppForDuration:(NSTimeInterval)duration;
+
+/** 
+ Changes the device orientation to the specified new `deviceOrientation` value.
+ 
+ You can access the current device orientation using `[[UIDevice currentDevice] orientation]`
+ 
+ @param deviceOrientation The device orientation to rotate to.
+ */
+- (void)setOrientation:(UIDeviceOrientation)deviceOrientation;
 
 @end

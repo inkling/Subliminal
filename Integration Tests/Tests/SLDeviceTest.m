@@ -64,4 +64,47 @@
     SLAssertNoThrow([mockDelegate verify], @"App did not deactivate and reactivate.");
 }
 
+- (void)testCanRotateDevice
+{
+    [[SLDevice currentDevice] setOrientation:UIDeviceOrientationPortrait]; // Reset
+    
+    const int orientationCount = 7;
+    const UIDeviceOrientation orientations[orientationCount] =
+    {
+        UIDeviceOrientationUnknown,
+        UIDeviceOrientationPortrait,
+        UIDeviceOrientationPortraitUpsideDown,
+        UIDeviceOrientationLandscapeLeft,
+        UIDeviceOrientationLandscapeRight,
+        UIDeviceOrientationFaceUp,
+        UIDeviceOrientationFaceDown
+    };
+    
+    for (int i=0; i<orientationCount; i++) {
+        [self rotateToAndCheckOrientation:orientations[i]];
+    }
+    
+    // Reset
+    [[SLDevice currentDevice] setOrientation:UIDeviceOrientationPortrait];
+}
+
+- (void)rotateToAndCheckOrientation:(UIDeviceOrientation)orientation
+{
+    [[SLDevice currentDevice] setOrientation:orientation];
+    SLAssertTrue([UIDevice currentDevice].orientation == orientation,
+                 @"After rotating, device orientation should be %@",SLNSStringFromUIDeviceOrientation(orientation));
+}
+
+NSString * SLNSStringFromUIDeviceOrientation(UIDeviceOrientation orientation) {
+	switch (orientation) {
+		case UIDeviceOrientationFaceDown:           return @"UIDeviceOrientationFaceDown";              break;
+		case UIDeviceOrientationFaceUp:             return @"UIDeviceOrientationFaceUp";                break;
+		case UIDeviceOrientationLandscapeLeft:      return @"UIDeviceOrientationLandscapeLeft";         break;
+		case UIDeviceOrientationLandscapeRight:     return @"UIDeviceOrientationLandscapeRight";        break;
+		case UIDeviceOrientationPortrait:           return @"UIDeviceOrientationPortrait";              break;
+		case UIDeviceOrientationPortraitUpsideDown: return @"UIDeviceOrientationPortraitUpsideDown";    break;
+		case UIDeviceOrientationUnknown:            return @"UIDeviceOrientationUnknown";               break;
+	}
+}
+
 @end
