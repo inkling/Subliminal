@@ -66,7 +66,7 @@
 
 - (void)testCanRotateDevice
 {
-    [[SLDevice currentDevice] rotateToOrientation:UIDeviceOrientationPortrait]; // Reset
+    [[SLDevice currentDevice] setOrientation:UIDeviceOrientationPortrait]; // Reset
     
     const int orientationCount = 7;
     const UIDeviceOrientation orientations[orientationCount] =
@@ -85,12 +85,12 @@
     }
     
     // Reset
-    [[SLDevice currentDevice] rotateToOrientation:UIDeviceOrientationPortrait];
+    [[SLDevice currentDevice] setOrientation:UIDeviceOrientationPortrait];
 }
 
 - (void)rotateToAndCheckOrientation:(UIDeviceOrientation)orientation
 {
-    [[SLDevice currentDevice] rotateToOrientation:orientation];
+    [[SLDevice currentDevice] setOrientation:orientation];
     SLAssertTrue([UIDevice currentDevice].orientation == orientation,
                  @"After rotating, device orientation should be %@",SLNSStringFromUIDeviceOrientation(orientation));
 }

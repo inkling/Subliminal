@@ -54,10 +54,13 @@
  */
 - (void)deactivateAppForDuration:(NSTimeInterval)duration;
 
-/** Rotates the device to the given orientation
+/** 
+ Changes the device orientation to the specified new `deviceOrientation` value.
  
- @param deviceOrientation The device orientation to rotate to
+ You can access the current device orientation using `[[UIDevice currentDevice] orientation]`
+ 
+ @param deviceOrientation The device orientation to rotate to.
  */
-- (void)rotateToOrientation:(UIDeviceOrientation)deviceOrientation;
+- (void)setOrientation:(UIDeviceOrientation)deviceOrientation;
 
 @end

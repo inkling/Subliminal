@@ -55,7 +55,7 @@ NSString * SLUIADeviceOrientationFromUIDeviceOrientation(UIDeviceOrientation dev
     }
 }
 
-- (void)rotateToOrientation:(UIDeviceOrientation)deviceOrientation
+- (void)setOrientation:(UIDeviceOrientation)deviceOrientation
 {
     [[SLTerminal sharedTerminal] evalWithFormat:@"UIATarget.localTarget().setDeviceOrientation(%@)", SLUIADeviceOrientationFromUIDeviceOrientation(deviceOrientation)];
 }
