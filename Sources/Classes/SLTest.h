@@ -383,7 +383,7 @@
  */
 #define SLAssertTrue(expression, failureDescription, ...) do { \
     [self recordLastKnownFile:__FILE__ line:__LINE__]; \
-    BOOL __result = (expression); \
+    BOOL __result = !!(expression); \
     if (!__result) { \
         NSString *__reason = [NSString stringWithFormat:@"\"%@\" should be true.%@", \
                                 @(#expression), SLComposeString(@" ", failureDescription, ##__VA_ARGS__)]; \
@@ -488,7 +488,7 @@
  */
 #define SLAssertFalse(expression, failureDescription, ...) do { \
     [self recordLastKnownFile:__FILE__ line:__LINE__]; \
-    BOOL __result = (expression); \
+    BOOL __result = !!(expression); \
     if (__result) { \
         NSString *__reason = [NSString stringWithFormat:@"\"%@\" should be false.%@", \
                                 @(#expression), SLComposeString(@" ", failureDescription, ##__VA_ARGS__)]; \
