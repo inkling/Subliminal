@@ -965,6 +965,21 @@
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
+- (void)testSLAssertTrueDoesNotThrowOnExpressionWithZeroFirstByte {
+    Class testClass = [TestWithSomeTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testClass];
+
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        STAssertNoThrow([test slAssertTrueWithUnsignedInteger:^NSUInteger{
+            return 0xFF00;
+        }], @"Assertion should not have failed.");
+    }] testOne];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
+}
+
 #pragma mark -SLAssertFalse
 
 - (void)testSLAssertFalseThrowsIffExpressionIsTrue {

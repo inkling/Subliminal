@@ -52,6 +52,11 @@ void SLRunTestsAndWaitUntilFinished(NSSet *tests, void (^completionBlock)()) {
     SLAssertTrue(condition(), nil);
 }
 
+- (void)slAssertTrueWithUnsignedInteger:(NSUInteger (^)(void))expression {
+    NSParameterAssert(expression);
+    SLAssertTrue(expression(), nil);
+}
+
 - (void)slAssertFalse:(BOOL (^)(void))condition {
     NSParameterAssert(condition);
     SLAssertFalse(condition(), nil);
