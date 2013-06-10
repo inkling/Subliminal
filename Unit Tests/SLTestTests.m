@@ -965,6 +965,24 @@
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
+// this test confirms that you can assert the "truth" of a non-nil object (that is, that it is not nil)
+// http://www.mikeash.com/pyblog/friday-qa-2012-12-14-objective-c-pitfalls.html, 
+// "Casting to BOOL" describes the problem that SLAssertTrue must avoid
+- (void)testSLAssertTrueDoesNotThrowOnExpressionWithZeroFirstByte {
+    Class testClass = [TestWithSomeTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testClass];
+
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        STAssertNoThrow([test slAssertTrueWithUnsignedInteger:^NSUInteger{
+            return 0xFF00;
+        }], @"Assertion should not have failed.");
+    }] testOne];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
+}
+
 #pragma mark -SLAssertFalse
 
 - (void)testSLAssertFalseThrowsIffExpressionIsTrue {
