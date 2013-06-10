@@ -41,6 +41,7 @@ extern void SLRunTestsAndWaitUntilFinished(NSSet *tests, void (^completionBlock)
 - (void)slAssertFailAtFilename:(NSString *__autoreleasing*)filename lineNumber:(int *)lineNumber;
 - (void)slAssertTrue:(BOOL (^)(void))condition;
 - (void)slAssertFalse:(BOOL (^)(void))condition;
+- (void)slAssertTrueWithUnsignedInteger:(NSUInteger (^)(void))expression;
 - (void)SLAssertTrueWithTimeout:(BOOL (^)(void))condition withTimeout:(NSTimeInterval)timeout;
 - (BOOL)SLWaitUntilTrue:(BOOL (^)(void))condition withTimeout:(NSTimeInterval)timeout;
 
