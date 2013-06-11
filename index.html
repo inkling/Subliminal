@@ -108,7 +108,7 @@
 		<!-- usage -->
 		<section class="section">		
 			<h2>Usage</h2>
-			<p>Subliminal is designed to be instantly familiar to users of OCUnit/SenTest. In Subliminal, subclasses of SLTest define tests as methods beginning with "test". At run-time, the SLTestController discovers and runs these tests. Here's what a sample SLTest implementation looks like:</p>
+			<p>Subliminal is designed to be instantly familiar to users of OCUnit/SenTest. In Subliminal, subclasses of <span class="inline-code">SLTest</span> define tests as methods beginning with "test". At run-time, the <span class="inline-code">SLTestController</span> discovers and runs these tests. Here's what a sample <span class="inline-code">SLTest</span> implementation looks like:</p>
 			<aside class="aside aside-code">
 				<pre>
 @implementation STLoginTest
@@ -120,18 +120,18 @@
         SLElement *loginSpinner = [SLElement elementWithAccessibilityLabel:@"Logging in..."];
 
         NSString *username = @"Jeff", *password = @"foo";
-        [UIAElement(usernameField) setText:username];
-        [UIAElement(passwordField) setText:password];
+        [usernameField setText:username];
+        [passwordField setText:password];
 
-        [UIAElement(submitButton) tap];
+        [submitButton tap];
 
         // Wait for login to succeed
-        SLAssertTrueWithTimeout([UIAElement(loginSpinner) isInvalidOrInvisible],
+        SLAssertTrueWithTimeout([loginSpinner isInvalidOrInvisible],
                                 3.0,
                                 @"Log-in was not successful.");
 
         NSString *successMessage = [NSString stringWithFormat:@"Hello, %@!", username];
-        SLAssertTrue([UIAElement([SLElement elementWithAccessibilityLabel:successMessage]) isValid],
+        SLAssertTrue([[SLElement elementWithAccessibilityLabel:successMessage] isValid],
                      @"Log-in did not succeed.");
 }
 
@@ -139,9 +139,11 @@
 				</pre>
 			</aside>
 
-			<p>In the body of those tests, you do some work and then make some assertions. Because the tests live inside your application, that work can involve talking to application code. Otherwise, your tests will manipulate the user interface.</p>
+			<p>In the body of those tests, you do some work and then make some assertions.</p>
 
-			<p>In Subliminal tests, you talk to UIAutomation, and manipulate the user interface, using instances of SLElement. <span class="inline-code">SLElements</span> are proxies for the "<span class="inline-code">UIAElements</span>" UIAutomation uses to represent user interface elements: when you <span class="inline-code">-tap</span> an <span class="inline-code">SLElement</span>, that <span class="inline-code">SLElement</span> causes the appropriate bit of Javascript to be executed to manipulate the corresponding <span class="inline-code">UIAElement</span>. Tests execute asynchronously, so they can block until UIAutomation is done evaluating the command, without blocking the application itself.</p>
+			<p>That work can involve simulating user interaction, using instances of <span class="inline-code">SLElement</span>. <span class="inline-code">SLElements</span> are proxies for the "<span class="inline-code">UIAElements</span>" UIAutomation uses to represent user interface elements: when you <span class="inline-code">-tap</span> an <span class="inline-code">SLElement</span>, that <span class="inline-code">SLElement</span> causes the appropriate bit of Javascript to be executed to manipulate the corresponding <span class="inline-code">UIAElement</span>. Tests execute asynchronously, so they can block until UIAutomation is done evaluating the command, without blocking the application itself.</p>
+
+			<p>Your tests live inside your application, so you can also manipulate the application directly, using <i>app hooks</i>. App hooks are Objective-C methods defined by the application, made available to your tests--so you could have one test verify that your login UI works, while the rest of your tests use a programmatic interface.</p>
 
 			<p>To learn more about how to use Subliminal, check out the <a href="http://github.com/inkling/Subliminal#readme">README</a> on GitHub.</p>
 		</section>
