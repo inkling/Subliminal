@@ -203,17 +203,17 @@ Here's what a sample `SLTest` implementation looks like:
 		SLElement *loginSpinner = [SLElement elementWithAccessibilityLabel:@"Logging in..."];
 		
 	    NSString *username = @"Jeff", *password = @"foo";
-	    [UIAElement(usernameField) setText:username];
-	    [UIAElement(passwordField) setText:password];
+	    [usernameField setText:username];
+	    [passwordField setText:password];
     
-	    [UIAElement(submitButton) tap];
+	    [submitButton tap];
     
     	// wait for the login spinner to disappear
-	    SLAssertTrueWithTimeout([UIAElement(_loginSpinner) isInvalidOrInvisible], 
+	    SLAssertTrueWithTimeout([_loginSpinner isInvalidOrInvisible], 
 	    						3.0, @"Log-in was not successful.");
     
 	    NSString *successMessage = [NSString stringWithFormat:@"Hello, %@!", username];
-	    SLAssertTrue([UIAElement([SLElement elementWithAccessibilityLabel:successMessage]) isValid], 
+	    SLAssertTrue([[SLElement elementWithAccessibilityLabel:successMessage] isValid], 
 	    			@"Log-in did not succeed.");
 	}
 
