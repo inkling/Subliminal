@@ -1,0 +1,1243 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="html/html; charset=utf-8" />
+		<title>SLLogger Class Reference</title>
+		<meta id="xcode-display" name="xcode-display" content="render"/>
+		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
+		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
+		<meta name="generator" content="appledoc 2.1 (build 858)" />
+	</head>
+	<body>
+		<header id="top_header">
+			<div id="library" class="hideInXcode">
+				<h1><a id="libraryTitle" href="../index.html">Subliminal </a></h1>
+				<a id="developerHome" href="../index.html">Inkling</a>
+			</div>
+			
+			<div id="title" role="banner">
+				<h1 class="hideInXcode">SLLogger Class Reference</h1>
+			</div>
+			<ul id="headerButtons" role="toolbar">
+				<li id="toc_button">
+					<button aria-label="Show Table of Contents" role="checkbox" class="open" id="table_of_contents"><span class="disclosure"></span>Table of Contents</button>
+				</li>
+				<li id="jumpto_button" role="navigation">
+					<select id="jumpTo">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+	
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+	
+	
+	
+	
+	
+	<option value="class_methods">Class Methods</option>
+	
+	<option value="//api/name/sharedLogger">&nbsp;&nbsp;&nbsp;&nbsp;+ sharedLogger</option>
+	
+	
+	
+	
+	<option value="instance_methods">Instance Methods</option>
+	
+	<option value="//api/name/logDebug:">&nbsp;&nbsp;&nbsp;&nbsp;- logDebug:</option>
+	
+	<option value="//api/name/logError:">&nbsp;&nbsp;&nbsp;&nbsp;- logError:</option>
+	
+	<option value="//api/name/logMessage:">&nbsp;&nbsp;&nbsp;&nbsp;- logMessage:</option>
+	
+	<option value="//api/name/logTest:caseFail:expected:">&nbsp;&nbsp;&nbsp;&nbsp;- logTest:caseFail:expected:</option>
+	
+	<option value="//api/name/logTest:casePass:">&nbsp;&nbsp;&nbsp;&nbsp;- logTest:casePass:</option>
+	
+	<option value="//api/name/logTest:caseStart:">&nbsp;&nbsp;&nbsp;&nbsp;- logTest:caseStart:</option>
+	
+	<option value="//api/name/logTestAbort:">&nbsp;&nbsp;&nbsp;&nbsp;- logTestAbort:</option>
+	
+	<option value="//api/name/logTestFinish:withNumCasesExecuted:numCasesFailed:numCasesFailedUnexpectedly:">&nbsp;&nbsp;&nbsp;&nbsp;- logTestFinish:withNumCasesExecuted:numCasesFailed:numCasesFailedUnexpectedly:</option>
+	
+	<option value="//api/name/logTestStart:">&nbsp;&nbsp;&nbsp;&nbsp;- logTestStart:</option>
+	
+	<option value="//api/name/logTestingFinishWithNumTestsExecuted:numTestsFailed:">&nbsp;&nbsp;&nbsp;&nbsp;- logTestingFinishWithNumTestsExecuted:numTestsFailed:</option>
+	
+	<option value="//api/name/logTestingStart">&nbsp;&nbsp;&nbsp;&nbsp;- logTestingStart</option>
+	
+	<option value="//api/name/logWarning:">&nbsp;&nbsp;&nbsp;&nbsp;- logWarning:</option>
+	
+	<option value="//api/name/loggingQueue">&nbsp;&nbsp;&nbsp;&nbsp;- loggingQueue</option>
+	
+	
+	
+</select>
+				</li>
+			</ul>
+		</header>
+		<nav id="tocContainer" class="isShowingTOC">
+			<ul id="toc" role="tree">
+				
+<li role="treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#overview">Overview</a></span></li>
+
+
+
+
+<li role="treeitem" id="task_treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#tasks">Tasks</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Getting and Setting the Shared Logger">Getting and Setting the Shared Logger</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Primitive Methods">Primitive Methods</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Logging with Severity Levels">Logging with Severity Levels</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Logging Test Progress">Logging Test Progress</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Logging Run Progress">Logging Run Progress</a></span></li>
+	
+</ul></li>
+
+
+
+
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#class_methods">Class Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/sharedLogger">sharedLogger</a></span></li>
+	
+</ul></li>
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logDebug:">logDebug:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logError:">logError:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logMessage:">logMessage:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logTest:caseFail:expected:">logTest:caseFail:expected:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logTest:casePass:">logTest:casePass:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logTest:caseStart:">logTest:caseStart:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logTestAbort:">logTestAbort:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logTestFinish:withNumCasesExecuted:numCasesFailed:numCasesFailedUnexpectedly:">logTestFinish:withNumCasesExecuted:numCasesFailed:numCasesFailedUnexpectedly:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logTestStart:">logTestStart:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logTestingFinishWithNumTestsExecuted:numTestsFailed:">logTestingFinishWithNumTestsExecuted:numTestsFailed:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logTestingStart">logTestingStart</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logWarning:">logWarning:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/loggingQueue">loggingQueue</a></span></li>
+	
+</ul></li>
+
+
+			</ul>
+		</nav>
+		<article>
+			<div id="contents" class="isShowingTOC" role="main">
+				<a title="SLLogger Class Reference" name="top"></a>
+				<div class="main-navigation navigation-top">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="header">
+					<div class="section-header">
+						<h1 class="title title-header">SLLogger Class Reference</h1>
+					</div>		
+				</div>
+				<div id="container">	
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<td class="specification-title">Inherits from</td>
+	<td class="specification-value">NSObject</td>
+</tr><tr>
+	<td class="specification-title">Declared in</td>
+	<td class="specification-value">SLLogger.h</td>
+</tr>
+						</tbody></table></div>
+					
+					
+					
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p>The shared <code>SLLogger</code> used by Subliminal to log test progress. It may also be
+used by tests, and by the application itself, to log custom messages to the
+test output.</p>
+
+<p><code>SLLogger</code> logs messages to the Automation instrument. Its output can be viewed
+in the Instruments application when the tests are running locally, and in the
+console while the <code>instruments</code> command-line tool is running.</p>
+
+<p>If the <code>instruments</code> command-line tool is invoked with a value for the <code>UIARESULTSPATH</code>
+environment variable (as the <code>subliminal-test</code> script does when invoked with the
+<code>-output</code> option), then <code>instruments</code> will also produce a <code>.trace</code> file inside
+that directory that can be opened in the Instruments application after the tests
+have concluded.</p>
+
+<p>When <a href="#//api/name/logError:">errors</a> or <a href="#//api/name/logWarning:">warnings</a> are logged, the <code>SLLogger</code>
+will direct the Automation instrument to take a screenshot of the application.
+Those screenshots can be viewed in Instruments alongside log messages when the
+tests are running locally, or by opening the <code>.trace</code> file produced by a run of
+the <code>instruments</code> command-line tool. The <code>instruments</code> command-line tool will also
+save such screenshots to the directory specified by the <code>UIARESULTSPATH</code> environment
+variable.</p>
+
+<h3>Providing alternate log formats</h3>
+
+<p><code>SLLogger</code> is not designed to be subclassed, because the Automation instrument
+is the only way for tests running on a device to report their status to the
+test runner. However, when the <code>instruments</code> command-line tool is invoked with
+a value for the <code>UIARESULTSPATH</code> environment variable, it will save the logs
+to that directory as a <code>.plist</code>, with all log events available as structured
+dictionaries. That <code>.plist</code> may be parsed into other formats after testing
+concludes.</p>
+
+<p>The <code>subliminal_uialog_to_junit</code> script, for example, parses the <code>.plist</code>
+into a JUnit report.</p>
+
+<h4><code>SLLogger (</code>SLTest<code>)</code></h4>
+
+<p>The methods in the <code>SLLogger (</code>SLTest<code>)</code> category are used by the
+tests to log test progress. They should not be called by a test writer.</p>
+
+<p>See <code>[SLTestTests testCompleteTestRunSequence]</code> for an illustration
+of when these methods are called.</p>
+
+<h4><code>SLLogger (</code>SLTestController<code>)</code></h4>
+
+<p>The methods in the <code>SLLogger (</code>SLTestController<code>)</code> category are used by the
+shared test controller to log the progress of the test run. They should not
+be called by a test writer.</p>
+
+<p>See <code>[SLTestTests testCompleteTestRunSequence]</code> for an illustration
+of when these methods are called.</p>
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						<h2 class="subtitle subtitle-tasks">Tasks</h2>
+						
+						
+						<a title="Getting and Setting the Shared Logger" name="task_Getting and Setting the Shared Logger"></a>
+						<h3 class="subsubtitle task-title">Getting and Setting the Shared Logger</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/sharedLogger">+&nbsp;sharedLogger</a></code>
+		<span class="tooltip"><p>The shared logger used by the Subliminal framework and by user-defined tests.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Primitive Methods" name="task_Primitive Methods"></a>
+						<h3 class="subsubtitle task-title">Primitive Methods</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/loggingQueue">&ndash;&nbsp;loggingQueue</a></code>
+		<span class="tooltip"><p>Returns a queue on which log messages may be serialized.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/logMessage:">&ndash;&nbsp;logMessage:</a></code>
+		<span class="tooltip"><p>Logs a message.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Logging with Severity Levels" name="task_Logging with Severity Levels"></a>
+						<h3 class="subsubtitle task-title">Logging with Severity Levels</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/logDebug:">&ndash;&nbsp;logDebug:</a></code>
+		<span class="tooltip"><p>Logs a message as a &ldquo;debug&rdquo; message.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/logWarning:">&ndash;&nbsp;logWarning:</a></code>
+		<span class="tooltip"><p>Logs a message as a &ldquo;warning&rdquo; message.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/logError:">&ndash;&nbsp;logError:</a></code>
+		<span class="tooltip"><p>Logs a message as an &ldquo;error&rdquo; message.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Logging Test Progress" name="task_Logging Test Progress"></a>
+						<h3 class="subsubtitle task-title">Logging Test Progress</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/logTest:caseStart:">&ndash;&nbsp;logTest:caseStart:</a></code>
+		<span class="tooltip"><p>Logs that the specified test case has started.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/logTest:casePass:">&ndash;&nbsp;logTest:casePass:</a></code>
+		<span class="tooltip"><p>Logs that the specified test case has passed.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/logTest:caseFail:expected:">&ndash;&nbsp;logTest:caseFail:expected:</a></code>
+		<span class="tooltip"><p>Logs that the specified test case has failed.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Logging Run Progress" name="task_Logging Run Progress"></a>
+						<h3 class="subsubtitle task-title">Logging Run Progress</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/logTestingStart">&ndash;&nbsp;logTestingStart</a></code>
+		<span class="tooltip"><p>Logs that testing has started.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/logTestStart:">&ndash;&nbsp;logTestStart:</a></code>
+		<span class="tooltip"><p>Logs that the specified test has started.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/logTestFinish:withNumCasesExecuted:numCasesFailed:numCasesFailedUnexpectedly:">&ndash;&nbsp;logTestFinish:withNumCasesExecuted:numCasesFailed:numCasesFailedUnexpectedly:</a></code>
+		<span class="tooltip"><p>Logs that the specified test has finished.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/logTestAbort:">&ndash;&nbsp;logTestAbort:</a></code>
+		<span class="tooltip"><p>Logs that the specified test has aborted.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/logTestingFinishWithNumTestsExecuted:numTestsFailed:">&ndash;&nbsp;logTestingFinishWithNumTestsExecuted:numTestsFailed:</a></code>
+		<span class="tooltip"><p>Logs that testing has finished.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+					</div>
+					
+					
+					
+					
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Class Methods" name="class_methods"></a>
+						<h2 class="subtitle subtitle-methods">Class Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/sharedLogger" title="sharedLogger"></a>
+	<h3 class="subsubtitle method-title">sharedLogger</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The shared logger used by the Subliminal framework and by user-defined tests.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (SLLogger *)sharedLogger</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The shared logger.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLLogger.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Instance Methods" name="instance_methods"></a>
+						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/logDebug:" title="logDebug:"></a>
+	<h3 class="subsubtitle method-title">logDebug:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Logs a message as a &ldquo;debug&rdquo; message.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)logDebug:(NSString *)<em>debug</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>debug</em></dt>
+			<dd><p>The message to log.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLLogger.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/logError:" title="logError:"></a>
+	<h3 class="subsubtitle method-title">logError:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Logs a message as an &ldquo;error&rdquo; message.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)logError:(NSString *)<em>error</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>error</em></dt>
+			<dd><p>The message to log.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLLogger.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/logMessage:" title="logMessage:"></a>
+	<h3 class="subsubtitle method-title">logMessage:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Logs a message.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)logMessage:(NSString *)<em>message</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>message</em></dt>
+			<dd><p>The message to log.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>This method is the primitive logging method used by all other logging methods
+(by default) as well as by <code>SLLog</code> and <code>SLLogAsync</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLLogger.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/logTest:caseFail:expected:" title="logTest:caseFail:expected:"></a>
+	<h3 class="subsubtitle method-title">logTest:caseFail:expected:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Logs that the specified test case has failed.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)logTest:(NSString *)<em>test</em> caseFail:(NSString *)<em>testCase</em> expected:(BOOL)<em>expected</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>test</em></dt>
+			<dd><p>The test that is currently running.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>testCase</em></dt>
+			<dd><p>The test case that has failed.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>expected</em></dt>
+			<dd><p>YES if the failure was &ldquo;expected&rdquo;, otherwise NO.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>See the discussion on the <a href="../Classes/SLTest.html"><code>SLTest</code></a> (SLTestCase) category for what constitutes
+an &ldquo;expected&rdquo; failure.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLLogger.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/logTest:casePass:" title="logTest:casePass:"></a>
+	<h3 class="subsubtitle method-title">logTest:casePass:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Logs that the specified test case has passed.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)logTest:(NSString *)<em>test</em> casePass:(NSString *)<em>testCase</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>test</em></dt>
+			<dd><p>The test that is currently running.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>testCase</em></dt>
+			<dd><p>The test case that has passed.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>By not throwing any exceptions.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLLogger.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/logTest:caseStart:" title="logTest:caseStart:"></a>
+	<h3 class="subsubtitle method-title">logTest:caseStart:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Logs that the specified test case has started.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)logTest:(NSString *)<em>test</em> caseStart:(NSString *)<em>testCase</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>test</em></dt>
+			<dd><p>The test that is currently running.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>testCase</em></dt>
+			<dd><p>The test case that has started.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLLogger.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/logTestAbort:" title="logTestAbort:"></a>
+	<h3 class="subsubtitle method-title">logTestAbort:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Logs that the specified test has aborted.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)logTestAbort:(NSString *)<em>test</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>test</em></dt>
+			<dd><p>The test that has aborted.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>As opposed to finishing; by throwing an exception in <a href="../Classes/SLTest.html#//api/name/setUpTest"><code>-setUpTest</code></a>
+or <a href="../Classes/SLTest.html#//api/name/tearDownTest"><code>-tearDownTest</code></a>.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="#//api/name/logTestFinish:withNumCasesExecuted:numCasesFailed:numCasesFailedUnexpectedly:">- logTestFinish:withNumCasesExecuted:numCasesFailed:numCasesFailedUnexpectedly:</a></p></code></li>
+			
+		</ul>
+	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLLogger.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/logTestFinish:withNumCasesExecuted:numCasesFailed:numCasesFailedUnexpectedly:" title="logTestFinish:withNumCasesExecuted:numCasesFailed:numCasesFailedUnexpectedly:"></a>
+	<h3 class="subsubtitle method-title">logTestFinish:withNumCasesExecuted:numCasesFailed:numCasesFailedUnexpectedly:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Logs that the specified test has finished.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)logTestFinish:(NSString *)<em>test</em> withNumCasesExecuted:(NSUInteger)<em>numCasesExecuted</em> numCasesFailed:(NSUInteger)<em>numCasesFailed</em> numCasesFailedUnexpectedly:(NSUInteger)<em>numCasesFailedUnexpectedly</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>test</em></dt>
+			<dd><p>The test that has finished.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>numCasesExecuted</em></dt>
+			<dd><p>The number of cases that were executed.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>numCasesFailed</em></dt>
+			<dd><p>Of <code>numCasesExecuted</code>, the number of cases that failed.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>numCasesFailedUnexpectedly</em></dt>
+			<dd><p>Of <code>numCasesFailed</code>, the number of cases that failed unexpectedly
+(those test cases that failed for reasons other than test assertion failures).</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>This means that it executed one or more test cases
+and did not throw an exception in <a href="../Classes/SLTest.html#//api/name/setUpTest"><code>-setUpTest</code></a> or
+<a href="../Classes/SLTest.html#//api/name/tearDownTest"><code>-tearDownTest</code></a>.</p>
+
+<p>See <a href="../Classes/SLTest.html#//api/name/runAndReportNumExecuted:failed:failedUnexpectedly:"><code>[SLTest runAndReportNumExecuted:failed:failedUnexpectedly:]</code></a> for
+further discussion of the information that this method will be used to log.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="#//api/name/logTestAbort:">- logTestAbort:</a></p></code></li>
+			
+		</ul>
+	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLLogger.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/logTestStart:" title="logTestStart:"></a>
+	<h3 class="subsubtitle method-title">logTestStart:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Logs that the specified test has started.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)logTestStart:(NSString *)<em>test</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>test</em></dt>
+			<dd><p>The test that has started.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLLogger.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/logTestingFinishWithNumTestsExecuted:numTestsFailed:" title="logTestingFinishWithNumTestsExecuted:numTestsFailed:"></a>
+	<h3 class="subsubtitle method-title">logTestingFinishWithNumTestsExecuted:numTestsFailed:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Logs that testing has finished.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)logTestingFinishWithNumTestsExecuted:(NSUInteger)<em>numTestsExecuted</em> numTestsFailed:(NSUInteger)<em>numTestsFailed</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>numTestsExecuted</em></dt>
+			<dd><p>The number of tests that were executed.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>numTestsFailed</em></dt>
+			<dd><p>Of <code>numTestsExecuted</code>, the number of tests that failed
+(by throwing an exception in set-up, tear-down, or a test case).</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>This method is called after all tests have run.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLLogger.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/logTestingStart" title="logTestingStart"></a>
+	<h3 class="subsubtitle method-title">logTestingStart</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Logs that testing has started.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)logTestingStart</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>This method is called before any tests have run.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLLogger.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/logWarning:" title="logWarning:"></a>
+	<h3 class="subsubtitle method-title">logWarning:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Logs a message as a &ldquo;warning&rdquo; message.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)logWarning:(NSString *)<em>warning</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>warning</em></dt>
+			<dd><p>The message to log.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLLogger.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/loggingQueue" title="loggingQueue"></a>
+	<h3 class="subsubtitle method-title">loggingQueue</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Returns a queue on which log messages may be serialized.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (dispatch_queue_t)loggingQueue</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>A custom serial dispatch queue on which to serialize log messages.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLLogger.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+				</div>
+				<div class="main-navigation navigation-bottom">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="footer">
+					<hr />
+					<div class="footer-copyright">
+						<p><span class="copyright">&copy; 2013 Inkling. All rights reserved. (Last updated: 2013-06-11)</span><br />
+						
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 858)</a>.</span></p>
+						
+					</div>
+				</div>
+			</div>
+		</article>
+		<script type="text/javascript">
+			function jumpToChange()
+			{
+				window.location.hash = this.options[this.selectedIndex].value;
+			}
+			
+			function toggleTOC()
+			{
+				var contents = document.getElementById('contents');
+				var tocContainer = document.getElementById('tocContainer');
+				
+				if (this.getAttribute('class') == 'open')
+				{
+					this.setAttribute('class', '');
+					contents.setAttribute('class', '');
+					tocContainer.setAttribute('class', '');
+					
+					window.name = "hideTOC";
+				}
+				else
+				{
+					this.setAttribute('class', 'open');
+					contents.setAttribute('class', 'isShowingTOC');
+					tocContainer.setAttribute('class', 'isShowingTOC');
+					
+					window.name = "";
+				}
+				return false;
+			}
+			
+			function toggleTOCEntryChildren(e)
+			{
+				e.stopPropagation();
+				var currentClass = this.getAttribute('class');
+				if (currentClass == 'children') {
+					this.setAttribute('class', 'children open');
+				}
+				else if (currentClass == 'children open') {
+					this.setAttribute('class', 'children');
+				}
+				return false;
+			}
+			
+			function tocEntryClick(e)
+			{
+				e.stopPropagation();
+				return true;
+			}
+			
+			function init()
+			{
+				var selectElement = document.getElementById('jumpTo');
+				selectElement.addEventListener('change', jumpToChange, false);
+				
+				var tocButton = document.getElementById('table_of_contents');
+				tocButton.addEventListener('click', toggleTOC, false);
+				
+				var taskTreeItem = document.getElementById('task_treeitem');
+				if (taskTreeItem.getElementsByTagName('li').length > 0)
+				{
+					taskTreeItem.setAttribute('class', 'children');
+					taskTreeItem.firstChild.setAttribute('class', 'disclosure');
+				}
+				
+				var tocList = document.getElementById('toc');
+				
+				var tocEntries = tocList.getElementsByTagName('li');
+				for (var i = 0; i < tocEntries.length; i++) {
+					tocEntries[i].addEventListener('click', toggleTOCEntryChildren, false);
+				}
+				
+				var tocLinks = tocList.getElementsByTagName('a');
+				for (var i = 0; i < tocLinks.length; i++) {
+					tocLinks[i].addEventListener('click', tocEntryClick, false);
+				}
+				
+				if (window.name == "hideTOC") {
+					toggleTOC.call(tocButton);
+				}
+			}
+			
+			window.onload = init;
+			
+			// If showing in Xcode, hide the TOC and Header
+			if (navigator.userAgent.match(/xcode/i)) {
+				document.getElementById("contents").className = "hideInXcode"
+				document.getElementById("tocContainer").className = "hideInXcode"
+				document.getElementById("top_header").className = "hideInXcode"
+			}
+			
+		</script>
+	</body>
+</html>

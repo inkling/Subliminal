@@ -1,0 +1,1491 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="html/html; charset=utf-8" />
+		<title>SLTest Class Reference</title>
+		<meta id="xcode-display" name="xcode-display" content="render"/>
+		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
+		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
+		<meta name="generator" content="appledoc 2.1 (build 858)" />
+	</head>
+	<body>
+		<header id="top_header">
+			<div id="library" class="hideInXcode">
+				<h1><a id="libraryTitle" href="../index.html">Subliminal </a></h1>
+				<a id="developerHome" href="../index.html">Inkling</a>
+			</div>
+			
+			<div id="title" role="banner">
+				<h1 class="hideInXcode">SLTest Class Reference</h1>
+			</div>
+			<ul id="headerButtons" role="toolbar">
+				<li id="toc_button">
+					<button aria-label="Show Table of Contents" role="checkbox" class="open" id="table_of_contents"><span class="disclosure"></span>Table of Contents</button>
+				</li>
+				<li id="jumpto_button" role="navigation">
+					<select id="jumpTo">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+	
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+	
+	
+	
+	
+	
+	<option value="class_methods">Class Methods</option>
+	
+	<option value="//api/name/allTests">&nbsp;&nbsp;&nbsp;&nbsp;+ allTests</option>
+	
+	<option value="//api/name/focusedTestCases">&nbsp;&nbsp;&nbsp;&nbsp;+ focusedTestCases</option>
+	
+	<option value="//api/name/isAbstract">&nbsp;&nbsp;&nbsp;&nbsp;+ isAbstract</option>
+	
+	<option value="//api/name/isFocused">&nbsp;&nbsp;&nbsp;&nbsp;+ isFocused</option>
+	
+	<option value="//api/name/supportsCurrentPlatform">&nbsp;&nbsp;&nbsp;&nbsp;+ supportsCurrentPlatform</option>
+	
+	<option value="//api/name/testCaseWithSelectorSupportsCurrentPlatform:">&nbsp;&nbsp;&nbsp;&nbsp;+ testCaseWithSelectorSupportsCurrentPlatform:</option>
+	
+	<option value="//api/name/testCases">&nbsp;&nbsp;&nbsp;&nbsp;+ testCases</option>
+	
+	<option value="//api/name/testCasesToRun">&nbsp;&nbsp;&nbsp;&nbsp;+ testCasesToRun</option>
+	
+	<option value="//api/name/testNamed:">&nbsp;&nbsp;&nbsp;&nbsp;+ testNamed:</option>
+	
+	
+	
+	
+	<option value="instance_methods">Instance Methods</option>
+	
+	<option value="//api/name/recordLastKnownFile:line:">&nbsp;&nbsp;&nbsp;&nbsp;- recordLastKnownFile:line:</option>
+	
+	<option value="//api/name/runAndReportNumExecuted:failed:failedUnexpectedly:">&nbsp;&nbsp;&nbsp;&nbsp;- runAndReportNumExecuted:failed:failedUnexpectedly:</option>
+	
+	<option value="//api/name/setUpTest">&nbsp;&nbsp;&nbsp;&nbsp;- setUpTest</option>
+	
+	<option value="//api/name/setUpTestCaseWithSelector:">&nbsp;&nbsp;&nbsp;&nbsp;- setUpTestCaseWithSelector:</option>
+	
+	<option value="//api/name/tearDownTest">&nbsp;&nbsp;&nbsp;&nbsp;- tearDownTest</option>
+	
+	<option value="//api/name/tearDownTestCaseWithSelector:">&nbsp;&nbsp;&nbsp;&nbsp;- tearDownTestCaseWithSelector:</option>
+	
+	<option value="//api/name/wait:">&nbsp;&nbsp;&nbsp;&nbsp;- wait:</option>
+	
+	
+	
+</select>
+				</li>
+			</ul>
+		</header>
+		<nav id="tocContainer" class="isShowingTOC">
+			<ul id="toc" role="tree">
+				
+<li role="treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#overview">Overview</a></span></li>
+
+
+
+
+<li role="treeitem" id="task_treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#tasks">Tasks</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Retrieving Tests to Run">Retrieving Tests to Run</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Conditionalizing Test Runs">Conditionalizing Test Runs</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Running a Test">Running a Test</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Internal Methods">Internal Methods</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Running Test Cases">Running Test Cases</a></span></li>
+	
+</ul></li>
+
+
+
+
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#class_methods">Class Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/allTests">allTests</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/focusedTestCases">focusedTestCases</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/isAbstract">isAbstract</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/isFocused">isFocused</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/supportsCurrentPlatform">supportsCurrentPlatform</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/testCaseWithSelectorSupportsCurrentPlatform:">testCaseWithSelectorSupportsCurrentPlatform:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/testCases">testCases</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/testCasesToRun">testCasesToRun</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/testNamed:">testNamed:</a></span></li>
+	
+</ul></li>
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/recordLastKnownFile:line:">recordLastKnownFile:line:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/runAndReportNumExecuted:failed:failedUnexpectedly:">runAndReportNumExecuted:failed:failedUnexpectedly:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setUpTest">setUpTest</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setUpTestCaseWithSelector:">setUpTestCaseWithSelector:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/tearDownTest">tearDownTest</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/tearDownTestCaseWithSelector:">tearDownTestCaseWithSelector:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/wait:">wait:</a></span></li>
+	
+</ul></li>
+
+
+			</ul>
+		</nav>
+		<article>
+			<div id="contents" class="isShowingTOC" role="main">
+				<a title="SLTest Class Reference" name="top"></a>
+				<div class="main-navigation navigation-top">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="header">
+					<div class="section-header">
+						<h1 class="title title-header">SLTest Class Reference</h1>
+					</div>		
+				</div>
+				<div id="container">	
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<td class="specification-title">Inherits from</td>
+	<td class="specification-value">NSObject</td>
+</tr><tr>
+	<td class="specification-title">Declared in</td>
+	<td class="specification-value">SLTest.h</td>
+</tr>
+						</tbody></table></div>
+					
+					
+					
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p><code>SLTest</code> is the abstract superclass of Subliminal integration tests.</p>
+
+<p>To write a test, developers create a new subclass of <code>SLTest</code>. They then add
+test case methods and implement set-up and tear-down methods as necessary.</p>
+
+<p>The methods in the <code>SLTest (Internal)</code> category are to be used only
+within Subliminal.</p>
+
+<p>The methods in the <code>SLTest (SLTestCase)</code> category are used to set up before
+and clean up after individual test case methods. Test case methods are methods,
+defined on a subclass of SLTest:</p>
+
+<ul>
+<li>whose names have the prefix &ldquo;test&rdquo;,</li>
+<li>with <code>void</code> return types, and</li>
+<li>which take no arguments.</li>
+</ul>
+
+
+<p>When a test is <a href="#//api/name/runAndReportNumExecuted:failed:failedUnexpectedly:">run</a>,
+it discovers, sets up, runs, and tears down all its test cases.
+The method descriptions below specify when each method will be called,
+and <code>[SLTestTests testCompleteTestRunSequence]</code> gives an example.</p>
+
+<p>A test case &ldquo;passes&rdquo; if it throws no exceptions in its set-up, tear-down, or
+the body of the test case itself; otherwise, it &ldquo;fails&rdquo;. That failure is
+&ldquo;expected&rdquo; if it was caused by a test assertion failing. Any other exception
+causes an &ldquo;unexpected&rdquo; failure.</p>
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						<h2 class="subtitle subtitle-tasks">Tasks</h2>
+						
+						
+						<a title="Retrieving Tests to Run" name="task_Retrieving Tests to Run"></a>
+						<h3 class="subsubtitle task-title">Retrieving Tests to Run</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/allTests">+&nbsp;allTests</a></code>
+		<span class="tooltip"><p>Returns all tests linked against the current target.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/testNamed:">+&nbsp;testNamed:</a></code>
+		<span class="tooltip"><p>Returns the <code>SLTest</code> subclass with the specified name.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Conditionalizing Test Runs" name="task_Conditionalizing Test Runs"></a>
+						<h3 class="subsubtitle task-title">Conditionalizing Test Runs</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/isAbstract">+&nbsp;isAbstract</a></code>
+		<span class="tooltip"><p>Returns <code>YES</code> if this class does not define test cases.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/supportsCurrentPlatform">+&nbsp;supportsCurrentPlatform</a></code>
+		<span class="tooltip"><p>Returns YES if this test has at least one test case which can be run
+given the current device, screen, etc.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/isFocused">+&nbsp;isFocused</a></code>
+		<span class="tooltip"><p>Returns YES if the test has at least one test case which is focused
+and which can run on the current platform.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Running a Test" name="task_Running a Test"></a>
+						<h3 class="subsubtitle task-title">Running a Test</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/runAndReportNumExecuted:failed:failedUnexpectedly:">&ndash;&nbsp;runAndReportNumExecuted:failed:failedUnexpectedly:</a></code>
+		<span class="tooltip"><p>Runs all test cases defined on the receiver&rsquo;s class,
+and reports statistics about their execution.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Internal Methods" name="task_Internal Methods"></a>
+						<h3 class="subsubtitle task-title">Internal Methods</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/testCases">+&nbsp;testCases</a></code>
+		<span class="tooltip"><p>All test cases defined on this test.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/focusedTestCases">+&nbsp;focusedTestCases</a></code>
+		<span class="tooltip"><p>All focused test cases defined on this test.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/testCasesToRun">+&nbsp;testCasesToRun</a></code>
+		<span class="tooltip"><p>The test cases that will be run when this test is <a href="#//api/name/runAndReportNumExecuted:failed:failedUnexpectedly:">run</a>.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Running Test Cases" name="task_Running Test Cases"></a>
+						<h3 class="subsubtitle task-title">Running Test Cases</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/testCaseWithSelectorSupportsCurrentPlatform:">+&nbsp;testCaseWithSelectorSupportsCurrentPlatform:</a></code>
+		<span class="tooltip"><p>Returns YES if this test case can be run given the current device, screen, etc.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/setUpTest">&ndash;&nbsp;setUpTest</a></code>
+		<span class="tooltip"><p>Called before any test cases are run.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/tearDownTest">&ndash;&nbsp;tearDownTest</a></code>
+		<span class="tooltip"><p>Called after all test cases are run.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/setUpTestCaseWithSelector:">&ndash;&nbsp;setUpTestCaseWithSelector:</a></code>
+		<span class="tooltip"><p>Called before each test case is run.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/tearDownTestCaseWithSelector:">&ndash;&nbsp;tearDownTestCaseWithSelector:</a></code>
+		<span class="tooltip"><p>Called after each test case is run.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/wait:">&ndash;&nbsp;wait:</a></code>
+		<span class="tooltip"><p>Suspends test execution for the specified time interval.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/recordLastKnownFile:line:">&ndash;&nbsp;recordLastKnownFile:line:</a></code>
+		<span class="tooltip"><p>Records a filename and line number to attach to an exception thrown at that
+source line.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+					</div>
+					
+					
+					
+					
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Class Methods" name="class_methods"></a>
+						<h2 class="subtitle subtitle-methods">Class Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/allTests" title="allTests"></a>
+	<h3 class="subsubtitle method-title">allTests</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Returns all tests linked against the current target.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (NSSet *)allTests</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>All tests (<code>SLTest</code> subclasses) linked against the current target.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The recommended way to run Subliminal tests is to invoke <a href="../Classes/SLTestController.html#//api/name/runTests:withCompletionBlock:"><code>[SLTestController runTests:withCompletionBlock:]</code></a>
+with the set returned by this method. That way, new tests will automatically
+be discovered and run.</p>
+
+<p>Without modifying the argument to <a href="../Classes/SLTestController.html#//api/name/runTests:withCompletionBlock:"><code>[SLTestController runTests:withCompletionBlock:]</code></a>,
+tests may be conditionalized to run only in certain circumstances using APIs
+like <a href="#//api/name/isAbstract"><code>isAbstract</code></a>, <a href="#//api/name/supportsCurrentPlatform"><code>supportsCurrentPlatform</code></a>, and <a href="#//api/name/isFocused"><code>isFocused</code></a>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/focusedTestCases" title="focusedTestCases"></a>
+	<h3 class="subsubtitle method-title">focusedTestCases</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>All focused test cases defined on this test.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (NSSet *)focusedTestCases</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>All focused test cases defined on this test, represented as strings.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>A focused test case is a <a href="#//api/name/testCases">test case</a> whose name is prefixed with
+<code>SLTestFocusPrefix</code>. If no test cases are thus &ldquo;explicitly&rdquo; focused,
+all test cases may be &ldquo;implicitly&rdquo; focused if the test itself (or any superclass)
+is focused (by its name being prefixed with <code>SLTestFocusPrefix</code>). If the test itself
+is focused <em>and</em> some test cases are explicitly focused, only the explicitly
+focused test cases will be considered focused. (The &ldquo;narrowest&rdquo; focus applies.)</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTest+Internal.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/isAbstract" title="isAbstract"></a>
+	<h3 class="subsubtitle method-title">isAbstract</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Returns <code>YES</code> if this class does not define test cases.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (BOOL)isAbstract</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p><code>YES</code> if the class is without test cases, otherwise <code>NO</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>An abstract test will not itself be run. Subclasses which do define test cases
+will be run, however, allowing a single base class to define set-up and tear-down
+work shared among related subclasses.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/isFocused" title="isFocused"></a>
+	<h3 class="subsubtitle method-title">isFocused</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Returns YES if the test has at least one test case which is focused
+and which can run on the current platform.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (BOOL)isFocused</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p><code>YES</code> if any test cases are focused and can be run on the current platform,
+<code>NO</code> otherwise.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>When a test is run, if any of its test cases are focused, only those test cases will run.
+This may be useful when writing or debugging tests.</p>
+
+<p>A test case is focused by prefixing its name with &ldquo;<code>focus_</code>&rdquo;, like so:</p>
+
+<pre><code>- (void)focus_testFoo;
+</code></pre>
+
+<p>It is also possible to implicitly focus all test cases by prefixing
+their test&rsquo;s name with &ldquo;<code>Focus_</code>&rdquo;. But if some test cases are explicitly focused
+(as above), only those test cases will run&ndash;the narrowest focus applies.</p>
+
+<p>If a test is focused, that focus will apply to any tests which descend from it.</p><div class="warning"><p><strong>Warning:</strong> Methods that take test case selectors as arguments (like
+<a href="#//api/name/setUpTestCaseWithSelector:"><code>setUpTestCaseWithSelector:</code></a>) are invoked with the unfocused form of the selectors
+&ndash;they need not (and should not) be modified when a test case is focused.</p></div><div class="warning"><p><strong>Warning:</strong> Focused test cases will not be run if their test is not run (e.g. if
+it is not included in the set of tests to be run, or if it does not support
+the current platform).</p></div>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="../Classes/SLTestController.html#//api/name/runTests:withCompletionBlock:">[SLTestController runTests:withCompletionBlock:]</a></p></code></li>
+			
+		</ul>
+	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/supportsCurrentPlatform" title="supportsCurrentPlatform"></a>
+	<h3 class="subsubtitle method-title">supportsCurrentPlatform</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Returns YES if this test has at least one test case which can be run
+given the current device, screen, etc.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (BOOL)supportsCurrentPlatform</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p><code>YES</code> if this class has test cases that can currently run, <code>NO</code> otherwise.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Subclasses of <code>SLTest</code> should override this method if some run-time condition
+should determine whether or not all test cases should run.
+Typical checks might include checking the user interface idiom (phone or pad)
+of the current device, or checking the scale of the main screen.</p>
+
+<p>As a convenience, test writers may specify the device type(s) on which a
+test can run by suffixing tests' names in the following fashion:</p>
+
+<ul>
+<li>A test whose name has the suffix &ldquo;<code>_iPhone</code>,&rdquo; like &ldquo;<code>TestFoo_iPhone</code>&rdquo;,
+ will be executed only when <code>([[UIDevice currentDevice] userInterfaceIdiom] ==
+ UIUserInterfaceIdiomPhone)</code> is true.</li>
+<li>A test whose name has the suffix &ldquo;<code>_iPad</code>&rdquo; will be executed only
+ when the current device user interface idiom is <code>UIUserInterfaceIdiomPad</code>.</li>
+<li>A test whose name has neither the &ldquo;<code>_iPhone</code>&rdquo; nor the &ldquo;<code>_iPad</code>&rdquo;
+ suffix will be executed on all devices regardless of the user interface idiom.</li>
+</ul>
+
+
+<p>The default implementation of this method checks that the class is suffixed
+appropriately and that there is at least one test case for which
+<a href="#//api/name/testCaseWithSelectorSupportsCurrentPlatform:"><code>testCaseWithSelectorSupportsCurrentPlatform:</code></a> returns <code>YES</code>.</p>
+
+<p>If this method returns <code>NO</code>, none of this test&rsquo;s cases will run.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="#//api/name/testCaseWithSelectorSupportsCurrentPlatform:">+ testCaseWithSelectorSupportsCurrentPlatform:</a></p></code></li>
+			
+		</ul>
+	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/testCaseWithSelectorSupportsCurrentPlatform:" title="testCaseWithSelectorSupportsCurrentPlatform:"></a>
+	<h3 class="subsubtitle method-title">testCaseWithSelectorSupportsCurrentPlatform:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Returns YES if this test case can be run given the current device, screen, etc.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (BOOL)testCaseWithSelectorSupportsCurrentPlatform:(SEL)<em>testCaseSelector</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>testCaseSelector</em></dt>
+			<dd><p>A selector identifying a test case.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p><code>YES</code> if the test case can be run, <code>NO</code> otherwise.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Subclasses of SLTest should override this method if they need to do any run-time
+checks to determine whether or not specific test cases can run. Typical checks
+might include checking the user interface idiom (phone or pad) of the current
+device, or checking the scale of the main screen.</p>
+
+<p>As a convenience, test writers may specify the device type(s) on which a
+test case can run by suffixing test cases' names in the following fashion:</p>
+
+<ul>
+<li>A test case whose name has the suffix &ldquo;<code>_iPhone</code>,&rdquo; like &ldquo;<code>testFoo_iPhone</code>&rdquo;,
+ will be executed only when <code>([[UIDevice currentDevice] userInterfaceIdiom] ==
+ UIUserInterfaceIdiomPhone)</code> is true.</li>
+<li>A test case whose name has the suffix &ldquo;<code>_iPad</code>&rdquo; will be executed only
+ when the current device user interface idiom is <code>UIUserInterfaceIdiomPad</code>.</li>
+<li>A test case whose name has neither the &ldquo;<code>_iPhone</code>&rdquo; nor the &ldquo;<code>_iPad</code>&rdquo;
+ suffix will be executed on all devices regardless of the user interface idiom.</li>
+</ul>
+
+
+<p>The default implementation of this method checks that the selector is suffixed
+appropriately.</p><div class="warning"><p><strong>Warning:</strong> If the test does not support the current platform, that test&rsquo;s cases
+will not be run regardless of this method&rsquo;s return value.</p></div>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="#//api/name/supportsCurrentPlatform">+ supportsCurrentPlatform</a></p></code></li>
+			
+		</ul>
+	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/testCases" title="testCases"></a>
+	<h3 class="subsubtitle method-title">testCases</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>All test cases defined on this test.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (NSSet *)testCases</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>All test cases defined on this test, represented as strings.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>A test case is a method beginning with &ldquo;test&rdquo;, taking no arguments, returning <code>void</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTest+Internal.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/testCasesToRun" title="testCasesToRun"></a>
+	<h3 class="subsubtitle method-title">testCasesToRun</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The test cases that will be run when this test is <a href="#//api/name/runAndReportNumExecuted:failed:failedUnexpectedly:">run</a>.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (NSSet *)testCasesToRun</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The test cases returned by <a href="#//api/name/testCases"><code>testCases</code></a>, or <a href="#//api/name/focusedTestCases"><code>focusedTestCases</code></a>
+(if this test is <a href="isFocused">focused</a>), filtered to those test cases that
+support the current platform. The test cases are represented as strings.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTest+Internal.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/testNamed:" title="testNamed:"></a>
+	<h3 class="subsubtitle method-title">testNamed:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Returns the <code>SLTest</code> subclass with the specified name.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (Class)testNamed:(NSString *)<em>name</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>name</em></dt>
+			<dd><p>The name of the test (<code>SLTest</code> subclass) to return.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The <code>SLTest</code> subclass with the specified name, or <code>nil</code> if no <code>SLTest</code>
+subclass with that name is linked against the current target.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>This method may be used to retrieve a single <code>SLTest</code>, e.g. to pass to
+<a href="../Classes/SLTestController.html#//api/name/runTests:withCompletionBlock:"><code>[SLTestController runTests:withCompletionBlock:]</code></a>, without having to import
+that test&rsquo;s interface.</p>
+
+<p>Note that it may be easier to run a single test by <a href="#//api/name/isFocused">focusing</a> that test
+than by modifying the arguments to <a href="../Classes/SLTestController.html#//api/name/runTests:withCompletionBlock:"><code>[SLTestController runTests:withCompletionBlock:]</code></a>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Instance Methods" name="instance_methods"></a>
+						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/recordLastKnownFile:line:" title="recordLastKnownFile:line:"></a>
+	<h3 class="subsubtitle method-title">recordLastKnownFile:line:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Records a filename and line number to attach to an exception thrown at that
+source line.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)recordLastKnownFile:(char *)<em>filename</em> line:(int)<em>lineNumber</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>filename</em></dt>
+			<dd><p>A filename, i.e. the last component of the <code>__FILE__</code> macro&rsquo;s expansion.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>lineNumber</em></dt>
+			<dd><p>A line number, i.e. the <code>__LINE__</code> macro&rsquo;s expansion.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Used by the <code>UIAElement</code> and test assertion macros so that exceptions thrown
+by <a href="../Classes/SLUIAElement.html"><code>SLUIAElement</code></a> methods and/or test assertions may be traced to their origins.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/runAndReportNumExecuted:failed:failedUnexpectedly:" title="runAndReportNumExecuted:failed:failedUnexpectedly:"></a>
+	<h3 class="subsubtitle method-title">runAndReportNumExecuted:failed:failedUnexpectedly:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Runs all test cases defined on the receiver&rsquo;s class,
+and reports statistics about their execution.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)runAndReportNumExecuted:(NSUInteger *)<em>numCasesExecuted</em> failed:(NSUInteger *)<em>numCasesFailed</em> failedUnexpectedly:(NSUInteger *)<em>numCasesFailedUnexpectedly</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>numCasesExecuted</em></dt>
+			<dd><p>If this is non-<code>NULL</code>, on return, this will be set to
+the number of test cases that were executed&ndash;which will be the number of test
+cases defined by the receiver&rsquo;s class.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>numCasesFailed</em></dt>
+			<dd><p>If this is non-<code>NULL</code>, on return, this will be set to the
+number of test cases that failed (the number of test cases that threw exceptions).</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>numCasesFailedUnexpectedly</em></dt>
+			<dd><p>If this is non-<code>NULL</code>, on return, this will
+be set to the number of test cases that failed unexpectedly (those test cases
+that threw exceptions for other reasons than test assertion failures).</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>See <code>SLTest (SLTestCase)</code> for a discussion of test case execution.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/setUpTest" title="setUpTest"></a>
+	<h3 class="subsubtitle method-title">setUpTest</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Called before any test cases are run.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)setUpTest</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>In this method, tests should establish any state shared by all test cases,
+including navigating to the part of the app being exercised by the test cases.</p>
+
+<p>In this method, tests can (and should) use test assertions to ensure
+that set-up was successful.</p><div class="warning"><p><strong>Warning:</strong> If set-up fails, this test will be aborted and its cases skipped.
+However, <a href="#//api/name/tearDownTest"><code>tearDownTest</code></a> will still be executed.</p></div><div class="warning"><p><strong>Warning:</strong> Unlike the <code>-setUp</code> method found in OCUnit and other JUnit-inspired
+frameworks, <code>-setUpTest</code> is called only once per test.</p></div>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="#//api/name/tearDownTest">- tearDownTest</a></p></code></li>
+			
+		</ul>
+	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/setUpTestCaseWithSelector:" title="setUpTestCaseWithSelector:"></a>
+	<h3 class="subsubtitle method-title">setUpTestCaseWithSelector:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Called before each test case is run.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)setUpTestCaseWithSelector:(SEL)<em>testCaseSelector</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>testCaseSelector</em></dt>
+			<dd><p>The selector identifying the test case about to be run.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>In this method, tests should establish any state particular to the specified test case.</p>
+
+<p>In this method, tests can (and should) use test assertions to ensure that
+set-up was successful.</p><div class="warning"><p><strong>Warning:</strong> If set-up fails, the test case will be logged as having failed,
+and the test case itself will be skipped. However, <a href="#//api/name/tearDownTestCaseWithSelector:">tearDownTestCaseWithSelector:</a>
+will still be executed.</p></div>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="#//api/name/tearDownTestCaseWithSelector:">- tearDownTestCaseWithSelector:</a></p></code></li>
+			
+		</ul>
+	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/tearDownTest" title="tearDownTest"></a>
+	<h3 class="subsubtitle method-title">tearDownTest</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Called after all test cases are run.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)tearDownTest</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>In this method, tests should clean up any state shared by all test cases,
+such as that which was established in <a href="#//api/name/setUpTest">setUpTest</a>.</p>
+
+<p>In this method, tests can (and should) use test assertions to ensure that
+tear-down was successful.</p><div class="warning"><p><strong>Warning:</strong> If tear-down fails, the test will be logged as having terminated
+abnormally rather than finished, but its test cases' logs will be preserved.</p></div><div class="warning"><p><strong>Warning:</strong> Unlike the <code>-setUp</code> method found in OCUnit and other JUnit-inspired
+frameworks, <a href="#//api/name/setUpTest"><code>setUpTest</code></a> is called only once per test.</p></div>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="#//api/name/setUpTest">- setUpTest</a></p></code></li>
+			
+		</ul>
+	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/tearDownTestCaseWithSelector:" title="tearDownTestCaseWithSelector:"></a>
+	<h3 class="subsubtitle method-title">tearDownTestCaseWithSelector:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Called after each test case is run.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)tearDownTestCaseWithSelector:(SEL)<em>testCaseSelector</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>testCaseSelector</em></dt>
+			<dd><p>The selector identifying the test case that was run.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>In this method, tests should clean up state particular to the specified test case,
+such as that which was established in <a href="#//api/name/setUpTestCaseWithSelector:">setUpTestCaseWithSelector:</a>.</p>
+
+<p>In this method, tests can (and should) use test assertions to ensure that
+tear-down was successful.</p><div class="warning"><p><strong>Warning:</strong> If tear-down fails, this test case will be logged as having failed
+even if the test case itself succeeded. However, the test case&rsquo;s logs
+will be preserved.</p></div>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="#//api/name/setUpTestCaseWithSelector:">- setUpTestCaseWithSelector:</a></p></code></li>
+			
+		</ul>
+	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/wait:" title="wait:"></a>
+	<h3 class="subsubtitle method-title">wait:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Suspends test execution for the specified time interval.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)wait:(NSTimeInterval)<em>interval</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>interval</em></dt>
+			<dd><p>The time interval for which to wait.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Only use this method to wait (for the UI to update, or for the application
+to complete some operation) if a delay is found to be necessary, and
+it is not possible to describe a specific condition on which to wait.</p>
+
+<p>It should not be necessary to wait before attempting to access interface elements
+when the delay would be less than the <a href="../Classes/SLTestController.html#//api/name/defaultTimeout">default timeout</a>:
+elements automatically <a href="../Classes/SLUIAElement.html#//api/name/defaultTimeout">wait to become valid and/or tappable</a>
+if access requires waiting.</p>
+
+<p>Where the delay would be more than the default timeout, or where the condition
+on which to wait involves application state not made apparent by the UI,
+using the <code>SLAssertTrueWithTimeout</code> macro will result in a clearer, more
+efficient test than using <code>-wait:</code>. See the definition of <code>SLAssertTrueWithTimeout</code>
+for examples.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+				</div>
+				<div class="main-navigation navigation-bottom">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="footer">
+					<hr />
+					<div class="footer-copyright">
+						<p><span class="copyright">&copy; 2013 Inkling. All rights reserved. (Last updated: 2013-06-11)</span><br />
+						
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 858)</a>.</span></p>
+						
+					</div>
+				</div>
+			</div>
+		</article>
+		<script type="text/javascript">
+			function jumpToChange()
+			{
+				window.location.hash = this.options[this.selectedIndex].value;
+			}
+			
+			function toggleTOC()
+			{
+				var contents = document.getElementById('contents');
+				var tocContainer = document.getElementById('tocContainer');
+				
+				if (this.getAttribute('class') == 'open')
+				{
+					this.setAttribute('class', '');
+					contents.setAttribute('class', '');
+					tocContainer.setAttribute('class', '');
+					
+					window.name = "hideTOC";
+				}
+				else
+				{
+					this.setAttribute('class', 'open');
+					contents.setAttribute('class', 'isShowingTOC');
+					tocContainer.setAttribute('class', 'isShowingTOC');
+					
+					window.name = "";
+				}
+				return false;
+			}
+			
+			function toggleTOCEntryChildren(e)
+			{
+				e.stopPropagation();
+				var currentClass = this.getAttribute('class');
+				if (currentClass == 'children') {
+					this.setAttribute('class', 'children open');
+				}
+				else if (currentClass == 'children open') {
+					this.setAttribute('class', 'children');
+				}
+				return false;
+			}
+			
+			function tocEntryClick(e)
+			{
+				e.stopPropagation();
+				return true;
+			}
+			
+			function init()
+			{
+				var selectElement = document.getElementById('jumpTo');
+				selectElement.addEventListener('change', jumpToChange, false);
+				
+				var tocButton = document.getElementById('table_of_contents');
+				tocButton.addEventListener('click', toggleTOC, false);
+				
+				var taskTreeItem = document.getElementById('task_treeitem');
+				if (taskTreeItem.getElementsByTagName('li').length > 0)
+				{
+					taskTreeItem.setAttribute('class', 'children');
+					taskTreeItem.firstChild.setAttribute('class', 'disclosure');
+				}
+				
+				var tocList = document.getElementById('toc');
+				
+				var tocEntries = tocList.getElementsByTagName('li');
+				for (var i = 0; i < tocEntries.length; i++) {
+					tocEntries[i].addEventListener('click', toggleTOCEntryChildren, false);
+				}
+				
+				var tocLinks = tocList.getElementsByTagName('a');
+				for (var i = 0; i < tocLinks.length; i++) {
+					tocLinks[i].addEventListener('click', tocEntryClick, false);
+				}
+				
+				if (window.name == "hideTOC") {
+					toggleTOC.call(tocButton);
+				}
+			}
+			
+			window.onload = init;
+			
+			// If showing in Xcode, hide the TOC and Header
+			if (navigator.userAgent.match(/xcode/i)) {
+				document.getElementById("contents").className = "hideInXcode"
+				document.getElementById("tocContainer").className = "hideInXcode"
+				document.getElementById("top_header").className = "hideInXcode"
+			}
+			
+		</script>
+	</body>
+</html>

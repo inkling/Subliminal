@@ -1,0 +1,834 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="html/html; charset=utf-8" />
+		<title>SLElement Class Reference</title>
+		<meta id="xcode-display" name="xcode-display" content="render"/>
+		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
+		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
+		<meta name="generator" content="appledoc 2.1 (build 858)" />
+	</head>
+	<body>
+		<header id="top_header">
+			<div id="library" class="hideInXcode">
+				<h1><a id="libraryTitle" href="../index.html">Subliminal </a></h1>
+				<a id="developerHome" href="../index.html">Inkling</a>
+			</div>
+			
+			<div id="title" role="banner">
+				<h1 class="hideInXcode">SLElement Class Reference</h1>
+			</div>
+			<ul id="headerButtons" role="toolbar">
+				<li id="toc_button">
+					<button aria-label="Show Table of Contents" role="checkbox" class="open" id="table_of_contents"><span class="disclosure"></span>Table of Contents</button>
+				</li>
+				<li id="jumpto_button" role="navigation">
+					<select id="jumpTo">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+	
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+	
+	
+	
+	
+	
+	<option value="class_methods">Class Methods</option>
+	
+	<option value="//api/name/anyElement">&nbsp;&nbsp;&nbsp;&nbsp;+ anyElement</option>
+	
+	<option value="//api/name/elementMatching:withDescription:">&nbsp;&nbsp;&nbsp;&nbsp;+ elementMatching:withDescription:</option>
+	
+	<option value="//api/name/elementWithAccessibilityIdentifier:">&nbsp;&nbsp;&nbsp;&nbsp;+ elementWithAccessibilityIdentifier:</option>
+	
+	<option value="//api/name/elementWithAccessibilityLabel:">&nbsp;&nbsp;&nbsp;&nbsp;+ elementWithAccessibilityLabel:</option>
+	
+	<option value="//api/name/elementWithAccessibilityLabel:value:traits:">&nbsp;&nbsp;&nbsp;&nbsp;+ elementWithAccessibilityLabel:value:traits:</option>
+	
+	
+	
+	
+	<option value="instance_methods">Instance Methods</option>
+	
+	<option value="//api/name/examineMatchingObject:">&nbsp;&nbsp;&nbsp;&nbsp;- examineMatchingObject:</option>
+	
+	<option value="//api/name/matchesObject:">&nbsp;&nbsp;&nbsp;&nbsp;- matchesObject:</option>
+	
+	
+	
+</select>
+				</li>
+			</ul>
+		</header>
+		<nav id="tocContainer" class="isShowingTOC">
+			<ul id="toc" role="tree">
+				
+<li role="treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#overview">Overview</a></span></li>
+
+
+
+
+<li role="treeitem" id="task_treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#tasks">Tasks</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Matching Interface Elements">Matching Interface Elements</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Methods for Subclasses">Methods for Subclasses</a></span></li>
+	
+</ul></li>
+
+
+
+
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#class_methods">Class Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/anyElement">anyElement</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/elementMatching:withDescription:">elementMatching:withDescription:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/elementWithAccessibilityIdentifier:">elementWithAccessibilityIdentifier:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/elementWithAccessibilityLabel:">elementWithAccessibilityLabel:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/elementWithAccessibilityLabel:value:traits:">elementWithAccessibilityLabel:value:traits:</a></span></li>
+	
+</ul></li>
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/examineMatchingObject:">examineMatchingObject:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/matchesObject:">matchesObject:</a></span></li>
+	
+</ul></li>
+
+
+			</ul>
+		</nav>
+		<article>
+			<div id="contents" class="isShowingTOC" role="main">
+				<a title="SLElement Class Reference" name="top"></a>
+				<div class="main-navigation navigation-top">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="header">
+					<div class="section-header">
+						<h1 class="title title-header">SLElement Class Reference</h1>
+					</div>		
+				</div>
+				<div id="container">	
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<td class="specification-title">Inherits from</td>
+	<td class="specification-value"><a href="../Classes/SLUIAElement.html">SLUIAElement</a> : NSObject</td>
+</tr><tr>
+	<td class="specification-title">Declared in</td>
+	<td class="specification-value">SLElement.h</td>
+</tr>
+						</tbody></table></div>
+					
+					
+					
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p>Instances of <code>SLElement</code> allow you to access and manipulate user interface
+elements that match criteria such as having certain accessible values
+or being of a particular type of control.</p>
+
+<p>These criteria are specified when <code>SLElement</code> is constructed, in the form of a
+predicate. When <code>SLElement</code> needs to access its corresponding interface element,
+it evaluates the element hierarchy using that predicate. If a matching object
+is found, it is made available to Subliminal and to UIAutomation
+to access and manipulate.</p>
+
+<p>The methods in the <code>SLElement (Subclassing)</code> category are to be called or
+overridden by subclasses of <code>SLElement</code>. Tests should not call these methods.</p>
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						<h2 class="subtitle subtitle-tasks">Tasks</h2>
+						
+						
+						<a title="Matching Interface Elements" name="task_Matching Interface Elements"></a>
+						<h3 class="subsubtitle task-title">Matching Interface Elements</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/elementWithAccessibilityLabel:">+&nbsp;elementWithAccessibilityLabel:</a></code>
+		<span class="tooltip"><p>Creates and returns an element that matches objects in the accessibility hierarchy
+with the specified accessibility label.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/elementWithAccessibilityLabel:value:traits:">+&nbsp;elementWithAccessibilityLabel:value:traits:</a></code>
+		<span class="tooltip"><p>Creates and returns an element that matches objects in the accessibility hierarchy
+with the specified accessibility label, value, and/or traits.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/elementWithAccessibilityIdentifier:">+&nbsp;elementWithAccessibilityIdentifier:</a></code>
+		<span class="tooltip"><p>Creates and returns an element that matches objects in the accessibility hierarchy
+with the specified accessibility identifier.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/elementMatching:withDescription:">+&nbsp;elementMatching:withDescription:</a></code>
+		<span class="tooltip"><p>Creates and returns an element that evaluates the accessibility hierarchy
+using a specified block object.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/anyElement">+&nbsp;anyElement</a></code>
+		<span class="tooltip"><p>Creates and returns an element that matches any object in the accessibility hierarchy.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Methods for Subclasses" name="task_Methods for Subclasses"></a>
+						<h3 class="subsubtitle task-title">Methods for Subclasses</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/matchesObject:">&ndash;&nbsp;matchesObject:</a></code>
+		<span class="tooltip"><p>Determines if the specified element matches the specified object.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/examineMatchingObject:">&ndash;&nbsp;examineMatchingObject:</a></code>
+		<span class="tooltip"><p>Allows the caller to interact with the actual object matched by the specified
+<code>SLElement</code>.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+					</div>
+					
+					
+					
+					
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Class Methods" name="class_methods"></a>
+						<h2 class="subtitle subtitle-methods">Class Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/anyElement" title="anyElement"></a>
+	<h3 class="subsubtitle method-title">anyElement</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates and returns an element that matches any object in the accessibility hierarchy.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (instancetype)anyElement</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>A newly created element that matches any object in the accessibility hierarchy.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>SLElement defines this constructor primarily for the benefit of subclasses
+that match a certain kind of object by default, such that a match is likely
+unique even without the developer specifying additional information. For instance,
+if your application only has one webview onscreen at a time, you could match
+that webview (using <a href="../Classes/SLWebView.html"><code>SLWebView</code></a>) by matching &ldquo;any&rdquo; webview, without having to
+give that webview an accessibility label or identifier.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/elementMatching:withDescription:" title="elementMatching:withDescription:"></a>
+	<h3 class="subsubtitle method-title">elementMatching:withDescription:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates and returns an element that evaluates the accessibility hierarchy
+using a specified block object.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (instancetype)elementMatching:(BOOL ( ^ ) ( NSObject *obj ))<em>predicate</em> withDescription:(NSString *)<em>description</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>predicate</em></dt>
+			<dd><p>The block used to evaluate objects within the accessibility
+hierarchy. The block will be evaluated on the main thread. The block should
+return YES if the element matches the object, otherwise NO.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>description</em></dt>
+			<dd><p>An optional description of the element, for use in debugging.
+(The other <code>SLElement</code> constructors derive element descriptions from their arguments.)</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>A newly created element that evaluates objects using predicate.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>This method allows you to apply some knowledge of the target object&rsquo;s identity
+and/or its location in the accessibility hierarchy, where the target object&rsquo;s
+accessibility information is not sufficient to distinguish the object.</p>
+
+<p>Consider using one of the more specialized constructors before this method.
+It is best to identify an object using information like its accessibility label,
+value, and/or traits, because that information also helps users with disabilities
+use your application. Even when that information is not sufficient to distinguish
+a target object, it may be easier for your application to set a unique
+accessibility identifier on a target object than for your tests to define a
+complex predicate.</p>
+
+<p>To describe the element&rsquo;s location in the accessibility hierarchy, see the
+methods in <code>NSObject (SLAccessibilityHierarchy)</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="#//api/name/elementWithAccessibilityIdentifier:">+ elementWithAccessibilityIdentifier:</a></p></code></li>
+			
+		</ul>
+	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/elementWithAccessibilityIdentifier:" title="elementWithAccessibilityIdentifier:"></a>
+	<h3 class="subsubtitle method-title">elementWithAccessibilityIdentifier:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates and returns an element that matches objects in the accessibility hierarchy
+with the specified accessibility identifier.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (instancetype)elementWithAccessibilityIdentifier:(NSString *)<em>identifier</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>identifier</em></dt>
+			<dd><p>A string that uniquely identifies a matching object.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>A newly created element that matches objects in the accessibility
+hierarchy with the specified accessibility identifier.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>It is best to identify an object using information like its accessibility label,
+value, and/or traits, because that information also helps users with disabilities
+use your application. However, when that information is not sufficient to
+identify an object, an accessibility identifier may be set by the application.
+Unlike accessibility labels, identifiers are not visible to users of assistive
+applications.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/elementWithAccessibilityLabel:" title="elementWithAccessibilityLabel:"></a>
+	<h3 class="subsubtitle method-title">elementWithAccessibilityLabel:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates and returns an element that matches objects in the accessibility hierarchy
+with the specified accessibility label.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (instancetype)elementWithAccessibilityLabel:(NSString *)<em>label</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>label</em></dt>
+			<dd><p>A label that identifies a matching object.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>A newly created element that matches objects in the accessibility
+hierarchy with the specified accessibility label.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>An accessibility label is the preferred way to identify an element to Subliminal,
+because accessibility labels are visible to users of assistive applications.
+See the UIAccessibility Protocol Reference for guidance in determining appropriate
+labels.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/elementWithAccessibilityLabel:value:traits:" title="elementWithAccessibilityLabel:value:traits:"></a>
+	<h3 class="subsubtitle method-title">elementWithAccessibilityLabel:value:traits:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Creates and returns an element that matches objects in the accessibility hierarchy
+with the specified accessibility label, value, and/or traits.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (instancetype)elementWithAccessibilityLabel:(NSString *)<em>label</em> value:(NSString *)<em>value</em> traits:(UIAccessibilityTraits)<em>traits</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>label</em></dt>
+			<dd><p>A label that identifies a matching object.
+If this is <code>nil</code>, the element does not restrict matches by label.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>value</em></dt>
+			<dd><p>The value of a matching object.
+If this is <code>nil</code>, the element does not restrict matches by value.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>traits</em></dt>
+			<dd><p>The combination of accessibility traits that characterize a
+matching object. If this is <code>SLUIAccessibilityTraitAny</code>, the element does not
+restrict matches by trait.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>See the UIAccessibility Protocol Reference for guidance in determining
+appropriate accessibility labels, values, and traits.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Instance Methods" name="instance_methods"></a>
+						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/examineMatchingObject:" title="examineMatchingObject:"></a>
+	<h3 class="subsubtitle method-title">examineMatchingObject:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Allows the caller to interact with the actual object matched by the specified
+<code>SLElement</code>.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)examineMatchingObject:(void ( ^ ) ( NSObject *object ))<em>block</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>block</em></dt>
+			<dd><p>A block which takes the matching object as an argument and returns
+<code>void</code>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The block will be executed synchronously on the main thread.</p>
+
+<p>This method should be used only when UIAutomation offers no API providing
+equivalent functionality: as a user interface element, the object should be
+manipulated by the simulated user for the tests to be most accurate.</p>
+	</div>
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementInvalidException</em></dt>
+			<dd><p>Raised if the element has not matched
+an object by the end of the <a href="+defaultTimeout">default timeout</a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement+Subclassing.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/matchesObject:" title="matchesObject:"></a>
+	<h3 class="subsubtitle method-title">matchesObject:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Determines if the specified element matches the specified object.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (BOOL)matchesObject:(NSObject *)<em>object</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>object</em></dt>
+			<dd><p>The object to which the instance of <code>SLElement</code> should be compared.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p><code>YES</code> if the specified element matches <code>object</code>, <code>NO</code> otherwise.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Subclasses of <code>SLElement</code> can override this method to provide custom matching behavior.
+The default implementation evaluates the object against the predicate
+with which the element was constructed (i.e. the argument to
+<a href="#//api/name/elementMatching:withDescription:"><code>elementMatching:withDescription:</code></a>, or a predicate derived from the arguments
+to a higher-level constructor).</p>
+
+<p>If you override this method, you must call <code>super</code> in your implementation.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement+Subclassing.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+				</div>
+				<div class="main-navigation navigation-bottom">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="footer">
+					<hr />
+					<div class="footer-copyright">
+						<p><span class="copyright">&copy; 2013 Inkling. All rights reserved. (Last updated: 2013-06-11)</span><br />
+						
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 858)</a>.</span></p>
+						
+					</div>
+				</div>
+			</div>
+		</article>
+		<script type="text/javascript">
+			function jumpToChange()
+			{
+				window.location.hash = this.options[this.selectedIndex].value;
+			}
+			
+			function toggleTOC()
+			{
+				var contents = document.getElementById('contents');
+				var tocContainer = document.getElementById('tocContainer');
+				
+				if (this.getAttribute('class') == 'open')
+				{
+					this.setAttribute('class', '');
+					contents.setAttribute('class', '');
+					tocContainer.setAttribute('class', '');
+					
+					window.name = "hideTOC";
+				}
+				else
+				{
+					this.setAttribute('class', 'open');
+					contents.setAttribute('class', 'isShowingTOC');
+					tocContainer.setAttribute('class', 'isShowingTOC');
+					
+					window.name = "";
+				}
+				return false;
+			}
+			
+			function toggleTOCEntryChildren(e)
+			{
+				e.stopPropagation();
+				var currentClass = this.getAttribute('class');
+				if (currentClass == 'children') {
+					this.setAttribute('class', 'children open');
+				}
+				else if (currentClass == 'children open') {
+					this.setAttribute('class', 'children');
+				}
+				return false;
+			}
+			
+			function tocEntryClick(e)
+			{
+				e.stopPropagation();
+				return true;
+			}
+			
+			function init()
+			{
+				var selectElement = document.getElementById('jumpTo');
+				selectElement.addEventListener('change', jumpToChange, false);
+				
+				var tocButton = document.getElementById('table_of_contents');
+				tocButton.addEventListener('click', toggleTOC, false);
+				
+				var taskTreeItem = document.getElementById('task_treeitem');
+				if (taskTreeItem.getElementsByTagName('li').length > 0)
+				{
+					taskTreeItem.setAttribute('class', 'children');
+					taskTreeItem.firstChild.setAttribute('class', 'disclosure');
+				}
+				
+				var tocList = document.getElementById('toc');
+				
+				var tocEntries = tocList.getElementsByTagName('li');
+				for (var i = 0; i < tocEntries.length; i++) {
+					tocEntries[i].addEventListener('click', toggleTOCEntryChildren, false);
+				}
+				
+				var tocLinks = tocList.getElementsByTagName('a');
+				for (var i = 0; i < tocLinks.length; i++) {
+					tocLinks[i].addEventListener('click', tocEntryClick, false);
+				}
+				
+				if (window.name == "hideTOC") {
+					toggleTOC.call(tocButton);
+				}
+			}
+			
+			window.onload = init;
+			
+			// If showing in Xcode, hide the TOC and Header
+			if (navigator.userAgent.match(/xcode/i)) {
+				document.getElementById("contents").className = "hideInXcode"
+				document.getElementById("tocContainer").className = "hideInXcode"
+				document.getElementById("top_header").className = "hideInXcode"
+			}
+			
+		</script>
+	</body>
+</html>

@@ -1,0 +1,1837 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="html/html; charset=utf-8" />
+		<title>SLUIAElement Class Reference</title>
+		<meta id="xcode-display" name="xcode-display" content="render"/>
+		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
+		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
+		<meta name="generator" content="appledoc 2.1 (build 858)" />
+	</head>
+	<body>
+		<header id="top_header">
+			<div id="library" class="hideInXcode">
+				<h1><a id="libraryTitle" href="../index.html">Subliminal </a></h1>
+				<a id="developerHome" href="../index.html">Inkling</a>
+			</div>
+			
+			<div id="title" role="banner">
+				<h1 class="hideInXcode">SLUIAElement Class Reference</h1>
+			</div>
+			<ul id="headerButtons" role="toolbar">
+				<li id="toc_button">
+					<button aria-label="Show Table of Contents" role="checkbox" class="open" id="table_of_contents"><span class="disclosure"></span>Table of Contents</button>
+				</li>
+				<li id="jumpto_button" role="navigation">
+					<select id="jumpTo">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+	
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+	
+	
+	
+	
+	
+	<option value="class_methods">Class Methods</option>
+	
+	<option value="//api/name/SLElementIsTappableFunctionName">&nbsp;&nbsp;&nbsp;&nbsp;+ SLElementIsTappableFunctionName</option>
+	
+	<option value="//api/name/defaultTimeout">&nbsp;&nbsp;&nbsp;&nbsp;+ defaultTimeout</option>
+	
+	<option value="//api/name/setDefaultTimeout:">&nbsp;&nbsp;&nbsp;&nbsp;+ setDefaultTimeout:</option>
+	
+	
+	
+	
+	<option value="instance_methods">Instance Methods</option>
+	
+	<option value="//api/name/dragWithStartOffset:endOffset:">&nbsp;&nbsp;&nbsp;&nbsp;- dragWithStartOffset:endOffset:</option>
+	
+	<option value="//api/name/hitpoint">&nbsp;&nbsp;&nbsp;&nbsp;- hitpoint</option>
+	
+	<option value="//api/name/isEnabled">&nbsp;&nbsp;&nbsp;&nbsp;- isEnabled</option>
+	
+	<option value="//api/name/isInvalidOrInvisible">&nbsp;&nbsp;&nbsp;&nbsp;- isInvalidOrInvisible</option>
+	
+	<option value="//api/name/isTappable">&nbsp;&nbsp;&nbsp;&nbsp;- isTappable</option>
+	
+	<option value="//api/name/isValid">&nbsp;&nbsp;&nbsp;&nbsp;- isValid</option>
+	
+	<option value="//api/name/isValidAndVisible">&nbsp;&nbsp;&nbsp;&nbsp;- isValidAndVisible</option>
+	
+	<option value="//api/name/isVisible">&nbsp;&nbsp;&nbsp;&nbsp;- isVisible</option>
+	
+	<option value="//api/name/label">&nbsp;&nbsp;&nbsp;&nbsp;- label</option>
+	
+	<option value="//api/name/logElement">&nbsp;&nbsp;&nbsp;&nbsp;- logElement</option>
+	
+	<option value="//api/name/logElementTree">&nbsp;&nbsp;&nbsp;&nbsp;- logElementTree</option>
+	
+	<option value="//api/name/rect">&nbsp;&nbsp;&nbsp;&nbsp;- rect</option>
+	
+	<option value="//api/name/scrollToVisible">&nbsp;&nbsp;&nbsp;&nbsp;- scrollToVisible</option>
+	
+	<option value="//api/name/tap">&nbsp;&nbsp;&nbsp;&nbsp;- tap</option>
+	
+	<option value="//api/name/value">&nbsp;&nbsp;&nbsp;&nbsp;- value</option>
+	
+	<option value="//api/name/waitUntilTappable:thenPerformActionWithUIARepresentation:timeout:">&nbsp;&nbsp;&nbsp;&nbsp;- waitUntilTappable:thenPerformActionWithUIARepresentation:timeout:</option>
+	
+	<option value="//api/name/waitUntilTappable:thenSendMessage:">&nbsp;&nbsp;&nbsp;&nbsp;- waitUntilTappable:thenSendMessage:</option>
+	
+	
+	
+</select>
+				</li>
+			</ul>
+		</header>
+		<nav id="tocContainer" class="isShowingTOC">
+			<ul id="toc" role="tree">
+				
+<li role="treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#overview">Overview</a></span></li>
+
+
+
+
+<li role="treeitem" id="task_treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#tasks">Tasks</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Configuring the Default Timeout">Configuring the Default Timeout</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Determining Element State">Determining Element State</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Gestures and Actions">Gestures and Actions</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Identifying Elements">Identifying Elements</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Determining Element Positioning">Determining Element Positioning</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Logging Element Information">Logging Element Information</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Methods for Subclasses">Methods for Subclasses</a></span></li>
+	
+</ul></li>
+
+
+
+
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#class_methods">Class Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/SLElementIsTappableFunctionName">SLElementIsTappableFunctionName</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/defaultTimeout">defaultTimeout</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setDefaultTimeout:">setDefaultTimeout:</a></span></li>
+	
+</ul></li>
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/dragWithStartOffset:endOffset:">dragWithStartOffset:endOffset:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/hitpoint">hitpoint</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/isEnabled">isEnabled</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/isInvalidOrInvisible">isInvalidOrInvisible</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/isTappable">isTappable</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/isValid">isValid</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/isValidAndVisible">isValidAndVisible</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/isVisible">isVisible</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/label">label</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logElement">logElement</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logElementTree">logElementTree</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/rect">rect</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/scrollToVisible">scrollToVisible</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/tap">tap</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/value">value</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/waitUntilTappable:thenPerformActionWithUIARepresentation:timeout:">waitUntilTappable:thenPerformActionWithUIARepresentation:timeout:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/waitUntilTappable:thenSendMessage:">waitUntilTappable:thenSendMessage:</a></span></li>
+	
+</ul></li>
+
+
+			</ul>
+		</nav>
+		<article>
+			<div id="contents" class="isShowingTOC" role="main">
+				<a title="SLUIAElement Class Reference" name="top"></a>
+				<div class="main-navigation navigation-top">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="header">
+					<div class="section-header">
+						<h1 class="title title-header">SLUIAElement Class Reference</h1>
+					</div>		
+				</div>
+				<div id="container">	
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<td class="specification-title">Inherits from</td>
+	<td class="specification-value">NSObject</td>
+</tr><tr>
+	<td class="specification-title">Declared in</td>
+	<td class="specification-value">SLUIAElement.h</td>
+</tr>
+						</tbody></table></div>
+					
+					
+					
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p><code>SLUIAElement</code> is an abstract class that defines an interface to
+access and manipulate a user interface element within your application.</p>
+
+<p>Concrete subclasses of <code>SLUIAElement</code>, <a href="../Classes/SLElement.html"><code>SLElement</code></a> and <a href="../Classes/SLStaticElement.html"><code>SLStaticElement</code></a>,
+handle the specifics of matching particular elements.</p>
+
+<p>The methods in the <code>SLUIAElement (Subclassing)</code> category are to be called
+or overridden by subclasses of <code>SLUIAElement</code>. Tests should not call these
+methods.</p>
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						<h2 class="subtitle subtitle-tasks">Tasks</h2>
+						
+						
+						<a title="Configuring the Default Timeout" name="task_Configuring the Default Timeout"></a>
+						<h3 class="subsubtitle task-title">Configuring the Default Timeout</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/setDefaultTimeout:">+&nbsp;setDefaultTimeout:</a></code>
+		<span class="tooltip"><p>Establishes the <a href="#//api/name/value">value</a> of the grace period during which instances <code>SLUIAElement</code>
+wait to establish access to their corresponding interface elements.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/defaultTimeout">+&nbsp;defaultTimeout</a></code>
+		<span class="tooltip"><p>The <a href="#//api/name/value">value</a> of the grace period during which instances of <code>SLUIAElement</code>
+wait to establish access to their corresponding interface elements.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Determining Element State" name="task_Determining Element State"></a>
+						<h3 class="subsubtitle task-title">Determining Element State</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/isValid">&ndash;&nbsp;isValid</a></code>
+		<span class="tooltip"><p>Determines whether a user interface element matching the specified <code>SLUIAElement</code>
+currently exists.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/isVisible">&ndash;&nbsp;isVisible</a></code>
+		<span class="tooltip"><p>Determines whether the specified element is visible on the screen.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/isValidAndVisible">&ndash;&nbsp;isValidAndVisible</a></code>
+		<span class="tooltip"><p>Determines whether the specified element is valid, and if so, if it is visible
+on the screen.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/isInvalidOrInvisible">&ndash;&nbsp;isInvalidOrInvisible</a></code>
+		<span class="tooltip"><p>Determines whether the specified element is invalid or, if it is valid,
+if it is invisible.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/isEnabled">&ndash;&nbsp;isEnabled</a></code>
+		<span class="tooltip"><p>Determines whether the specified element is enabled.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/isTappable">&ndash;&nbsp;isTappable</a></code>
+		<span class="tooltip"><p>Determines whether it is possible to interact with the specified element.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Gestures and Actions" name="task_Gestures and Actions"></a>
+						<h3 class="subsubtitle task-title">Gestures and Actions</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/tap">&ndash;&nbsp;tap</a></code>
+		<span class="tooltip"><p>Taps the specified element.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/dragWithStartOffset:endOffset:">&ndash;&nbsp;dragWithStartOffset:endOffset:</a></code>
+		<span class="tooltip"><p>Drags within the bounds of the specified element.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Identifying Elements" name="task_Identifying Elements"></a>
+						<h3 class="subsubtitle task-title">Identifying Elements</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/scrollToVisible">&ndash;&nbsp;scrollToVisible</a></code>
+		<span class="tooltip"><p>If this element has a UIScrollView or UIWebview ancestor, then that ancestor will be
+scrolled until this element is visible.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/label">&ndash;&nbsp;label</a></code>
+		<span class="tooltip"><p>Returns the element&rsquo;s label.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/value">&ndash;&nbsp;value</a></code>
+		<span class="tooltip"><p>Returns the element&rsquo;s value.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Determining Element Positioning" name="task_Determining Element Positioning"></a>
+						<h3 class="subsubtitle task-title">Determining Element Positioning</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/hitpoint">&ndash;&nbsp;hitpoint</a></code>
+		<span class="tooltip"><p>Returns the screen position to <a href="#//api/name/tap">tap</a> for the element.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/rect">&ndash;&nbsp;rect</a></code>
+		<span class="tooltip"><p>Returns the location and size of the object.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Logging Element Information" name="task_Logging Element Information"></a>
+						<h3 class="subsubtitle task-title">Logging Element Information</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/logElement">&ndash;&nbsp;logElement</a></code>
+		<span class="tooltip"><p>Logs information about the specified element.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/logElementTree">&ndash;&nbsp;logElementTree</a></code>
+		<span class="tooltip"><p>Logs information about the element hierarchy rooted in the specified
+element.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Methods for Subclasses" name="task_Methods for Subclasses"></a>
+						<h3 class="subsubtitle task-title">Methods for Subclasses</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/waitUntilTappable:thenSendMessage:">&ndash;&nbsp;waitUntilTappable:thenSendMessage:</a></code>
+		<span class="tooltip"><p>Forwards an action message to the <code>UIAElement</code> corresponding to the
+specified element and returns the result.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/waitUntilTappable:thenPerformActionWithUIARepresentation:timeout:">&ndash;&nbsp;waitUntilTappable:thenPerformActionWithUIARepresentation:timeout:</a></code>
+		<span class="tooltip"><p>Provides access to the UIAutomation representation of the specified element
+within a specified block.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/SLElementIsTappableFunctionName">+&nbsp;SLElementIsTappableFunctionName</a></code>
+		<span class="tooltip"><p>Returns the name of the JavaScript function used to evaluate whether a
+<code>UIAElement</code> is tappable, loading it into the terminal&rsquo;s namespace if necessary.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+					</div>
+					
+					
+					
+					
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Class Methods" name="class_methods"></a>
+						<h2 class="subtitle subtitle-methods">Class Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/SLElementIsTappableFunctionName" title="SLElementIsTappableFunctionName"></a>
+	<h3 class="subsubtitle method-title">SLElementIsTappableFunctionName</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Returns the name of the JavaScript function used to evaluate whether a
+<code>UIAElement</code> is tappable, loading it into the terminal&rsquo;s namespace if necessary.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (NSString *)SLElementIsTappableFunctionName</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The name of the JavaScript function used to evaluate whether a
+<code>UIAElement</code> is tappable.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>This method is used internally by <code>SLUIAElement</code> and its subclasses
+<a href="../Classes/SLElement.html"><code>SLElement</code></a> and <a href="../Classes/SLStaticElement.html"><code>SLStaticElement</code></a>. It should not need to be used by additional
+descendants of <code>SLUIAElement</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement+Subclassing.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/defaultTimeout" title="defaultTimeout"></a>
+	<h3 class="subsubtitle method-title">defaultTimeout</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>The <a href="#//api/name/value">value</a> of the grace period during which instances of <code>SLUIAElement</code>
+wait to establish access to their corresponding interface elements.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (NSTimeInterval)defaultTimeout</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The <a href="#//api/name/value">value</a> of the grace period that instances of <code>SLUIAElement</code> use
+to establish access to their corresponding interface elements.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>When asked to access their corresponding elements, instances of <code>SLUIAElement</code>
+automatically wait for those elements to become <a href="#//api/name/isValid">valid</a>, for not more
+than this timeout <a href="#//api/name/value">value</a>. If that access requires simulating user interaction,
+instances of <code>SLUIAElement</code> will additionally wait, for the remainder of the
+timeout, for their corresponding elements to become <a href="#//api/name/isTappable">tappable</a>.</p>
+
+<p>This means that tests rarely need to wait for the user interface to update
+before attempting to access or interact with interface elements.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="#//api/name/setDefaultTimeout:">+ setDefaultTimeout:</a></p></code></li>
+			
+			<li><code><p><a href="#//api/name/isValid">- isValid</a></p></code></li>
+			
+			<li><code><p><a href="#//api/name/isTappable">- isTappable</a></p></code></li>
+			
+		</ul>
+	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/setDefaultTimeout:" title="setDefaultTimeout:"></a>
+	<h3 class="subsubtitle method-title">setDefaultTimeout:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Establishes the <a href="#//api/name/value">value</a> of the grace period during which instances <code>SLUIAElement</code>
+wait to establish access to their corresponding interface elements.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (void)setDefaultTimeout:(NSTimeInterval)<em>timeout</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>timeout</em></dt>
+			<dd><p>The new <a href="#//api/name/value">value</a> of the &ldquo;grace period&rdquo; that instances of <code>SLUIAElement</code> use
+to establish access to their corresponding interface elements.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Clients change this value by setting the default timeout used by the shared
+test controller (<a href="../Classes/SLTestController.html#//api/name/defaultTimeout">[SLTestController setDefaultTimeout:]</a>) before testing begins.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="#//api/name/defaultTimeout">+ defaultTimeout</a></p></code></li>
+			
+		</ul>
+	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Instance Methods" name="instance_methods"></a>
+						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/dragWithStartOffset:endOffset:" title="dragWithStartOffset:endOffset:"></a>
+	<h3 class="subsubtitle method-title">dragWithStartOffset:endOffset:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Drags within the bounds of the specified element.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)dragWithStartOffset:(CGPoint)<em>startOffset</em> endOffset:(CGPoint)<em>endOffset</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>startOffset</em></dt>
+			<dd><p>The offset, within the element&rsquo;s <a href="#//api/name/rect">rect</a>, at which to begin
+dragging.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>endOffset</em></dt>
+			<dd><p>The offset, within the element&rsquo;s <a href="#//api/name/rect">rect</a>, at which to end dragging.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Each offset specifies a pair of <em>x</em> and <em>y</em> values, each ranging from <code>0.0</code> to <code>1.0</code>.
+These values represent, respectively, relative horizontal and vertical positions
+within the element&rsquo;s <a href="#//api/name/rect"><code>rect</code></a>, with <code>{0.0, 0.0}</code> as the top left and <code>{1.0, 1.0}</code>
+as the bottom right.</p>
+
+<p>This method uses a drag duration of 1.0 seconds (the documented default duration
+for touch-and-hold gestures according to Apple&rsquo;s <code>UIAElement</code> class reference).</p>
+	</div>
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementInvalidException</em></dt>
+			<dd><p>Raised if the element is not valid
+by the end of the <a href="#//api/name/defaultTimeout">default timeout</a>.</p></dd>
+		</dl>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementNotTappableException</em></dt>
+			<dd><p>Raised if the element is not tappable
+when whatever amount of time remains of the default timeout after the element
+becomes valid elapses.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/hitpoint" title="hitpoint"></a>
+	<h3 class="subsubtitle method-title">hitpoint</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Returns the screen position to <a href="#//api/name/tap">tap</a> for the element.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (CGPoint)hitpoint</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The position to <a href="#//api/name/tap">tap</a> for the user interface element represented by the
+specified element, in screen coordinates, or <code>SLCGPointNull</code> if such a position
+cannot be determined.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>This is the midpoint of the element&rsquo;s <a href="#//api/name/rect"><code>rect</code></a>, unless that point cannot be tapped,
+in which case this method returns an alternate point, if possible.</p>
+	</div>
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementInvalidException</em></dt>
+			<dd><p>Raised if the element is not valid
+by the end of the <a href="#//api/name/defaultTimeout">default timeout</a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/isEnabled" title="isEnabled"></a>
+	<h3 class="subsubtitle method-title">isEnabled</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Determines whether the specified element is enabled.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (BOOL)isEnabled</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p><code>YES</code> if the user interface element represented by the specified element
+is enabled, <code>NO</code> otherwise.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The user interface element represented by this element defines what
+&ldquo;enabled&rdquo; means. When the interface element is an instance of <code>UIControl</code>,
+this returns the <a href="#//api/name/value">value</a> of that control&rsquo;s <code>-isEnabled</code> property.
+This method otherwise appears to evaluate to <code>YES</code>.</p>
+	</div>
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementInvalidException</em></dt>
+			<dd><p>Raised if the element is not valid
+by the end of the <a href="#//api/name/defaultTimeout">default timeout</a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/isInvalidOrInvisible" title="isInvalidOrInvisible"></a>
+	<h3 class="subsubtitle method-title">isInvalidOrInvisible</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Determines whether the specified element is invalid or, if it is valid,
+if it is invisible.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (BOOL)isInvalidOrInvisible</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p><code>YES</code> if the user interface element represented by the specified element
+<a href="#//api/name/isValid">does not exist</a> or is <a href="#//api/name/isVisible">invisible</a>, <code>NO</code> otherwise.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Unlike <a href="#//api/name/isVisible"><code>isVisible</code></a>, this method will not raise an <code>SLUIAElementInvalidException</code>
+if the element is not valid&ndash;it will just return <code>NO</code>. This allows test writers
+to wait for an element to disappear without having to worry about whether
+the element will become invisible or simply invalid.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/isTappable" title="isTappable"></a>
+	<h3 class="subsubtitle method-title">isTappable</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Determines whether it is possible to interact with the specified element.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (BOOL)isTappable</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p><code>YES</code> if it is possible to <a href="#//api/name/tap">tap</a> on or otherwise interact with the user
+interface element represented by the specified element, <code>NO</code> otherwise.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>All methods that simulate user interaction with an element require that
+that element be tappable. When a method involving user interaction is invoked
+on an <code>SLUIAElement</code>, that method will wait up to the <a href="#//api/name/defaultTimeout">default timeout</a>
+for the element to become <a href="#//api/name/isValid">valid</a>, and then will wait for the remainder
+of the timeout for the element to become tappable. If the element does not
+become tappable within that interval, the method will raise an
+<code>SLUIAElementNotTappableException</code>.</p>
+
+<p>Use of the <code>UIAElement</code> macro can help tests diagnose tappability failures.</p><div class="warning"><p><strong>Warning:</strong> <a href="#//api/name/isVisible">Visibility</a> correlates very closely with tappability,
+but in some circumstances, an element may be tappable even if it is not visible,
+and vice versa, due to bugs in <code>UIAutomation</code>. See the implementation for details.
+Tests should assert visibility separately if desired.</p></div>
+	</div>
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementInvalidException</em></dt>
+			<dd><p>Raised if the element is not valid
+by the end of the <a href="#//api/name/defaultTimeout">default timeout</a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="#//api/name/isValid">- isValid</a></p></code></li>
+			
+		</ul>
+	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/isValid" title="isValid"></a>
+	<h3 class="subsubtitle method-title">isValid</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Determines whether a user interface element matching the specified <code>SLUIAElement</code>
+currently exists.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (BOOL)isValid</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p><code>YES</code> if a matching element currently exists, <code>NO</code> otherwise.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>An element&rsquo;s state can be accessed if and only if it is valid.</p>
+
+<p>This method returns immediately. All other methods, unless marked otherwise,
+wait up to <a href="#//api/name/defaultTimeout">default timeout</a> for the element to become valid,
+and raise an <code>SLUIAElementInvalidException</code> if the element does not become valid
+within that interval.</p>
+
+<p>Use of the <code>UIAElement</code> macro can help tests diagnose validity failures.</p>
+
+<p>Validity is not cached, but is determined anew every time a <code>SLUIAElement</code> is
+asked to access a corresponding interface element.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="#//api/name/isTappable">- isTappable</a></p></code></li>
+			
+		</ul>
+	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/isValidAndVisible" title="isValidAndVisible"></a>
+	<h3 class="subsubtitle method-title">isValidAndVisible</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Determines whether the specified element is valid, and if so, if it is visible
+on the screen.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (BOOL)isValidAndVisible</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p><code>YES</code> if the user interface element represented by the specified element
+both <a href="#//api/name/isValid">exists</a> and is <a href="#//api/name/isVisible">visible</a>, <code>NO</code> otherwise.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>This method returns immediately, but unlike <a href="#//api/name/isVisible"><code>isVisible</code></a>, will not raise
+an <code>SLUIAElementInvalidException</code> if the element is not valid&ndash;it will
+just return <code>NO</code>. This allows test writers to wait for an element to appear
+without having to worry about whether the element is valid at the start of the wait.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/isVisible" title="isVisible"></a>
+	<h3 class="subsubtitle method-title">isVisible</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Determines whether the specified element is visible on the screen.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (BOOL)isVisible</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p><code>YES</code> if the user interface element represented by the specified element
+is visible on-screen, <code>NO</code> otherwise.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>This method returns, or raises an <code>SLUIAElementInvalidException</code>, immediately.</p>
+	</div>
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementInvalidException</em></dt>
+			<dd><p>Raised if the element is not currently
+valid. For this reason, developers are encouraged to use <a href="#//api/name/isValidAndVisible"><code>isValidAndVisible</code></a> and
+<a href="#//api/name/isInvalidOrInvisible"><code>isInvalidOrInvisible</code></a> with <code>SLAssertTrueWithTimeout</code>, rather than this method.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/label" title="label"></a>
+	<h3 class="subsubtitle method-title">label</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Returns the element&rsquo;s label.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (NSString *)label</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The accessibility label of the user interface element represented by
+the specified element.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementInvalidException</em></dt>
+			<dd><p>Raised if the element is not valid
+by the end of the <a href="#//api/name/defaultTimeout">default timeout</a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/logElement" title="logElement"></a>
+	<h3 class="subsubtitle method-title">logElement</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Logs information about the specified element.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)logElement</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The information that is logged is determined by UIAutomation.</p>
+	</div>
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementInvalidException</em></dt>
+			<dd><p>Raised if the element is not valid
+by the end of the <a href="#//api/name/defaultTimeout">default timeout</a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p>[NSObject slAccessibilityDescription]</p></code></li>
+			
+		</ul>
+	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/logElementTree" title="logElementTree"></a>
+	<h3 class="subsubtitle method-title">logElementTree</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Logs information about the element hierarchy rooted in the specified
+element.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)logElementTree</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The information that is logged is determined by UIAutomation.</p>
+	</div>
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementInvalidException</em></dt>
+			<dd><p>Raised if the element is not valid
+by the end of the <a href="#//api/name/defaultTimeout">default timeout</a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p>[NSObject slRecursiveAccessibilityDescription]</p></code></li>
+			
+		</ul>
+	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/rect" title="rect"></a>
+	<h3 class="subsubtitle method-title">rect</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Returns the location and size of the object.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (CGRect)rect</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The accessibility frame of the user interface element represented by
+the specified element.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The relevant coordinates are screen-relative and are adjusted to account for
+device orientation.</p>
+	</div>
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementInvalidException</em></dt>
+			<dd><p>Raised if the element is not valid
+by the end of the <a href="#//api/name/defaultTimeout">default timeout</a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/scrollToVisible" title="scrollToVisible"></a>
+	<h3 class="subsubtitle method-title">scrollToVisible</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>If this element has a UIScrollView or UIWebview ancestor, then that ancestor will be
+scrolled until this element is visible.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)scrollToVisible</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<div class="warning"><p><strong>Warning:</strong> This method should only be called on elements that are within a UIScrollView or UIWebView.</p></div>
+	</div>
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLJavaScriptException</em></dt>
+			<dd><p>if the element is not within a UIScrollView or UIWebView</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/tap" title="tap"></a>
+	<h3 class="subsubtitle method-title">tap</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Taps the specified element.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)tap</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The tap occurs at the element&rsquo;s <a href="#//api/name/hitpoint">hitpoint</a>.</p>
+	</div>
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementInvalidException</em></dt>
+			<dd><p>Raised if the element is not valid
+by the end of the <a href="#//api/name/defaultTimeout">default timeout</a>.</p></dd>
+		</dl>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementNotTappableException</em></dt>
+			<dd><p>Raised if the element is not tappable
+when whatever amount of time remains of the default timeout after the element
+becomes valid elapses.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/value" title="value"></a>
+	<h3 class="subsubtitle method-title">value</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Returns the element&rsquo;s value.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (NSString *)value</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The accessibility value of the user interface element represented by
+the specified element.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementInvalidException</em></dt>
+			<dd><p>Raised if the element is not valid
+by the end of the <a href="#//api/name/defaultTimeout">default timeout</a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/waitUntilTappable:thenPerformActionWithUIARepresentation:timeout:" title="waitUntilTappable:thenPerformActionWithUIARepresentation:timeout:"></a>
+	<h3 class="subsubtitle method-title">waitUntilTappable:thenPerformActionWithUIARepresentation:timeout:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Provides access to the UIAutomation representation of the specified element
+within a specified block.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)waitUntilTappable:(BOOL)<em>waitUntilTappable</em> thenPerformActionWithUIARepresentation:(void ( ^ ) ( NSString *UIARepresentation ))<em>block</em> timeout:(NSTimeInterval)<em>timeout</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>waitUntilTappable</em></dt>
+			<dd><p>If <code>YES</code>, this method will wait for the remainder
+of <code>timeout</code> after the element becomes valid for the element to become tappable.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>block</em></dt>
+			<dd><p>A block which takes the UIAutomation representation of the specified
+element as an argument and returns <code>void</code>.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>timeout</em></dt>
+			<dd><p>The timeout for which this method should wait for the specified
+element to become valid (and tappable, if <code>waitUntilTappable</code> is YES). Clients
+should generally call this method with <a href="#//api/name/defaultTimeout"><code>[SLUIAElement defaultTimeout]</code></a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The UIAutomation representation identifies the <code>UIAElement</code> corresponding to
+the specified element to UIAutomation.</p>
+
+<p>This method allows an element to evaluate more complex JavaScript expressions
+involving its corresponding <code>UIAElement</code> than simple function calls (for which
+<a href="#//api/name/waitUntilTappable:thenSendMessage:"><code>waitUntilTappable:thenSendMessage:</code></a> may be used); or to use a non-standard
+timeout for resolving the corresponding <code>UIAElement</code>.</p>
+
+<p>This method waits until the element <a href="#//api/name/isValid">is valid</a> before attempting to
+access the <code>UIAElement</code>, for not more than <code>timeout. If</code>waitUntilTappable<code>
+is</code>YES<code>, the method will also wait, for the remainder of</code>timeout`, for the
+element to become <a href="#//api/name/isTappable">tappable</a>.</p><div class="warning"><p><strong>Warning:</strong> If the expression to be evaluated by <code>block</code> involves user interaction,
+the caller must pass <code>YES</code> for <code>waitUntilTappable</code>.</p></div>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement+Subclassing.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/waitUntilTappable:thenSendMessage:" title="waitUntilTappable:thenSendMessage:"></a>
+	<h3 class="subsubtitle method-title">waitUntilTappable:thenSendMessage:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Forwards an action message to the <code>UIAElement</code> corresponding to the
+specified element and returns the result.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (id)waitUntilTappable:(BOOL)<em>waitUntilTappable</em> thenSendMessage:(NSString *)<em>action</em>, <em>...</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>waitUntilTappable</em></dt>
+			<dd><p>If <code>YES</code>, this method will wait for the remainder
+of the default timeout after the element becomes valid for the element to
+become tappable.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>action</em></dt>
+			<dd><p>A format string (in the manner of <code>[NSString stringWithFormat:]</code>)
+representing a JavaScript function to be called on the corresponding <code>UIAElement</code>.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>...</em></dt>
+			<dd><p>(Optional) A comma-separated list of arguments to substitute into
+<code>action</code>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The <a href="#//api/name/value">value</a> returned by the function, as an <code>Objective-C</code> object. See
+<a href="../Classes/SLTerminal.html#//api/name/eval:"><code>[SLTerminal eval:]</code></a> for more infomation.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The &ldquo;message&rdquo; is a formatted function call. For instance, <code>SLUIAElement</code> calls
+<a href="#//api/name/tap"><code>tap</code></a>() on its corresponding <code>UIAElement</code> by invoking</p>
+
+<pre><code>[self waitUntilTappable:YES thenSendMessage:@"tap()"]
+</code></pre>
+
+<p>This method automatically waits until the element <a href="#//api/name/isValid">is valid</a> before
+attempting to access the <code>UIAElement</code>, for not more than the <a href="#//api/name/defaultTimeout">default timeout</a>.
+If <code>waitUntilTappable</code> is <code>YES</code>, the method will also wait, for the remainder
+of the timeout, for the element to become <a href="#//api/name/isTappable">tappable</a>.</p><div class="warning"><p><strong>Warning:</strong> All methods that involve user interaction must pass <code>YES</code> for
+<code>waitUntilTappable</code>.</p></div><div class="warning"><p><strong>Warning:</strong> Variable arguments that are strings need to be escaped,
+using <code>[NSString slStringByEscapingForJavaScriptLiteral]</code>,
+if they are to be substituted into a JavaScript string literal.</p></div>
+	</div>
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementInvalidException</em></dt>
+			<dd><p>Raised if the element is not valid
+by the end of the default timeout.</p></dd>
+		</dl>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementNotTappableException</em></dt>
+			<dd><p>Raised if the element is not
+tappable when whatever amount of time remains of the default timeout after
+the element becomes valid elapses.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement+Subclassing.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+				</div>
+				<div class="main-navigation navigation-bottom">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="footer">
+					<hr />
+					<div class="footer-copyright">
+						<p><span class="copyright">&copy; 2013 Inkling. All rights reserved. (Last updated: 2013-06-11)</span><br />
+						
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 858)</a>.</span></p>
+						
+					</div>
+				</div>
+			</div>
+		</article>
+		<script type="text/javascript">
+			function jumpToChange()
+			{
+				window.location.hash = this.options[this.selectedIndex].value;
+			}
+			
+			function toggleTOC()
+			{
+				var contents = document.getElementById('contents');
+				var tocContainer = document.getElementById('tocContainer');
+				
+				if (this.getAttribute('class') == 'open')
+				{
+					this.setAttribute('class', '');
+					contents.setAttribute('class', '');
+					tocContainer.setAttribute('class', '');
+					
+					window.name = "hideTOC";
+				}
+				else
+				{
+					this.setAttribute('class', 'open');
+					contents.setAttribute('class', 'isShowingTOC');
+					tocContainer.setAttribute('class', 'isShowingTOC');
+					
+					window.name = "";
+				}
+				return false;
+			}
+			
+			function toggleTOCEntryChildren(e)
+			{
+				e.stopPropagation();
+				var currentClass = this.getAttribute('class');
+				if (currentClass == 'children') {
+					this.setAttribute('class', 'children open');
+				}
+				else if (currentClass == 'children open') {
+					this.setAttribute('class', 'children');
+				}
+				return false;
+			}
+			
+			function tocEntryClick(e)
+			{
+				e.stopPropagation();
+				return true;
+			}
+			
+			function init()
+			{
+				var selectElement = document.getElementById('jumpTo');
+				selectElement.addEventListener('change', jumpToChange, false);
+				
+				var tocButton = document.getElementById('table_of_contents');
+				tocButton.addEventListener('click', toggleTOC, false);
+				
+				var taskTreeItem = document.getElementById('task_treeitem');
+				if (taskTreeItem.getElementsByTagName('li').length > 0)
+				{
+					taskTreeItem.setAttribute('class', 'children');
+					taskTreeItem.firstChild.setAttribute('class', 'disclosure');
+				}
+				
+				var tocList = document.getElementById('toc');
+				
+				var tocEntries = tocList.getElementsByTagName('li');
+				for (var i = 0; i < tocEntries.length; i++) {
+					tocEntries[i].addEventListener('click', toggleTOCEntryChildren, false);
+				}
+				
+				var tocLinks = tocList.getElementsByTagName('a');
+				for (var i = 0; i < tocLinks.length; i++) {
+					tocLinks[i].addEventListener('click', tocEntryClick, false);
+				}
+				
+				if (window.name == "hideTOC") {
+					toggleTOC.call(tocButton);
+				}
+			}
+			
+			window.onload = init;
+			
+			// If showing in Xcode, hide the TOC and Header
+			if (navigator.userAgent.match(/xcode/i)) {
+				document.getElementById("contents").className = "hideInXcode"
+				document.getElementById("tocContainer").className = "hideInXcode"
+				document.getElementById("top_header").className = "hideInXcode"
+			}
+			
+		</script>
+	</body>
+</html>

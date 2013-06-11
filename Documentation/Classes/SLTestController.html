@@ -1,0 +1,1128 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="html/html; charset=utf-8" />
+		<title>SLTestController Class Reference</title>
+		<meta id="xcode-display" name="xcode-display" content="render"/>
+		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
+		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
+		<meta name="generator" content="appledoc 2.1 (build 858)" />
+	</head>
+	<body>
+		<header id="top_header">
+			<div id="library" class="hideInXcode">
+				<h1><a id="libraryTitle" href="../index.html">Subliminal </a></h1>
+				<a id="developerHome" href="../index.html">Inkling</a>
+			</div>
+			
+			<div id="title" role="banner">
+				<h1 class="hideInXcode">SLTestController Class Reference</h1>
+			</div>
+			<ul id="headerButtons" role="toolbar">
+				<li id="toc_button">
+					<button aria-label="Show Table of Contents" role="checkbox" class="open" id="table_of_contents"><span class="disclosure"></span>Table of Contents</button>
+				</li>
+				<li id="jumpto_button" role="navigation">
+					<select id="jumpTo">
+	<option value="top">Jump To&#133;</option>
+	
+	<option value="overview">Overview</option>
+	
+	
+	
+	
+	<option value="tasks">Tasks</option>
+	
+	
+	
+	
+	
+	<option value="properties">Properties</option>
+	
+	<option value="//api/name/defaultTimeout">&nbsp;&nbsp;&nbsp;&nbsp;defaultTimeout</option>
+	
+	<option value="//api/name/shouldWaitToStartTesting">&nbsp;&nbsp;&nbsp;&nbsp;shouldWaitToStartTesting</option>
+	
+	
+	
+	
+	<option value="class_methods">Class Methods</option>
+	
+	<option value="//api/name/sharedTestController">&nbsp;&nbsp;&nbsp;&nbsp;+ sharedTestController</option>
+	
+	<option value="//api/name/testsToRun:withFocus:">&nbsp;&nbsp;&nbsp;&nbsp;+ testsToRun:withFocus:</option>
+	
+	
+	
+	
+	<option value="instance_methods">Instance Methods</option>
+	
+	<option value="//api/name/deregisterTarget:">&nbsp;&nbsp;&nbsp;&nbsp;- deregisterTarget:</option>
+	
+	<option value="//api/name/deregisterTarget:forAction:">&nbsp;&nbsp;&nbsp;&nbsp;- deregisterTarget:forAction:</option>
+	
+	<option value="//api/name/registerTarget:forAction:">&nbsp;&nbsp;&nbsp;&nbsp;- registerTarget:forAction:</option>
+	
+	<option value="//api/name/runTests:withCompletionBlock:">&nbsp;&nbsp;&nbsp;&nbsp;- runTests:withCompletionBlock:</option>
+	
+	<option value="//api/name/sendAction:">&nbsp;&nbsp;&nbsp;&nbsp;- sendAction:</option>
+	
+	<option value="//api/name/sendAction:withObject:">&nbsp;&nbsp;&nbsp;&nbsp;- sendAction:withObject:</option>
+	
+	
+	
+</select>
+				</li>
+			</ul>
+		</header>
+		<nav id="tocContainer" class="isShowingTOC">
+			<ul id="toc" role="tree">
+				
+<li role="treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#overview">Overview</a></span></li>
+
+
+
+
+<li role="treeitem" id="task_treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#tasks">Tasks</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Configuring the Default Timeout">Configuring the Default Timeout</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Getting the Shared Test Controller">Getting the Shared Test Controller</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Running Tests">Running Tests</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Internal Methods">Internal Methods</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Debugging tests">Debugging tests</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Registering and Deregistering App Hooks">Registering and Deregistering App Hooks</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Calling App Hooks">Calling App Hooks</a></span></li>
+	
+</ul></li>
+
+
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#properties">Properties</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/defaultTimeout">defaultTimeout</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/shouldWaitToStartTesting">shouldWaitToStartTesting</a></span></li>
+	
+</ul></li>
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#class_methods">Class Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/sharedTestController">sharedTestController</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/testsToRun:withFocus:">testsToRun:withFocus:</a></span></li>
+	
+</ul></li>
+
+
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/deregisterTarget:">deregisterTarget:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/deregisterTarget:forAction:">deregisterTarget:forAction:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/registerTarget:forAction:">registerTarget:forAction:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/runTests:withCompletionBlock:">runTests:withCompletionBlock:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/sendAction:">sendAction:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/sendAction:withObject:">sendAction:withObject:</a></span></li>
+	
+</ul></li>
+
+
+			</ul>
+		</nav>
+		<article>
+			<div id="contents" class="isShowingTOC" role="main">
+				<a title="SLTestController Class Reference" name="top"></a>
+				<div class="main-navigation navigation-top">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="header">
+					<div class="section-header">
+						<h1 class="title title-header">SLTestController Class Reference</h1>
+					</div>		
+				</div>
+				<div id="container">	
+					
+					<div class="section section-specification"><table cellspacing="0"><tbody>
+						<tr>
+	<td class="specification-title">Inherits from</td>
+	<td class="specification-value">NSObject</td>
+</tr><tr>
+	<td class="specification-title">Declared in</td>
+	<td class="specification-value">SLTestController.h</td>
+</tr>
+						</tbody></table></div>
+					
+					
+					
+					
+					<div class="section section-overview">
+						<a title="Overview" name="overview"></a>
+						<h2 class="subtitle subtitle-overview">Overview</h2>
+						<p><code>SLTestController</code> coordinates test execution. Its singleton instance
+is the primary interface between the application and the tests.</p>
+
+<p>The methods in the <code>SLTestController (Internal)</code> category are to be used only
+within Subliminal.</p>
+
+<p>The methods in the <code>SLTestController (DebugSettings)</code> category may be useful
+in debugging tests.</p>
+
+<p>Tests execute on a background queue. The methods in the <code>SLTestController (AppHooks)</code>
+category allow tests to access and manipulate application state in a structured,
+thread-safe manner.</p>
+
+<p>For instance, before running the tests, the application delegate could register
+a &ldquo;login manager&rdquo; singleton as being able to programmatically log a test user in:</p>
+
+<pre><code> [[SLTestController sharedTestController] registerTarget:[LoginManager sharedManager] 
+                                               forAction:@selector(logInWithInfo:)];
+</code></pre>
+
+<p>When tests need to log in, they could then call <code>loginWithInfo:</code>:</p>
+
+<pre><code>[[SLTestController sharedTestController] sendAction:@selector(logInWithInfo:)
+                                         withObject:@{
+                                                        @"username": @"john@foo.com",
+                                                        @"password": @"Hello1234"
+                                                     }];
+</code></pre>
+
+<p>This technique has two main benefits:</p>
+
+<ol>
+<li>It increases the independence of the tests: while one test could (and should)
+ test logging in as a user would, using the UI, the other tests could
+ use the programmatic interface, and not be crippled should the log-in
+ UI break.</li>
+<li>It encourages re-use of your application&rsquo;s code, while not making the
+ tests dependent on your application&rsquo;s structure: in the example above,
+ the tests need not know which object implements the <code>logInWithInfo:</code>
+ action. And, actions can only return objects that can be copied into the
+ testing context, preventing the application and tests from sharing state.</li>
+</ol>
+
+
+<p>Target actions may be conditionally defined (and registered) only when
+integration testing by using the <code>INTEGRATION_TESTING</code> preprocessor macro.</p>
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-tasks">
+						<a title="Tasks" name="tasks"></a>
+						<h2 class="subtitle subtitle-tasks">Tasks</h2>
+						
+						
+						<a title="Configuring the Default Timeout" name="task_Configuring the Default Timeout"></a>
+						<h3 class="subsubtitle task-title">Configuring the Default Timeout</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/defaultTimeout">&nbsp;&nbsp;defaultTimeout</a></code>
+		<span class="tooltip"><p>Subliminal&rsquo;s timeout.</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li>
+						</ul>
+						
+						
+						<a title="Getting the Shared Test Controller" name="task_Getting the Shared Test Controller"></a>
+						<h3 class="subsubtitle task-title">Getting the Shared Test Controller</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/sharedTestController">+&nbsp;sharedTestController</a></code>
+		<span class="tooltip"><p>Returns the test controller.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Running Tests" name="task_Running Tests"></a>
+						<h3 class="subsubtitle task-title">Running Tests</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/runTests:withCompletionBlock:">&ndash;&nbsp;runTests:withCompletionBlock:</a></code>
+		<span class="tooltip"><p>Run the specified tests.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Internal Methods" name="task_Internal Methods"></a>
+						<h3 class="subsubtitle task-title">Internal Methods</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/testsToRun:withFocus:">+&nbsp;testsToRun:withFocus:</a></code>
+		<span class="tooltip"><p>Given a set of tests, returns a new set filtered to those that should be run.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Debugging tests" name="task_Debugging tests"></a>
+						<h3 class="subsubtitle task-title">Debugging tests</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/shouldWaitToStartTesting">&nbsp;&nbsp;shouldWaitToStartTesting</a></code>
+		<span class="tooltip"><p>Determines whether the controller should wait, after <a href="#//api/name/runTests:withCompletionBlock:"><code>runTests:withCompletionBlock:</code></a>
+is invoked, to start testing.</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li>
+						</ul>
+						
+						
+						<a title="Registering and Deregistering App Hooks" name="task_Registering and Deregistering App Hooks"></a>
+						<h3 class="subsubtitle task-title">Registering and Deregistering App Hooks</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/registerTarget:forAction:">&ndash;&nbsp;registerTarget:forAction:</a></code>
+		<span class="tooltip"><p>Allows application objects to register themselves as being able to perform
+arbitrary actions.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/deregisterTarget:forAction:">&ndash;&nbsp;deregisterTarget:forAction:</a></code>
+		<span class="tooltip"><p>Deregisters the target for the specified actions.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/deregisterTarget:">&ndash;&nbsp;deregisterTarget:</a></code>
+		<span class="tooltip"><p>Deregisters the target for all actions.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Calling App Hooks" name="task_Calling App Hooks"></a>
+						<h3 class="subsubtitle task-title">Calling App Hooks</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/sendAction:">&ndash;&nbsp;sendAction:</a></code>
+		<span class="tooltip"><p>Sends a specified action message to its registered target and returns the result of the message.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/sendAction:withObject:">&ndash;&nbsp;sendAction:withObject:</a></code>
+		<span class="tooltip"><p>Sends a specified action message to its registered target with an object as the argument,
+and returns the result of the message.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+					</div>
+					
+					
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Properties" name="properties"></a>
+						<h2 class="subtitle subtitle-methods">Properties</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/defaultTimeout" title="defaultTimeout"></a>
+	<h3 class="subsubtitle method-title">defaultTimeout</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Subliminal&rsquo;s timeout.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic) NSTimeInterval defaultTimeout</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Various classes within Subliminal use this timeout to control operations that
+involve waiting. In particular, this timeout is used to wait for interface elements
+to become valid and/or tappable, as required by the tests.
+See <a href="../Classes/SLUIAElement.html#//api/name/defaultTimeout"><code>[SLUIAElement defaultTimeout]</code></a>.</p>
+
+<p>The default value is 5 seconds.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTestController.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/shouldWaitToStartTesting" title="shouldWaitToStartTesting"></a>
+	<h3 class="subsubtitle method-title">shouldWaitToStartTesting</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Determines whether the controller should wait, after <a href="#//api/name/runTests:withCompletionBlock:"><code>runTests:withCompletionBlock:</code></a>
+is invoked, to start testing.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic) BOOL shouldWaitToStartTesting</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>If this is YES, the test controller will show an alert after
+<a href="#//api/name/runTests:withCompletionBlock:"><code>runTests:withCompletionBlock:</code></a> is invoked and will not begin testing until
+the developer has dismissed that alert.</p>
+
+<p>This allows the developer time to attach the debugger to the tests. That is done
+by launching the tests, then clicking the following menu items, in Xcode:</p>
+
+<pre><code>Product -&gt; Attach to Process -&gt; &lt;name of testing target, at top&gt;
+</code></pre>
+
+<p>This setting will only take effect if the target is built in the &ldquo;Debug&rdquo;
+configuration (with the <code>DEBUG</code> preprocessor macro set). This is to prevent the
+alert from showing when built (in &ldquo;Release&rdquo;) for an unattended, continuous
+integration run; and to ensure that debug information will be available to the
+debugger (whereas the Release configuration may optimize that information away).</p>
+
+<p>To build the tests in Debug, click the the &ldquo;Scheme&rdquo; dropdown in the upper
+left-hand corner, then the following menu items:</p>
+
+<pre><code>&lt;Manage Scheme&gt; -&gt; (double-click) &lt;name of your "Integration Tests" scheme&gt; -&gt; 
+"Profile" (in the left side-bar)
+</code></pre>
+
+<p>and change the &ldquo;Build Configuration&rdquo; to &ldquo;Debug&rdquo;.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTestController.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Class Methods" name="class_methods"></a>
+						<h2 class="subtitle subtitle-methods">Class Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/sharedTestController" title="sharedTestController"></a>
+	<h3 class="subsubtitle method-title">sharedTestController</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Returns the test controller.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (instancetype)sharedTestController</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The shared <code>SLTestController</code> instance.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTestController.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/testsToRun:withFocus:" title="testsToRun:withFocus:"></a>
+	<h3 class="subsubtitle method-title">testsToRun:withFocus:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Given a set of tests, returns a new set filtered to those that should be run.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (NSSet *)testsToRun:(NSSet *)<em>tests</em> withFocus:(BOOL *)<em>withFocus</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>tests</em></dt>
+			<dd><p>The set of <a href="../Classes/SLTest.html"><code>SLTest</code></a> subclasses to process.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>withFocus</em></dt>
+			<dd><p>If this is non-<code>NULL</code>, upon return, it will be set to <code>YES</code>
+if any of the tests <a href="../Classes/SLTest.html#//api/name/isFocused">are focused</a>, <code>NO</code> otherwise.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>A filtered set of tests to run.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The set of tests is filtered:</p>
+
+<ol>
+<li>to those that <a href="../Classes/SLTest.html#//api/name/isAbstract">are concrete</a>,</li>
+<li>that <a href="../Classes/SLTest.html#//api/name/supportsCurrentPlatform">support the current platform</a>,</li>
+<li>and that <a href="../Classes/SLTest.html#//api/name/isFocused">are focused</a> (if any remaining are focused).</li>
+</ol>
+
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTestController+Internal.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+					
+					<div class="section section-methods">
+						<a title="Instance Methods" name="instance_methods"></a>
+						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/deregisterTarget:" title="deregisterTarget:"></a>
+	<h3 class="subsubtitle method-title">deregisterTarget:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Deregisters the target for all actions.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)deregisterTarget:(id)<em>target</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>target</em></dt>
+			<dd><p>The object to be deregistered.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>If target is not registered for any actions, this method has no effect.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTestController+AppHooks.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/deregisterTarget:forAction:" title="deregisterTarget:forAction:"></a>
+	<h3 class="subsubtitle method-title">deregisterTarget:forAction:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Deregisters the target for the specified actions.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)deregisterTarget:(id)<em>target</em> forAction:(SEL)<em>action</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>target</em></dt>
+			<dd><p>The object to be deregistered.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>action</em></dt>
+			<dd><p>The action message for which the target should be deregistered.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>If target is not registered for the specified action, this method has no effect.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTestController+AppHooks.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/registerTarget:forAction:" title="registerTarget:forAction:"></a>
+	<h3 class="subsubtitle method-title">registerTarget:forAction:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Allows application objects to register themselves as being able to perform
+arbitrary actions.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)registerTarget:(id)<em>target</em> forAction:(SEL)<em>action</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>target</em></dt>
+			<dd><p>The object to which the action message will be sent.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>action</em></dt>
+			<dd><p>The message which will be sent to the target.
+               It must take either no arguments, or one <code>id</code>-type value conforming to NSCopying.
+               It must return either nothing, or an id-type value conforming to NSCopying.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Action messages must take either no arguments, or one id-type value conforming
+to <code>NSCopying</code>. Messages can return either nothing, or id-type values conforming
+to <code>NSCopying</code>. (Copying arguments and return values prevents the tests and
+the application from sharing state.)</p>
+
+<p>Each action is performed on the main thread.
+The argument (if any) is copied, and the copy passed to the target.
+The return value (if any) is copied, and the copy passed to the caller.</p>
+
+<p>Only one target may be registered for any given action:
+if a second target is registered for a given action,
+the first target will be deregistered for that action.
+Registering the same target for the same action twice has no effect.</p>
+
+<p>The test controller keeps weak references to targets. It&rsquo;s still recommended
+for targets to deregister themselves at appropriate times, though.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="#//api/name/deregisterTarget:">- deregisterTarget:</a></p></code></li>
+			
+		</ul>
+	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTestController+AppHooks.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/runTests:withCompletionBlock:" title="runTests:withCompletionBlock:"></a>
+	<h3 class="subsubtitle method-title">runTests:withCompletionBlock:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Run the specified tests.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)runTests:(NSSet *)<em>tests</em> withCompletionBlock:(void ( ^ ) ( ))<em>completionBlock</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>tests</em></dt>
+			<dd><p>The set of tests to run.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>completionBlock</em></dt>
+			<dd><p>An optional block to execute once testing has finished.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tests are run on a background queue, in indeterminate order.
+Tests must <a href="../Classes/SLTest.html#//api/name/supportsCurrentPlatform">support the current platform</a>
+in order to be run.
+If any tests <a href="../Classes/SLTest.html#//api/name/isFocused">are focused</a>, only those tests will be run.</p>
+
+<p>When all tests have finished, the completion block (if provided)
+will be executed on the main queue. The test controller will then signal
+UIAutomation to finish executing commands.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTestController.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/sendAction:" title="sendAction:"></a>
+	<h3 class="subsubtitle method-title">sendAction:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Sends a specified action message to its registered target and returns the result of the message.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (id)sendAction:(SEL)<em>action</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>action</em></dt>
+			<dd><p>The message to be performed.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The result of the action, if any; otherwise <code>nil</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>This method must not be called from the main thread (it is intended to be called
+by tests).</p>
+
+<p>The message will be performed on the main thread.
+The returned value (if any) will be copied, and the copy passed to the caller.</p>
+	</div>
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLAppActionTargetDoesNotExistException</em></dt>
+			<dd><p>Thrown if, after several
+seconds' wait, no target has been registered for <code>action</code>, or a registered target
+has fallen out of scope.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTestController+AppHooks.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/sendAction:withObject:" title="sendAction:withObject:"></a>
+	<h3 class="subsubtitle method-title">sendAction:withObject:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Sends a specified action message to its registered target with an object as the argument,
+and returns the result of the message.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (id)sendAction:(SEL)<em>action</em> withObject:(id&lt;NSCopying&gt;)<em>object</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>action</em></dt>
+			<dd><p>The message to be performed.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>object</em></dt>
+			<dd><p>An object which is the sole argument of the action message.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>The result of the action, if any; otherwise nil.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>This method must not be called from the main thread (it is intended to be called
+by tests).</p>
+
+<p>The message will be performed on the main thread.
+The argument will be copied, and the copy passed to the target.
+The returned value (if any) will be copied, and the copy passed to the calling <a href="../Classes/SLTest.html">SLTest</a>.</p>
+	</div>
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLAppActionTargetDoesNotExistException</em></dt>
+			<dd><p>Thrown if, after several
+seconds' wait, no target has been registered for <code>action</code>, or a registered target
+has fallen out of scope.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTestController+AppHooks.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
+					
+					
+				</div>
+				<div class="main-navigation navigation-bottom">
+					<ul>
+	<li><a href="../index.html">Index</a></li>
+	<li><a href="../hierarchy.html">Hierarchy</a></li>
+</ul>
+				</div>
+				<div id="footer">
+					<hr />
+					<div class="footer-copyright">
+						<p><span class="copyright">&copy; 2013 Inkling. All rights reserved. (Last updated: 2013-06-11)</span><br />
+						
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 858)</a>.</span></p>
+						
+					</div>
+				</div>
+			</div>
+		</article>
+		<script type="text/javascript">
+			function jumpToChange()
+			{
+				window.location.hash = this.options[this.selectedIndex].value;
+			}
+			
+			function toggleTOC()
+			{
+				var contents = document.getElementById('contents');
+				var tocContainer = document.getElementById('tocContainer');
+				
+				if (this.getAttribute('class') == 'open')
+				{
+					this.setAttribute('class', '');
+					contents.setAttribute('class', '');
+					tocContainer.setAttribute('class', '');
+					
+					window.name = "hideTOC";
+				}
+				else
+				{
+					this.setAttribute('class', 'open');
+					contents.setAttribute('class', 'isShowingTOC');
+					tocContainer.setAttribute('class', 'isShowingTOC');
+					
+					window.name = "";
+				}
+				return false;
+			}
+			
+			function toggleTOCEntryChildren(e)
+			{
+				e.stopPropagation();
+				var currentClass = this.getAttribute('class');
+				if (currentClass == 'children') {
+					this.setAttribute('class', 'children open');
+				}
+				else if (currentClass == 'children open') {
+					this.setAttribute('class', 'children');
+				}
+				return false;
+			}
+			
+			function tocEntryClick(e)
+			{
+				e.stopPropagation();
+				return true;
+			}
+			
+			function init()
+			{
+				var selectElement = document.getElementById('jumpTo');
+				selectElement.addEventListener('change', jumpToChange, false);
+				
+				var tocButton = document.getElementById('table_of_contents');
+				tocButton.addEventListener('click', toggleTOC, false);
+				
+				var taskTreeItem = document.getElementById('task_treeitem');
+				if (taskTreeItem.getElementsByTagName('li').length > 0)
+				{
+					taskTreeItem.setAttribute('class', 'children');
+					taskTreeItem.firstChild.setAttribute('class', 'disclosure');
+				}
+				
+				var tocList = document.getElementById('toc');
+				
+				var tocEntries = tocList.getElementsByTagName('li');
+				for (var i = 0; i < tocEntries.length; i++) {
+					tocEntries[i].addEventListener('click', toggleTOCEntryChildren, false);
+				}
+				
+				var tocLinks = tocList.getElementsByTagName('a');
+				for (var i = 0; i < tocLinks.length; i++) {
+					tocLinks[i].addEventListener('click', tocEntryClick, false);
+				}
+				
+				if (window.name == "hideTOC") {
+					toggleTOC.call(tocButton);
+				}
+			}
+			
+			window.onload = init;
+			
+			// If showing in Xcode, hide the TOC and Header
+			if (navigator.userAgent.match(/xcode/i)) {
+				document.getElementById("contents").className = "hideInXcode"
+				document.getElementById("tocContainer").className = "hideInXcode"
+				document.getElementById("top_header").className = "hideInXcode"
+			}
+			
+		</script>
+	</body>
+</html>
