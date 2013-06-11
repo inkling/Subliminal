@@ -31,7 +31,7 @@ SCHEMES_DIR = "Subliminal.xcodeproj/xcuserdata/#{ENV['USER']}.xcuserdatad/xcsche
 
 DOCSET_DIR = "#{ENV['HOME']}/Library/Developer/Shared/Documentation/DocSets"
 DOCSET_NAME = "com.inkling.Subliminal.docset"
-DOCSET_VERSION = "1.0"
+DOCSET_VERSION = "1.0.1"
 
 
 task :default => :usage
@@ -238,7 +238,9 @@ task :install => :uninstall do
 
   install_file_templates(ENV["DEV"] == "yes")
   install_trace_template
-  install_docs unless ENV["DOCS"] == "no"
+  unless ENV["DOCS"] == "no"
+    fail "Could not install Subliminal's documentation. You can retry, or invoke \`install\` with \`DOCS=no\`." if !install_docs?
+  end
   if ENV["DEV"] == "yes"
     fail "Could not install Subliminal's schemes." if !install_schemes?
   end
@@ -274,31 +276,41 @@ def install_trace_template
   plutil -convert binary1 #{TRACE_TEMPLATE_NAME}`
 end
 
-def install_docs
+def install_docs?
   puts "- Installing docs..."
 
   # download the latest docs
   docset_xar_name = "com.inkling.Subliminal-#{DOCSET_VERSION}.xar"
 
-  docset_download_dir = "/tmp"
+  docset_download_dir = `mktemp -d /tmp/subliminal-install.docset.XXXXXX`.chomp
+  if $? != 0
+    puts "Could not create temporary directory to download docs."
+    return false
+  end
   docset_xar_file = "#{docset_download_dir}/#{docset_xar_name}"
 
-  # Use a link to our GitHub repo once it goes public
-  # docset_xar_URL_root = "https://github.com/inkling/subliminal/<to be determined>"
-  docset_xar_URL_root = "http://f.cl.ly/items/0O3Q3N062F2G2v2b010m"
-  `curl --progress-bar --output #{docset_xar_file} #{docset_xar_URL_root}/#{docset_xar_name}`
+  docset_xar_URL_root = "http://inkling.github.io/Subliminal/Documentation"
+  `curl --progress-bar --output "#{docset_xar_file}" "#{docset_xar_URL_root}/#{docset_xar_name}"`
+  if $? != 0
+    puts "Could not download docset."
+    return false
+  end
 
   # uncompress them
-  `xar -C #{docset_download_dir} -xf #{docset_xar_file}`
-  `rm #{docset_xar_file}`
+  `xar -C "#{docset_download_dir}" -xf "#{docset_xar_file}"`
 
   # move them to the documentation directory
   downloaded_docset_file = "#{docset_download_dir}/#{DOCSET_NAME}"
   installed_docset_file = "#{DOCSET_DIR}/#{DOCSET_NAME}"
-  `mv #{downloaded_docset_file} #{installed_docset_file}`
+  `mv "#{downloaded_docset_file}" "#{installed_docset_file}"`
 
   # load them
   `osascript -e 'tell application "Xcode" to load documentation set with path "#{installed_docset_file}"'`
+
+  # clean up temporary directory
+  `rm -rf "#{docset_download_dir}"`
+
+  return true
 end
 
 # If Subliminal's schemes were shared, they'd show up in projects that used Subliminal
