@@ -106,17 +106,17 @@ target and select "Duplicate".
 
 Next, rename both your new target to "Integration Tests" and the info.plist 
 created for it to "Integration Tests-Info.plist". Move the reference to the 
-newly created target's info.plist into your Integration Tests group using the 
-navigator pane, and move the actual info.plist file into your 
+newly created target's Info.plist file into your Integration Tests group using the 
+navigator pane, and move the actual Info.plist file into your 
 Integration Tests directory using the Finder. After this step you will need to
-update Xcode's reference to the plist.
+update Xcode's reference to the `plist`.
 
 ![](http://inkling.github.io/Subliminal/readme-images/UpdatePlistReference.png)
 
 Now, link Subliminal to the Integration Tests target. To do this open the 
 project inspector by selecting your project in the navigator pane. Then select 
 your Integration Tests target and then the Build Phases tab, and add 
-`libSubliminal.a` to the list titled Link Binary With Libraries.
+`libSubliminal.a` to the list titled "Link Binary With Libraries".
 
 ![](http://inkling.github.io/Subliminal/readme-images/LinkSubliminalBinary.png)
 
@@ -129,17 +129,17 @@ Subliminal provides an `xcconfig` file to configure the rest of your target's
 settings. To apply this file to your target, expand Subliminal's project reference 
 in your navigator pane, then drag the `Integration Tests.xcconfig` file into the 
 base level of your Integration Tests group. Now, select your project within the 
-project inspector, navigate to the Info tab, and base the configurations used to 
+project inspector, navigate to the "Info" tab, and base the configurations used to 
 build your Integration Tests target off `Integration Tests.xcconfig`.
 
 ![](http://inkling.github.io/Subliminal/readme-images/SetConfigurations.png)
 
-Finally, to ensure that this xcconfig file takes effect, you must delete two 
+Finally, to ensure that this `xcconfig` file takes effect, you must delete two 
 default build settings. Select your Integration Tests target in the project 
 inspector and then select the Build Settings tab. Search for and delete the 
-settings for Product Name and Info.plist File: these values will be provided by 
-the `Integration Tests.xcconfig` file. NOTE: to delete the Info.plist setting, 
-you must have renamed and moved your Integration Tests target's info.plist as 
+settings for "Product Name" and "Info.plist File": these values will be provided by 
+the `Integration Tests.xcconfig` file. NOTE: To delete the "Info.plist File" setting, 
+you must have renamed and moved your Integration Tests target's Info.plist file as 
 described above.
 
 ![](http://inkling.github.io/Subliminal/readme-images/DeleteProductNameSetting.png)
@@ -239,7 +239,7 @@ In Subliminal tests, you manipulate the user interface using instances of `SLEle
 `SLElements` are proxies for the "`UIAElements`" UIAutomation uses to represent 
 user interface elements: when you `-tap` an `SLElement`, that `SLElement` causes 
 the appropriate bit of JavaScript to be executed to manipulate the corresponding 
-`UIAElement`. Tests execute asynchronously, so they can block until `UIAutomation` 
+`UIAElement`. Tests execute asynchronously, so they can block until UIAutomation 
 is done evaluating the command.
 
 ### Manipulate the Application Directly
@@ -319,10 +319,12 @@ mkdir -p OUTPUT_DIR
 	-sim_device "$DEVICE"
 	-login_password "$PASSWORD"
 	-output "$OUTPUT_DIR"
+```
 
 For CI servers like [Jenkins](http://jenkins-ci.org/), you can process test logs 
 into JUnit reports using the `subliminal_uialog_to_junit` script:
 
+```sh
 "$PROJECT_DIR/Integration Tests/Subliminal/Supporting Files/CI/subliminal_uialog_to_junit" \
 	-i ${OUTPUT_DIR}/Run\ Data/Automation\ Results.plist \
 	-o ${OUTPUT_DIR}/junit.xml
