@@ -488,7 +488,7 @@ with help from:
 * [William Green](http://ca.linkedin.com/pub/william-green/21/724/105)
 * [John Detloff](https://github.com/jmdetloff)
 * [Aaron Golden](http://stackoverflow.com/users/2172667/aaron-golden)
-* [Luhknos Liu](https://github.com/lukhnos)
+* [Lukhnos Liu](https://github.com/lukhnos)
 * [Aaron Haney](https://github.com/ahaneyinkling)
 
 and Subliminal's [growing list of contributors](https://github.com/inkling/Subliminal/contributors).
