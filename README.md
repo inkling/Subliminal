@@ -287,10 +287,14 @@ You can run Subliminal tests from the command line using the `subliminal-test`
 script, which takes care of building your application and running the tests on the 
 appropriate simulator or device.
 
-To use `subliminal-test`, install Subliminal on the test machine as above,
-then "share" the "Integration Tests" scheme to make it available to the CI server 
-(in Xcode, click "Product" -> "Schemes" -> "Manage Schemes…", click the "Shared" 
-checkbox next to the scheme, and check the resulting file into source control).
+To use `subliminal-test`, first:
+
+1. 	[Install Subliminal](#installing-subliminal) on the test machine
+2. 	"Share" the "Integration Tests" scheme to make it available to the CI server: 
+	in Xcode, click "Product" -> "Schemes" -> "Manage Schemes…", click the "Shared" 
+	checkbox next to the scheme, and check the resulting file into source control.
+3. 	Enable GUI scripting: Open System Preferences and check Enable Access for 
+	Assistive Devices in the Accessibility preference pane.
 
 A minimal test runner would then look something like this: 
 
