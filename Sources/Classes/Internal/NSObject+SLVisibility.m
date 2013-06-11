@@ -242,7 +242,7 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
     size_t columns = maxX - minX + 1;
     size_t rows = maxY - minY + 1;
     unsigned char *pixels = (unsigned char *)malloc(columns * rows * 4);
-    CGContextRef context = CGBitmapContextCreate(pixels, columns, rows, 8, 4 * columns, rgbColorSpace, kCGImageAlphaPremultipliedLast);
+    CGContextRef context = CGBitmapContextCreate(pixels, columns, rows, 8, 4 * columns, rgbColorSpace, kCGBitmapAlphaInfoMask & kCGImageAlphaPremultipliedLast);
     CGContextTranslateCTM(context, -minX, -minY);
     [self renderViewRecursively:window inContext:context withTargetView:self baseView:window];
 
