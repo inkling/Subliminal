@@ -276,8 +276,9 @@ application and tests.
 Requirements
 ------------
 
-Subliminal requires iOS 5.0 and above, and has been tested with the latest Xcode 
-(4.6.2).
+Subliminal has been tested with the latest Xcode (4.6.2), and currently requires 
+iOS 6.x. iOS 5 support is literally [in review](https://github.com/inkling/Subliminal/pull/11), 
+and iOS 7 support will be coming soon!
 
 Continuous Integration
 ----------------------
