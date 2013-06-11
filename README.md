@@ -470,7 +470,27 @@ Contributing
 
 We are very much looking forward to working with 3rd-party developers to make Subliminal 
 even better, and will post contributing guidelines very soon.
-	
+
+Credits
+-------
+
+Created by [Jeff Wear](https://github.com/wearhere), made possible by [Inkling](https://www.inkling.com/), 
+with help from:
+
+* [William Green](http://ca.linkedin.com/pub/william-green/21/724/105)
+* [John Detloff](https://github.com/jmdetloff)
+* [Aaron Golden](http://stackoverflow.com/users/2172667/aaron-golden)
+* [Luhknos Liu](https://github.com/lukhnos)
+* [Aaron Haney](https://github.com/ahaneyinkling)
+
+and Subliminal's [growing list of contributors](https://github.com/inkling/Subliminal/contributors).
+
+Contact
+-------
+
+Follow Subliminal ([@subliminaltest](https://twitter.com/subliminaltest)) and 
+Jeff Wear ([@wear_here](https://twitter.com/wear_here/)) on Twitter.
+
 Copyright and License
 ---------------------
 
