@@ -277,9 +277,7 @@ application and tests.
 Requirements
 ------------
 
-Subliminal currently requires Xcode 4.6.x and iOS 6.x. 
-
-iOS 5 support is [in review](https://github.com/inkling/Subliminal/pull/11).
+Subliminal currently supports Xcode 4.6.x and iOS 5.0 through 6.1. 
 
 We are closely monitoring the development of Xcode 5 and the iOS 7 SDK. It is 
 very likely that we will announce at least partial support before 7 goes Gold 
@@ -321,9 +319,11 @@ export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
 # Run the tests in the non-retina iPhone Simulator
 DEVICE="iPhone"
 
-# A bug in Instruments (http://openradar.appspot.com/radar?id=1544403) 
-# requires that the script be invoked with the current user's login password in order 
-# to run fully un-attended
+# Run the tests on iOS 6.1
+VERSION=6.1
+
+# Allow `subliminal-test` to work around bugs in Apple's `instruments` tool 
+# while running un-attended. See the FAQ for more information.
 PASSWORD="password1234"
 
 OUTPUT_DIR=reports
@@ -334,6 +334,7 @@ mkdir -p "$OUTPUT_DIR"
 "$PROJECT_DIR/Integration Tests/Subliminal/Supporting Files/CI/subliminal-test" \
 	-project "$YOUR_PROJECT" \
 	-sim_device "$DEVICE" \
+	-sim_version "$VERSION" \
 	-login_password "$PASSWORD" \
 	-output "$OUTPUT_DIR"
 ```
@@ -491,6 +492,35 @@ FAQ
 		to break immediately after launch, you may find it useful to give yourself 
 		time to attach the debugger by setting `-[SLTestController shouldWaitToStartTesting]` 
 		to `YES`.
+
+### Continuous Integration
+
+*	Why does the `subliminal-test` script require my login password?
+
+	`subliminal-test` can work around several bugs in Apple's `instruments` tool, 
+	but only with superuser privileges. Providing your password lets the script 
+	run un-attended. The password is used:
+
+	1.	To authorize `instruments` to take control of your application if it asks 
+		for such permission when launched: http://openradar.appspot.com/radar?id=1544403.
+	2.	To temporarily modify the Xcode folder to force `instruments` to use the 
+		specified SDK to run the tests, whereas it otherwise would only use the 
+		latest SDK installed: http://openradar.appspot.com/radar?id=3107401.
+
+	`subliminal-test` cannot itself be run with superuser privileges because 
+	`instruments` only works properly if it is run as the user.
+
+	If a developer will be attending the tests as they execute (for instance on 
+	their local machine rather than on the build server), and so can enter their 
+	password as required, they may execute `subliminal-test` with the `--live` option.
+
+	We would gladly welcome alternate workarounds for the issues above. In some 
+	environments, [modifying `/etc/authorization`](http://stackoverflow.com/a/11416025/495611) 
+	will suffice to authorize `instruments`. And, if developers only need to test 
+	on the latest SDK, they can rely on `instruments` using that SDK by default, 
+	and avoid specifying an SDK version--though that behavior may change with the 
+	Xcode 5 developer tools: see the note at the bottom of the bug report 
+	[here](http://openradar.appspot.com/radar?id=3107401).
 
 Known Issues
 ------------

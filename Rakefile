@@ -183,7 +183,7 @@ task :uninstall do
   puts "\nUninstalling old supporting files..."
 
   uninstall_file_templates
-  uninstall_trace_template
+  uninstall_trace_templates
   # This setting may cascade from the tests;
   # respecting it allows us to avoid restarting Xcode when running tests locally.
   if ENV["DOCS"] != "no"
@@ -201,8 +201,8 @@ def uninstall_file_templates
   `rm -rf "#{FILE_TEMPLATE_DIR}"`
 end
 
-def uninstall_trace_template
-  puts "- Uninstalling trace template..."
+def uninstall_trace_templates
+  puts "- Uninstalling trace templates..."
 
   `rm -rf "#{TRACE_TEMPLATE_DIR}"`
 end
@@ -237,7 +237,7 @@ task :install => :uninstall do
   puts "\nInstalling supporting files..."
 
   install_file_templates(ENV["DEV"] == "yes")
-  install_trace_template
+  install_trace_templates
   unless ENV["DOCS"] == "no"
     fail "Could not install Subliminal's documentation. You can retry, or invoke \`install\` with \`DOCS=no\`." if !install_docs?
   end
@@ -262,11 +262,11 @@ def install_file_templates(install_dev_templates)
   end
 end
 
-def install_trace_template
-  puts "- Installing trace template..."
+def install_trace_templates
+  puts "- Installing trace templates..."
 
   `mkdir -p "#{TRACE_TEMPLATE_DIR}" && \
-  cp "#{PROJECT_DIR}/Supporting Files/Instruments/"* "#{TRACE_TEMPLATE_DIR}"`
+  cp -R "#{PROJECT_DIR}/Supporting Files/Instruments/"* "#{TRACE_TEMPLATE_DIR}"`
 
   # Update the template to reference its script and icon correctly
   # (as the user's home directory isn't known until now)
@@ -400,29 +400,26 @@ namespace :test do
     # When the tests are running separately, 
     # we want them to (individually) fail rake
     # But here we want to run them both
+    tests_succeeded = true
     begin
       Rake::Task['test:integration:iphone'].invoke
     rescue Exception => e
       puts e
-      iPhone_succeeded = false
-    else
-      iPhone_succeeded = true
+      tests_succeeded = false
     end
 
     begin
       Rake::Task['test:integration:ipad'].invoke      
     rescue Exception => e
       puts e
-      iPad_succeeded = false
-    else
-      iPad_succeeded = true
+      tests_succeeded = false
     end
 
     # test:integration:device must be explicitly invoked
     # by a developer with a valid identity/provisioning profile
     # and device attached
 
-    if iPhone_succeeded && iPad_succeeded
+    if tests_succeeded
       puts "\nIntegration tests passed.\n\n"
     else
       fail "\nIntegration tests failed.\n\n"
@@ -430,7 +427,7 @@ namespace :test do
   end
 
   namespace :integration do
-    def test_command
+    def base_test_command
       command = "\"#{SCRIPT_DIR}/subliminal-test\"\
                 -project Subliminal.xcodeproj\
                 -scheme 'Subliminal Integration Tests'\
@@ -449,15 +446,35 @@ namespace :test do
       command
     end
 
+    # ! because this clears old results
+    def fresh_results_dir!(device, sdk = nil)
+      results_dir = "#{SCRIPT_DIR}/results/#{device}"
+      results_dir << "/#{sdk}" if sdk
+      `rm -rf "#{results_dir}" && mkdir -p "#{results_dir}"`
+      results_dir
+    end
+
     desc "Runs the integration tests on iPhone"
     task :iphone => :prepare do
       puts "-- Running iPhone integration tests..."
 
-      results_dir = "#{SCRIPT_DIR}/results/iphone"
-      `rm -rf "#{results_dir}" && mkdir -p "#{results_dir}"`
+      tests_succeeded = true
+      test_on_sdk = lambda { |sdk|
+        puts "\n--- Running iPhone integration tests on iOS #{sdk}..."
 
-      # Use system so we see the tests' output
-      if system("#{test_command} -output \"#{results_dir}\" -sim_device 'iPhone'")
+        # Use system so we see the tests' output
+        results_dir = fresh_results_dir!("iphone", sdk)
+        if system("#{base_test_command} -output \"#{results_dir}\" -sim_device 'iPhone' -sim_version #{sdk}")
+          puts "iPhone integration tests succeeded on iOS #{sdk}.\n\n"
+        else
+          puts "iPhone integration tests failed on iOS #{sdk}.\n\n"
+          tests_succeeded = false
+        end
+      }
+      test_on_sdk.call("5.1")
+      test_on_sdk.call("6.1")
+
+      if tests_succeeded
         puts "\niPhone integration tests passed.\n\n"
       else
         fail "\niPhone integration tests failed.\n\n"
@@ -468,11 +485,23 @@ namespace :test do
     task :ipad => :prepare do
       puts "-- Running iPad integration tests..."
 
-      results_dir = "#{SCRIPT_DIR}/results/ipad"
-      `rm -rf "#{results_dir}" && mkdir -p "#{results_dir}"`
+      tests_succeeded = true
+      test_on_sdk = lambda { |sdk|
+        puts "\n--- Running iPad integration tests on iOS #{sdk}..."
 
-      # Use system so we see the tests' output
-      if system("#{test_command} -output \"#{results_dir}\" -sim_device 'iPad'")
+        # Use system so we see the tests' output
+        results_dir = fresh_results_dir!("ipad", sdk)
+        if system("#{base_test_command} -output \"#{results_dir}\" -sim_device 'iPad' -sim_version #{sdk}")
+          puts "iPad integration tests succeeded on iOS #{sdk}.\n\n"
+        else
+          puts "iPad integration tests failed on iOS #{sdk}.\n\n"
+          tests_succeeded = false
+        end
+      }
+      test_on_sdk.call("5.1")
+      test_on_sdk.call("6.1")
+
+      if tests_succeeded
         puts "\niPad integration tests passed.\n\n"
       else
         fail "\niPad integration tests failed.\n\n"
@@ -488,11 +517,9 @@ namespace :test do
         fail "Device UDID not specified. See 'rake usage[test]'.\n\n" 
       end
 
-      results_dir = "#{SCRIPT_DIR}/results/device"
-      `rm -rf "#{results_dir}" && mkdir -p "#{results_dir}"`
-
       # Use system so we see the tests' output
-      if system("#{test_command} -output \"#{results_dir}\" -hw_id #{udid}")
+      results_dir = fresh_results_dir!("device")
+      if system("#{base_test_command} -output \"#{results_dir}\" -hw_id #{udid}")
         puts "\nDevice integration tests passed.\n\n"
       else
         fail "\nDevice integration tests failed.\n\n"
