@@ -257,14 +257,10 @@ if [ $? -ne 0 ]; then
 	cleanup_and_exit 1
 fi
 
-# build in a subshell to conditionally redirect its output (and only its output)
-# to the build log (if one was created because --quiet_build was specified)
-(
-	[[ -e "$BUILD_LOG" ]] && exec >"$BUILD_LOG" 2>&1
-
-	# Don't validate the product (its entitlements etc.)
-	# --this should not be necessary in the simulator
-	# and can cause problems when testing on device
+# Don't validate the product (its entitlements etc.)
+# --this should not be necessary in the simulator
+# and can cause problems when testing on device
+build_base_command () {
 	$BUILD_TOOL\
 		$BUILD_SOURCE_ARG\
 		-scheme "$SCHEME"\
@@ -272,8 +268,15 @@ fi
 		-sdk "$SDK"\
 		$TARGETED_DEVICE_FAMILY_ARG\
 		SYMROOT="$BUILD_DIR"\
-		VALIDATE_PRODUCT=NO\
-		clean build
+		VALIDATE_PRODUCT=NO $1
+}
+
+# build in a subshell to conditionally redirect its output (and only its output)
+# to the build log (if one was created because --quiet_build was specified)
+(
+	[[ -e "$BUILD_LOG" ]] && exec >"$BUILD_LOG" 2>&1
+
+	build_base_command "clean build"
 )
 
 if [ $? -ne 0 ]; then
@@ -288,7 +291,7 @@ APP=`find "$BUILD_DIR" -name "*.app"`
 
 # Change the app's bundle identifier if a replacement was specified
 if [[ -n "$REPLACEMENT_BUNDLE_ID" ]]; then
-    INFO_PLIST_PATH=`$BUILD_TOOL -project "$PROJECT" -scheme "$SCHEME" -configuration "$CONFIGURATION" -sdk "$SDK" $TARGETED_DEVICE_FAMILY_ARG -showBuildSettings | grep INFOPLIST_PATH | awk 'BEGIN {FS=" = ";} {print $2}'`
+    INFO_PLIST_PATH=`build_base_command -showBuildSettings | grep INFOPLIST_PATH | awk 'BEGIN {FS=" = ";} {print $2}'`
     INFO_PLIST_NAME=`basename "$INFO_PLIST_PATH"`
     INFO_PLIST="$APP/$INFO_PLIST_NAME"
 	defaults write "$INFO_PLIST" CFBundleIdentifier "$REPLACEMENT_BUNDLE_ID"
