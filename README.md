@@ -62,9 +62,11 @@ First, create a directory named "Integration Tests" in your project for
 integration tests, and download and add Subliminal to your new directory. If
 you're using git for your project add Subliminal as a submodule:
 
-    mkdir Integration\ Tests
-    mkdir Integration\ Tests/Subliminal
-    git submodule add git@github.com:inkling/Subliminal.git Integration\ Tests/Subliminal/
+```sh
+mkdir Integration\ Tests
+mkdir Integration\ Tests/Subliminal
+git submodule add git@github.com:inkling/Subliminal.git Integration\ Tests/Subliminal/
+```
 
 Otherwise manually download and add Subliminal to `Integration Tests/Subliminal`.
 
@@ -73,8 +75,10 @@ Otherwise manually download and add Subliminal to `Integration Tests/Subliminal`
 Now, install Subliminal's supporting files, including test file templates and 
 documentation:
 
-    cd Integration\ Tests/Subliminal
-    rake install
+```sh
+cd Integration\ Tests/Subliminal
+rake install
+```
 
 If you'd rather read Subliminal's documentation online you can append `DOCS=no` 
 to this command.
@@ -164,15 +168,19 @@ begin running your tests. First build your Integration Tests scheme, so that
 Xcode can provide autocompletion results as you modify your app delegate. Then, 
 import the Subliminal header at the top of your app delegate implementation file:
 
-    #if INTEGRATION_TESTING
-    #import <Subliminal/Subliminal.h>
-    #endif
+```objc
+#if INTEGRATION_TESTING
+#import <Subliminal/Subliminal.h>
+#endif
+```
     
 and tell the shared test controller to run all test cases:
 
-    #if INTEGRATION_TESTING
-    [[SLTestController sharedTestController] runTests:[SLTest allTests] withCompletionBlock:nil];
-    #endif
+```objc
+#if INTEGRATION_TESTING
+[[SLTestController sharedTestController] runTests:[SLTest allTests] withCompletionBlock:nil];
+#endif
+```
    
 Note that you do not need to direct the test controller to run specific 
 tests: Subliminal automatically discovers all tests linked against the 
@@ -194,31 +202,32 @@ In Subliminal, subclasses of `SLTest` define tests as methods beginning with "te
 At run-time, the `SLTestController` discovers and runs these tests. 
 Here's what a sample `SLTest` implementation looks like:
 
-	@implementation STLoginTest
+```objc
+@implementation STLoginTest
 
-	- (void)testLogInSucceedsWithUsernameAndPassword {
-		SLTextField *usernameField = [SLTextField elementWithAccessibilityLabel:@"username field"];
-		SLTextField *passwordField = [SLTextField elementWithAccessibilityLabel:@"password field" isSecure:YES];
-		SLElement *submitButton = [SLElement elementWithAccessibilityLabel:@"Submit"];
-		SLElement *loginSpinner = [SLElement elementWithAccessibilityLabel:@"Logging in..."];
-		
-	    NSString *username = @"Jeff", *password = @"foo";
-	    [usernameField setText:username];
-	    [passwordField setText:password];
-    
-	    [submitButton tap];
-    
-    	// wait for the login spinner to disappear
-	    SLAssertTrueWithTimeout([_loginSpinner isInvalidOrInvisible], 
-	    						3.0, @"Log-in was not successful.");
-    
-	    NSString *successMessage = [NSString stringWithFormat:@"Hello, %@!", username];
-	    SLAssertTrue([[SLElement elementWithAccessibilityLabel:successMessage] isValid], 
-	    			@"Log-in did not succeed.");
-	}
+- (void)testLogInSucceedsWithUsernameAndPassword {
+	SLTextField *usernameField = [SLTextField elementWithAccessibilityLabel:@"username field"];
+	SLTextField *passwordField = [SLTextField elementWithAccessibilityLabel:@"password field" isSecure:YES];
+	SLElement *submitButton = [SLElement elementWithAccessibilityLabel:@"Submit"];
+	SLElement *loginSpinner = [SLElement elementWithAccessibilityLabel:@"Logging in..."];
+	
+    NSString *username = @"Jeff", *password = @"foo";
+    [usernameField setText:username];
+    [passwordField setText:password];
 
-	@end
+    [submitButton tap];
 
+	// wait for the login spinner to disappear
+    SLAssertTrueWithTimeout([_loginSpinner isInvalidOrInvisible], 
+    						3.0, @"Log-in was not successful.");
+
+    NSString *successMessage = [NSString stringWithFormat:@"Hello, %@!", username];
+    SLAssertTrue([[SLElement elementWithAccessibilityLabel:successMessage] isValid], 
+    			@"Log-in did not succeed.");
+}
+
+@end
+```
 
 In the body of those tests, you do some work and then make some assertions. 
 In tests, you can simulate user interaction and even manipulate the application 
@@ -241,18 +250,22 @@ then be invoked, by name, by the tests. Any arguments or return values of these
 methods are copied between the tests and application.
 
 For instance, before running the tests, the application delegate could register
- a "login manager" singleton as being able to programmatically log a test user in:
+a "login manager" singleton as being able to programmatically log a test user in:
 
-     [[SLTestController sharedTestController] registerTarget:[LoginManager sharedManager] 
-                                                   forAction:@selector(logInWithInfo:)];
+```objc
+[[SLTestController sharedTestController] registerTarget:[LoginManager sharedManager] 
+                                               forAction:@selector(logInWithInfo:)];
+```
  
- When tests need to log in, they could then call `loginWithInfo:`:
+When tests need to log in, they could then call `loginWithInfo:`:
  
-    [[SLTestController sharedTestController] sendAction:@selector(logInWithInfo:)
-                                             withObject:@{
-                                                            @"username": @"john@foo.com",
-                                                            @"password": @"Hello1234"
-                                                         }];
+```objc
+[[SLTestController sharedTestController] sendAction:@selector(logInWithInfo:)
+                                         withObject:@{
+                                                        @"username": @"john@foo.com",
+                                                        @"password": @"Hello1234"
+                                                     }];
+```
 
 App hooks help developers write independent tests: only one test need evaluate 
 the login UI, while the others can use the programmatic interface. App hooks 
@@ -280,33 +293,35 @@ checkbox next to the scheme, and check the resulting file into source control).
 
 A minimal test runner would then look something like this: 
 
-	#!/bin/bash
+```sh
+#!/bin/bash
 
-	# Run the tests in the non-retina iPhone Simulator
-	DEVICE="iPhone"
+# Run the tests in the non-retina iPhone Simulator
+DEVICE="iPhone"
 
-	# A bug in Instruments (http://openradar.appspot.com/radar?id=1544403) 
-	# requires that the script be invoked with the current user's login password in order 
-	# to run fully un-attended
-	PASSWORD="password1234"
+# A bug in Instruments (http://openradar.appspot.com/radar?id=1544403) 
+# requires that the script be invoked with the current user's login password in order 
+# to run fully un-attended
+PASSWORD="password1234"
 
-	OUTPUT_DIR=test-reports
-	mkdir -p OUTPUT_DIR
+OUTPUT_DIR=test-reports
+mkdir -p OUTPUT_DIR
 
-	# Returns 0 on success, 1 on failure
-	# Log output and screenshots will be placed in $OUTPUT_DIR
-	"$PROJECT_DIR/Integration Tests/Subliminal/Supporting Files/CI/subliminal-test" \
-		-project "$YOUR_PROJECT"
-		-sim_device "$DEVICE"
-		-login_password "$PASSWORD"
-		-output "$OUTPUT_DIR"
+# Returns 0 on success, 1 on failure
+# Log output and screenshots will be placed in $OUTPUT_DIR
+"$PROJECT_DIR/Integration Tests/Subliminal/Supporting Files/CI/subliminal-test" \
+	-project "$YOUR_PROJECT"
+	-sim_device "$DEVICE"
+	-login_password "$PASSWORD"
+	-output "$OUTPUT_DIR"
 
 For CI servers like [Jenkins](http://jenkins-ci.org/), you can process test logs 
 into JUnit reports using the `subliminal_uialog_to_junit` script:
 
-	"$PROJECT_DIR/Integration Tests/Subliminal/Supporting Files/CI/subliminal_uialog_to_junit" \
-		-i ${OUTPUT_DIR}/Run\ Data/Automation\ Results.plist \
-		-o ${OUTPUT_DIR}/junit.xml
+"$PROJECT_DIR/Integration Tests/Subliminal/Supporting Files/CI/subliminal_uialog_to_junit" \
+	-i ${OUTPUT_DIR}/Run\ Data/Automation\ Results.plist \
+	-o ${OUTPUT_DIR}/junit.xml
+```
 
 Subliminal runs integration tests against itself using [Travis](https://travis-ci.org/). 
 Take a look at its [configuration file](https://github.com/inkling/Subliminal/blob/master/.travis.yml) 
@@ -346,7 +361,9 @@ FAQ
 	that user interface elements be identified by their position within the 
 	["element hierarchy"](https://developer.apple.com/library/ios/#documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/UsingtheAutomationInstrument/UsingtheAutomationInstrument.html#//apple_ref/doc/uid/TP40004652-CH20-SW88), like
 
-		UIATarget.localTarget().frontMostApp().mainWindow().tableViews()[0].cells()[0].
+	```js
+	UIATarget.localTarget().frontMostApp().mainWindow().tableViews()[0].cells()[0].
+	```
 
 	These references are not only difficult to read but are also difficult to write.
 	To refer to any particular element, you have to describe its entire ancestry, 
@@ -404,11 +421,15 @@ FAQ
 	and show up in Instruments' trace log. These can sometimes be useful but are 
 	mostly noise. Disable them using this command in Terminal:
 
-		defaults write com.apple.dt.Instruments UIAVerboseLogging -int 4096
+	```sh
+	defaults write com.apple.dt.Instruments UIAVerboseLogging -int 4096
+	```
 
 	to reset this preference:
-		
-		defaults delete com.apple.dt.Instruments UIAVerboseLogging
+	
+	```sh
+	defaults delete com.apple.dt.Instruments UIAVerboseLogging
+	```
 
 *	How can Subliminal tell me where I'm getting "invalid element" and/or 
 	"element not tappable" exceptions?
@@ -416,8 +437,10 @@ FAQ
 	Use the `UIAElement` macro to log the filename and line number of calls to 
 	`-[SLUIAElement tap]`, etc.:
 
-		SLButton *button = [SLButton buttonWithAccessibilityLabel:@"foo"];
-		[UIAElement(button) tap];	// vs. [button tap];
+	```objc
+	SLButton *button = [SLButton buttonWithAccessibilityLabel:@"foo"];
+	[UIAElement(button) tap];	// vs. [button tap];
+	```
 
 *	How can I debug tests while running?
 
