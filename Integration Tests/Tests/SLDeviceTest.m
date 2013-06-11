@@ -33,6 +33,13 @@
     return @"SLDeviceTestViewController";
 }
 
+- (void)tearDownTestCaseWithSelector:(SEL)testCaseSelector {
+    if (testCaseSelector == @selector(testCanRotateDevice)) {
+        [[SLDevice currentDevice] setOrientation:UIDeviceOrientationPortrait];
+    }
+    [super tearDownTestCaseWithSelector:testCaseSelector];
+}
+
 - (void)testDeactivateAppForDuration {
     // notify whoever's watching the tests that we're about to deactivate the app,
     // so they can follow along
@@ -66,8 +73,6 @@
 
 - (void)testCanRotateDevice
 {
-    [[SLDevice currentDevice] setOrientation:UIDeviceOrientationPortrait]; // Reset
-    
     const int orientationCount = 7;
     const UIDeviceOrientation orientations[orientationCount] =
     {
@@ -83,9 +88,6 @@
     for (int i=0; i<orientationCount; i++) {
         [self rotateToAndCheckOrientation:orientations[i]];
     }
-    
-    // Reset
-    [[SLDevice currentDevice] setOrientation:UIDeviceOrientationPortrait];
 }
 
 - (void)rotateToAndCheckOrientation:(UIDeviceOrientation)orientation
