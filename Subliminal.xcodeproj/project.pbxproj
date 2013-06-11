@@ -1012,7 +1012,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"${PROJECT_DIR}/Documentation\" && \\\n/usr/local/bin/appledoc \\\n--clean-output \\\n--project-name \"Subliminal\" \\\n--project-version 1.0 \\\n--project-company \"Inkling\" \\\n--company-id \"com.inkling\" \\\n--docset-platform-family \"iphoneos\" \\\n--logformat xcode \\\n--keep-merged-sections \\\n--keep-undocumented-objects \\\n--keep-undocumented-members \\\n--no-repeat-first-par \\\n--no-warn-invalid-crossref \\\n--ignore \"*.m\" \\\n--index-desc \"${PROJECT_DIR}/README.md\" \\\n--output \"${PROJECT_DIR}/Documentation\" \\\n--keep-intermediate-files \\\n\"${PROJECT_DIR}/Sources\"";
+			shellScript = "mkdir -p \"${PROJECT_DIR}/Documentation\" && \\\n/usr/local/bin/appledoc \\\n--clean-output \\\n--project-name \"Subliminal\" \\\n--project-version 1.0.1 \\\n--project-company \"Inkling\" \\\n--company-id \"com.inkling\" \\\n--docset-platform-family \"iphoneos\" \\\n--logformat xcode \\\n--keep-merged-sections \\\n--keep-undocumented-objects \\\n--keep-undocumented-members \\\n--no-repeat-first-par \\\n--no-warn-invalid-crossref \\\n--ignore \"*.m\" \\\n--index-desc \"${PROJECT_DIR}/README.md\" \\\n--output \"${PROJECT_DIR}/Documentation\" \\\n\"${PROJECT_DIR}/Sources\"";
 		};
 		F0D240501683F7130031B67C /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
