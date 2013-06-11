@@ -40,8 +40,9 @@ How to Get Started
 and try out the included example app. Instructions for running the example app are [here](#running-the-example-app)
 * Install Subliminal and write your first test in just 10 minutes (guide below, 
 screencast [here](https://vimeo.com/67771344))
-* Read the FAQ [here](#faq), and find support [@subliminaltest](https://twitter.com/subliminaltest) 
-and on [Stack Overflow](http://stackoverflow.com/questions/tagged/subliminal)
+* Check out the [FAQ](#faq) or read the [complete documentation](http://inkling.github.io/Subliminal/Documentation/)
+* Find support [@subliminaltest](https://twitter.com/subliminaltest) and on 
+[Stack Overflow](http://stackoverflow.com/questions/tagged/subliminal)
 
 Running the Example App
 -----------------------
@@ -80,8 +81,8 @@ cd Integration\ Tests/Subliminal
 rake install
 ```
 
-If you'd rather read Subliminal's documentation online you can append `DOCS=no` 
-to this command.
+If you'd rather read Subliminal's documentation [online](http://inkling.github.io/Subliminal/Documentation/) 
+you can append `DOCS=no` to this command.
 
 ### Adding Subliminal to Your Project
 
