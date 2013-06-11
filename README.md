@@ -276,8 +276,9 @@ application and tests.
 Requirements
 ------------
 
-Subliminal requires iOS 5.0 and above, and has been tested with the latest Xcode 
-(4.6.2).
+Subliminal has been tested with the latest Xcode (4.6.2), and currently requires 
+iOS 6.x. iOS 5 support is literally [in review](https://github.com/inkling/Subliminal/pull/11), 
+and iOS 7 support will be coming soon!
 
 Continuous Integration
 ----------------------
@@ -286,10 +287,14 @@ You can run Subliminal tests from the command line using the `subliminal-test`
 script, which takes care of building your application and running the tests on the 
 appropriate simulator or device.
 
-To use `subliminal-test`, install Subliminal on the test machine as above,
-then "share" the "Integration Tests" scheme to make it available to the CI server 
-(in Xcode, click "Product" -> "Schemes" -> "Manage Schemes…", click the "Shared" 
-checkbox next to the scheme, and check the resulting file into source control).
+To use `subliminal-test`, first:
+
+1. 	[Install Subliminal](#installing-subliminal) on the test machine
+2. 	"Share" the "Integration Tests" scheme to make it available to the CI server: 
+	in Xcode, click "Product" -> "Schemes" -> "Manage Schemes…", click the "Shared" 
+	checkbox next to the scheme, and check the resulting file into source control.
+3. 	Enable GUI scripting: Open System Preferences and check Enable Access for 
+	Assistive Devices in the Accessibility preference pane.
 
 A minimal test runner would then look something like this: 
 
