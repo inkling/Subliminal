@@ -310,15 +310,15 @@ DEVICE="iPhone"
 # to run fully un-attended
 PASSWORD="password1234"
 
-OUTPUT_DIR=test-reports
-mkdir -p OUTPUT_DIR
+OUTPUT_DIR=reports
+mkdir -p "$OUTPUT_DIR"
 
 # Returns 0 on success, 1 on failure
 # Log output and screenshots will be placed in $OUTPUT_DIR
 "$PROJECT_DIR/Integration Tests/Subliminal/Supporting Files/CI/subliminal-test" \
-	-project "$YOUR_PROJECT"
-	-sim_device "$DEVICE"
-	-login_password "$PASSWORD"
+	-project "$YOUR_PROJECT" \
+	-sim_device "$DEVICE" \
+	-login_password "$PASSWORD" \
 	-output "$OUTPUT_DIR"
 ```
 
@@ -327,8 +327,8 @@ into JUnit reports using the `subliminal_uialog_to_junit` script:
 
 ```sh
 "$PROJECT_DIR/Integration Tests/Subliminal/Supporting Files/CI/subliminal_uialog_to_junit" \
-	-i ${OUTPUT_DIR}/Run\ Data/Automation\ Results.plist \
-	-o ${OUTPUT_DIR}/junit.xml
+	-i "$OUTPUT_DIR/Run\ Data/Automation\ Results.plist" \
+	-o "$OUTPUT_DIR/junit.xml"
 ```
 
 Subliminal runs integration tests against itself using [Travis](https://travis-ci.org/). 
