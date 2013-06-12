@@ -117,6 +117,9 @@ Optional testing arguments:
 					  * and the run's .trace file, which can be opened in the Instruments GUI to view the run log and the screenshots.
 					Has no default value.
 
+	--verbose_logging		Enables UIAutomation's debug logs, which record every user interaction simulated 
+					by the Automation instrument. 
+
 	-e <variable> <value>		An environment variable setting. You may specify more than one.
 	"""
 	exit 1
@@ -145,6 +148,10 @@ case $1 in
 
     --quiet_build)
 		BUILD_LOG=`mktemp /tmp/subliminal-test.build-log.XXXXXX`
+		shift 1;;
+
+	--verbose_logging)
+		VERBOSE_LOGGING=true
 		shift 1;;
 
 	# Set argument, wait for value
@@ -318,6 +325,12 @@ mkdir "$RESULTS_DIR"
 ### Launch tests
 echo "\n\nLaunching tests...\n"
 
+# Temporarily disable UIAutomation's debug logging unless directed otherwise
+if [[ -z $VERBOSE_LOGGING ]] || ! $VERBOSE_LOGGING; then
+	VERBOSE_LOGGING_SETTING=`defaults read com.apple.dt.InstrumentsCLI UIAVerboseLogging 2> /dev/null`
+	defaults write com.apple.dt.InstrumentsCLI UIAVerboseLogging 4096
+fi
+
 # Attempt to authorize instruments to take control of the application
 # Unless the user indicated otherwise
 if [[ -z $LIVE ]] || ! $LIVE; then
@@ -345,6 +358,15 @@ printf "$LOGIN_PASSWORD\n" | xcrun instruments\
 	$HARDWARE_ARG\
 	"$APP"\
 	-e UIARESULTSPATH "$RESULTS_DIR"
+
+# Reset UIAutomation's debug logging if necessary
+if [[ -z $VERBOSE_LOGGING ]] || ! $VERBOSE_LOGGING; then
+	if [[ -n "$VERBOSE_LOGGING_SETTING" ]]; then
+		defaults write com.apple.dt.InstrumentsCLI UIAVerboseLogging "$VERBOSE_LOGGING_SETTING"
+	else
+		defaults delete com.apple.dt.InstrumentsCLI UIAVerboseLogging
+	fi
+fi
 
 if [[ -n "$SIM_DEVICE" ]]; then
 	# Reset the simulator again if the bundle identifier was replaced
