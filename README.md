@@ -425,19 +425,22 @@ FAQ
 
 *	How can I disable UIAutomation's debug logs?
 
-	UIAutomation debug logs record every action taken (`button.tap()`, etc.) 
-	and show up in Instruments' trace log. These can sometimes be useful but are 
-	mostly noise. Disable them using this command in Terminal:
+	UIAutomation's debug logs record every user interaction simulated by the 
+	Automation instrument. They can be quite noisy. To prevent the logs from 
+	appearing in Instruments' GUI, execute this command in Terminal:
 
 	```sh
-	defaults write com.apple.dt.Instruments UIAVerboseLogging -int 4096
+	defaults write com.apple.dt.Instruments UIAVerboseLogging 4096
 	```
 
-	to reset this preference:
+	To re-enable the logs, execute:
 	
 	```sh
 	defaults delete com.apple.dt.Instruments UIAVerboseLogging
 	```
+
+	The `subliminal-test` script prevents these logs from appearing when tests 
+	are run at the command line, unless the `--verbose_logging` flag is specified.
 
 *	How can Subliminal tell me where I'm getting "invalid element" and/or 
 	"element not tappable" exceptions?
