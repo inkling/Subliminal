@@ -47,8 +47,9 @@ Otherwise, it returns success (0).
 
 \`subliminal-test\` expects to be run:
 
-  * alongside the other scripts that were originally in \`/Supporting Files/CI\`, and
-  * with Subliminal having been installed on the test machine, using \`rake install DOCS=no\`.
+  * alongside the other scripts that were originally in \`/Supporting Files/CI\`;
+  * with Subliminal having been installed on the test machine, using \`rake install DOCS=no\`;
+  * and with GUI scripting enabled: Open System Preferences and check \"Enable Access for Assistive Devices\" in the Accessibility preference pane.
 
 Also make sure that your \"Integration Tests\" scheme is shared (in Xcode, click \`Product -> Schemes -> Manage Schemes…\`
 and then click the \"Shared\" checkbox next to the scheme) and checked into source control:
