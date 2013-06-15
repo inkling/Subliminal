@@ -19,23 +19,28 @@
 #
 
 
-# `set_simulator_device` sets the device simulated by the iOS Simulator to the specified type.
+# `set_simulator_version` sets the SDK used by the iOS Simulator to the specified version.
 # Execute `set_simulator_device` with no arguments to print usage.
 
 print_usage_and_fail () {
-	echo "usage: set_simulator_device <device>"
-	echo "  <device>\tA device type like \"iPhone\"."
-	echo "          \tAcceptable types are listed in the iPhone Simulator's \"Hardware -> Device\" menu."
+	echo "usage: set_simulator_version <sdk_version>"
+	echo "  <sdk_version>\tA string like \"5.1\" specifying the simulator SDK version to use."
 	exit 1
 }
 
-DEVICE=$1
-if [[ -z "$DEVICE" ]]; then
+SDK=$1
+if [[ -z "$SDK" ]]; then
 	print_usage_and_fail
 fi
 
-# Change device type
-defaults write com.apple.iphonesimulator SimulateDevice "$DEVICE"
+# Set new SDK root
+# The quoting of "xcode-select" is just so that "select" doesn't mess up this file's syntax highlighting
+SDK_ROOT=`find "$('xcode-select' -print-path)" -type d -iname "iphonesimulator$SDK.sdk"`
+if [[ -z "$SDK_ROOT" ]]; then
+	echo "Error: Simulator SDK $SDK not found."
+	exit 1
+fi
+defaults write com.apple.iphonesimulator currentSDKRoot "$SDK_ROOT"
 
 # Restart simulator
 killall "iPhone Simulator" 2> /dev/null
