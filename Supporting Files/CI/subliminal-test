@@ -221,6 +221,11 @@ cleanup_and_exit () {
 QUIETLY=`[[ -e "$BUILD_LOG" ]] && echo " (quietly)" || echo ""`
 echo "\n\nBuilding app$QUIETLY..."
 
+# Select the build source, taking care to escape spaces in the source using `printf`
+BUILD_SOURCE_ARG=`[[ -n "$PROJECT" ]] &&\
+	echo "-project "$(printf '%q' "$PROJECT") ||\
+	echo "-workspace "$(printf '%q' "$WORKSPACE")`
+
 if [[ -z "$SDK" ]]; then
 	SDK=`[[ -n "$SIM_DEVICE" ]] && echo "iphonesimulator" || echo "iphoneos"`
 fi
@@ -261,7 +266,7 @@ fi
 	# --this should not be necessary in the simulator
 	# and can cause problems when testing on device
 	$BUILD_TOOL\
-		-project "$PROJECT"\
+		$BUILD_SOURCE_ARG\
 		-scheme "$SCHEME"\
 		-configuration "$CONFIGURATION"\
 		-sdk "$SDK"\
