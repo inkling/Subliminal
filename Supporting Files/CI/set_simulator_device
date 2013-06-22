@@ -40,5 +40,7 @@ defaults write com.apple.iphonesimulator SimulateDevice "$DEVICE"
 # Restart simulator
 killall "iPhone Simulator" 2> /dev/null
 sleep 1.0
-open -a "iPhone Simulator"
+# Make sure to open the Simulator corresponding to the current dev tools
+SIMULATOR_PATH=`find "$(xcode-select -print-path)" -name "iPhone Simulator.app"`
+open "$SIMULATOR_PATH"
 sleep 1.0
