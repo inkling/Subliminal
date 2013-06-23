@@ -277,9 +277,22 @@ application and tests.
 Requirements
 ------------
 
-Subliminal has been tested with the latest Xcode (4.6.2), and currently requires 
-iOS 6.x. iOS 5 support is literally [in review](https://github.com/inkling/Subliminal/pull/11), 
-and iOS 7 support will be coming soon!
+Subliminal currently requires Xcode 4.6.x and iOS 6.x. 
+
+iOS 5 support is [in review](https://github.com/inkling/Subliminal/pull/11).
+
+We are closely monitoring the development of Xcode 5 and the iOS 7 SDK. It is 
+very likely that we will announce at least partial support before 7 goes Gold 
+Master, but there is at least [one serious bug](http://openradar.appspot.com/radar?id=3115412) 
+in the current 5.0 developer tools that would need to be resolved by Apple before we 
+could fully support that toolchain.
+
+If you have Xcode 5 installed, your [continuous integration script](#continuous-integration) 
+must select the Xcode 4.6 toolchain before invoking `subliminal-test`:
+
+```sh
+export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+```
 
 Continuous Integration
 ----------------------
@@ -301,6 +314,9 @@ A minimal test runner would then look something like this:
 
 ```sh
 #!/bin/bash
+
+# Ensure that `subliminal-test` uses the Xcode 4.6 toolchain
+export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
 
 # Run the tests in the non-retina iPhone Simulator
 DEVICE="iPhone"

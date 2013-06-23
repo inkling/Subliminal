@@ -357,6 +357,11 @@ namespace :test do
     # but can't declare install as a dependency because we have to set its env vars
     ENV['DEV'] = "yes"; ENV['DOCS'] = "no"
     Rake::Task['install'].invoke
+
+    # Ensure that we use the Xcode 4.6 toolchain for now: https://github.com/inkling/Subliminal/issues/32
+    # Note that we can't properly `export` an environment variable from a Ruby script,
+    # But adding it to ENV works because `subliminal-test` is run in a subshell
+    ENV['DEVELOPER_DIR'] = "/Applications/Xcode.app/Contents/Developer"
   end
 
   desc "Runs the unit tests"
