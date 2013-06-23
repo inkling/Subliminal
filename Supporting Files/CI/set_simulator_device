@@ -43,4 +43,4 @@ sleep 1.0
 # Make sure to open the Simulator corresponding to the current dev tools
 SIMULATOR_PATH=`find "$(xcode-select -print-path)" -name "iPhone Simulator.app"`
 open "$SIMULATOR_PATH"
-sleep 1.0
+sleep 2.0

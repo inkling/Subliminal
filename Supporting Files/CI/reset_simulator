@@ -38,7 +38,7 @@ SIMULATOR_PATH=`find "$(xcode-select -print-path)" -name "iPhone Simulator.app"`
 # Open that simulator, to make sure that it is the last simulator
 # to have written its preferences to `com.apple.iphonesimulator`
 open "$SIMULATOR_PATH"
-sleep 1.0
+sleep 2.0
 
 # Kill the simulator
 killall "iPhone Simulator" 2> /dev/null
@@ -55,4 +55,4 @@ rm -rf "$HOME/Library/Application Support/iPhone Simulator/$SDK"
 # Restart the simulator, 
 # causing it to recreate the support directory for the current SDK
 open "$SIMULATOR_PATH"
-sleep 1.0
+sleep 2.0
