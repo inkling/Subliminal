@@ -30,6 +30,9 @@
 @property (weak, nonatomic) IBOutlet UIButton *button;
 @property (weak, nonatomic) IBOutlet UIView *coveringView;
 
+@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (weak, nonatomic) IBOutlet UIButton *scrollViewButton;
+
 @end
 
 
@@ -45,6 +48,9 @@
                testCase == @selector(testElementIsTappableIfItHasANonNullHitpoint) ||
                testCase == @selector(testCanRetrieveLabelEvenIfNotTappable)) {
         nibName = @"SLElementStateTestCompletelyCovered";
+    } else if (testCase == @selector(testScrollViewsAreNotTappableOnIPad5_x) ||
+               testCase == @selector(testScrollViewChildElementsAreTappableEvenOnIPad5_x)) {
+        nibName = @"SLElementStateTestScrollViewCases";
     }
     return nibName;
 }
@@ -89,6 +95,12 @@
 
     _testView.isAccessibilityElement = YES;
     _testView.accessibilityLabel = @"Test Element";
+
+    // we can't make the scroll view accessible in `testScrollViewsAreNotTappableOnIPad5_x`
+    // because that will prevent its child element from appearing in the accessibility hierarchy
+    if (self.testCase == @selector(testScrollViewsAreNotTappableOnIPad5_x)) {
+        self.scrollView.accessibilityIdentifier = @"scroll view";
+    }
 }
 
 - (instancetype)initWithTestCaseWithSelector:(SEL)testCase {

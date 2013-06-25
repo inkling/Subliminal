@@ -186,6 +186,8 @@
 @end
 
 @implementation SLElementVisibilityTestViewController {
+    NSString *_testTableViewCellIdentifier;
+
     UIWebView *_webView;
     BOOL _webViewDidFinishLoad;
 }
@@ -253,7 +255,6 @@
     [[SLTestController sharedTestController] deregisterTarget:self];
 }
 
-static NSString *TestCellIdentifier = nil;
 - (void)loadViewForTestCase:(SEL)testCase {
     if (testCase == @selector(testViewIsNotVisibleIfItIsHiddenEvenInTableViewCell) ||
         testCase == @selector(testAccessibilityElementIsNotVisibleIfContainerIsHiddenEvenInTableViewCell)) {
@@ -264,11 +265,7 @@ static NSString *TestCellIdentifier = nil;
         tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         tableView.delegate = self;
         tableView.dataSource = self;
-        Class containerViewCellClass = [SLElementVisibilityTestCell class];
-        TestCellIdentifier = [NSString stringWithFormat:@"%@_%@",
-                              NSStringFromClass(containerViewCellClass), NSStringFromSelector(testCase)];
-        [tableView registerClass:containerViewCellClass forCellReuseIdentifier:TestCellIdentifier];
-        tableView.rowHeight = [containerViewCellClass rowHeight];
+        tableView.rowHeight = [SLElementVisibilityTestCell rowHeight];
         [view addSubview:tableView];
 
         self.view = view;
@@ -329,7 +326,15 @@ static NSString *TestCellIdentifier = nil;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    SLElementVisibilityTestCell *cell = (SLElementVisibilityTestCell *) [tableView dequeueReusableCellWithIdentifier:TestCellIdentifier forIndexPath:indexPath];
+    if (!_testTableViewCellIdentifier) {
+        _testTableViewCellIdentifier = [NSString stringWithFormat:@"%@_%@",
+                                        NSStringFromClass([SLElementVisibilityTestCell class]), NSStringFromSelector(self.testCase)];
+    }
+
+    SLElementVisibilityTestCell *cell = (SLElementVisibilityTestCell *)[tableView dequeueReusableCellWithIdentifier:_testTableViewCellIdentifier];
+    if (!cell) {
+        cell = [[SLElementVisibilityTestCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:_testTableViewCellIdentifier];
+    }
 
     if (self.testCase == @selector(testViewIsNotVisibleIfItIsHiddenEvenInTableViewCell)) {
         cell.testView.isAccessibilityElement = YES;

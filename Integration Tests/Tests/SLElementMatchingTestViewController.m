@@ -119,6 +119,10 @@
 
 @implementation SLElementMatchingTestViewController {
     UIView *_parentView, *_childView;
+
+    NSString *_testTableViewCellIdentifier;
+    Class _testTableViewCellClass;
+
     UIWebView *_webView;
     BOOL _webViewDidFinishLoad;
 
@@ -192,7 +196,6 @@
     }
 }
 
-static NSString *TestCellIdentifier = nil;
 - (void)viewDidLoad {
     [super viewDidLoad];
 
@@ -213,20 +216,18 @@ static NSString *TestCellIdentifier = nil;
     _childView.accessibilityLabel = @"childView";
 
     if (self.tableView) {
-        Class testCellClass;
         if ((self.testCase == @selector(testMatchingTableViewCellTextLabel)) ||
             (self.testCase == @selector(testMatchingTableViewHeader)) ||
             (self.testCase == @selector(testMatchingTableViewHeaderChildElements))) {
-            testCellClass = [UITableViewCell class];
+            _testTableViewCellClass = [UITableViewCell class];
         } else if ((self.testCase == @selector(testMatchingNonLabelTableViewCellChildElement)) ||
                    (self.testCase == @selector(testMatchingTableViewCellWithCombinedLabel)) ||
                    (self.testCase == @selector(testCannotMatchIndividualChildLabelsOfTableViewCell))) {
-            testCellClass = [SLElementMatchingTestCell class];
+            _testTableViewCellClass = [SLElementMatchingTestCell class];
         } else {
             NSAssert(NO, @"Table view loaded for unexpected test case: %@.", NSStringFromSelector(self.testCase));
         }
-        TestCellIdentifier = [NSString stringWithFormat:@"%@_%@", NSStringFromClass(testCellClass), NSStringFromSelector(self.testCase)];
-        [self.tableView registerClass:testCellClass forCellReuseIdentifier:TestCellIdentifier];
+        _testTableViewCellIdentifier = [NSString stringWithFormat:@"%@_%@", NSStringFromClass(_testTableViewCellClass), NSStringFromSelector(self.testCase)];
     }
 
     if (_webView) {
@@ -248,7 +249,10 @@ static NSString *TestCellIdentifier = nil;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:TestCellIdentifier forIndexPath:indexPath];
+    UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:_testTableViewCellIdentifier];
+    if (!cell) {
+        cell = [[_testTableViewCellClass alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:_testTableViewCellIdentifier];
+    }
 
     if ((self.testCase == @selector(testMatchingTableViewCellTextLabel)) ||
         (self.testCase == @selector(testMatchingTableViewHeader)) ||

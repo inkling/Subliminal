@@ -42,6 +42,9 @@ static const CGFloat kBottomLabelYOffset = 0.2;
 }
 
 /// This test demonstrates simply that we can drag a view.
+/// It will also confirm that we can drag a scroll view
+/// despite UIAutomation reporting it not being tappable when running
+/// on the iPad 5.1 Simulator (though error messages are logged).
 - (void)testDraggingSimple {
     // Do not run this test on Travis, because even very simple scrolling tests
     // fail regularly on the Travis machines.  These tests seem to work fine in

@@ -40,6 +40,9 @@
 		F00800CF174C1C64001927AC /* SLPopover.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800CD174C1C64001927AC /* SLPopover.m */; };
 		F00800E2174C2E0A001927AC /* SLPopoverTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800E0174C2E0A001927AC /* SLPopoverTest.m */; };
 		F00800E3174C2E0A001927AC /* SLPopoverTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800E1174C2E0A001927AC /* SLPopoverTestViewController.m */; };
+		F00F3B5E1778E05100119580 /* SLElementTapTestScrollViewCases.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00F3B5D1778E05100119580 /* SLElementTapTestScrollViewCases.xib */; };
+		F00F3B631778E63C00119580 /* SLElementStateTestScrollViewCases.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00F3B621778E63C00119580 /* SLElementStateTestScrollViewCases.xib */; };
+		F00F3B6717790B4C00119580 /* SLStaticElementTestScrollView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00F3B6617790B4C00119580 /* SLStaticElementTestScrollView.xib */; };
 		F016493D16D42E3C000AEB50 /* SLTestController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = F016493B16D42E3C000AEB50 /* SLTestController+Internal.h */; };
 		F01B2B6D16D2C55900DBA391 /* SLElementMatchingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F01B2B6A16D2C55900DBA391 /* SLElementMatchingTest.m */; };
 		F01B2B6E16D2C55900DBA391 /* SLElementMatchingTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F01B2B6B16D2C55900DBA391 /* SLElementMatchingTestViewController.m */; };
@@ -234,6 +237,9 @@
 		F00800CD174C1C64001927AC /* SLPopover.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLPopover.m; sourceTree = "<group>"; };
 		F00800E0174C2E0A001927AC /* SLPopoverTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLPopoverTest.m; sourceTree = "<group>"; };
 		F00800E1174C2E0A001927AC /* SLPopoverTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLPopoverTestViewController.m; sourceTree = "<group>"; };
+		F00F3B5D1778E05100119580 /* SLElementTapTestScrollViewCases.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementTapTestScrollViewCases.xib; sourceTree = "<group>"; };
+		F00F3B621778E63C00119580 /* SLElementStateTestScrollViewCases.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementStateTestScrollViewCases.xib; sourceTree = "<group>"; };
+		F00F3B6617790B4C00119580 /* SLStaticElementTestScrollView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLStaticElementTestScrollView.xib; sourceTree = "<group>"; };
 		F016493B16D42E3C000AEB50 /* SLTestController+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLTestController+Internal.h"; sourceTree = "<group>"; };
 		F01B2B6A16D2C55900DBA391 /* SLElementMatchingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementMatchingTest.m; sourceTree = "<group>"; };
 		F01B2B6B16D2C55900DBA391 /* SLElementMatchingTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementMatchingTestViewController.m; sourceTree = "<group>"; };
@@ -652,6 +658,7 @@
 			children = (
 				F05D2B041746B55C0089DB9E /* SLStaticElementTest.m */,
 				F05D2B051746B55C0089DB9E /* SLStaticElementTestViewController.m */,
+				F00F3B6617790B4C00119580 /* SLStaticElementTestScrollView.xib */,
 			);
 			name = "SLStaticElement Tests";
 			sourceTree = "<group>";
@@ -735,6 +742,7 @@
 				F0AE4C8C16F7F92D00B2BB2B /* SLElementStateTestViewController.m */,
 				F0C27CDE1741694900335A41 /* SLElementStateTestMidpointCovered.xib */,
 				F0C27CE817416EC400335A41 /* SLElementStateTestCompletelyCovered.xib */,
+				F00F3B621778E63C00119580 /* SLElementStateTestScrollViewCases.xib */,
 			);
 			name = "SLElement State Tests";
 			sourceTree = "<group>";
@@ -754,6 +762,7 @@
 			children = (
 				F0CC7598173B097800E8F94A /* SLElementTapTest.m */,
 				F0CC7599173B097800E8F94A /* SLElementTapTestViewController.m */,
+				F00F3B5D1778E05100119580 /* SLElementTapTestScrollViewCases.xib */,
 			);
 			name = Tapping;
 			sourceTree = "<group>";
@@ -987,6 +996,9 @@
 				F0C27CDF1741694900335A41 /* SLElementStateTestMidpointCovered.xib in Resources */,
 				F0C27CE917416EC400335A41 /* SLElementStateTestCompletelyCovered.xib in Resources */,
 				F00800C9174B3349001927AC /* SLButtonTestViewController.xib in Resources */,
+				F00F3B5E1778E05100119580 /* SLElementTapTestScrollViewCases.xib in Resources */,
+				F00F3B631778E63C00119580 /* SLElementStateTestScrollViewCases.xib in Resources */,
+				F00F3B6717790B4C00119580 /* SLStaticElementTestScrollView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1272,7 +1284,6 @@
 					"\"$(BUILT_PRODUCTS_DIR)\"",
 				);
 				INFOPLIST_FILE = "Integration Tests/$(TARGET_NAME)-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				PRODUCT_NAME = "Subliminal (Integration Tests)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
@@ -1297,7 +1308,6 @@
 					"\"$(BUILT_PRODUCTS_DIR)\"",
 				);
 				INFOPLIST_FILE = "Integration Tests/$(TARGET_NAME)-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "Subliminal (Integration Tests)";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1321,7 +1331,6 @@
 					"\"$(BUILT_PRODUCTS_DIR)\"",
 				);
 				INFOPLIST_FILE = "Unit Tests/Subliminal Unit Tests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "Subliminal (Unit Tests)";
 				WRAPPER_EXTENSION = octest;
@@ -1344,7 +1353,6 @@
 					"\"$(BUILT_PRODUCTS_DIR)\"",
 				);
 				INFOPLIST_FILE = "Unit Tests/Subliminal Unit Tests-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "Subliminal (Unit Tests)";
 				WRAPPER_EXTENSION = octest;

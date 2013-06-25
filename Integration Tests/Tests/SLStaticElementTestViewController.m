@@ -25,12 +25,20 @@
 #import <Subliminal/SLTestController+AppHooks.h>
 
 @interface SLStaticElementTestViewController : SLTestCaseViewController
-
+@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @end
 
 @implementation SLStaticElementTestViewController {
     UIButton *_button;
     BOOL _buttonWasTapped;
+}
+
++ (NSString *)nibNameForTestCase:(SEL)testCase {
+    NSString *nibName = nil;
+    if (testCase == @selector(testStaticElementsDoNotWaitUntilTappableIfIsScrollViewIsYESAndIsIPad5_x)) {
+        nibName = @"SLStaticElementTestScrollView";
+    }
+    return nibName;
 }
 
 - (void)loadViewForTestCase:(SEL)testCase {
@@ -48,6 +56,10 @@
     _button.accessibilityIdentifier = @"SLTestStaticElement";
     _button.accessibilityValue = @"elementValue";
     [_button addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
+
+    self.scrollView.accessibilityIdentifier = @"scroll view";
+    self.scrollView.backgroundColor = [UIColor blueColor];
+    self.scrollView.hidden = YES;
 }
 
 - (void)viewWillLayoutSubviews {
@@ -66,6 +78,8 @@
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showButtonAfterInterval:)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(hideButton)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(buttonWasTapped)];
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(hideScrollView)];
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showScrollViewAfterInterval:)];
     }
     return self;
 }
@@ -107,6 +121,23 @@
 
 - (void)buttonTapped:(id)sender {
     _buttonWasTapped = YES;
+}
+
+- (void)hideScrollView {
+    self.scrollView.hidden = YES;
+}
+
+- (void)showScrollView {
+    self.scrollView.hidden = NO;
+}
+
+- (void)showScrollViewAfterInterval:(NSNumber *)intervalNumber {
+    NSTimeInterval delay = [intervalNumber doubleValue];
+    if (!delay) {
+        [self showScrollView];
+    } else {
+        [self performSelector:@selector(showScrollView) withObject:nil afterDelay:delay];
+    }
 }
 
 @end

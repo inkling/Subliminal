@@ -171,19 +171,32 @@
  become tappable within that interval, the method will raise an 
  `SLUIAElementNotTappableException`.
  
+ This method returns, or raises an `SLUIAElementInvalidException`, immediately.
+ 
  Use of the `UIAElement` macro can help tests diagnose tappability failures.
  
  @warning [Visibility](-isVisible) correlates very closely with tappability, 
  but in some circumstances, an element may be tappable even if it is not visible, 
- and vice versa, due to bugs in `UIAutomation`. See the implementation for details.
+ and vice versa, due to bugs in UIAutomation. See the implementation for details.
  Tests should assert visibility separately if desired.
+ 
+ @bug UIAutomation reports that scroll views are never tappable in applications 
+ running on iPad simulators or devices running iOS 5.x. On such platforms, Subliminal 
+ attempts to interact with scroll views despite UIAutomation reporting that they 
+ are not tappable. Testing reveals that tapping scroll views on an iPad simulator 
+ or device running iOS 5.x will fail, but dragging will succeed (barring factors 
+ like the scroll view actually being hidden or having user interaction disabled, 
+ etc.).
+ 
+ UIAutomation correctly reports scroll view child elements as tappable 
+ regardless of platform.
 
  @return `YES` if it is possible to tap on or otherwise interact with the user
  interface element represented by the specified element, `NO` otherwise.
  
- @exception SLUIAElementInvalidException Raised if the element is not valid
- by the end of the [default timeout](+defaultTimeout).
-
+ @exception SLUIAElementInvalidException Raised if the element is not currently
+ valid.
+ 
  @see -isValid
  */
 - (BOOL)isTappable;
@@ -198,6 +211,14 @@
  
  The tap occurs at the element's [hitpoint](-hitpoint).
  
+ @bug This method will fail if the specified element identifies a scroll view
+ in an application running on an iPad simulator or device running iOS 5.x, due 
+ to a bug in UIAutomation (see -isTappable). An `SLTerminalJavaScriptException` 
+ will be raised in such a scenario.
+ 
+ UIAutomation is able to tap on scroll view child elements 
+ regardless of platform.
+
  @exception SLUIAElementInvalidException Raised if the element is not valid
  by the end of the [default timeout](+defaultTimeout).
  

@@ -60,7 +60,10 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
         
         if (traits & UIAccessibilityTraitButton)                  [traitNames addObject:@"Button"];
         if (traits & UIAccessibilityTraitLink)                    [traitNames addObject:@"Link"];
-        if (traits & UIAccessibilityTraitHeader)                  [traitNames addObject:@"Header"];
+        // UIAccessibilityTraitHeader is only available starting in iOS 6
+        if (kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_5_1) {
+            if (traits & UIAccessibilityTraitHeader)                  [traitNames addObject:@"Header"];
+        }
         if (traits & UIAccessibilityTraitSearchField)             [traitNames addObject:@"Search Field"];
         if (traits & UIAccessibilityTraitImage)                   [traitNames addObject:@"Image"];
         if (traits & UIAccessibilityTraitSelected)                [traitNames addObject:@"Selected"];
@@ -129,6 +132,34 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
     return [NSString stringWithFormat:@"<%@ description:\"%@\">", NSStringFromClass([self class]), _description];
 }
 
+- (BOOL)canDetermineTappabilityUsingAccessibilityPath:(SLAccessibilityPath *)path {
+    BOOL canDetermineTappability = YES;
+    if ((kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_5_1)
+        && ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)) {
+        __block BOOL matchingObjectIsScrollView = NO;
+        [path examineLastPathComponent:^(NSObject *lastPathComponent) {
+            matchingObjectIsScrollView = [lastPathComponent isKindOfClass:[UIScrollView class]];
+        }];
+        canDetermineTappability = !matchingObjectIsScrollView;
+    }
+    return canDetermineTappability;
+}
+
+- (BOOL)canDetermineTappability {
+    BOOL canDetermineTappability = YES;
+    // incur the cost of a path lookup only if necessary
+    if ((kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_5_1)
+        && ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)) {
+        // like `-isTappable`, evaluate the current state, no waiting to resolve the element
+        SLAccessibilityPath *accessibilityPath = [self accessibilityPathWithTimeout:0.0];
+        if (!accessibilityPath) {
+            [NSException raise:SLUIAElementInvalidException format:@"Element '%@' does not exist.", self];
+        }
+        canDetermineTappability = [self canDetermineTappabilityUsingAccessibilityPath:accessibilityPath];
+    }
+    return canDetermineTappability;
+}
+
 - (SLAccessibilityPath *)accessibilityPathWithTimeout:(NSTimeInterval)timeout {
     __block SLAccessibilityPath *accessibilityPath = nil;
     NSDate *startDate = [NSDate date];
@@ -166,7 +197,9 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
         // catch and rethrow exceptions so that we can unbind the path
         @try {
             NSString *UIARepresentation = [boundPath UIARepresentation];
-            if (waitUntilTappable) {
+            // evaluate canDetermineTappability using the current path
+            // because we can't retrieve another while the element is bound
+            if (waitUntilTappable && [self canDetermineTappabilityUsingAccessibilityPath:accessibilityPath]) {
                 if (![[SLTerminal sharedTerminal] waitUntilFunctionWithNameIsTrue:[[self class]SLElementIsTappableFunctionName]
                                                             whenEvaluatedWithArgs:@[ UIARepresentation ]
                                                                        retryDelay:SLUIAElementWaitRetryDelay
@@ -174,7 +207,6 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
                     [NSException raise:SLUIAElementNotTappableException format:@"Element '%@' is not tappable.", self];
                 }
             }
-
             block(UIARepresentation);
         }
         @catch (NSException *exception) {

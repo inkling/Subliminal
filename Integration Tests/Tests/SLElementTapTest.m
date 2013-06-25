@@ -58,6 +58,34 @@
     SLAssertTrue(SLAskApp(tapPoint) != nil, @"Tap should have been recognized.");
 }
 
+- (void)testCannotTapScrollViewsOnIPad5_x {
+    // this test should succeed given an iPhone running iOS 5.1,
+    // and an iPad running iOS 6.1
+    BOOL canTapScrollView = !((kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_5_1) &&
+                              ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad));
+    SLElement *scrollView = [SLElement elementWithAccessibilityIdentifier:@"scroll view"];
+    if (canTapScrollView) {
+        SLAssertNoThrow([UIAElement(scrollView) tap], @"Should have been able to tap scroll view.");
+        SLAssertTrue(SLAskApp(tapPoint) != nil, @"Scroll view should have been tapped.");
+    } else {
+        // If we had disallowed the tap on the basis of UIAutomation saying that
+        // the scroll view was not tappable, we would have thrown an SLElementNotTappableException.
+        SLAssertThrowsNamed([UIAElement(scrollView) tap],
+                            SLTerminalJavaScriptException,
+                            @"Should have allowed tap, but not have been able to tap element.");
+        // sanity check
+        SLAssertTrue(SLAskApp(tapPoint) == nil, @"Scroll view should not have been tapped.");
+    }
+}
+
+- (void)testCanTapChildElementsOfScrollViewsEvenOnIPad5_x {
+    SLButton *scrollViewButton = [SLButton elementWithAccessibilityLabel:@"Button"];
+    SLAssertNoThrow([UIAElement(scrollViewButton) tap],
+                    @"Should have been able to tap scroll view child element regardless of platform.");
+    // sanity check
+    SLAssertTrue(SLAskAppYesNo(scrollViewButtonWasTapped), @"Scroll view button should have been tapped.");
+}
+
 - (void)testTapOccursAtHitpoint {
     [UIAElement(_testElement) tap];
     CGPoint tapPoint = [SLAskApp(tapPoint) CGPointValue];
