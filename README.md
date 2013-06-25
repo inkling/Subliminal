@@ -208,7 +208,7 @@ Here's what a sample `SLTest` implementation looks like:
 
 - (void)testLogInSucceedsWithUsernameAndPassword {
 	SLTextField *usernameField = [SLTextField elementWithAccessibilityLabel:@"username field"];
-	SLTextField *passwordField = [SLTextField elementWithAccessibilityLabel:@"password field" isSecure:YES];
+	SLTextField *passwordField = [SLTextField elementWithAccessibilityLabel:@"password field"];
 	SLElement *submitButton = [SLElement elementWithAccessibilityLabel:@"Submit"];
 	SLElement *loginSpinner = [SLElement elementWithAccessibilityLabel:@"Logging in..."];
 	

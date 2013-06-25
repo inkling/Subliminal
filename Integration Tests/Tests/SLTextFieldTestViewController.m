@@ -40,7 +40,9 @@
     const CGRect kTextFieldFrame = (CGRect){CGPointZero, CGSizeMake(100.0f, 30.0f)};
     if (testCase == @selector(testSetText) ||
         testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
+        testCase == @selector(testSetTextOfSecureTextField) ||
         testCase == @selector(testGetText) ||
+        testCase == @selector(testUIAutomationCannotGetTextTypedIntoSecureTextField) ||
         // we'll test that we match the searchBar *and not* the textField
         testCase == @selector(testMatchesSearchBarTextField)) {
         
@@ -86,10 +88,15 @@
     _textField.borderStyle = UITextBorderStyleRoundedRect;
     if (self.testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing)) {
         _textField.clearsOnBeginEditing = YES;
+    } else if (self.testCase == @selector(testSetTextOfSecureTextField) ||
+               self.testCase == @selector(testUIAutomationCannotGetTextTypedIntoSecureTextField)) {
+        _textField.secureTextEntry = YES;
     }
 
     if (self.testCase != @selector(testSetText) &&
-        self.testCase != @selector(testSetTextWhenFieldClearsOnBeginEditing)) {
+        self.testCase != @selector(testSetTextWhenFieldClearsOnBeginEditing) &&
+        self.testCase != @selector(testSetTextOfSecureTextField) &&
+        self.testCase != @selector(testUIAutomationCannotGetTextTypedIntoSecureTextField)) {
         _textField.text = @"foo";
     }
 
@@ -134,7 +141,9 @@
     NSString *text;
     if (self.testCase == @selector(testSetText) ||
         self.testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
-        self.testCase == @selector(testGetText)) {
+        self.testCase == @selector(testSetTextOfSecureTextField) ||
+        self.testCase == @selector(testGetText) ||
+        self.testCase == @selector(testUIAutomationCannotGetTextTypedIntoSecureTextField)) {
         text = _textField.text;
     } else if (self.testCase == @selector(testMatchesSearchBarTextField) ||
                self.testCase == @selector(testSetSearchBarText) ||

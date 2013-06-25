@@ -30,6 +30,8 @@
 /** 
  The text displayed by the text field.
  
+ @warning UIAutomation is not able to read the text of a secure text field.
+
  @exception SLUIAElementInvalidException Raised by both `-text` and `-setText:`
  if the element is not valid by the end of the [default timeout](+defaultTimeout).
 

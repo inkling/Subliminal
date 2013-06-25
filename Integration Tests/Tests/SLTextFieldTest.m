@@ -41,7 +41,9 @@
 
     if (testSelector == @selector(testSetText) ||
         testSelector == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
-        testSelector == @selector(testGetText)) {
+        testSelector == @selector(testSetTextOfSecureTextField) ||
+        testSelector == @selector(testGetText) ||
+        testSelector == @selector(testUIAutomationCannotGetTextTypedIntoSecureTextField)) {
         _textField = [SLTextField elementWithAccessibilityLabel:@"test element"];
     } else if (testSelector == @selector(testMatchesSearchBarTextField) ||
                testSelector == @selector(testSetSearchBarText) ||
@@ -69,10 +71,30 @@
     SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
 }
 
+- (void)testSetTextOfSecureTextField {
+    NSString *const expectedText = @"foo";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
+}
+
 - (void)testGetText {
     NSString *text;
     SLAssertNoThrow(text = [UIAElement(_textField) text], @"Should not have thrown.");
     SLAssertTrue([text isEqualToString:@"foo"], @"Retrieved unexpected text: %@.", text);
+}
+
+// The app can read text typed into a secure text field,
+// but UIAutomation cannot--it reads the obfuscated value e.g. "•••".
+// Note that only *typed* text is obfuscated--UIAutomation is able
+// to read prepopulated text from such fields.
+- (void)testUIAutomationCannotGetTextTypedIntoSecureTextField {
+    NSString *const textSet = @"foo";
+    SLAssertNoThrow([UIAElement(_textField) setText:textSet], @"Should not have thrown.");
+
+    NSString *textRead;
+    SLAssertNoThrow(textRead = [UIAElement(_textField) text], @"Should not have thrown.");
+    NSString *expectedTextRead = [@"" stringByPaddingToLength:[textSet length] withString:@"•" startingAtIndex:0];
+    SLAssertTrue([textRead isEqualToString:expectedTextRead], @"Retrieved unexpected text: %@.", textRead);
 }
 
 #pragma mark - SLSearchField test cases
