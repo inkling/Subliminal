@@ -31,7 +31,7 @@ subliminal-test (-project <project_path> | -workspace <workspace_path>)
 		( -sim_device <device_type> | -hw_id <udid> )
 		(-login_password <password> | --live)
 		[-build_tool <tool_name>] [-scheme <scheme_name>] [-sdk <sdk>] [-replacement_bundle_id <id>] [--quiet_build]
-		[-timeout <timeout>] [-output <output_dir>] 
+		[-sim_version <version>] [-timeout <timeout>] [-output <output_dir>] 
 		[-e <variable> <value>]
 
 \`subliminal-test\` builds a scheme contained in an Xcode project or Xcode workspace,
@@ -70,13 +70,22 @@ Required arguments:
 	-hw_id <udid>			The UDID of the hardware to target.
 					Either this or \`-sim_device\` must be specified.
 
-	-login_password <password>	The current user's login password. When instruments is launched, it may ask 
-					for permission to take control of your application (http://openradar.appspot.com/radar?id=1544403). 
-					To authorize instruments during an un-attended run, this script requires the current user's password.
-					When running this script live, \`--live\` may be specified instead.
+	-login_password <password>	The current user's login password. This permits 
+					this script to work around several bugs in Apple's \`instruments\` 
+					tool while running un-attended. The password is used: 
+
+					  1. To authorize \`instruments\` to take control of your application if 
+					     it asks for such permission when launched: http://openradar.appspot.com/radar?id=1544403.
+					  2. To temporarily modify the Xcode folder to force \`instruments\` 
+					     to use the specified SDK to run the tests, where it otherwise 
+					     would only use the latest SDK installed: http://openradar.appspot.com/radar?id=3107401.
+
+					If a developer will be attending the tests as they execute, 
+					they may specify \`--live\` rather than provide their password.
 
 	--live				Indicates that this script is being attended by a developer who can 
-					enter their password if instruments asks for authorization. For this script 
+					enter their password to authorize instruments and/or to disable the SDKs 
+					other than that specified by \`-sim_version\`. For this script 
 					to run un-attended, the current user's login password must be specified
 					using \`-login_password\`.
 
@@ -91,10 +100,11 @@ Optional build arguments:
 					Defaults to \"Release\".
 
 	-sdk <sdk>			The SDK to use to build the specified project or workspace.
-					This should be an iPhone Simulator SDK if \`-sim_device\` is specified, 
-					or an iOS device SDK if \`-hw_id\` is specified. Defaults to \"iphonesimulator\" 
-					(the latest iPhone Simulator SDK) if \`-sim_device\` is specified, 
-					or \"iphoneos\" (the latest iOS device SDK) if \`-hw_id\` is specified.
+					This should be an iOS Simulator SDK if \`-sim_device\` is specified, 
+					or an iOS device SDK if \`-hw_id\` is specified. Defaults to 
+					\"iphonesimulator\" (the latest iOS Simulator SDK installed) 
+					if \`-sim_device\` is specified, or \"iphoneos\" (the latest 
+					iOS device SDK) if \`-hw_id\` is specified.
 
 	-replacement_bundle_id <id>	The identifier to use to overwrite the product's bundle identifier.
 					When testing in-app purchase, this must be the identifier of your main app.
@@ -110,13 +120,23 @@ Optional build arguments:
 					log output entirely, by using \`xctool\` as a build tool.
 
 Optional testing arguments:
+	-sim_version <version>		The version of the iOS Simulator SDK to test with, 
+					e.g. 5.1 or 6.1. Defaults to the latest iOS Simulator SDK 
+					installed. Ignored if \`-sim_device\` is not specified.
+
+					Note that the iOS Simulator does not accept certain combinations 
+					of device type and SDK, e.g. \"iPhone (Retina 4-inch)\" 
+					and \"5.1\".
+
 	-timeout <timeout>		The maximum duration for which to run the tests before aborting.
 					Specified in milliseconds and as a number rather than a string. Defaults to infinite.
 
 	-output <output_dir>		The directory to which to save Instruments' output, to aid in debugging test failures:
-					  * the run log, as an XML plist;
+
+					  * the run log, as an XML \`.plist\`;
 					  * screenshots taken when warnings or errors are logged;
-					  * and the run's .trace file, which can be opened in the Instruments GUI to view the run log and the screenshots.
+					  * and the run's \`.trace\` file, which can be opened in the Instruments GUI to view the run log and the screenshots.
+
 					Has no default value.
 
 	--verbose_logging		Enables UIAutomation's debug logs, which record every user interaction simulated 
@@ -157,7 +177,7 @@ case $1 in
 		shift 1;;
 
 	# Set argument, wait for value
-    -project|-workspace|-sim_device|-hw_id|-login_password|-build_tool|-scheme|-configuration|-sdk|-replacement_bundle_id|-timeout|-output|-e)
+    -project|-workspace|-sim_device|-hw_id|-login_password|-build_tool|-scheme|-configuration|-sdk|-replacement_bundle_id|-sim_version|-timeout|-output|-e)
 		if [[ -n "$CURRENT_ARG" ]]; then
 			echo "Missing value for argument: $CURRENT_ARG"
 			print_usage_and_fail
@@ -204,18 +224,98 @@ fi
 # Enforce required args
 if [[ ( -z "$PROJECT" && -z "$WORKSPACE" ) || 
 	( -z "$SIM_DEVICE" && -z "$HW_ID" ) || 
-	( -z "$LOGIN_PASSWORD" && -z "$LIVE" )]]; then
+	( -z "$LOGIN_PASSWORD" && -z "$LIVE" ) ]]; then
 	echo "Missing required arguments"
 	print_usage_and_fail
 fi
 
+# This function allows simulator SDKs to be enabled/disabled 
+# to work around http://openradar.appspot.com/radar?id=3107401
+# It must be declared here because it is called from `cleanup_and_exit`
+enable_SDK_version_or_all () {
+	SDK_VERSION="$1"
+
+	# An SDK is disabled by changing its settings plist's extension to "disabled",
+	# causing it to be ignored by instruments
+	enable_SDK_at_path () {
+		SDK_PATH="$1"
+		ENABLE="$2"
+
+		# Modifying the Xcode folder will require authorization 
+		SUDO_INPUT=`([[ -z $LIVE ]] || ! $LIVE) && echo "-S" || echo ""`
+
+		SDK_VERSION=`echo "$SDK_PATH" | perl -pe 's|.*iphonesimulator(.+)\.sdk|$1|i'`
+		SDK_SETTINGS=`find "$SDK_PATH" -maxdepth 1 -name "SDKSettings.*"`
+		if ! $ENABLE && [[ "$SDK_SETTINGS" == *.plist ]]; then
+			echo "Disabling SDK $SDK_VERSION by changing the extension of \`$SDK_SETTINGS\` to \`*.disabled\`..."
+
+			# If the user did not specify a login password, this will just print a newline
+			printf "$LOGIN_PASSWORD\n" | sudo $SUDO_INPUT mv "$SDK_SETTINGS" "$SDK_PATH/SDKSettings.disabled"
+		elif $ENABLE && [[ "$SDK_SETTINGS" == *.disabled ]]; then
+			echo "Re-enabling SDK $SDK_VERSION by changing the extension of \`$SDK_SETTINGS\` back to \`*.plist\`..."
+
+			printf "$LOGIN_PASSWORD\n" | sudo $SUDO_INPUT mv "$SDK_SETTINGS" "$SDK_PATH/SDKSettings.plist"
+		fi
+	}
+	# so that the subshell used by find -exec can call this function
+	export -f enable_SDK_at_path
+	export LOGIN_PASSWORD
+	export LIVE
+
+	# If a SDK version is passed, disable all other SDKs 
+	if [[ -n "$SDK_VERSION" ]]; then
+		# The quoting of "xcode-select" is just so that "select" doesn't mess up this file's syntax highlighting
+		find "$('xcode-select' -print-path)" \
+			-iname "iphonesimulator*.sdk" -and -not -iname "iphonesimulator${SDK_VERSION}.sdk" \
+			-exec bash -c 'enable_SDK_at_path "$0" $1' {} false ';'
+	else
+		# Otherwise, (re)enable all SDKs
+		find "$('xcode-select' -print-path)" \
+			-iname "iphonesimulator*.sdk" \
+			-exec bash -c 'enable_SDK_at_path "$0" $1' {} true ';'
+	fi
+}
+
 # This function allows the script to abort at any point below without duplicating cleanup logic
 cleanup_and_exit () {
+	# Remove temporary files
 	[[ -n "$BUILD_DIR" ]] && rm -rf "$BUILD_DIR"
 	[[ -n "$BUILD_LOG" ]] && rm -rf "$BUILD_LOG"
 	[[ -n "$RUN_DIR" ]] && rm -rf "$RUN_DIR"
+
+	# Re-enable all simulator SDKs if necessary
+	echo ""
+	enable_SDK_version_or_all
+	echo ""
+	kill AUTHORIZE_INSTRUMENTS_PID 2> /dev/null
+
+	# Reset UIAutomation's debug logging if necessary
+	if [[ -z $VERBOSE_LOGGING ]] || ! $VERBOSE_LOGGING; then
+		if [[ -n "$VERBOSE_LOGGING_SETTING" ]]; then
+			defaults write com.apple.dt.InstrumentsCLI UIAVerboseLogging "$VERBOSE_LOGGING_SETTING"
+		else
+			defaults delete com.apple.dt.InstrumentsCLI UIAVerboseLogging 2> /dev/null
+		fi
+	fi
+
+	if [[ -n "$SIM_DEVICE" ]]; then
+		# Reset the simulator if the bundle identifier was replaced
+		# due to the risk of collision
+		if [[ -n "$REPLACEMENT_BUNDLE_ID" ]]; then
+			echo "\nResetting simulator content and settings because bundle identifier was replaced..."
+			"$SCRIPT_DIR/reset_simulator"
+			if [ $? -eq 0 ]; then
+				echo "Successfully reset iOS Simulator."
+			else
+				echo "\nERROR: Could not reset the simulator."
+			fi
+		fi
+	fi
+
 	exit $1
 }
+trap "cleanup_and_exit 1" SIGINT SIGTERM
+
 
 ### Build app
 QUIETLY=`[[ -e "$BUILD_LOG" ]] && echo " (quietly)" || echo ""`
@@ -244,7 +344,7 @@ if [[ -n "$SIM_DEVICE" ]]; then
 			;;
 		*)
 			echo "\nERROR: Unrecognized device type."
-			exit 1
+			cleanup_and_exit 1
 			;;
 	esac
 	TARGETED_DEVICE_FAMILY_ARG="TARGETED_DEVICE_FAMILY=$DEVICE_FAMILY"
@@ -257,14 +357,10 @@ if [ $? -ne 0 ]; then
 	cleanup_and_exit 1
 fi
 
-# build in a subshell to conditionally redirect its output (and only its output)
-# to the build log (if one was created because --quiet_build was specified)
-(
-	[[ -e "$BUILD_LOG" ]] && exec >"$BUILD_LOG" 2>&1
-
-	# Don't validate the product (its entitlements etc.)
-	# --this should not be necessary in the simulator
-	# and can cause problems when testing on device
+# Don't validate the product (its entitlements etc.)
+# --this should not be necessary in the simulator
+# and can cause problems when testing on device
+build_base_command () {
 	$BUILD_TOOL\
 		$BUILD_SOURCE_ARG\
 		-scheme "$SCHEME"\
@@ -272,14 +368,21 @@ fi
 		-sdk "$SDK"\
 		$TARGETED_DEVICE_FAMILY_ARG\
 		SYMROOT="$BUILD_DIR"\
-		VALIDATE_PRODUCT=NO\
-		clean build
+		VALIDATE_PRODUCT=NO $1
+}
+
+# build in a subshell to conditionally redirect its output (and only its output)
+# to the build log (if one was created because --quiet_build was specified)
+(
+	[[ -e "$BUILD_LOG" ]] && exec >"$BUILD_LOG" 2>&1
+
+	build_base_command "clean build"
 )
 
 if [ $? -ne 0 ]; then
 	[[ -e "$BUILD_LOG" ]] && cat "$BUILD_LOG"
 
-	echo "\n\nERROR: Could not build application."
+	echo "\nERROR: Could not build application."
 	cleanup_and_exit 1
 fi
 
@@ -288,27 +391,18 @@ APP=`find "$BUILD_DIR" -name "*.app"`
 
 # Change the app's bundle identifier if a replacement was specified
 if [[ -n "$REPLACEMENT_BUNDLE_ID" ]]; then
-    INFO_PLIST_PATH=`$BUILD_TOOL -project "$PROJECT" -scheme "$SCHEME" -configuration "$CONFIGURATION" -sdk "$SDK" $TARGETED_DEVICE_FAMILY_ARG -showBuildSettings | grep INFOPLIST_PATH | awk 'BEGIN {FS=" = ";} {print $2}'`
+    INFO_PLIST_PATH=`build_base_command -showBuildSettings | grep INFOPLIST_PATH | awk 'BEGIN {FS=" = ";} {print $2}'`
     INFO_PLIST_NAME=`basename "$INFO_PLIST_PATH"`
     INFO_PLIST="$APP/$INFO_PLIST_NAME"
 	defaults write "$INFO_PLIST" CFBundleIdentifier "$REPLACEMENT_BUNDLE_ID"
 fi
 
+
 ### Prepare to install app
 echo "\n\nPreparing to install app..."
 
 if [[ -n "$SIM_DEVICE" ]]; then
-	# Reset the simulator
 	SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
-
-	echo "\nResetting simulator content and settings..."
-	"$SCRIPT_DIR/reset_simulator"
-	if [ $? -eq 0 ]; then
-		echo "Successfully reset iOS Simulator."
-	else
-		echo "\n\nERROR: Could not reset the simulator."
-		cleanup_and_exit 1
-	fi
 
 	# Set the simulator's device type
 	echo "\nSetting simulator device type..."
@@ -316,7 +410,42 @@ if [[ -n "$SIM_DEVICE" ]]; then
 	if [ $? -eq 0 ]; then
 		echo "Successfully set simulator device type."
 	else
-		echo "\n\nERROR: Could not set the simulator's device type."
+		echo "\nERROR: Could not set the simulator's device type."
+		cleanup_and_exit 1
+	fi
+
+	# Set the simulator's version if specified
+	if [[ -n "$SIM_VERSION" ]]; then
+		echo "\nSetting simulator version..."
+
+		"$SCRIPT_DIR/set_simulator_version" "$SIM_VERSION"
+		if [ $? -ne 0 ]; then
+			echo "\nERROR: Could not set the simulator's version."
+			cleanup_and_exit 1
+		fi
+
+		# By default, the instruments command-line tool 
+		# always runs using the latest SDK
+		# http://stackoverflow.com/questions/12836129/launch-a-specific-hardware-version-of-ios-simulator-using-instruments-command-li)
+		# We must disable the SDKs other than the one we're targeting 
+		# to force it to use the simulator's current setting
+		enable_SDK_version_or_all "$SIM_VERSION"
+
+		echo "\nSuccessfully set simulator version."
+	else
+		# fall back on instruments' default behavior
+		echo "\nSimulator version not specified. Defaulting to latest simulator installed."
+	fi
+
+	# Reset the simulator
+	# This has got to be done after setting the simulator's version
+	# so that we wipe the appropriate content and settings
+	echo "\nResetting simulator content and settings..."
+	"$SCRIPT_DIR/reset_simulator"
+	if [ $? -eq 0 ]; then
+		echo "Successfully reset iOS Simulator."
+	else
+		echo "\nERROR: Could not reset the simulator."
 		cleanup_and_exit 1
 	fi
 fi
@@ -324,12 +453,13 @@ fi
 # Set paths to save Instruments' output (at least temporarily)
 RUN_DIR=`mktemp -d /tmp/subliminal-test.run.XXXXXX`
 if [ $? -ne 0 ]; then
-	echo "\n\nERROR: Could not create temporary test results directory."
+	echo "\nERROR: Could not create temporary test results directory."
 	cleanup_and_exit 1
 fi
 TRACE_FILE="$RUN_DIR/Integration Tests.trace"
 RESULTS_DIR="$RUN_DIR/Automation Results"
 mkdir "$RESULTS_DIR"
+
 
 ### Launch tests
 echo "\n\nLaunching tests...\n"
@@ -346,8 +476,8 @@ if [[ -z $LIVE ]] || ! $LIVE; then
 	# First attempt to authorize instruments when it is launched: 
 	# in the background, monitor for, and dismiss, the dialog it shows
 	osascript "$SCRIPT_DIR/authorize_instruments.scpt" "$LOGIN_PASSWORD" &
-	# Kill the process when the parent script ends
-	trap "kill $!" SIGINT SIGTERM EXIT
+	# Track pid to be killed when the parent script ends
+	AUTHORIZE_INSTRUMENTS_PID=$!
 fi
  
 # Second attempt (in case the dialog does not show, as in certain CI environments 
@@ -368,29 +498,6 @@ printf "$LOGIN_PASSWORD\n" | xcrun instruments\
 	"$APP"\
 	-e UIARESULTSPATH "$RESULTS_DIR"
 
-# Reset UIAutomation's debug logging if necessary
-if [[ -z $VERBOSE_LOGGING ]] || ! $VERBOSE_LOGGING; then
-	if [[ -n "$VERBOSE_LOGGING_SETTING" ]]; then
-		defaults write com.apple.dt.InstrumentsCLI UIAVerboseLogging "$VERBOSE_LOGGING_SETTING"
-	else
-		defaults delete com.apple.dt.InstrumentsCLI UIAVerboseLogging
-	fi
-fi
-
-if [[ -n "$SIM_DEVICE" ]]; then
-	# Reset the simulator again if the bundle identifier was replaced
-	# due to the risk of collision
-	if [[ -n "$REPLACEMENT_BUNDLE_ID" ]]; then
-		echo "\nResetting simulator content and settings again because bundle identifier was replaced..."
-		"$SCRIPT_DIR/reset_simulator"
-		if [ $? -eq 0 ]; then
-			echo "Successfully reset iOS Simulator."
-		else
-			echo "\nERROR: Could not reset the simulator."
-			# Don't fail at this point, since the tests ran
-		fi
-	fi
-fi
 
 ### Process results
 echo "\n\nProcessing results..."
@@ -400,12 +507,12 @@ RESULT_LOG="$RESULTS_DIR/Run 1/Automation Results.plist"
 TEST_STATUS=0
 grep -q "This was a focused run." "$RESULT_LOG"
 if [ $? -eq 0 ]; then
-	echo "\n\nERROR: Tests were committed with focus--fewer test cases may have run than normal."
+	echo "\nERROR: Tests were committed with focus--fewer test cases may have run than normal."
 	TEST_STATUS=1
 else
 	OVERALL_RESULT=`grep "Testing finished" "$RESULT_LOG"`
 	if [[ -z "$OVERALL_RESULT" ]]; then
-		echo "\n\nERROR: Tests did not finish."
+		echo "\nERROR: Tests did not finish."
 		TEST_STATUS=1
 	else
 		NUMBER_OF_FAILURES=`echo "$OVERALL_RESULT" | sed -E 's|.+with ([0-9]+) failure.+|\1|'`

@@ -82,7 +82,7 @@
 
 - (void)verifyTerminalConnectionAndRunTests {
     // Wait for UIAutomation to evaluate our command
-    NSTimeInterval startupTimeout = 2.0;
+    NSTimeInterval startupTimeout = 5.0;
     NSDate *startDate = [NSDate date];
     while (![_terminalStartupResult isEqualToString:@"Hello world"]
            && [[NSDate date] timeIntervalSinceDate:startDate] < startupTimeout) {

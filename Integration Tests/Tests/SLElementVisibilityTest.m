@@ -226,15 +226,26 @@
 }
 
 - (void)testAccessibilityElementIsNotVisibleIfContainerIsHiddenEvenInTableViewCell {
-    // for some reason, UIAElement.isVisible always returns true
+    // on iOS 6, UIAElement.isVisible always returns true
     // for elements in table view cells, even if those elements' containers are hidden
-    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible, but it doesn't.");
+    if (kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_5_1) {
+        SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible, but it doesn't.");
+    } else {
+        SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible.");
+    }
     SLAssertFalse([_testElement isVisible], @"Subliminal should say that the element is not visible.");
 
     // the test view is the container of the test element
     SLAskApp(showTestView);
 
-    SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    // on iOS 5, table view cells appear to cache their accessibility state,
+    // so, the test view having started out hidden, UIAElement.isVisible will return false
+    // even though its container is now visible
+    if (kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_5_1) {
+        SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    } else {
+        SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible, but it doesn't.");
+    }
     SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
 }
 

@@ -116,11 +116,15 @@
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
 
-    _textField.center = self.view.center;
+    // move the textfield above the keyboard
+    static const CGFloat kTextFieldVerticalOffset = -40.0f;
+
+    CGPoint textFieldCenter = CGPointMake(self.view.center.x, self.view.center.y + kTextFieldVerticalOffset);
+    _textField.center = textFieldCenter;
     if (_textField) {
         _searchBar.center = CGPointMake(_textField.center.x, _textField.center.y - 50.0f);
     } else {
-        _searchBar.center = self.view.center;
+        _searchBar.center = textFieldCenter;
     }
 }
 

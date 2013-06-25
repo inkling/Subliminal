@@ -106,6 +106,24 @@
     SLAssertTrue([UIAElement(_testElement) isTappable], @"Element should be tappable if hitpoint is not null.");
 }
 
+- (void)testScrollViewsAreNotTappableOnIPad5_x {
+    SLElement *scrollView = [SLElement elementWithAccessibilityIdentifier:@"scroll view"];
+    if ((kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_5_1) &&
+        ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)) {
+        SLAssertFalse([UIAElement(scrollView) isTappable],
+                      @"UIAutomation should report scroll views as not tappable on iPads running iOS 5.x.");
+    } else {
+        SLAssertTrue([UIAElement(scrollView) isTappable],
+                     @"UIAutomation should otherwise report scroll views as tappable.");
+    }
+}
+
+- (void)testScrollViewChildElementsAreTappableEvenOnIPad5_x {
+    SLButton *scrollViewButton = [SLButton elementWithAccessibilityLabel:@"Button"];
+    SLAssertTrue([UIAElement(scrollViewButton) isTappable],
+                 @"UIAutomation should correctly report scroll view child elements as tappable regardless of platform.");
+}
+
 // UIAutomation does not throw an exception when asked to access a user interface
 // element, so long as that access does not involve simulating user interaction
 // with the element. Contrast -[SLElementTapTest testUserInteractionRequiresTappability].

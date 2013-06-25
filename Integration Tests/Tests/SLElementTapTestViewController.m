@@ -26,14 +26,25 @@
 #import "SLElement.h"
 
 @interface SLElementTapTestViewController : SLTestCaseViewController
-
+@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (weak, nonatomic) IBOutlet UIButton *scrollViewButton;
 @end
 
 @implementation SLElementTapTestViewController {
     UIView *_testView;
     UITapGestureRecognizer *_tapRecognizer;
-
     CGPoint _tapPoint;
+
+    BOOL _scrollViewButtonWasTapped;
+}
+
++ (NSString *)nibNameForTestCase:(SEL)testCase {
+    NSString *nibName = nil;
+    if ((testCase == @selector(testCannotTapScrollViewsOnIPad5_x)) ||
+        (testCase == @selector(testCanTapChildElementsOfScrollViewsEvenOnIPad5_x))) {
+        nibName = @"SLElementTapTestScrollViewCases";
+    }
+    return nibName;
 }
 
 - (void)loadViewForTestCase:(SEL)testCase {
@@ -50,12 +61,17 @@
     self = [super initWithTestCaseWithSelector:testCase];
     if (self) {
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(tapPoint)];
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(scrollViewButtonWasTapped)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(resetTapRecognition)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(hideTestView)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showTestView)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showTestViewAfterInterval:)];
     }
     return self;
+}
+
+- (void)dealloc {
+    [[SLTestController sharedTestController] deregisterTarget:self];
 }
 
 - (void)viewDidLoad {
@@ -66,7 +82,18 @@
     _tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
     _tapRecognizer.numberOfTapsRequired = 1;
     _tapRecognizer.numberOfTouchesRequired = 1;
-    [_testView addGestureRecognizer:_tapRecognizer];
+    if (self.testCase == @selector(testCannotTapScrollViewsOnIPad5_x)) {
+        [self.scrollView addGestureRecognizer:_tapRecognizer];
+    } else {
+        [_testView addGestureRecognizer:_tapRecognizer];
+    }
+
+    // we can't make the scroll view accessible in `testCanTapChildElementsOfScrollViewsEvenOnIPad5_x`
+    // because that will prevent its child element from appearing in the accessibility hierarchy
+    if (self.testCase == @selector(testCannotTapScrollViewsOnIPad5_x)) {
+        self.scrollView.accessibilityIdentifier = @"scroll view";
+    }
+    [self.scrollViewButton addTarget:self action:@selector(scrollViewButtonTapped) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)viewWillLayoutSubviews {
@@ -83,6 +110,10 @@
     _tapPoint = [self.view.window convertPoint:tapPointInWindowCoordinates toWindow:nil];
 }
 
+- (void)scrollViewButtonTapped {
+    _scrollViewButtonWasTapped = YES;
+}
+
 #pragma mark - App hooks
 
 - (NSValue *)tapPoint {
@@ -90,8 +121,13 @@
     else return [NSValue valueWithCGPoint:_tapPoint];
 }
 
+- (NSNumber *)scrollViewButtonWasTapped {
+    return @(_scrollViewButtonWasTapped);
+}
+
 - (void)resetTapRecognition {
     _tapPoint = SLCGPointNull;
+    _scrollViewButtonWasTapped = NO;
 }
 
 - (void)hideTestView {

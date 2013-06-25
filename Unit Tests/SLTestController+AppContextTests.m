@@ -99,7 +99,7 @@
 
     SLTestController *_controller;
     id _controllerMock;
-    id _targetMock;
+    id _target, _secondTarget, _targetMock, _secondTargetMock;
     Class _testClass;
     id _testMock;
 }
@@ -117,8 +117,15 @@
 
     // Set up objects used by tests
     _controller = [SLTestController sharedTestController];
-    
-    _targetMock = [OCMockObject mockForClass:[SLAppTarget class]];
+
+    // we shouldn't need to mock real objects here--class mocks would suffice
+    // --but we can't use mocks as targets, because ARC is incompatible
+    // with weak references to NSProxy-derived objects in iOS 5
+    // See http://stackoverflow.com/questions/9104544/how-can-i-get-ocmock-under-arc-to-stop-nilling-an-nsproxy-subclass-set-using-a-w
+    _target = [[SLAppTarget alloc] init];
+    _secondTarget = [[SLAppTarget alloc] init];
+    _targetMock = [OCMockObject partialMockForObject:_target];
+    _secondTargetMock = [OCMockObject partialMockForObject:_secondTarget];
 
     _testClass = [TestWithSomeTestCases class];
     _testMock = [OCMockObject partialMockForClass:_testClass];
@@ -143,10 +150,12 @@
 - (void)tearDownTestWithSelector:(SEL)testMethod {
     _terminalMock = nil;
 
-    [_controller deregisterTarget:_targetMock];
+    [_controller deregisterTarget:_target];
+    [_controller deregisterTarget:_secondTarget];
     _controllerMock = nil;
     _controller = nil;
     _targetMock = nil;
+    _secondTargetMock = nil;
     _testMock = nil;
     _loggerClassMock = nil;
     _loggerMock = nil;
@@ -154,31 +163,31 @@
 
 - (void)testThrowsOnRegistrationForActionNotHandledByTarget {
     NSLog(@"*** The assertion failure seen in the test output immediately below is an expected part of the tests.");
-    STAssertThrows([_controller registerTarget:_targetMock forAction:_cmd],
+    STAssertThrows([_controller registerTarget:_target forAction:_cmd],
                    @"Should have raised an exception because the target does not respond to the action.");
 }
 
 - (void)testThrowsOnRegistrationForActionThatTakesMoreThanOneArgument {
     NSLog(@"*** The assertion failure seen in the test output immediately below is an expected part of the tests.");
-    STAssertThrows([_controller registerTarget:_targetMock forAction:@selector(invalidActionTakingMoreThanOneArgument:two:)],
+    STAssertThrows([_controller registerTarget:_target forAction:@selector(invalidActionTakingMoreThanOneArgument:two:)],
                    @"Should have raised an exception because the action takes more than one argument.");
 }
 
 - (void)testThrowsOnRegistrationForActionTakingAnArgumentNotOfTypeId {
     NSLog(@"*** The assertion failure seen in the test output immediately below is an expected part of the tests.");
-    STAssertThrows([_controller registerTarget:_targetMock forAction:@selector(invalidActionTakingAnArgumentNotOfTypeId:)],
+    STAssertThrows([_controller registerTarget:_target forAction:@selector(invalidActionTakingAnArgumentNotOfTypeId:)],
                    @"Should have raised an exception because the action takes an argument not of type id.");
 }
 
 - (void)testThrowsOnRegistrationForActionThatReturnsNeitherVoidNorIdType {
     NSLog(@"*** The assertion failure seen in the test output immediately below is an expected part of the tests.");
-    STAssertThrows([_controller registerTarget:_targetMock forAction:@selector(invalidActionReturningNeitherVoidNorIdType)],
+    STAssertThrows([_controller registerTarget:_target forAction:@selector(invalidActionReturningNeitherVoidNorIdType)],
                    @"Should have raised an exception because the action returns neither void nor id type.");
 }
 
 - (void)testSuccessfulRegistrationForActionTakingNoArgumentReturningVoid {
     SEL action = @selector(actionTakingNoArgumentReturningVoid);
-    STAssertNoThrow([_controller registerTarget:_targetMock forAction:action],
+    STAssertNoThrow([_controller registerTarget:_target forAction:action],
                     @"Should not have thrown an exception.");
 
     // have testOne call the action
@@ -197,7 +206,7 @@
 
 - (void)testSuccessfulRegistrationForActionTakingAnArgumentReturningVoid {
     SEL action = @selector(actionTakingAnArgumentReturningVoid:);
-    STAssertNoThrow([_controller registerTarget:_targetMock forAction:action],
+    STAssertNoThrow([_controller registerTarget:_target forAction:action],
                     @"Should not have thrown an exception.");
 
     // have testOne call the action with the given argument
@@ -217,7 +226,7 @@
 
 - (void)testSuccessfulRegistrationForActionTakingNoArgumentReturningAValue {
     SEL action = @selector(actionTakingNoArgumentReturningAValue);
-    STAssertNoThrow([_controller registerTarget:_targetMock forAction:action],
+    STAssertNoThrow([_controller registerTarget:_target forAction:action],
                     @"Should not have thrown an exception.");
 
     // have testOne call the action, and check to see that we got the expected value back
@@ -239,7 +248,7 @@
 
 - (void)testSuccessfulRegistrationForActionTakingAnArgumentReturningAValue {
     SEL action = @selector(actionTakingAnArgumentReturningAValue:);
-    STAssertNoThrow([_controller registerTarget:_targetMock forAction:action],
+    STAssertNoThrow([_controller registerTarget:_target forAction:action],
                     @"Should not have thrown an exception.");
 
     // have testOne call the action with the given argument, and check to see that we got the expected value back
@@ -262,10 +271,10 @@
 
 - (void)testRegistrationIsIdempotent {
     SEL action = @selector(actionTakingNoArgumentReturningVoid);
-    STAssertNoThrow([_controller registerTarget:_targetMock forAction:action],
+    STAssertNoThrow([_controller registerTarget:_target forAction:action],
                     @"Should not have thrown an exception.");
     // register a second time
-    STAssertNoThrow([_controller registerTarget:_targetMock forAction:action],
+    STAssertNoThrow([_controller registerTarget:_target forAction:action],
                     @"Should not have thrown an exception.");
 
     // have testOne call the action
@@ -303,7 +312,7 @@
         double registrationDelayInSeconds = 2.0;
         dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(registrationDelayInSeconds * NSEC_PER_SEC));
         dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-            STAssertNoThrow([_controller registerTarget:_targetMock forAction:action],
+            STAssertNoThrow([_controller registerTarget:_target forAction:action],
                             @"Should not have thrown an exception.");
         });
 
@@ -323,7 +332,7 @@
     // first run with the action registered
     
     SEL action = @selector(actionTakingNoArgumentReturningVoid);
-    STAssertNoThrow([_controller registerTarget:_targetMock forAction:action],
+    STAssertNoThrow([_controller registerTarget:_target forAction:action],
                     @"Should not have thrown an exception.");
 
     // have testOne call the action
@@ -342,7 +351,7 @@
 
     // now run with the action deregistered
     
-    [_controller deregisterTarget:_targetMock forAction:action];
+    [_controller deregisterTarget:_target forAction:action];
 
     // try sending the action again
     [[[_testMock expect] andDo:^(NSInvocation *invocation) {
@@ -362,10 +371,10 @@
     // first run with two actions registered
 
     SEL actionOne = @selector(actionTakingNoArgumentReturningVoid);
-    STAssertNoThrow([_controller registerTarget:_targetMock forAction:actionOne],
+    STAssertNoThrow([_controller registerTarget:_target forAction:actionOne],
                     @"Should not have thrown an exception.");
     SEL actionTwo = @selector(actionTakingNoArgumentReturningAValue);
-    STAssertNoThrow([_controller registerTarget:_targetMock forAction:actionTwo],
+    STAssertNoThrow([_controller registerTarget:_target forAction:actionTwo],
                     @"Should not have thrown an exception.");
 
     // have testOne call actionOne and testTwo call actionTwo
@@ -389,7 +398,7 @@
 
     // now run with all actions deregistered
 
-    [_controller deregisterTarget:_targetMock];
+    [_controller deregisterTarget:_target];
 
     // try sending the actions again
     [[[_testMock expect] andDo:^(NSInvocation *invocation) {
@@ -413,12 +422,11 @@
 - (void)testOnlyOneTargetCanBeRegisteredForAnAction {
     // register the first target
     SEL action = @selector(actionTakingNoArgumentReturningVoid);
-    STAssertNoThrow([_controller registerTarget:_targetMock forAction:action],
+    STAssertNoThrow([_controller registerTarget:_target forAction:action],
                     @"Should not have thrown an exception.");
 
     // now register a second target
-    id secondTargetMock = [OCMockObject mockForClass:[SLAppTarget class]];
-    STAssertNoThrow([_controller registerTarget:secondTargetMock forAction:action],
+    STAssertNoThrow([_controller registerTarget:_secondTarget forAction:action],
                     @"Should not have thrown an exception.");
 
     // have testOne call the action
@@ -428,28 +436,27 @@
     }] testOne];
 
     // expect the action to be received by the second target, but not the first
-    [[secondTargetMock expect] actionTakingNoArgumentReturningVoid];
+    [[_secondTargetMock expect] actionTakingNoArgumentReturningVoid];
     [[_targetMock reject] actionTakingNoArgumentReturningVoid];
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
-    STAssertNoThrow([secondTargetMock verify], @"Second target should have received action.");
+    STAssertNoThrow([_secondTargetMock verify], @"Second target should have received action.");
     STAssertNoThrow([_targetMock verify], @"First target should not have received action.");
 }
 
 - (void)testDeregisteringTargetForActionDoesNotDeregisterOtherTargets {
     // register the first target
     SEL action = @selector(actionTakingNoArgumentReturningVoid);
-    STAssertNoThrow([_controller registerTarget:_targetMock forAction:action],
+    STAssertNoThrow([_controller registerTarget:_target forAction:action],
                     @"Should not have thrown an exception.");
 
     // now register a second target
-    id secondTargetMock = [OCMockObject mockForClass:[SLAppTarget class]];
-    STAssertNoThrow([_controller registerTarget:secondTargetMock forAction:action],
+    STAssertNoThrow([_controller registerTarget:_secondTarget forAction:action],
                     @"Should not have thrown an exception.");
 
     // have the first target "deregister" for the action--this should be a no-op
-    STAssertNoThrow([_controller deregisterTarget:_targetMock forAction:action],
+    STAssertNoThrow([_controller deregisterTarget:_target forAction:action],
                     @"Should not have thrown an exception.");
 
     // have testOne call the action
@@ -460,11 +467,11 @@
 
     // expect the action to be received by the second target,
     // i.e it should not have been deregistered by the above call
-    [[secondTargetMock expect] actionTakingNoArgumentReturningVoid];
+    [[_secondTargetMock expect] actionTakingNoArgumentReturningVoid];
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
-    STAssertNoThrow([secondTargetMock verify], @"Second target should have received action.");
+    STAssertNoThrow([_secondTargetMock verify], @"Second target should have received action.");
 }
 
 - (void)testTargetsAreNotRetained {
@@ -516,7 +523,7 @@
 #undef actionName
 #define actionName actionTakingNoArgumentReturningVoid
     SEL action = @selector(actionName);
-    STAssertNoThrow([_controller registerTarget:_targetMock forAction:action],
+    STAssertNoThrow([_controller registerTarget:_target forAction:action],
                     @"Should not have thrown an exception.");
 
     // have testOne call the action
@@ -540,7 +547,7 @@
 #undef actionName
 #define actionName actionTakingAnArgumentReturningVoid:
     SEL action = @selector(actionName);
-    STAssertNoThrow([_controller registerTarget:_targetMock forAction:action],
+    STAssertNoThrow([_controller registerTarget:_target forAction:action],
                     @"Should not have thrown an exception.");
 
     // have testOne call the action with the given argument
@@ -565,7 +572,7 @@
 #undef actionName
 #define actionName actionReturningABOOLValue
     SEL action = @selector(actionName);
-    STAssertNoThrow([_controller registerTarget:_targetMock forAction:action],
+    STAssertNoThrow([_controller registerTarget:_target forAction:action],
                     @"Should not have thrown an exception.");
 
     // have testOne call the action, and check to see that we got the expected value back
@@ -592,7 +599,7 @@
 #undef actionName
 #define actionName actionTakingAnArgumentReturningABOOLValue:
     SEL action = @selector(actionName);
-    STAssertNoThrow([_controller registerTarget:_targetMock forAction:action],
+    STAssertNoThrow([_controller registerTarget:_target forAction:action],
                     @"Should not have thrown an exception.");
 
     // have testOne call the action with the given argument, and check to see that we got the expected value back

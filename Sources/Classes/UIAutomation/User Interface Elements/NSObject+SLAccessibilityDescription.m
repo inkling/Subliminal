@@ -56,7 +56,10 @@
     NSMutableArray *traitNames = [NSMutableArray array];
     if (traits & UIAccessibilityTraitButton)                  [traitNames addObject:@"Button"];
     if (traits & UIAccessibilityTraitLink)                    [traitNames addObject:@"Link"];
-    if (traits & UIAccessibilityTraitHeader)                  [traitNames addObject:@"Header"];
+    // UIAccessibilityTraitHeader is only available starting in iOS 6
+    if (kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_5_1) {
+        if (traits & UIAccessibilityTraitHeader)                  [traitNames addObject:@"Header"];
+    }
     if (traits & UIAccessibilityTraitSearchField)             [traitNames addObject:@"Search Field"];
     if (traits & UIAccessibilityTraitImage)                   [traitNames addObject:@"Image"];
     if (traits & UIAccessibilityTraitSelected)                [traitNames addObject:@"Selected"];

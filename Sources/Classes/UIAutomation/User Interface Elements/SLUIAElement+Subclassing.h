@@ -60,9 +60,9 @@
  using `-[NSString slStringByEscapingForJavaScriptLiteral]`,
  if they are to be substituted into a JavaScript string literal.
 
- @param waitUntilTappable If `YES`, this method will wait for the remainder 
- of the default timeout after the element becomes valid for the element to 
- become tappable.
+ @param waitUntilTappable If `YES`, and `-canDetermineTappability` returns `YES`, 
+ this method will wait for the remainder of the default timeout, after the element
+ becomes valid, for the element to become tappable.
  @param action A format string (in the manner of `-[NSString stringWithFormat:]`) 
  representing a JavaScript function to be called on the corresponding `UIAElement`.
  @param ... (Optional) A comma-separated list of arguments to substitute into 
@@ -73,9 +73,9 @@
  @exception SLUIAElementInvalidException Raised if the element is not valid
  by the end of the default timeout.
 
- @exception SLUIAElementNotTappableException Raised if the element is not 
- tappable when whatever amount of time remains of the default timeout after 
- the element becomes valid elapses.
+ @exception SLUIAElementNotTappableException Raised if the element waits for
+ tappability and is not tappable when whatever amount of time remains of the 
+ default timeout, after the element becomes valid, elapses.
  */
 - (id)waitUntilTappable:(BOOL)waitUntilTappable
         thenSendMessage:(NSString *)action, ... NS_FORMAT_FUNCTION(2, 3);
@@ -100,13 +100,21 @@
  @warning If the expression to be evaluated by `block` involves user interaction,
  the caller must pass `YES` for `waitUntilTappable`.
 
- @param waitUntilTappable If `YES`, this method will wait for the remainder
- of `timeout` after the element becomes valid for the element to become tappable.
+ @param waitUntilTappable If `YES`, and `-canDetermineTappability` returns `YES`, 
+ this method will wait for the remainder of `timeout`, after the element becomes valid, 
+ for the element to become tappable.
  @param block A block which takes the UIAutomation representation of the specified 
  element as an argument and returns `void`.
  @param timeout The timeout for which this method should wait for the specified 
  element to become valid (and tappable, if `waitUntilTappable` is YES). Clients 
  should generally call this method with `+[SLUIAElement defaultTimeout]`.
+ 
+ @exception SLUIAElementInvalidException Raised if the element is not valid
+ by the end of `timeout`.
+
+ @exception SLUIAElementNotTappableException Raised if the element waits for 
+ tappability and is not tappable when whatever amount of time remains of `timeout`,
+ after the element becomes valid, elapses.
  */
 - (void)waitUntilTappable:(BOOL)waitUntilTappable
         thenPerformActionWithUIARepresentation:(void(^)(NSString *UIARepresentation))block
@@ -124,6 +132,24 @@
  `UIAElement` is tappable.
  */
 + (NSString *)SLElementIsTappableFunctionName;
+
+/**
+ Determines whether the specified element's response to `-isTappable` is valid.
+ 
+ This should return `YES` unless the specified element identifies an instance 
+ of `UIScrollView` and tests are running on an iPad simulator or device running 
+ iOS 5.x. On those platforms, UIAutomation reports that scroll views are always 
+ invisible, and thus not tappable.
+ 
+ If this method returns `NO`, tappability will not be enforced as a prerequisite 
+ for simulating user interaction. This will let Subliminal attempt interaction 
+ with scroll views despite UIAutomation's response. Testing reveals that certain 
+ forms of interaction, e.g. dragging, will yet succeed (barring factors like the 
+ scroll view actually being hidden or having user interaction disabled, etc.).
+ 
+ @exception SLUIAElementInvalidException Raised if the element is not valid.
+ */
+- (BOOL)canDetermineTappability;
 
 @end
 

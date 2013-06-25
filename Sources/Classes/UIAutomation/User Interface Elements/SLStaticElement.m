@@ -41,6 +41,15 @@
     return [NSString stringWithFormat:@"<%@>", NSStringFromClass([self class])];
 }
 
+- (BOOL)canDetermineTappability {
+    BOOL canDetermineTappability = YES;
+    if ((kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_5_1)
+        && ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)) {
+        canDetermineTappability = !self.isScrollView;
+    }
+    return canDetermineTappability;
+}
+
 - (void)waitUntilTappable:(BOOL)waitUntilTappable
         thenPerformActionWithUIARepresentation:(void (^)(NSString *UIARepresentation))block
                                        timeout:(NSTimeInterval)timeout {
@@ -56,7 +65,7 @@
     NSTimeInterval resolutionDuration = resolutionEnd - resolutionStart;
     NSTimeInterval remainingTimeout = timeout - resolutionDuration;
     
-    if (waitUntilTappable) {
+    if (waitUntilTappable && [self canDetermineTappability]) {
         if (![[SLTerminal sharedTerminal] waitUntilFunctionWithNameIsTrue:[[self class] SLElementIsTappableFunctionName]
                                                     whenEvaluatedWithArgs:@[ _UIARepresentation ]
                                                                retryDelay:SLUIAElementWaitRetryDelay

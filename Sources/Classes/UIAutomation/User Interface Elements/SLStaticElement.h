@@ -69,4 +69,20 @@
  */
 - (instancetype)initWithUIARepresentation:(NSString *)UIARepresentation;
 
+/**
+ Informs Subliminal that this element identifies an instance of `UIScrollView`.
+ 
+ Developers must set this to `YES` for an element used to represent a scroll view
+ in tests that will be run on an iPad 5.x simulator or device, due to 
+ [a bug in UIAutomation](-isTappable).
+ 
+ When this is set to `YES` and tests are running on an iPad simulator or device 
+ running iOS 5.x, Subliminal will not try to determine tappability when simulating 
+ user interaction with that scroll view, because UIAutomation will always say 
+ that the scroll view is not tappable.
+
+ Defaults to `NO`.
+ */
+@property (nonatomic) BOOL isScrollView;
+
 @end
