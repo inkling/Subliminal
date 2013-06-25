@@ -492,6 +492,24 @@ FAQ
 		time to attach the debugger by setting `-[SLTestController shouldWaitToStartTesting]` 
 		to `YES`.
 
+Known Issues
+------------
+
+> This section is reserved for issues that Subliminal cannot resolve, due to 
+limitations of Apple's frameworks or bugs therein. Other issues are tracked 
+[here](https://github.com/inkling/Subliminal/issues).
+
+* 	UIAutomation reports that scroll views are never tappable in applications 
+	running on iPad simulators or devices running iOS 5.x. On such platforms, 
+	Subliminal attempts to interact with scroll views despite UIAutomation reporting 
+	that they are not tappable--whereas on other platforms (not iPad, or not running 
+	iOS 5.x), Subliminal requires that elements be tappable before interaction 
+	can proceed.
+
+	Testing reveals that tapping scroll views on an iPad simulator or device 
+	running iOS 5.x will fail, but dragging will succeed. Also, UIAutomation 
+	correctly reports scroll view child elements as tappable regardless of platform.
+
 Contributing
 ------------
 

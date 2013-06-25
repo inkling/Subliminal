@@ -141,6 +141,11 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return isTappable;
 }
 
+- (BOOL)canDetermineTappability {
+    // Concrete subclasses must determine whether instances identify scroll views.
+    return YES;
+}
+
 - (void)tap {
     [self waitUntilTappable:YES thenSendMessage:@"tap()"];
 }
