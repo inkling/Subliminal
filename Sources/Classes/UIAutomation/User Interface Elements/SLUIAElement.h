@@ -152,11 +152,13 @@
  this returns the value of that control's `-isEnabled` property. 
  This method otherwise appears to evaluate to `YES`.
 
+ This method returns, or raises an `SLUIAElementInvalidException`, immediately.
+
  @return `YES` if the user interface element represented by the specified element 
  is enabled, `NO` otherwise.
  
- @exception SLUIAElementInvalidException Raised if the element is not valid
- by the end of the [default timeout](+defaultTimeout).
+ @exception SLUIAElementInvalidException Raised if the element is not currently 
+ valid.
  */
 - (BOOL)isEnabled;
 

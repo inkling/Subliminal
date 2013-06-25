@@ -103,7 +103,13 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (BOOL)isEnabled {
-    return [[self waitUntilTappable:NO thenSendMessage:@"isEnabled()"] boolValue];
+    __block BOOL isEnabled;
+    // `-isEnabled` evaluates the current state, no waiting to resolve the element
+    [self waitUntilTappable:NO
+          thenPerformActionWithUIARepresentation:^(NSString *UIARepresentation) {
+        isEnabled = [[[SLTerminal sharedTerminal] evalWithFormat:@"%@.isEnabled()", UIARepresentation] boolValue];
+    } timeout:0.0];
+    return isEnabled;
 }
 
 + (NSString *)SLElementIsTappableFunctionName {
