@@ -77,6 +77,13 @@
                  @"Should have matched the button with label 'foo' again.");
 }
 
+// Reading an element's value is a process involving JS execution, with some variability:
+// +/- one SLElementRetryDelay and two SLTerminalReadRetryDelays (one for
+// SLTerminal.js receiving the command and one for SLTerminal receiving the result).
+- (NSTimeInterval)waitDelayVariability {
+    return SLUIAElementWaitRetryDelay + SLTerminalReadRetryDelay * 2;
+}
+
 - (void)testElementsWaitToMatchValidObjects {
     SLElement *fooButton = [SLElement elementWithAccessibilityLabel:@"foo"];
     // isValid returns immediately, and doesn't throw if the element is invalid
@@ -94,7 +101,7 @@
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < SLUIAElementWaitRetryDelay,
+    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],
                  @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
                  actualWaitTimeInterval, expectedWaitTimeInterval);
 
@@ -118,7 +125,7 @@
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < SLUIAElementWaitRetryDelay,
+    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],
                  @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
                  actualWaitTimeInterval, expectedWaitTimeInterval);
 }
