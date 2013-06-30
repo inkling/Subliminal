@@ -255,12 +255,12 @@ enable_SDK_version_or_all () {
 
 		SDK_VERSION=`echo "$SDK_PATH" | perl -pe 's|.*iphonesimulator(.+)\.sdk|$1|i'`
 		SDK_SETTINGS=`find "$SDK_PATH" -maxdepth 1 -name "SDKSettings.*"`
-		if ! $ENABLE && [[ "$SDK_SETTINGS" == *.plist ]]; then
+		if [[ -n "$ENABLE" ]] && ! $ENABLE && [[ "$SDK_SETTINGS" == *.plist ]]; then
 			echo "Disabling SDK $SDK_VERSION by changing the extension of \`$SDK_SETTINGS\` to \`*.disabled\`..."
 
 			# If the user did not specify a login password, this will just print a newline
 			printf "$LOGIN_PASSWORD\n" | sudo $SUDO_INPUT mv "$SDK_SETTINGS" "$SDK_PATH/SDKSettings.disabled"
-		elif $ENABLE && [[ "$SDK_SETTINGS" == *.disabled ]]; then
+		elif [[ -n "$ENABLE" ]] && $ENABLE && [[ "$SDK_SETTINGS" == *.disabled ]]; then
 			echo "Re-enabling SDK $SDK_VERSION by changing the extension of \`$SDK_SETTINGS\` back to \`*.plist\`..."
 
 			printf "$LOGIN_PASSWORD\n" | sudo $SUDO_INPUT mv "$SDK_SETTINGS" "$SDK_PATH/SDKSettings.plist"
