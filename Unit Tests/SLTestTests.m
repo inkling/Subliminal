@@ -94,6 +94,17 @@
     STAssertNil(undefinedTestClass, @"+testNamed: should not have found a test.");
 }
 
+- (void)testTestNamedReturnsFocusedTests {   // with or without the prefix
+    Class validTestClass = [Focus_TestThatIsFocused class];
+    
+    Class resultTestClass = [SLTest testNamed:NSStringFromClass(validTestClass)];
+    STAssertEqualObjects(resultTestClass, validTestClass, @"+testNamed: should have found the test.");
+
+    NSString *unprefixedTestClassName = [NSStringFromClass(validTestClass) substringFromIndex:[SLTestFocusPrefix length]];
+    resultTestClass = [SLTest testNamed:unprefixedTestClassName];
+    STAssertEqualObjects(resultTestClass, validTestClass, @"+testNamed: should have found the test even without the prefix.");
+}
+
 #pragma mark - Abstract tests
 
 - (void)testATestIsAbstractIfItDefinesNoTestCases {
