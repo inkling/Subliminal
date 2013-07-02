@@ -25,7 +25,7 @@
 @implementation NSString (SLJavaScript)
 
 - (NSString *)slStringByEscapingForJavaScriptLiteral {
-    // Escape sequences taken from here: http://ecma262-5.com/ELS5_HTML.htm#Section_7.8.4
+    // Escape sequences taken from here: http://www.ecma-international.org/ecma-262/5.1/#sec-7.8.4
     NSString *literal = [self stringByReplacingOccurrencesOfString:@"\\" withString:@"\\\\"];
     literal = [literal stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""];
     literal = [literal stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"];
