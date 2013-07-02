@@ -57,7 +57,10 @@
 
 #pragma mark - SLTextField test cases
 
-- (void)testSetText {
+- (void)focus_testSetText {
+    [[SLDevice currentDevice] captureScreenshotWithFilename:@"aName"];
+    [[SLDevice currentDevice] captureScreenshotWithFilename:@"rectOnly" inRect:CGRectMake(100, 100, -100, -100)];
+    [[SLDevice currentDevice] captureScreenshotWithFilename:@"rectOnly" inRect:CGRectMake(0, 0, 100, 100)];
     NSString *const expectedText = @"foo";
     SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
     SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
