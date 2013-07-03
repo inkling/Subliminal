@@ -110,6 +110,4 @@
  */
 - (void)captureScreenshotWithFilename:(NSString *)filename inRect:(CGRect)rect;
 
-NSString *SLUIARectFromCGRect(CGRect rect);
-
 @end
