@@ -22,6 +22,7 @@
 
 #import "SLUIAElement.h"
 #import "SLUIAElement+Subclassing.h"
+#import "SLGeometry.h"
 
 #import <objc/runtime.h>
 
@@ -187,18 +188,14 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (CGRect)rect {
-    NSString *__block CGRectString = nil;
+    CGRect __block rect;
     [self waitUntilTappable:NO
-          thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
-        NSString *rectString = [NSString stringWithFormat:@"%@.rect()", uiaRepresentation];
-        CGRectString = [[SLTerminal sharedTerminal] evalFunctionWithName:@"SLCGRectStringFromJSRect"
-                                                                  params:@[ @"rect" ]
-                                                                    body:@"if (!rect) return '';\
-                                                                           else return '{{' + rect.origin.x + ',' + rect.origin.y + '},\
-                                                                                         {' + rect.size.width + ',' + rect.size.height + '}}';"
-                                                                withArgs:@[ rectString ]];
+          thenPerformActionWithUIARepresentation:^(NSString *const uiaRepresentation) {
+        NSString *javaScriptToReachRect = [NSString stringWithFormat:@"%@.rect()", uiaRepresentation];
+        rect = SLCGRectFromUIARect(javaScriptToReachRect);
     } timeout:[[self class] defaultTimeout]];
-    return ([CGRectString length] ? CGRectFromString(CGRectString) : CGRectNull);
+    
+    return rect;
 }
 
 - (void)logElement {
