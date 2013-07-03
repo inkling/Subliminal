@@ -21,8 +21,8 @@ CGRect SLCGRectFromUIARect(NSString *UIARect) {
     NSString *CGRectString = [[SLTerminal sharedTerminal] evalFunctionWithName:@"SLCGRectStringFromJSRect"
                                                                         params:@[ @"rect" ]
                                                                           body:@"if (!rect) return '';\
-                              else return '{{' + rect.origin.x + ',' + rect.origin.y + '},\
-                              {' + rect.size.width + ',' + rect.size.height + '}}';"
+                                                                                 else return '{{' + rect.origin.x + ',' + rect.origin.y + '},\
+                                                                                 {' + rect.size.width + ',' + rect.size.height + '}}';"
                                                                       withArgs:@[ UIARect ]];
     return ([CGRectString length] ? CGRectFromString(CGRectString) : CGRectNull);
 }
