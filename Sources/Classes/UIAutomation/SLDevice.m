@@ -24,6 +24,7 @@
 
 #import "SLTerminal.h"
 #import "SLStringUtilities.h"
+#import "SLGeometry.h"
 
 
 @implementation SLDevice
@@ -73,12 +74,6 @@ NSString * SLUIADeviceOrientationFromUIDeviceOrientation(UIDeviceOrientation dev
 - (void)captureScreenshotWithFilename:(NSString *)filename inRect:(CGRect)rect
 {
     [[SLTerminal sharedTerminal] evalWithFormat:@"UIATarget.localTarget().captureRectWithName(%@,\"%@\")",SLUIARectFromCGRect(rect),[filename slStringByEscapingForJavaScriptLiteral]];
-}
-
-NSString *SLUIARectFromCGRect(CGRect rect)
-{
-    NSCParameterAssert(!CGRectIsNull(rect));
-    return [NSString stringWithFormat:@"{origin:{x:%f,y:%f}, size:{width:%f, height:%f}}",rect.origin.x,rect.origin.y,rect.size.width,rect.size.height];
 }
 
 @end
