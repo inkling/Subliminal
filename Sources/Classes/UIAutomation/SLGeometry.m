@@ -18,13 +18,11 @@ NSString *SLUIARectFromCGRect(CGRect rect)
 
 // `UIARect` is some string which evaluates to a `Rect`
 CGRect SLCGRectFromUIARect(NSString *UIARect) {
-    NSLog(@"UIARect = %@",UIARect);
     NSString *CGRectString = [[SLTerminal sharedTerminal] evalFunctionWithName:@"SLCGRectStringFromJSRect"
                                                                         params:@[ @"rect" ]
                                                                           body:@"if (!rect) return '';\
                               else return '{{' + rect.origin.x + ',' + rect.origin.y + '},\
                               {' + rect.size.width + ',' + rect.size.height + '}}';"
                                                                       withArgs:@[ UIARect ]];
-    NSLog(@"CGRectString = %@",CGRectString);
     return ([CGRectString length] ? CGRectFromString(CGRectString) : CGRectNull);
 }
