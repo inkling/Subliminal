@@ -57,7 +57,7 @@
 
 #pragma mark - SLTextField test cases
 
-- (void)focus_testSetText {
+- (void)testSetText {
     [[SLDevice currentDevice] captureScreenshotWithFilename:@"aName"];
     [[SLDevice currentDevice] captureScreenshotWithFilename:@"rectOnly" inRect:CGRectMake(100, 100, -100, -100)];
     [[SLDevice currentDevice] captureScreenshotWithFilename:@"rectOnly" inRect:CGRectMake(0, 0, 100, 100)];
