@@ -28,7 +28,9 @@
  The singleton `SLDevice` instance allows you to access and manipulate
  the device on which your application is running.
  */
-@interface SLDevice : NSObject
+@interface SLDevice : NSObject{}
+
+#pragma mark - Getting the shared instance
 
 /**
  Returns an object representing the current device.
@@ -36,6 +38,8 @@
  @return A singleton object that represents the current device.
  */
 + (SLDevice *)currentDevice;
+
+#pragma mark - Interacting with hardware buttons
 
 /**
  Deactivates your application for the specified duration.
@@ -54,7 +58,9 @@
  */
 - (void)deactivateAppForDuration:(NSTimeInterval)duration;
 
-/** 
+#pragma mark - Device Orientation
+
+/**
  Changes the device orientation to the specified new `deviceOrientation` value.
  
  You can access the current device orientation using `[[UIDevice currentDevice] orientation]`
@@ -63,7 +69,27 @@
  */
 - (void)setOrientation:(UIDeviceOrientation)deviceOrientation;
 
+#pragma mark - Screenshots
+
+/** Takes a screenshot of the entire device screen.
+ 
+ The image is viewable from the UIAutomation debug log in Instruments. 
+ 
+ When running `subliminal-test` from the command line, the images are also saved as PNGs within the Run Data folder.
+ 
+ @param filename A string to use as the name for the resultant image file.
+ */
 - (void)captureScreenshotWithFilename:(NSString *)filename;
+
+/** Takes a screenshot of the specified rectangular portion of the device screen.
+ 
+ The image is viewable from the UIAutomation debug log in Instruments.
+ 
+ When running `subliminal-test` from the command line, the images are also saved as PNGs within the Run Data folder.
+ 
+ @param filename A string to use as the name for the resultant image file.
+ @param rect The rect that defines the area of the screen to capture.
+ */
 - (void)captureScreenshotWithFilename:(NSString *)filename inRect:(CGRect)rect;
 
 @end
