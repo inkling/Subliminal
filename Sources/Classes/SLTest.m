@@ -70,7 +70,13 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
 }
 
 + (Class)testNamed:(NSString *)name {
+    NSParameterAssert(name);
+    
     Class klass = NSClassFromString(name);
+    // perhaps the test is focused
+    if (!klass) klass = NSClassFromString([SLTestFocusPrefix stringByAppendingString:name]);
+    if (!klass) klass = NSClassFromString([[SLTestFocusPrefix capitalizedString] stringByAppendingString:name]);
+    
     BOOL classIsTestClass = (class_respondsToSelector(object_getClass(klass), @selector(isSubclassOfClass:)) &&
                              [klass isSubclassOfClass:[SLTest class]]);
     return (classIsTestClass ? klass : nil);
