@@ -348,7 +348,7 @@
  @param filename A filename, i.e. the last component of the `__FILE__` macro's expansion.
  @param lineNumber A line number, i.e. the `__LINE__` macro's expansion.
  */
-- (void)recordLastKnownFile:(char *)filename line:(int)lineNumber;
+- (void)recordLastKnownFile:(const char *)filename line:(int)lineNumber;
 
 /**
  Records the current filename and line number and returns its argument.
