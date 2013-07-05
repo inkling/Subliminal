@@ -27,6 +27,8 @@
 		0696BA5816E013D600DD70CF /* SLElementDraggingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0696BA5516E013D600DD70CF /* SLElementDraggingTest.m */; };
 		0696BA5916E013D600DD70CF /* SLElementDraggingTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0696BA5616E013D600DD70CF /* SLElementDraggingTestViewController.m */; };
 		0696BA5A16E013D600DD70CF /* SLElementDraggingTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0696BA5716E013D600DD70CF /* SLElementDraggingTestViewController.xib */; };
+		50F3E18C1783A5CB00C6BD1B /* SLGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 50F3E18A1783A5CB00C6BD1B /* SLGeometry.h */; };
+		50F3E18E1783A60100C6BD1B /* SLGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 50F3E18B1783A5CB00C6BD1B /* SLGeometry.m */; };
 		CA75E78216697A1200D57E92 /* SLDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = CA75E78016697A1200D57E92 /* SLDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CA75E78516697C0000D57E92 /* SLDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = CA75E78116697A1200D57E92 /* SLDevice.m */; };
 		CAC388051641CD7500F995F9 /* SLStringUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC388031641CD7500F995F9 /* SLStringUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -224,6 +226,8 @@
 		0696BA5516E013D600DD70CF /* SLElementDraggingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementDraggingTest.m; sourceTree = "<group>"; };
 		0696BA5616E013D600DD70CF /* SLElementDraggingTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementDraggingTestViewController.m; sourceTree = "<group>"; };
 		0696BA5716E013D600DD70CF /* SLElementDraggingTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementDraggingTestViewController.xib; sourceTree = "<group>"; };
+		50F3E18A1783A5CB00C6BD1B /* SLGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLGeometry.h; sourceTree = "<group>"; };
+		50F3E18B1783A5CB00C6BD1B /* SLGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLGeometry.m; sourceTree = "<group>"; };
 		CA75E78016697A1200D57E92 /* SLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLDevice.h; sourceTree = "<group>"; };
 		CA75E78116697A1200D57E92 /* SLDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDevice.m; sourceTree = "<group>"; };
 		CAC388031641CD7500F995F9 /* SLStringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLStringUtilities.h; sourceTree = "<group>"; };
@@ -566,6 +570,8 @@
 			children = (
 				CA75E78016697A1200D57E92 /* SLDevice.h */,
 				CA75E78116697A1200D57E92 /* SLDevice.m */,
+				50F3E18A1783A5CB00C6BD1B /* SLGeometry.h */,
+				50F3E18B1783A5CB00C6BD1B /* SLGeometry.m */,
 				F089F98B17445DDA00DF1F25 /* User Interface Elements */,
 			);
 			path = UIAutomation;
@@ -836,6 +842,7 @@
 				F043469F175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.h in Headers */,
 				F04346AF175AD63E00D91F7F /* SLAccessibilityPath.h in Headers */,
 				F04346A7175AD10200D91F7F /* NSObject+SLVisibility.h in Headers */,
+				50F3E18C1783A5CB00C6BD1B /* SLGeometry.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1046,6 +1053,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				50F3E18E1783A60100C6BD1B /* SLGeometry.m in Sources */,
 				F0695DE4160138DF000B05D0 /* SLUIAElement.m in Sources */,
 				F0695DE5160138DF000B05D0 /* SLLogger.m in Sources */,
 				F0695DE7160138DF000B05D0 /* SLTerminal.m in Sources */,
