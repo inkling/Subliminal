@@ -298,6 +298,15 @@
                  @"Could not match button in popover.");
 }
 
+#pragma mark - Tab bar buttons
+
+- (void)testMatchingTabBarButtons {
+    NSString *actualLabel, *expectedLabel = @"Favorites";
+    SLButton *favoritesButton = [SLButton elementWithAccessibilityLabel:expectedLabel];
+    SLAssertNoThrow(actualLabel = [UIAElement(favoritesButton) label], @"Could not retrieve button's label.");
+    SLAssertTrue([actualLabel isEqualToString:expectedLabel], @"Did not match button as expected.");
+}
+
 #pragma mark - Internal tests
 
 // Subliminal replaces the accessibility identifiers of objects in the accessibility
