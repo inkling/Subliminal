@@ -229,6 +229,13 @@
 - (void)tap;
 
 /**
+ Touches and holds the specified element.
+
+ @param duration The duration for the touch.
+ */
+- (void)touchAndHoldWithDuration:(NSTimeInterval)duration;
+
+/**
  Drags within the bounds of the specified element.
  
  Each offset specifies a pair of _x_ and _y_ values, each ranging from `0.0` to `1.0`.
