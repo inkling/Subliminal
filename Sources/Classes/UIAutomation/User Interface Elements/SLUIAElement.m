@@ -150,6 +150,10 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     [self waitUntilTappable:YES thenSendMessage:@"tap()"];
 }
 
+- (void)touchAndHoldWithDuration:(NSTimeInterval)duration {
+    [self waitUntilTappable:YES thenSendMessage:@"touchAndHold(%lf)", duration];
+}
+
 - (void)dragWithStartOffset:(CGPoint)startOffset endOffset:(CGPoint)endOffset
 {
     // Points must be passed in floating point format for UIAutomation
