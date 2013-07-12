@@ -21,9 +21,12 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		0640035A178FDE7800479173 /* SLElementTouchAndHoldTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 06400358178FDE7800479173 /* SLElementTouchAndHoldTestViewController.m */; };
+		0640035B178FDE7800479173 /* SLElementTouchAndHoldTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 06400359178FDE7800479173 /* SLElementTouchAndHoldTestViewController.xib */; };
 		064B6F55173B13E9004AB1BF /* SLElementVisibilityTestCoveredByClearRegion.xib in Resources */ = {isa = PBXBuildFile; fileRef = 064B6F54173B13E9004AB1BF /* SLElementVisibilityTestCoveredByClearRegion.xib */; };
 		064B6FC7173DCE9A004AB1BF /* SLElementVisibilityWithSubviews.xib in Resources */ = {isa = PBXBuildFile; fileRef = 064B6FC6173DCE9A004AB1BF /* SLElementVisibilityWithSubviews.xib */; };
 		068D3E4D16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 068D3E4C16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib */; };
+		06953E3F178FDA7100B3D1B7 /* SLElementTouchAndHoldTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 06953E3E178FDA7100B3D1B7 /* SLElementTouchAndHoldTest.m */; };
 		0696BA5816E013D600DD70CF /* SLElementDraggingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0696BA5516E013D600DD70CF /* SLElementDraggingTest.m */; };
 		0696BA5916E013D600DD70CF /* SLElementDraggingTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0696BA5616E013D600DD70CF /* SLElementDraggingTestViewController.m */; };
 		0696BA5A16E013D600DD70CF /* SLElementDraggingTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0696BA5716E013D600DD70CF /* SLElementDraggingTestViewController.xib */; };
@@ -218,9 +221,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		06400358178FDE7800479173 /* SLElementTouchAndHoldTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementTouchAndHoldTestViewController.m; sourceTree = "<group>"; };
+		06400359178FDE7800479173 /* SLElementTouchAndHoldTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementTouchAndHoldTestViewController.xib; sourceTree = "<group>"; };
 		064B6F54173B13E9004AB1BF /* SLElementVisibilityTestCoveredByClearRegion.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestCoveredByClearRegion.xib; sourceTree = "<group>"; };
 		064B6FC6173DCE9A004AB1BF /* SLElementVisibilityWithSubviews.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityWithSubviews.xib; sourceTree = "<group>"; };
 		068D3E4C16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLTableViewChildElementMatchingTestViewController.xib; sourceTree = "<group>"; };
+		06953E3E178FDA7100B3D1B7 /* SLElementTouchAndHoldTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementTouchAndHoldTest.m; sourceTree = "<group>"; };
 		0696BA5516E013D600DD70CF /* SLElementDraggingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementDraggingTest.m; sourceTree = "<group>"; };
 		0696BA5616E013D600DD70CF /* SLElementDraggingTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementDraggingTestViewController.m; sourceTree = "<group>"; };
 		0696BA5716E013D600DD70CF /* SLElementDraggingTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementDraggingTestViewController.xib; sourceTree = "<group>"; };
@@ -401,9 +407,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		06953E3A178FDA3700B3D1B7 /* Touch and Hold */ = {
+			isa = PBXGroup;
+			children = (
+				06953E3E178FDA7100B3D1B7 /* SLElementTouchAndHoldTest.m */,
+				06400358178FDE7800479173 /* SLElementTouchAndHoldTestViewController.m */,
+				06400359178FDE7800479173 /* SLElementTouchAndHoldTestViewController.xib */,
+			);
+			name = "Touch and Hold";
+			sourceTree = "<group>";
+		};
 		0696BA5E16E013DF00DD70CF /* SLElement Gestures and Actions Tests */ = {
 			isa = PBXGroup;
 			children = (
+				06953E3A178FDA3700B3D1B7 /* Touch and Hold */,
 				F0CC7597173B092B00E8F94A /* Tapping */,
 				F0CC7596173B092300E8F94A /* Dragging */,
 			);
@@ -999,6 +1016,7 @@
 				F00F3B5E1778E05100119580 /* SLElementTapTestScrollViewCases.xib in Resources */,
 				F00F3B631778E63C00119580 /* SLElementStateTestScrollViewCases.xib in Resources */,
 				F00F3B6717790B4C00119580 /* SLStaticElementTestScrollView.xib in Resources */,
+				0640035B178FDE7800479173 /* SLElementTouchAndHoldTestViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1083,6 +1101,7 @@
 				F0AC80C116BB559F00C5D5C0 /* SLIntegrationTest.m in Sources */,
 				F0AC80C816BC367E00C5D5C0 /* SLTestViewController.m in Sources */,
 				F0AC80E616BCF91800C5D5C0 /* SLTestCaseViewController.m in Sources */,
+				06953E3F178FDA7100B3D1B7 /* SLElementTouchAndHoldTest.m in Sources */,
 				F01B2B6D16D2C55900DBA391 /* SLElementMatchingTest.m in Sources */,
 				F01B2B6E16D2C55900DBA391 /* SLElementMatchingTestViewController.m in Sources */,
 				F0CEA00216D60EAD008A3B4A /* SLDeviceTest.m in Sources */,
@@ -1110,6 +1129,7 @@
 				F00800C8174B3349001927AC /* SLButtonTestViewController.m in Sources */,
 				F00800E2174C2E0A001927AC /* SLPopoverTest.m in Sources */,
 				F00800E3174C2E0A001927AC /* SLPopoverTestViewController.m in Sources */,
+				0640035A178FDE7800479173 /* SLElementTouchAndHoldTestViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
