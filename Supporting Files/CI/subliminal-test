@@ -335,7 +335,7 @@ fi
 # http://openradar.appspot.com/13607967
 TARGETED_DEVICE_FAMILY_ARG=""
 if [[ -n "$SIM_DEVICE" ]]; then
-	case ${SIM_DEVICE//"'"/} in
+	case $SIM_DEVICE in
 		iPhone*)
 			DEVICE_FAMILY=1
 			;;
