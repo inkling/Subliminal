@@ -19,7 +19,8 @@
 
 @implementation SLGeometryTestViewController
 
-- (instancetype)initWithTestCaseWithSelector:(SEL)testCase {
+- (instancetype)initWithTestCaseWithSelector:(SEL)testCase
+{
     self = [super initWithTestCaseWithSelector:testCase];
     if (self) {
         SLTestController *testController = [SLTestController sharedTestController];
@@ -33,10 +34,8 @@
     return [NSValue valueWithCGRect:self.navigationController.navigationBar.frame];
 }
 
-- (void)loadViewForTestCase:(SEL)testCase {
-    NSLog(@"Loading view for test case = %@",NSStringFromSelector(testCase));
-    SLLogAsync(@"Loading view for test case");
-    
+- (void)loadViewForTestCase:(SEL)testCase
+{
     UIView *view = [[UIView alloc] initWithFrame:self.navigationController.view.bounds];
     view.backgroundColor = [UIColor whiteColor];
     
@@ -55,7 +54,6 @@
     nothingToShowHereLabel.center = CGPointMake(CGRectGetMidX(view.bounds), CGRectGetMidY(view.bounds));
     
     self.view = view;
-
 }
 
 - (void)dealloc

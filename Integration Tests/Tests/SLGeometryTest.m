@@ -11,29 +11,22 @@
 #import "SLGeometry.h"
 #import "SLTerminal.h"
 
-@interface focus_SLGeometryTest : SLIntegrationTest
+@interface SLGeometryTest : SLIntegrationTest
 
 @end
 
-@implementation focus_SLGeometryTest
+@implementation SLGeometryTest
 
 + (NSString *)testCaseViewControllerClassName {
     return @"SLGeometryTestViewController";
 }
 
-- (void)testTheRectOfTheMainWindowIsEquivalent
+- (void)testSLCGRectFromUIARectConvertsCorrectly
 {
     const CGRect UIARect = SLCGRectFromUIARect(@"UIATarget.localTarget().frontMostApp().navigationBar().rect()");
     const CGRect UIKitRect = [SLAskApp(navigationBarFrameValue) CGRectValue];
     
     SLAssertTrue(CGRectEqualToRect(UIARect, UIKitRect), @"The frame of the main window should be the same when coming from UIAutomation or UIKit");
-}
-
-- (void)testTest
-{
-    NSString *result = [[SLTerminal sharedTerminal] eval:@"UIATarget.localTarget().frontMostApp().mainWindow().rect()"];
-    SLLog(@"Result = %@",result);
-    SLAssertTrue(YES, @"YES is true");
 }
 
 @end
