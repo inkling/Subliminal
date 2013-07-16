@@ -35,7 +35,7 @@ if [[ -z "$DEVICE" ]]; then
 fi
 
 # Change device type
-defaults write com.apple.iphonesimulator SimulateDevice "$DEVICE"
+defaults write com.apple.iphonesimulator SimulateDevice "'$DEVICE'"
 
 # Restart simulator
 killall "iPhone Simulator" 2> /dev/null
