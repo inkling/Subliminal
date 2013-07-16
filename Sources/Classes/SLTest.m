@@ -330,7 +330,7 @@ NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey
     [NSThread sleepForTimeInterval:interval];
 }
 
-- (void)recordLastKnownFile:(char *)filename line:(int)lineNumber {
+- (void)recordLastKnownFile:(const char *)filename line:(int)lineNumber {
     _lastKnownFilename = [@(filename) lastPathComponent];
     _lastKnownLineNumber = lineNumber;
 }
