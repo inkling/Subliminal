@@ -142,7 +142,8 @@
         (testCase == @selector(testSubliminalOnlyReplacesAccessibilityIdentifiersOfElementsInvolvedInMatch)) ||
         (testCase == @selector(testSubliminalRestoresAccessibilityIdentifiersAfterMatching)) ||
         (testCase == @selector(testSubliminalRestoresAccessibilityIdentifiersAfterMatchingEvenIfActionThrows)) ||
-        (testCase == @selector(testMatchingPopoverChildElement_iPad))) {
+        (testCase == @selector(testMatchingPopoverChildElement_iPad)) ||
+        (testCase == @selector(testMatchingTabBarButtons))) {
         return @"SLElementMatchingTestViewController";
     } else if ((testCase == @selector(testMatchingTableViewCellTextLabel)) ||
                (testCase == @selector(testMatchingTableViewCellWithCombinedLabel)) ||

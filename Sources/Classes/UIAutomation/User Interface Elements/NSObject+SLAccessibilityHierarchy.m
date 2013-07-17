@@ -316,6 +316,13 @@
 @end
 
 
+@implementation UITabBar (SLAccessibilityHierarchy)
+- (BOOL)classForcesPresenceInAccessibilityHierarchy {
+    return YES;
+}
+@end
+
+
 @implementation UIToolbar (SLAccessibilityHierarchy)
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
     return YES;

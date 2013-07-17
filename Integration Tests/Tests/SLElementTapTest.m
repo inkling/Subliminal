@@ -126,12 +126,16 @@
 }
 
 // Tapping is a process involving JS execution,
-// with some variability in waiting for tappability (+/- one SLElementRetryDelay
-// and two SLTerminalReadRetryDelays (one for SLTerminal.js receiving the command
-// and one for SLTerminal receiving the result)), and tapping
-// (two more SLTerminalReadRetryDelays).
-- (NSTimeInterval)waitDelayVariabilityIncludingTap:(BOOL)includingTap {
-    return SLUIAElementWaitRetryDelay + SLTerminalReadRetryDelay * (includingTap ? 4 : 2);
+// with some variability in waiting for the element to become valid (+/- one SLUIAElementRetryDelay`),
+// waiting for tappability (+/- two `SLTerminalReadRetryDelays`, one for SLTerminal.js receiving the command
+// and one for SLTerminal receiving the result)),
+// and tapping (two more `SLTerminalReadRetryDelays`).
+- (NSTimeInterval)waitDelayVariabilityIncludingTappabilityCheck:(BOOL)includeTappabilityCheck
+                                                            tap:(BOOL)includeTap {
+    NSUInteger terminalReadRetryCount = 0;
+    if (includeTappabilityCheck) terminalReadRetryCount += 2;
+    if (includeTap) terminalReadRetryCount +=2;
+    return SLUIAElementWaitRetryDelay + SLTerminalReadRetryDelay * terminalReadRetryCount;
 }
 
 - (void)testWaitUntilTappableNOThenPerformActionWithUIARepresentationDoesNotWaitUntilTappable {
@@ -150,7 +154,7 @@
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
 
-    SLAssertTrue(waitTimeInterval < [self waitDelayVariabilityIncludingTap:YES],
+    SLAssertTrue(waitTimeInterval < [self waitDelayVariabilityIncludingTappabilityCheck:NO tap:YES],
                  @"Test waited for %g but should not have waited for an appreciable interval.", waitTimeInterval);
     
     // sanity check
@@ -175,7 +179,7 @@
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariabilityIncludingTap:YES],
+    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariabilityIncludingTappabilityCheck:YES tap:YES],
                  @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
                  actualWaitTimeInterval, expectedWaitTimeInterval);
 
@@ -198,7 +202,8 @@
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariabilityIncludingTap:NO],
+    // we should have aborted after the tappability check, and not tapped
+    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariabilityIncludingTappabilityCheck:YES tap:NO],
                  @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
                  actualWaitTimeInterval, expectedWaitTimeInterval);
 }

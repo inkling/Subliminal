@@ -72,11 +72,15 @@
 }
 
 // Checking validity is a process involving JS execution, with some variability:
-// +/- one SLElementRetryDelay and two SLTerminalReadRetryDelays (one for
+// +/- one `SLUIAElementWaitRetryDelay` and two `SLTerminalReadRetryDelays` (one for
 // SLTerminal.js receiving the command and one for SLTerminal receiving the result).
-// If we tap the element that command involves another two SLTerminalReadRetryDelay's.
-- (NSTimeInterval)waitDelayVariabilityIncludingTap:(BOOL)includingTap {
-    return SLUIAElementWaitRetryDelay + SLTerminalReadRetryDelay * (includingTap ? 4 : 2);
+// Waiting for tappability and/or tapping will involve 2 more `SLTerminalReadRetryDelays` apiece.
+- (NSTimeInterval)waitDelayVariabilityIncludingTappabilityCheck:(BOOL)includeTappabilityCheck
+                                                            tap:(BOOL)includeTap {
+    NSUInteger terminalReadRetryCount = 2;
+    if (includeTappabilityCheck) terminalReadRetryCount += 2;
+    if (includeTap) terminalReadRetryCount +=2;
+    return SLUIAElementWaitRetryDelay + SLTerminalReadRetryDelay * terminalReadRetryCount;
 }
 
 - (void)testStaticElementsWaitToMatchValidObjects {
@@ -98,7 +102,7 @@
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariabilityIncludingTap:NO],
+    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariabilityIncludingTappabilityCheck:NO tap:NO],
                  @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
                  actualWaitTimeInterval, expectedWaitTimeInterval);
 
@@ -124,7 +128,7 @@
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariabilityIncludingTap:NO],
+    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariabilityIncludingTappabilityCheck:NO tap:NO],
                  @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
                  actualWaitTimeInterval, expectedWaitTimeInterval);
 }
@@ -155,7 +159,7 @@
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariabilityIncludingTap:YES],
+    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariabilityIncludingTappabilityCheck:YES tap:YES],
                  @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
                  actualWaitTimeInterval, expectedWaitTimeInterval);
 
@@ -178,7 +182,8 @@
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariabilityIncludingTap:NO],
+    // we should have aborted after the tappability check, and not tapped
+    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariabilityIncludingTappabilityCheck:YES tap:NO],
                  @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
                  actualWaitTimeInterval, expectedWaitTimeInterval);
 }
@@ -192,7 +197,7 @@
     
     BOOL isIPad5_x = ((kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_5_1) &&
                       ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad));
-    NSTimeInterval expectedWaitTimeInterval = (isIPad5_x ? 0.0 : 2.0);
+    NSTimeInterval expectedWaitTimeInterval;
     if (isIPad5_x) {
         expectedWaitTimeInterval = 0.0;
         SLAssertFalse([UIAElement(scrollView) isTappable],
@@ -222,7 +227,8 @@
     }
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(ABS(actualWaitInterval - expectedWaitTimeInterval) < [self waitDelayVariabilityIncludingTap:YES],
+    // we should not have waited for tappability on iPad 5_x, due to `isScrollView` being `YES`
+    SLAssertTrue(ABS(actualWaitInterval - expectedWaitTimeInterval) < [self waitDelayVariabilityIncludingTappabilityCheck:!isIPad5_x tap:YES],
                  @"Test waited for %g but should not have waited for appreciably longer or shorter than %g.",
                  actualWaitInterval, expectedWaitTimeInterval);
 
@@ -247,7 +253,8 @@
                             @"Should have tried to tap the scroll view and found it to not be tappable.");
         endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
         actualWaitInterval = endTimeInterval - startTimeInterval;
-        SLAssertTrue(ABS(actualWaitInterval - expectedWaitTimeInterval) < [self waitDelayVariabilityIncludingTap:NO],
+        // we should have aborted after the tappability check, and not tapped
+        SLAssertTrue(ABS(actualWaitInterval - expectedWaitTimeInterval) < [self waitDelayVariabilityIncludingTappabilityCheck:YES tap:NO],
                      @"Test waited for %g but should not have waited for appreciably longer or shorter than %g.",
                      actualWaitInterval, expectedWaitTimeInterval);
     }
