@@ -48,6 +48,8 @@
 - (void)tearDownTestCaseWithSelector:(SEL)testCaseSelector {
     if (testCaseSelector == @selector(testMatchingPopoverChildElement_iPad)) {
         SLAskApp(hidePopover);
+    } else if (testCaseSelector == @selector(testMatchingActionSheetButtons)) {
+        SLAskApp(hideActionSheet);
     }
     [super tearDownTestCaseWithSelector:testCaseSelector];
 }
@@ -304,6 +306,17 @@
     NSString *actualLabel, *expectedLabel = @"Favorites";
     SLButton *favoritesButton = [SLButton elementWithAccessibilityLabel:expectedLabel];
     SLAssertNoThrow(actualLabel = [UIAElement(favoritesButton) label], @"Could not retrieve button's label.");
+    SLAssertTrue([actualLabel isEqualToString:expectedLabel], @"Did not match button as expected.");
+}
+
+#pragma mark - Action sheets
+
+- (void)testMatchingActionSheetButtons {
+    SLAskApp(showActionSheet);
+
+    NSString *actualLabel, *expectedLabel = @"Cancel";
+    SLButton *cancelButton = [SLButton elementWithAccessibilityLabel:expectedLabel];
+    SLAssertNoThrow(actualLabel = [UIAElement(cancelButton) label], @"Could not retrieve button's label.");
     SLAssertTrue([actualLabel isEqualToString:expectedLabel], @"Did not match button as expected.");
 }
 

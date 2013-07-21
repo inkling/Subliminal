@@ -330,6 +330,13 @@
 @end
 
 
+@implementation UIActionSheet (SLAccessibilityHierarchy)
+- (BOOL)classForcesPresenceInAccessibilityHierarchy {
+    return YES;
+}
+@end
+
+
 @implementation UINavigationBar (SLAccessibilityHierarchy)
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
     return YES;
