@@ -114,6 +114,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *barButton;
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UITabBar *tabBar;
 
 @end
 
@@ -127,6 +128,8 @@
     BOOL _webViewDidFinishLoad;
 
     UIPopoverController *_popoverController;
+
+    UIActionSheet *_actionSheet;
 }
 
 + (NSString *)nibNameForTestCase:(SEL)testCase {
@@ -143,7 +146,9 @@
         (testCase == @selector(testSubliminalRestoresAccessibilityIdentifiersAfterMatching)) ||
         (testCase == @selector(testSubliminalRestoresAccessibilityIdentifiersAfterMatchingEvenIfActionThrows)) ||
         (testCase == @selector(testMatchingPopoverChildElement_iPad)) ||
-        (testCase == @selector(testMatchingTabBarButtons))) {
+        (testCase == @selector(testMatchingTabBarButtons)) ||
+        (testCase == @selector(testMatchingActionSheetButtons)) ||
+        (testCase == @selector(testMatchingButtonsOfActionSheetsInPopovers_iPad))) {
         return @"SLElementMatchingTestViewController";
     } else if ((testCase == @selector(testMatchingTableViewCellTextLabel)) ||
                (testCase == @selector(testMatchingTableViewCellWithCombinedLabel)) ||
@@ -168,6 +173,9 @@
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(barButtonIdentifier)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(webViewDidFinishLoad)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showPopover)];
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showPopoverWithActionSheet)];
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showActionSheet)];
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(hideActionSheet)];
     }
     return self;
 }
@@ -362,7 +370,7 @@
     return @(_webViewDidFinishLoad);
 }
 
-- (void)showPopover {
+- (void)showPopoverWithActionSheet:(BOOL)showActionSheet {
     // Inception!
     SLElementMatchingTestViewController *contentViewController = [[SLElementMatchingTestViewController alloc] initWithTestCaseWithSelector:self.testCase];
 
@@ -375,10 +383,40 @@
 
     // register this here vs. in init so the controller we just presented doesn't steal it
     [[SLTestController sharedTestController] registerTarget:self forAction:@selector(hidePopover)];
+
+    if (showActionSheet) {
+        UIActionSheet *testSheet = [[UIActionSheet alloc] initWithTitle:@"Test Sheet"
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"Popover Cancel"
+                                                 destructiveButtonTitle:@"Destruct"
+                                                      otherButtonTitles:nil];
+        [testSheet showInView:_popoverController.contentViewController.view];
+    }
+}
+
+- (void)showPopover {
+    [self showPopoverWithActionSheet:NO];
+}
+
+- (void)showPopoverWithActionSheet {
+    [self showPopoverWithActionSheet:YES];
 }
 
 - (void)hidePopover {
     [_popoverController dismissPopoverAnimated:NO];
+}
+
+- (void)showActionSheet {
+    _actionSheet = [[UIActionSheet alloc] initWithTitle:@"Test Sheet"
+                                               delegate:nil
+                                      cancelButtonTitle:@"Cancel"
+                                 destructiveButtonTitle:@"Destruct"
+                                      otherButtonTitles:nil];
+    [_actionSheet showFromTabBar:self.tabBar];
+}
+
+- (void)hideActionSheet {
+    [_actionSheet dismissWithClickedButtonIndex:0 animated:NO];
 }
 
 @end
