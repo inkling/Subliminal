@@ -211,10 +211,6 @@
     }
     if (isTableViewSectionElement) return YES;
 
-    // _UIPopoverView is identified by its parent's label.
-    BOOL isPopover = [[parent accessibilityLabel] isEqualToString:@"dismiss popup"];
-    if (isPopover) return YES;
-
     return NO;
 }
 
@@ -240,6 +236,17 @@
         }
         return children;
     }
+}
+
+- (BOOL)classForcesPresenceInAccessibilityHierarchy {
+    if ([super classForcesPresenceInAccessibilityHierarchy]) return YES;
+
+    // Identify _UIPopoverView by its first subview being a popover background view.
+    BOOL isPopover = NO;
+    if ([self.subviews count]) {
+        isPopover = [self.subviews[0] isKindOfClass:[UIPopoverBackgroundView class]];
+    }
+    return isPopover;
 }
 
 // An object is a mock view if its accessibilityIdentifier tracks

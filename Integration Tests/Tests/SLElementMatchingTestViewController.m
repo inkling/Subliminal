@@ -147,7 +147,8 @@
         (testCase == @selector(testSubliminalRestoresAccessibilityIdentifiersAfterMatchingEvenIfActionThrows)) ||
         (testCase == @selector(testMatchingPopoverChildElement_iPad)) ||
         (testCase == @selector(testMatchingTabBarButtons)) ||
-        (testCase == @selector(testMatchingActionSheetButtons))) {
+        (testCase == @selector(testMatchingActionSheetButtons)) ||
+        (testCase == @selector(testMatchingButtonsOfActionSheetsInPopovers_iPad))) {
         return @"SLElementMatchingTestViewController";
     } else if ((testCase == @selector(testMatchingTableViewCellTextLabel)) ||
                (testCase == @selector(testMatchingTableViewCellWithCombinedLabel)) ||
@@ -172,6 +173,7 @@
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(barButtonIdentifier)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(webViewDidFinishLoad)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showPopover)];
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showPopoverWithActionSheet)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showActionSheet)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(hideActionSheet)];
     }
@@ -368,7 +370,7 @@
     return @(_webViewDidFinishLoad);
 }
 
-- (void)showPopover {
+- (void)showPopoverWithActionSheet:(BOOL)showActionSheet {
     // Inception!
     SLElementMatchingTestViewController *contentViewController = [[SLElementMatchingTestViewController alloc] initWithTestCaseWithSelector:self.testCase];
 
@@ -381,6 +383,23 @@
 
     // register this here vs. in init so the controller we just presented doesn't steal it
     [[SLTestController sharedTestController] registerTarget:self forAction:@selector(hidePopover)];
+
+    if (showActionSheet) {
+        UIActionSheet *testSheet = [[UIActionSheet alloc] initWithTitle:@"Test Sheet"
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"Popover Cancel"
+                                                 destructiveButtonTitle:@"Destruct"
+                                                      otherButtonTitles:nil];
+        [testSheet showInView:_popoverController.contentViewController.view];
+    }
+}
+
+- (void)showPopover {
+    [self showPopoverWithActionSheet:NO];
+}
+
+- (void)showPopoverWithActionSheet {
+    [self showPopoverWithActionSheet:YES];
 }
 
 - (void)hidePopover {
