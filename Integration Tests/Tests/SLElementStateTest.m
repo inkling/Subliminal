@@ -123,6 +123,15 @@
     SLAssertTrue([label isEqualToString:expectedLabel], @"-label did not return expected.");
 }
 
+- (void)testHasKeyboardFocus {
+    SLTextField *textField = [SLTextField elementWithAccessibilityLabel:@"Test Element"];
+    SLAssertFalse([UIAElement(textField) hasKeyboardFocus], @"Text field should not have keyboard focus.");
+
+    SLAskApp(makeTextFieldFirstResponder);
+    
+    SLAssertTrue([UIAElement(textField) hasKeyboardFocus], @"Text field should have keyboard focus.");
+}
+
 - (void)testRect {
     CGRect expectedRect = [SLAskApp(elementRect) CGRectValue];
     CGRect rect = [UIAElement(_testElement) rect];

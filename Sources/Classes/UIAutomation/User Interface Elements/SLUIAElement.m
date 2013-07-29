@@ -146,6 +146,16 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return YES;
 }
 
+- (BOOL)hasKeyboardFocus {
+    __block BOOL hasKeyboardFocus;
+    // hasKeyboardFocus evaluates the current state, no waiting to resolve the element
+    [self waitUntilTappable:NO
+          thenPerformActionWithUIARepresentation:^(NSString *UIARepresentation) {
+        hasKeyboardFocus = [[[SLTerminal sharedTerminal] evalWithFormat:@"%@.hasKeyboardFocus()", UIARepresentation] boolValue];
+    } timeout:0.0];
+    return hasKeyboardFocus;
+}
+
 - (void)tap {
     [self waitUntilTappable:YES thenSendMessage:@"tap()"];
 }
