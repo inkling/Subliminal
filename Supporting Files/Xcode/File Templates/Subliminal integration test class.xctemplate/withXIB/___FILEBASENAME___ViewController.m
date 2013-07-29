@@ -8,7 +8,7 @@
 
 #import "SLTestCaseViewController.h"
 
-#import <Subliminal/SLTestController+AppContext.h>
+#import <Subliminal/SLTestController+AppHooks.h>
 
 @interface ___FILEBASENAMEASIDENTIFIER___ViewController : SLTestCaseViewController
 
