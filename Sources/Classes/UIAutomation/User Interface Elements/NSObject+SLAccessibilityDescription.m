@@ -48,8 +48,13 @@
             [properties addObject:[NSString stringWithFormat:@"id = '%@'", [identifier slStringByEscapingForJavaScriptLiteral]]];
         }
     }
-    if ([self.accessibilityValue length]) {
-        [properties addObject:[NSString stringWithFormat:@"value = '%@'", [self.accessibilityValue slStringByEscapingForJavaScriptLiteral]]];
+    // in iOS 6.1 at least, `UITextView` returns an attributed string from `-accessibilityValue` >.<
+    id accessibilityValue = self.accessibilityValue;
+    if ([accessibilityValue isKindOfClass:[NSAttributedString class]]) {
+        accessibilityValue = [accessibilityValue string];
+    }
+    if ([accessibilityValue length]) {
+        [properties addObject:[NSString stringWithFormat:@"value = '%@'", [accessibilityValue slStringByEscapingForJavaScriptLiteral]]];
     }
 
     UIAccessibilityTraits traits = self.accessibilityTraits;
