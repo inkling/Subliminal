@@ -155,6 +155,21 @@
         }
         parent = [parent slAccessibilityParent];
     }
+
+    // While editing, text fields render their text using something like a web view
+    // which vends an accessibility element (inheriting from `NSObject` though, not `UIAccessibilityElement`)
+    // representing the current text. This element is not recognized by UIAutomation.
+    if (([self accessibilityTraits] & UIAccessibilityTraitStaticText) &&
+        ![self isKindOfClass:[UIAccessibilityElement class]] &&
+        ![self isKindOfClass:[UIView class]]) {
+        // if we're within a text field, abort
+        parent = [self slAccessibilityParent];
+        while (parent && ![parent isKindOfClass:[UITextField class]]) {
+            parent = [parent slAccessibilityParent];
+        }
+        if (parent) return YES;
+    }
+    
     return NO;
 }
 

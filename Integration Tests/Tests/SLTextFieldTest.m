@@ -42,6 +42,7 @@
     if (testSelector == @selector(testSetText) ||
         testSelector == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
         testSelector == @selector(testGetText) ||
+        testSelector == @selector(testDoNotMatchEditorAccessibilityObjects) ||
         testSelector == @selector(testClearTextButton)) {
         _textField = [SLTextField elementWithAccessibilityLabel:@"test element"];
     } else if (testSelector == @selector(testMatchesSearchBarTextField) ||
@@ -74,6 +75,18 @@
     NSString *text;
     SLAssertNoThrow(text = [UIAElement(_textField) text], @"Should not have thrown.");
     SLAssertTrue([text isEqualToString:@"foo"], @"Retrieved unexpected text: %@.", text);
+}
+
+// An internal test. See `-[NSObject (SLAccessibility_Internal) accessibilityAncestorPreventsPresenceInAccessibilityHierarchy]`.
+- (void)testDoNotMatchEditorAccessibilityObjects {
+    NSString *const expectedText = @"foo";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
+
+    SLAssertTrue([UIAElement(_textField) hasKeyboardFocus],
+                 @"For the purposes of this test case, the text field must now be editing.");
+    SLElement *textElement = [SLElement elementWithAccessibilityLabel:expectedText];
+    SLAssertFalse([UIAElement(textElement) isValid], @"Should not have matched internal text object.");
 }
 
 - (void)testClearTextButton {
