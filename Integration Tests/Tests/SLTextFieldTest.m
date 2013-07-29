@@ -41,7 +41,8 @@
 
     if (testSelector == @selector(testSetText) ||
         testSelector == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
-        testSelector == @selector(testGetText)) {
+        testSelector == @selector(testGetText) ||
+        testSelector == @selector(testClearTextButton)) {
         _textField = [SLTextField elementWithAccessibilityLabel:@"test element"];
     } else if (testSelector == @selector(testMatchesSearchBarTextField) ||
                testSelector == @selector(testSetSearchBarText) ||
@@ -73,6 +74,16 @@
     NSString *text;
     SLAssertNoThrow(text = [UIAElement(_textField) text], @"Should not have thrown.");
     SLAssertTrue([text isEqualToString:@"foo"], @"Retrieved unexpected text: %@.", text);
+}
+
+- (void)testClearTextButton {
+    SLAssertFalse([SLAskApp(text) isEqualToString:@""],
+                  @"For the purposes of this test case, the text field must have some initial value.");
+
+    SLButton *clearButton = [SLButton elementWithAccessibilityLabel:@"Clear text"];
+    SLAssertTrue([UIAElement(clearButton) isValid], @"Did not find clear button.");
+    SLAssertNoThrow([UIAElement(clearButton) tap], @"Could not tap clear button.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:@""], @"Text was not cleared after tapping clear button.");
 }
 
 #pragma mark - SLSearchField test cases
