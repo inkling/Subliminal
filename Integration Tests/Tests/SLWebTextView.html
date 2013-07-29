@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script type="text/javascript">
+			function getText() {
+				return document.getElementById("testView").value;
+			}
+
+            function setText(text) {
+                document.getElementById("testView").value = text;
+            }
+        </script>
+	</head>
+	<body>
+		<form name="testForm">
+            <!-- 
+             See http://alxgbsn.co.uk/2011/06/06/making-web-content-more-accessible-with-ios-voiceover/
+             for a description of the "aria-labelledby" attribute.
+
+             Note that by whatever criteria you're trying to match the field, 
+             the field must be unique. For example, the label element below 
+             is hidden using "display:none" so that the textarea will be the only
+             visible element labelled "test element".
+             -->
+			<label id="testView-label" style="display:none">test element</label>
+			<textarea id="testView" aria-labelledby="testView-label" style="display:inline"></textarea>
+        </form>
+	</body>
+</html>

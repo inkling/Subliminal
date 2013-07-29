@@ -26,3 +26,20 @@
 }
 
 @end
+
+
+@implementation SLWebTextView
+// `SLWebTextView` does not inherit from `SLTextView`
+// because the elements it matches, web text views, are not instances of `UITextView`
+// but rather a private type of accessibility element.
+
+- (NSString *)text {
+    return [self value];
+}
+
+- (void)setText:(NSString *)text {
+    [self tap];
+    [[SLKeyboard keyboard] typeString:text];
+}
+
+@end

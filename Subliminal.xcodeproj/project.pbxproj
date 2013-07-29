@@ -112,6 +112,7 @@
 		F0A3F63D17A7172E007529C3 /* SLTextViewTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A3F63A17A7172E007529C3 /* SLTextViewTest.m */; };
 		F0A3F63E17A7172E007529C3 /* SLTextViewTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A3F63B17A7172E007529C3 /* SLTextViewTestViewController.m */; };
 		F0A3F63F17A7172E007529C3 /* SLTextViewTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0A3F63C17A7172E007529C3 /* SLTextViewTestViewController.xib */; };
+		F0A3F64117A73198007529C3 /* SLWebTextView.html in Resources */ = {isa = PBXBuildFile; fileRef = F0A3F64017A73198007529C3 /* SLWebTextView.html */; };
 		F0AC809516BB299500C5D5C0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695E0C16013D77000B05D0 /* UIKit.framework */; };
 		F0AC809616BB299500C5D5C0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8E16011515000B05D0 /* Foundation.framework */; };
 		F0AC809816BB299500C5D5C0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0AC809716BB299500C5D5C0 /* CoreGraphics.framework */; };
@@ -320,6 +321,7 @@
 		F0A3F63A17A7172E007529C3 /* SLTextViewTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTextViewTest.m; sourceTree = "<group>"; };
 		F0A3F63B17A7172E007529C3 /* SLTextViewTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTextViewTestViewController.m; sourceTree = "<group>"; };
 		F0A3F63C17A7172E007529C3 /* SLTextViewTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLTextViewTestViewController.xib; sourceTree = "<group>"; };
+		F0A3F64017A73198007529C3 /* SLWebTextView.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = SLWebTextView.html; sourceTree = "<group>"; };
 		F0AC809416BB299500C5D5C0 /* Subliminal (Integration Tests).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Subliminal (Integration Tests).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0AC809716BB299500C5D5C0 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F0AC809B16BB299500C5D5C0 /* Subliminal Integration Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Subliminal Integration Tests-Info.plist"; sourceTree = "<group>"; };
@@ -715,6 +717,7 @@
 				F0A3F63A17A7172E007529C3 /* SLTextViewTest.m */,
 				F0A3F63B17A7172E007529C3 /* SLTextViewTestViewController.m */,
 				F0A3F63C17A7172E007529C3 /* SLTextViewTestViewController.xib */,
+				F0A3F64017A73198007529C3 /* SLWebTextView.html */,
 			);
 			name = "SLTextView Tests";
 			sourceTree = "<group>";
@@ -1038,6 +1041,7 @@
 				F00F3B6717790B4C00119580 /* SLStaticElementTestScrollView.xib in Resources */,
 				0640035B178FDE7800479173 /* SLElementTouchAndHoldTestViewController.xib in Resources */,
 				F0A3F63F17A7172E007529C3 /* SLTextViewTestViewController.xib in Resources */,
+				F0A3F64117A73198007529C3 /* SLWebTextView.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

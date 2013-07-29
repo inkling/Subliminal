@@ -13,25 +13,34 @@
 @end
 
 @implementation SLTextViewTest {
-    SLTextView *_textView;
+    // `_textView` is id-typed so that it can represent `SLTextViews`
+    // and `SLWebTextViews`
+    id _textView;
 }
 
 + (NSString *)testCaseViewControllerClassName {
     return @"SLTextViewTestViewController";
 }
 
-- (void)setUpTest {
-    [super setUpTest];
-
-    _textView = [SLTextView elementWithAccessibilityLabel:@"test element"];
-}
-
 static NSString *const kExpectedText = @"foo";
 - (void)setUpTestCaseWithSelector:(SEL)testCaseSelector {
     [super setUpTestCaseWithSelector:testCaseSelector];
 
-    if ((testCaseSelector == @selector(testGetText)) ||
+    if ((testCaseSelector == @selector(testSetText)) ||
+        (testCaseSelector == @selector(testGetText)) ||
         (testCaseSelector == @selector(testDoNotMatchEditorAccessibilityObjects))) {
+        _textView = [SLTextView elementWithAccessibilityLabel:@"test element"];
+    } else if ((testCaseSelector == @selector(testMatchesWebTextView)) ||
+               (testCaseSelector == @selector(testSetWebTextViewText)) ||
+               (testCaseSelector == @selector(testGetWebTextViewText))) {
+        _textView = [SLWebTextView elementWithAccessibilityLabel:@"test element"];
+        SLAssertTrueWithTimeout(SLAskAppYesNo(webViewDidFinishLoad), 5.0, @"Webview did not load test HTML.");
+    }
+
+    if ((testCaseSelector == @selector(testGetText)) ||
+        (testCaseSelector == @selector(testDoNotMatchEditorAccessibilityObjects)) ||
+        (testCaseSelector == @selector(testMatchesWebTextView)) ||
+        (testCaseSelector == @selector(testGetWebTextViewText))) {
         SLAskApp1(setText:, kExpectedText);
     }
 }
@@ -54,6 +63,24 @@ static NSString *const kExpectedText = @"foo";
 
     SLElement *textElement = [SLElement elementWithAccessibilityLabel:kExpectedText];
     SLAssertFalse([UIAElement(textElement) isValid], @"Should not have matched internal text object.");
+}
+
+#pragma mark - SLWebTextField test cases
+
+- (void)testMatchesWebTextView {
+    SLAssertTrue([UIAElement(_textView) isValid], @"Web text view should be valid.");
+    SLAssertTrue([[UIAElement(_textView) text] isEqualToString:kExpectedText], @"Did not match expected element.");
+}
+
+- (void)testSetWebTextViewText {
+    SLAssertNoThrow([UIAElement(_textView) setText:kExpectedText], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:kExpectedText], @"Text was not set to expected value.");
+}
+
+- (void)testGetWebTextViewText {
+    NSString *text;
+    SLAssertNoThrow(text = [UIAElement(_textView) text], @"Should not have thrown.");
+    SLAssertTrue([text isEqualToString:kExpectedText], @"Retrieved unexpected text: %@.", text);
 }
 
 @end
