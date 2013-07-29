@@ -156,15 +156,17 @@
         parent = [parent slAccessibilityParent];
     }
 
-    // While editing, text fields render their text using something like a web view
-    // which vends an accessibility element (inheriting from `NSObject` though, not `UIAccessibilityElement`)
-    // representing the current text. This element is not recognized by UIAutomation.
+    // Text fields (when they are editing) and text views (all the time) render their text
+    // using something like a web view, which vends an accessibility element--inheriting from `NSObject` though,
+    // not `UIAccessibilityElement`--which element represents the current text.
+    // This element is not recognized by UIAutomation.
     if (([self accessibilityTraits] & UIAccessibilityTraitStaticText) &&
         ![self isKindOfClass:[UIAccessibilityElement class]] &&
         ![self isKindOfClass:[UIView class]]) {
-        // if we're within a text field, abort
+        // if we're within a text field or text view, abort
         parent = [self slAccessibilityParent];
-        while (parent && ![parent isKindOfClass:[UITextField class]]) {
+        while (parent &&
+               !([parent isKindOfClass:[UITextField class]] || [parent isKindOfClass:[UITextView class]])) {
             parent = [parent slAccessibilityParent];
         }
         if (parent) return YES;
