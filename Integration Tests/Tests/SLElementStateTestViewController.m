@@ -30,14 +30,12 @@
 @property (weak, nonatomic) IBOutlet UIButton *button;
 @property (weak, nonatomic) IBOutlet UIView *coveringView;
 
-@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
-@property (weak, nonatomic) IBOutlet UIButton *scrollViewButton;
-
 @end
 
 
 @implementation SLElementStateTestViewController {
     UIView *_testView;
+    UITextField *_textField;
 }
 
 + (NSString *)nibNameForTestCase:(SEL)testCase {
@@ -48,9 +46,6 @@
                testCase == @selector(testElementIsTappableIfItHasANonNullHitpoint) ||
                testCase == @selector(testCanRetrieveLabelEvenIfNotTappable)) {
         nibName = @"SLElementStateTestCompletelyCovered";
-    } else if (testCase == @selector(testScrollViewsAreNotTappableOnIPad5_x) ||
-               testCase == @selector(testScrollViewChildElementsAreTappableEvenOnIPad5_x)) {
-        nibName = @"SLElementStateTestScrollViewCases";
     }
     return nibName;
 }
@@ -82,6 +77,13 @@
         _testView.center = view.center;
 
         self.view = view;
+    } else  if (testCase == @selector(testHasKeyboardFocus)) {
+        UIView *view = [[UIView alloc] initWithFrame:CGRectZero];
+
+        _textField = [[UITextField alloc] initWithFrame:(CGRect){CGPointZero, CGSizeMake(100.0f, 30.0f)}];
+        [view addSubview:_textField];
+
+        self.view = view;
     }
 }
 
@@ -96,11 +98,17 @@
     _testView.isAccessibilityElement = YES;
     _testView.accessibilityLabel = @"Test Element";
 
-    // we can't make the scroll view accessible in `testScrollViewsAreNotTappableOnIPad5_x`
-    // because that will prevent its child element from appearing in the accessibility hierarchy
-    if (self.testCase == @selector(testScrollViewsAreNotTappableOnIPad5_x)) {
-        self.scrollView.accessibilityIdentifier = @"scroll view";
-    }
+    _textField.accessibilityLabel = @"Test Element";
+    _textField.borderStyle = UITextBorderStyleRoundedRect;
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+
+    // move the textfield above the keyboard
+    static const CGFloat kTextFieldVerticalOffset = -40.0f;
+    CGPoint textFieldCenter = CGPointMake(self.view.center.x, self.view.center.y + kTextFieldVerticalOffset);
+    _textField.center = textFieldCenter;
 }
 
 - (instancetype)initWithTestCaseWithSelector:(SEL)testCase {
@@ -112,6 +120,7 @@
         [testController registerTarget:self forAction:@selector(disableElement)];
         [testController registerTarget:self forAction:@selector(enableElement)];
         [testController registerTarget:self forAction:@selector(uncoverTestView)];
+        [testController registerTarget:self forAction:@selector(makeTextFieldFirstResponder)];
         [testController registerTarget:self forAction:@selector(elementRect)];
     }
     return self;
@@ -141,6 +150,10 @@
 
 - (void)uncoverTestView {
     _coveringView.hidden = YES;
+}
+
+- (void)makeTextFieldFirstResponder {
+    [_textField becomeFirstResponder];
 }
 
 - (NSValue *)elementRect {

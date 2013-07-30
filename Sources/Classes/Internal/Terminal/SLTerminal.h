@@ -165,3 +165,7 @@ extern NSString *const SLTerminalJavaScriptException;
 /// `SLTerminal` waits for this duration between checking to see if a script
 /// has finished evaluating.
 extern const NSTimeInterval SLTerminalReadRetryDelay;
+
+/// This interval represents an upper bound on the execution of a JavaScript
+/// statement. It allows Subliminal's integration tests to calibrate timeouts.
+extern const NSTimeInterval SLTerminalEvaluationDelay;

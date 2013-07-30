@@ -43,6 +43,11 @@ static NSString *const SLTerminalHasShutDownVariable            = @"hasShutDown"
 
 const NSTimeInterval SLTerminalReadRetryDelay = 0.1;
 
+// This is calibrated with respect to errors reported on Travis.
+// It should be a comfortable margin--the actual discrepancy between
+// Travis' execution times, and what we (had) thought would suffice,
+// is closer to 0.05.
+const NSTimeInterval SLTerminalEvaluationDelay = 0.075;
 
 @implementation SLTerminal {
     NSString *_scriptNamespace;

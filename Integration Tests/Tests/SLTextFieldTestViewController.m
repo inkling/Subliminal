@@ -41,6 +41,8 @@
     if (testCase == @selector(testSetText) ||
         testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
         testCase == @selector(testGetText) ||
+        testCase == @selector(testDoNotMatchEditorAccessibilityObjects) ||
+        testCase == @selector(testClearTextButton) ||
         // we'll test that we match the searchBar *and not* the textField
         testCase == @selector(testMatchesSearchBarTextField)) {
         
@@ -84,12 +86,15 @@
 
     _textField.accessibilityLabel = @"test element";
     _textField.borderStyle = UITextBorderStyleRoundedRect;
-    if (self.testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing)) {
+    if (self.testCase == @selector(testClearTextButton)) {
+        _textField.clearButtonMode = UITextFieldViewModeAlways;
+    } else if (self.testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing)) {
         _textField.clearsOnBeginEditing = YES;
     }
 
     if (self.testCase != @selector(testSetText) &&
-        self.testCase != @selector(testSetTextWhenFieldClearsOnBeginEditing)) {
+        self.testCase != @selector(testSetTextWhenFieldClearsOnBeginEditing) &&
+        self.testCase != @selector(testDoNotMatchEditorAccessibilityObjects)) {
         _textField.text = @"foo";
     }
 
@@ -134,7 +139,9 @@
     NSString *text;
     if (self.testCase == @selector(testSetText) ||
         self.testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
-        self.testCase == @selector(testGetText)) {
+        self.testCase == @selector(testGetText) ||
+        self.testCase == @selector(testDoNotMatchEditorAccessibilityObjects) ||
+        self.testCase == @selector(testClearTextButton)) {
         text = _textField.text;
     } else if (self.testCase == @selector(testMatchesSearchBarTextField) ||
                self.testCase == @selector(testSetSearchBarText) ||
