@@ -82,10 +82,11 @@
 }
 
 // Reading an element's value is a process involving JS execution, with some variability:
-// +/- one SLElementRetryDelay and two SLTerminalReadRetryDelays (one for
-// SLTerminal.js receiving the command and one for SLTerminal receiving the result).
+// +/- one `SLElementRetryDelay`, two `SLTerminalReadRetryDelays` (one for
+// SLTerminal.js receiving the command and one for SLTerminal receiving the result),
+// and one `SLTerminalEvaluationDelay` to evaluate the command.
 - (NSTimeInterval)waitDelayVariability {
-    return SLUIAElementWaitRetryDelay + SLTerminalReadRetryDelay * 2;
+    return SLUIAElementWaitRetryDelay + (SLTerminalReadRetryDelay * 2) + SLTerminalEvaluationDelay;
 }
 
 - (void)testElementsWaitToMatchValidObjects {

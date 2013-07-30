@@ -44,7 +44,6 @@
 		F00800E2174C2E0A001927AC /* SLPopoverTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800E0174C2E0A001927AC /* SLPopoverTest.m */; };
 		F00800E3174C2E0A001927AC /* SLPopoverTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F00800E1174C2E0A001927AC /* SLPopoverTestViewController.m */; };
 		F00F3B5E1778E05100119580 /* SLElementTapTestScrollViewCases.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00F3B5D1778E05100119580 /* SLElementTapTestScrollViewCases.xib */; };
-		F00F3B631778E63C00119580 /* SLElementStateTestScrollViewCases.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00F3B621778E63C00119580 /* SLElementStateTestScrollViewCases.xib */; };
 		F00F3B6717790B4C00119580 /* SLStaticElementTestScrollView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F00F3B6617790B4C00119580 /* SLStaticElementTestScrollView.xib */; };
 		F016493D16D42E3C000AEB50 /* SLTestController+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = F016493B16D42E3C000AEB50 /* SLTestController+Internal.h */; };
 		F01B2B6D16D2C55900DBA391 /* SLElementMatchingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F01B2B6A16D2C55900DBA391 /* SLElementMatchingTest.m */; };
@@ -108,6 +107,12 @@
 		F0A040131698ECDE009D8157 /* SLTestController+AppContextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A040121698ECDE009D8157 /* SLTestController+AppContextTests.m */; };
 		F0A04E1D1749F70F002C7520 /* SLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F0A04E1B1749F70F002C7520 /* SLElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0A04E1E1749F70F002C7520 /* SLElement.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A04E1C1749F70F002C7520 /* SLElement.m */; };
+		F0A3F63417A715AE007529C3 /* SLTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = F0A3F63217A715AD007529C3 /* SLTextView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F0A3F63517A715AE007529C3 /* SLTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A3F63317A715AE007529C3 /* SLTextView.m */; };
+		F0A3F63D17A7172E007529C3 /* SLTextViewTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A3F63A17A7172E007529C3 /* SLTextViewTest.m */; };
+		F0A3F63E17A7172E007529C3 /* SLTextViewTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0A3F63B17A7172E007529C3 /* SLTextViewTestViewController.m */; };
+		F0A3F63F17A7172E007529C3 /* SLTextViewTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F0A3F63C17A7172E007529C3 /* SLTextViewTestViewController.xib */; };
+		F0A3F64117A73198007529C3 /* SLWebTextView.html in Resources */ = {isa = PBXBuildFile; fileRef = F0A3F64017A73198007529C3 /* SLWebTextView.html */; };
 		F0AC809516BB299500C5D5C0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695E0C16013D77000B05D0 /* UIKit.framework */; };
 		F0AC809616BB299500C5D5C0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0695D8E16011515000B05D0 /* Foundation.framework */; };
 		F0AC809816BB299500C5D5C0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0AC809716BB299500C5D5C0 /* CoreGraphics.framework */; };
@@ -244,7 +249,6 @@
 		F00800E0174C2E0A001927AC /* SLPopoverTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLPopoverTest.m; sourceTree = "<group>"; };
 		F00800E1174C2E0A001927AC /* SLPopoverTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLPopoverTestViewController.m; sourceTree = "<group>"; };
 		F00F3B5D1778E05100119580 /* SLElementTapTestScrollViewCases.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementTapTestScrollViewCases.xib; sourceTree = "<group>"; };
-		F00F3B621778E63C00119580 /* SLElementStateTestScrollViewCases.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementStateTestScrollViewCases.xib; sourceTree = "<group>"; };
 		F00F3B6617790B4C00119580 /* SLStaticElementTestScrollView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLStaticElementTestScrollView.xib; sourceTree = "<group>"; };
 		F016493B16D42E3C000AEB50 /* SLTestController+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLTestController+Internal.h"; sourceTree = "<group>"; };
 		F01B2B6A16D2C55900DBA391 /* SLElementMatchingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementMatchingTest.m; sourceTree = "<group>"; };
@@ -312,6 +316,12 @@
 		F0A040121698ECDE009D8157 /* SLTestController+AppContextTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SLTestController+AppContextTests.m"; sourceTree = "<group>"; };
 		F0A04E1B1749F70F002C7520 /* SLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLElement.h; sourceTree = "<group>"; };
 		F0A04E1C1749F70F002C7520 /* SLElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElement.m; sourceTree = "<group>"; };
+		F0A3F63217A715AD007529C3 /* SLTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTextView.h; sourceTree = "<group>"; };
+		F0A3F63317A715AE007529C3 /* SLTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTextView.m; sourceTree = "<group>"; };
+		F0A3F63A17A7172E007529C3 /* SLTextViewTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTextViewTest.m; sourceTree = "<group>"; };
+		F0A3F63B17A7172E007529C3 /* SLTextViewTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTextViewTestViewController.m; sourceTree = "<group>"; };
+		F0A3F63C17A7172E007529C3 /* SLTextViewTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLTextViewTestViewController.xib; sourceTree = "<group>"; };
+		F0A3F64017A73198007529C3 /* SLWebTextView.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = SLWebTextView.html; sourceTree = "<group>"; };
 		F0AC809416BB299500C5D5C0 /* Subliminal (Integration Tests).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Subliminal (Integration Tests).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0AC809716BB299500C5D5C0 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F0AC809B16BB299500C5D5C0 /* Subliminal Integration Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Subliminal Integration Tests-Info.plist"; sourceTree = "<group>"; };
@@ -644,6 +654,8 @@
 				F00800CD174C1C64001927AC /* SLPopover.m */,
 				F0C07A491704002100C93F93 /* SLTextField.h */,
 				F0C07A4A1704002100C93F93 /* SLTextField.m */,
+				F0A3F63217A715AD007529C3 /* SLTextView.h */,
+				F0A3F63317A715AE007529C3 /* SLTextView.m */,
 				F0C07A55170401E400C93F93 /* SLWebView.h */,
 				F0C07A56170401E500C93F93 /* SLWebView.m */,
 				F0C07A4D1704009E00C93F93 /* SLWindow.h */,
@@ -699,6 +711,17 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		F0A3F63917A716FC007529C3 /* SLTextView Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F0A3F63A17A7172E007529C3 /* SLTextViewTest.m */,
+				F0A3F63B17A7172E007529C3 /* SLTextViewTestViewController.m */,
+				F0A3F63C17A7172E007529C3 /* SLTextViewTestViewController.xib */,
+				F0A3F64017A73198007529C3 /* SLWebTextView.html */,
+			);
+			name = "SLTextView Tests";
+			sourceTree = "<group>";
+		};
 		F0AC809916BB299500C5D5C0 /* Integration Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -746,6 +769,7 @@
 				F00800D3174C2871001927AC /* SLPopover Tests */,
 				F089F9FD1746B1D200DF1F25 /* SLStaticElement Tests */,
 				F01EBC951701150E00FF6A7C /* SLTextField Tests */,
+				F0A3F63917A716FC007529C3 /* SLTextView Tests */,
 				F013798E16D0843B009BAF22 /* SLTerminal Tests */,
 				F089F98E17458B7400DF1F25 /* SLWindow Tests */,
 			);
@@ -759,7 +783,6 @@
 				F0AE4C8C16F7F92D00B2BB2B /* SLElementStateTestViewController.m */,
 				F0C27CDE1741694900335A41 /* SLElementStateTestMidpointCovered.xib */,
 				F0C27CE817416EC400335A41 /* SLElementStateTestCompletelyCovered.xib */,
-				F00F3B621778E63C00119580 /* SLElementStateTestScrollViewCases.xib */,
 			);
 			name = "SLElement State Tests";
 			sourceTree = "<group>";
@@ -853,6 +876,7 @@
 				F043469F175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.h in Headers */,
 				F04346AF175AD63E00D91F7F /* SLAccessibilityPath.h in Headers */,
 				F04346A7175AD10200D91F7F /* NSObject+SLVisibility.h in Headers */,
+				F0A3F63417A715AE007529C3 /* SLTextView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1014,9 +1038,10 @@
 				F0C27CE917416EC400335A41 /* SLElementStateTestCompletelyCovered.xib in Resources */,
 				F00800C9174B3349001927AC /* SLButtonTestViewController.xib in Resources */,
 				F00F3B5E1778E05100119580 /* SLElementTapTestScrollViewCases.xib in Resources */,
-				F00F3B631778E63C00119580 /* SLElementStateTestScrollViewCases.xib in Resources */,
 				F00F3B6717790B4C00119580 /* SLStaticElementTestScrollView.xib in Resources */,
 				0640035B178FDE7800479173 /* SLElementTouchAndHoldTestViewController.xib in Resources */,
+				F0A3F63F17A7172E007529C3 /* SLTextViewTestViewController.xib in Resources */,
+				F0A3F64117A73198007529C3 /* SLWebTextView.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1087,6 +1112,7 @@
 				F04346A0175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.m in Sources */,
 				F04346B0175AD63E00D91F7F /* SLAccessibilityPath.m in Sources */,
 				F04346A8175AD10200D91F7F /* NSObject+SLVisibility.m in Sources */,
+				F0A3F63517A715AE007529C3 /* SLTextView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1130,6 +1156,8 @@
 				F00800E2174C2E0A001927AC /* SLPopoverTest.m in Sources */,
 				F00800E3174C2E0A001927AC /* SLPopoverTestViewController.m in Sources */,
 				0640035A178FDE7800479173 /* SLElementTouchAndHoldTestViewController.m in Sources */,
+				F0A3F63D17A7172E007529C3 /* SLTextViewTest.m in Sources */,
+				F0A3F63E17A7172E007529C3 /* SLTextViewTestViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

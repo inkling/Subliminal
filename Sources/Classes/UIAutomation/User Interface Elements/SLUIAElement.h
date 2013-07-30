@@ -201,6 +201,19 @@
  */
 - (BOOL)isTappable;
 
+/**
+ Determines whether the specified element currently receives keyboard input.
+
+ That is, whether the receiver is first responder.
+ 
+ @return `YES` if the user interface element represented by the specified element 
+ is the current receiver of keyboard input, `NO` otherwise.
+ 
+ @exception SLUIAElementInvalidException Raised if the element is not currently
+ valid.
+ */
+- (BOOL)hasKeyboardFocus;
+
 #pragma mark - Gestures and Actions
 /// ----------------------------------------
 /// @name Gestures and Actions

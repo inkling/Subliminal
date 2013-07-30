@@ -125,17 +125,18 @@
     SLAssertTrue(SLAskApp(tapPoint) != nil, @"Tap should have been recognized.");
 }
 
-// Tapping is a process involving JS execution,
-// with some variability in waiting for the element to become valid (+/- one SLUIAElementRetryDelay`),
-// waiting for tappability (+/- two `SLTerminalReadRetryDelays`, one for SLTerminal.js receiving the command
-// and one for SLTerminal receiving the result)),
-// and tapping (two more `SLTerminalReadRetryDelays`).
+// Tapping is a process involving JS execution:
+// +/- one SLUIAElementRetryDelay` for the element to become valid,
+// two `SLTerminalReadRetryDelays` and one `SLTerminalEvaluationDelay` waiting for tappability
+// (one `SLTerminalReadRetryDelay` for `SLTerminal.js` receiving the command and another for `SLTerminal`
+// receiving the result, and then one `SLTerminalEvaluationDelay` to evaluate the command),
+// and tapping (two more `SLTerminalReadRetryDelays` and another `SLTerminalEvaluationDelay`).
 - (NSTimeInterval)waitDelayVariabilityIncludingTappabilityCheck:(BOOL)includeTappabilityCheck
                                                             tap:(BOOL)includeTap {
-    NSUInteger terminalReadRetryCount = 0;
-    if (includeTappabilityCheck) terminalReadRetryCount += 2;
-    if (includeTap) terminalReadRetryCount +=2;
-    return SLUIAElementWaitRetryDelay + SLTerminalReadRetryDelay * terminalReadRetryCount;
+    NSUInteger evaluationCount = 0;
+    if (includeTappabilityCheck) evaluationCount++;
+    if (includeTap) evaluationCount++;
+    return SLUIAElementWaitRetryDelay + ((SLTerminalReadRetryDelay * 2) + SLTerminalEvaluationDelay) * evaluationCount;
 }
 
 - (void)testWaitUntilTappableNOThenPerformActionWithUIARepresentationDoesNotWaitUntilTappable {

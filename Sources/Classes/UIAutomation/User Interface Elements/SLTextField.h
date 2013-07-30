@@ -37,7 +37,7 @@
  element is not tappable when whatever amount of time remains of the default 
  timeout after the element becomes valid elapses.
  */
-@property (nonatomic, strong) NSString *text;
+@property (nonatomic, copy) NSString *text;
 
 @end
 
@@ -80,6 +80,6 @@
  element is not tappable when whatever amount of time remains of the default
  timeout after the element becomes valid elapses.
  */
-@property (nonatomic, strong) NSString *text;
+@property (nonatomic, copy) NSString *text;
 
 @end

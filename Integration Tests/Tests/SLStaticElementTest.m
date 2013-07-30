@@ -72,15 +72,17 @@
 }
 
 // Checking validity is a process involving JS execution, with some variability:
-// +/- one `SLUIAElementWaitRetryDelay` and two `SLTerminalReadRetryDelays` (one for
-// SLTerminal.js receiving the command and one for SLTerminal receiving the result).
-// Waiting for tappability and/or tapping will involve 2 more `SLTerminalReadRetryDelays` apiece.
+// +/- one `SLUIAElementWaitRetryDelay`, two `SLTerminalReadRetryDelays` (one for
+// `SLTerminal.js` receiving the command and one for `SLTerminal` receiving the result),
+// and one `SLTerminalEvaluationDelay` (to evaluate the command).
+// Waiting for tappability and/or tapping will involve 2 more `SLTerminalReadRetryDelays`,
+// and another `SLTerminalEvaluationDelay`, apiece.
 - (NSTimeInterval)waitDelayVariabilityIncludingTappabilityCheck:(BOOL)includeTappabilityCheck
                                                             tap:(BOOL)includeTap {
-    NSUInteger terminalReadRetryCount = 2;
-    if (includeTappabilityCheck) terminalReadRetryCount += 2;
-    if (includeTap) terminalReadRetryCount +=2;
-    return SLUIAElementWaitRetryDelay + SLTerminalReadRetryDelay * terminalReadRetryCount;
+    NSUInteger evaluationCount = 1;
+    if (includeTappabilityCheck) evaluationCount++;
+    if (includeTap) evaluationCount++;
+    return SLUIAElementWaitRetryDelay + ((SLTerminalReadRetryDelay * 2) + SLTerminalEvaluationDelay) * evaluationCount;
 }
 
 - (void)testStaticElementsWaitToMatchValidObjects {
