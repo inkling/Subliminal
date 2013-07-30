@@ -83,8 +83,6 @@
 @end
 
 
-static const NSTimeInterval kWebviewTextfieldDelay = 1;
-
 @implementation SLWebTextField
 // SLWebTextField does not inherit from SLTextField
 // because the elements it matches, web text fields, are not instances of UITextField
@@ -94,16 +92,9 @@ static const NSTimeInterval kWebviewTextfieldDelay = 1;
     return [self value];
 }
 
-// Experimentation has shown that SLTextFields within a webview must be tapped, and
-// a waiting period is necessary, before setValue() will have any effect. A wait period
-// after setting the value is also necessary, otherwise it seems as if regardless of
-// correct matching, the next actions sent to UIAutomation will be applied incorrectly
-// to this webview textfield.
 - (void)setText:(NSString *)text {
     [self tap];
-    [NSThread sleepForTimeInterval:kWebviewTextfieldDelay];
     [[SLKeyboard keyboard] typeString:text];
-    [NSThread sleepForTimeInterval:kWebviewTextfieldDelay];
 }
 
 @end
