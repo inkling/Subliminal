@@ -3,8 +3,10 @@ language: objective-c
 # These tasks run before cd'ing into Subliminal's repo
 before_install:
     - brew update
-# Used as build tool for test and documentation targets
-    - brew install xctool --HEAD
+
+# `xctool` is required to build the unit test and documentation targets
+# but it is already installed on Travis
+
 # Used to build documentation
     - brew install appledoc
 # Initialize test dependencies (OCMock)
