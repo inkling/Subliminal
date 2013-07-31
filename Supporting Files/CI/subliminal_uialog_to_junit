@@ -54,20 +54,19 @@ def main(inputPath, outputPath):
         # NOTE: Don't change the order of "failed unexpectedly" and "failed" or
         # the regular expression matcher will always choose "failed" instead of
         # "failed unexpectedly."
-        match = re.match('^Test case "\-\[(.+) (.+)\]" (passed|failed\ unexpectedly|failed)', message)
+        match = re.match('^Test case "\-\[.+ (.+)\]" (passed|failed\ unexpectedly|failed)', message)
         if (match is not None):
-            testClassName = match.group(1)
-            testCaseName = match.group(2)
-            action = match.group(3)
-            if (testClassName is not None):
-                case = ET.SubElement(testSuite, "testcase")
-                case.set("name", testCaseName)
-                if (action == "failed"):
-                    failure = ET.SubElement(case, "failure")
-                    failure.set("message", latestErrorMessage)
-                elif (action == "failed unexpectedly"):
-                    error = ET.SubElement(case, "error")
-                    error.set("message", latestErrorMessage)
+            testCaseName = match.group(1)
+            case = ET.SubElement(testSuite, "testcase")
+            case.set("name", testCaseName)
+
+            action = match.group(2)
+            if (action == "failed"):
+                failure = ET.SubElement(case, "failure")
+                failure.set("message", latestErrorMessage)
+            elif (action == "failed unexpectedly"):
+                error = ET.SubElement(case, "error")
+                error.set("message", latestErrorMessage)
 
         tree = ET.ElementTree(root)
         tree.write(outputPath)
