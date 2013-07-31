@@ -46,10 +46,9 @@ def main(inputPath, outputPath):
         if (match is not None):
             testSuiteName = match.group(1)
             action = match.group(2)
-            if (testSuiteName is not None):
-                if (action == "started"):
-                    testSuite = ET.SubElement(root, "testsuite")
-                    testSuite.set("name", testSuiteName)
+            if (action == "started"):
+                testSuite = ET.SubElement(root, "testsuite")
+                testSuite.set("name", testSuiteName)
 
         # Test cases
         # NOTE: Don't change the order of "failed unexpectedly" and "failed" or
