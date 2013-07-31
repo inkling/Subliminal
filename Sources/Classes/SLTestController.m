@@ -37,10 +37,35 @@
 static NSUncaughtExceptionHandler *appsUncaughtExceptionHandler = NULL;
 static const NSTimeInterval kDefaultTimeout = 5.0;
 
+
+@interface SLTestController () <UIAlertViewDelegate>
+
+/// The currently-running test, if any.
+@property (nonatomic, readonly) SLTest *currentTest;
+
+@end
+
+
 /// Uncaught exceptions are logged to Subliminal for visibility.
 static void SLUncaughtExceptionHandler(NSException *exception)
 {
-    NSString *exceptionMessage = [NSString stringWithFormat:@"Uncaught exception occurred: ***%@*** for reason: %@", [exception name], [exception reason]];
+    NSMutableString *exceptionMessage = [[NSMutableString alloc] initWithString:@"Uncaught exception occurred"];
+    SLTest *currentTest = [[SLTestController sharedTestController] currentTest];
+    if (currentTest) {
+        NSString *currentTestName = NSStringFromClass([currentTest class]);
+        NSString *currentTestCase = currentTest.currentTestCase;
+        if (currentTestCase) {
+            [exceptionMessage appendFormat:@" during test case \"-[%@ %@]\"", currentTestName, currentTestCase];
+        } else {
+            [exceptionMessage appendFormat:@" during test \"%@\"", currentTestName];
+        }
+    }
+    [exceptionMessage appendFormat:@": ***%@***", [exception name]];
+    NSString *exceptionReason = [exception reason];
+    if ([exceptionReason length]) {
+        [exceptionMessage appendFormat:@" for reason: %@", exceptionReason];
+    }
+    
     if ([NSThread isMainThread]) {
         // We need to wait for UIAutomation, but we can't block the main thread,
         // so we spin the run loop instead.
@@ -61,9 +86,6 @@ static void SLUncaughtExceptionHandler(NSException *exception)
     }
 }
 
-
-@interface SLTestController () <UIAlertViewDelegate>
-@end
 
 @implementation SLTestController {
     dispatch_queue_t _runQueue;
@@ -230,7 +252,7 @@ static SLTestController *__sharedController = nil;
 
         for (Class testClass in _testsToRun) {
             @autoreleasepool {
-                SLTest *test = (SLTest *)[[testClass alloc] init];
+                _currentTest = (SLTest *)[[testClass alloc] init];
 
                 NSString *testName = NSStringFromClass(testClass);
                 [[SLLogger sharedLogger] logTestStart:testName];
@@ -238,9 +260,9 @@ static SLTestController *__sharedController = nil;
                 @try {
                     NSUInteger numCasesExecuted = 0, numCasesFailed = 0, numCasesFailedUnexpectedly = 0;
 
-                    [test runAndReportNumExecuted:&numCasesExecuted
-                                           failed:&numCasesFailed
-                               failedUnexpectedly:&numCasesFailedUnexpectedly];
+                    [_currentTest runAndReportNumExecuted:&numCasesExecuted
+                                                   failed:&numCasesFailed
+                                       failedUnexpectedly:&numCasesFailedUnexpectedly];
 
                     [[SLLogger sharedLogger] logTestFinish:testName
                                       withNumCasesExecuted:numCasesExecuted
@@ -266,6 +288,8 @@ static SLTestController *__sharedController = nil;
                     _numTestsFailed++;
                 }
                 _numTestsExecuted++;
+
+                _currentTest = nil;
             }
         }
 

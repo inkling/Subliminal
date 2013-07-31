@@ -174,6 +174,13 @@
                          failed:(NSUInteger *)numCasesFailed
              failedUnexpectedly:(NSUInteger *)numCasesFailedUnexpectedly;
 
+/**
+ The currently-running test case, if any.
+ 
+ This will be `nil` while the test is being set up or torn down.
+ */
+@property (nonatomic, readonly) NSString *currentTestCase;
+
 @end
 
 
