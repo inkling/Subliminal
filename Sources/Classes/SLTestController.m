@@ -37,6 +37,15 @@
 static NSUncaughtExceptionHandler *appsUncaughtExceptionHandler = NULL;
 static const NSTimeInterval kDefaultTimeout = 5.0;
 
+
+@interface SLTestController () <UIAlertViewDelegate>
+
+/// The currently-running test, if any.
+@property (nonatomic, readonly) SLTest *currentTest;
+
+@end
+
+
 /// Uncaught exceptions are logged to Subliminal for visibility.
 static void SLUncaughtExceptionHandler(NSException *exception)
 {
@@ -61,9 +70,6 @@ static void SLUncaughtExceptionHandler(NSException *exception)
     }
 }
 
-
-@interface SLTestController () <UIAlertViewDelegate>
-@end
 
 @implementation SLTestController {
     dispatch_queue_t _runQueue;
@@ -230,7 +236,7 @@ static SLTestController *__sharedController = nil;
 
         for (Class testClass in _testsToRun) {
             @autoreleasepool {
-                SLTest *test = (SLTest *)[[testClass alloc] init];
+                _currentTest = (SLTest *)[[testClass alloc] init];
 
                 NSString *testName = NSStringFromClass(testClass);
                 [[SLLogger sharedLogger] logTestStart:testName];
@@ -238,9 +244,9 @@ static SLTestController *__sharedController = nil;
                 @try {
                     NSUInteger numCasesExecuted = 0, numCasesFailed = 0, numCasesFailedUnexpectedly = 0;
 
-                    [test runAndReportNumExecuted:&numCasesExecuted
-                                           failed:&numCasesFailed
-                               failedUnexpectedly:&numCasesFailedUnexpectedly];
+                    [_currentTest runAndReportNumExecuted:&numCasesExecuted
+                                                   failed:&numCasesFailed
+                                       failedUnexpectedly:&numCasesFailedUnexpectedly];
 
                     [[SLLogger sharedLogger] logTestFinish:testName
                                       withNumCasesExecuted:numCasesExecuted
@@ -266,6 +272,8 @@ static SLTestController *__sharedController = nil;
                     _numTestsFailed++;
                 }
                 _numTestsExecuted++;
+
+                _currentTest = nil;
             }
         }
 
