@@ -49,7 +49,23 @@ static const NSTimeInterval kDefaultTimeout = 5.0;
 /// Uncaught exceptions are logged to Subliminal for visibility.
 static void SLUncaughtExceptionHandler(NSException *exception)
 {
-    NSString *exceptionMessage = [NSString stringWithFormat:@"Uncaught exception occurred: ***%@*** for reason: %@", [exception name], [exception reason]];
+    NSMutableString *exceptionMessage = [[NSMutableString alloc] initWithString:@"Uncaught exception occurred"];
+    SLTest *currentTest = [[SLTestController sharedTestController] currentTest];
+    if (currentTest) {
+        NSString *currentTestName = NSStringFromClass([currentTest class]);
+        NSString *currentTestCase = currentTest.currentTestCase;
+        if (currentTestCase) {
+            [exceptionMessage appendFormat:@" during test case \"-[%@ %@]\"", currentTestName, currentTestCase];
+        } else {
+            [exceptionMessage appendFormat:@" during test \"%@\"", currentTestName];
+        }
+    }
+    [exceptionMessage appendFormat:@": ***%@***", [exception name]];
+    NSString *exceptionReason = [exception reason];
+    if ([exceptionReason length]) {
+        [exceptionMessage appendFormat:@" for reason: %@", exceptionReason];
+    }
+    
     if ([NSThread isMainThread]) {
         // We need to wait for UIAutomation, but we can't block the main thread,
         // so we spin the run loop instead.
