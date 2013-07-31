@@ -67,6 +67,20 @@ def main(inputPath, outputPath):
             elif (action == "failed unexpectedly"):
                 error = ET.SubElement(case, "error")
                 error.set("message", latestErrorMessage)
+        else:
+            match = re.match('^Uncaught exception occurred during test case "\-\[.+ (.+)\]": \*\*\*(.+)\*\*\*(?: for reason: (.+))?', message)
+            if (match is not None):
+                testCaseName = match.group(1)
+                case = ET.SubElement(testSuite, "testcase")
+                case.set("name", testCaseName)
+
+                exceptionName = match.group(2)
+                exceptionReason = match.group(3);
+                exceptionMessage = "Uncaught exception occurred: ***%s***" % exceptionName
+                if (exceptionReason is not None):
+                    exceptionMessage += " for reason: %s" % exceptionReason
+                error = ET.SubElement(case, "error");
+                error.set("message", exceptionMessage)
 
         tree = ET.ElementTree(root)
         tree.write(outputPath)
