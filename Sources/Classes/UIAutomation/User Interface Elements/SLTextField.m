@@ -57,6 +57,8 @@
     // typeString method will fail when Automation can't find the first of those
     // "non-basic" character's keys on the keyboard, so we use setValue instead.
     if ([text rangeOfCharacterFromSet:nonBasicCharacters].location == NSNotFound) {
+        // Clear any current text before typing the new text.
+        [self waitUntilTappable:YES thenSendMessage:@"setValue('')"];
         [[SLKeyboard keyboard] typeString:text];
     } else {
         [self waitUntilTappable:YES thenSendMessage:@"setValue('%@')", [text slStringByEscapingForJavaScriptLiteral]];

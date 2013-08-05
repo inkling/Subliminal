@@ -111,9 +111,13 @@
 }
 
 - (void)testSetSearchBarText {
-    NSString *const expectedText = @"bar";
-    SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
-    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
+    NSString *const expectedText1 = @"foo";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText1], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText1], @"Text was not set to expected value.");
+
+    NSString *const expectedText2 = @"bar";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText2], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText2], @"Text was not set to expected value.");
 }
 
 - (void)testGetSearchBarText {
