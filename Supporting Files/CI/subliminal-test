@@ -508,7 +508,7 @@ TEST_STATUS=0
 grep -q "This was a focused run." "$RESULT_LOG"
 if [ $? -eq 0 ]; then
 	echo "\nERROR: Tests were committed with focus--fewer test cases may have run than normal."
-	TEST_STATUS=1
+	TEST_STATUS=3
 else
 	OVERALL_RESULT=`grep "Testing finished" "$RESULT_LOG"`
 	if [[ -z "$OVERALL_RESULT" ]]; then
@@ -517,7 +517,7 @@ else
 	else
 		NUMBER_OF_FAILURES=`echo "$OVERALL_RESULT" | sed -E 's|.+with ([0-9]+) failure.+|\1|'`
 		if [ "$NUMBER_OF_FAILURES" -gt "0" ]; then
-			TEST_STATUS=1
+			TEST_STATUS=2
 		fi
 	fi
 fi
