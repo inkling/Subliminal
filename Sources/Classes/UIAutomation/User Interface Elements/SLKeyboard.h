@@ -42,6 +42,10 @@
  Taps the keys of the specified keyboard as required 
  to generate the specified string.
  
+ This string may contain characters that do not appear on the keyboard 
+ in the keyboard's current state--the keyboard will change keyplanes 
+ as necessary to make the corresponding keys visible.
+
  @param string The string to be typed on the keyboard.
  */
 - (void)typeString:(NSString *)string;

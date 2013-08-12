@@ -31,12 +31,6 @@
 }
 
 - (void)setText:(NSString *)text {
-    static NSCharacterSet *nonBasicCharacters;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        nonBasicCharacters = [[NSCharacterSet characterSetWithCharactersInString:@"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ,. "] invertedSet];
-    });
-
     // Normally we want to tap on the view that backs this SLTextField before
     // attempting to edit the field.  That way we can be confident that the
     // view will be first responder.  The only exception is when the backing
@@ -51,18 +45,9 @@
         [self tap];
     }
 
-    // If the text contains only characters that appear on the software keyboard
-    // in its default state, then we can use typeString to enter the text in the
-    // field.  If the text contains other characters then the JavaScript
-    // typeString method will fail when Automation can't find the first of those
-    // "non-basic" character's keys on the keyboard, so we use setValue instead.
-    if ([text rangeOfCharacterFromSet:nonBasicCharacters].location == NSNotFound) {
-        // Clear any current text before typing the new text.
-        [self waitUntilTappable:YES thenSendMessage:@"setValue('')"];
-        [[SLKeyboard keyboard] typeString:text];
-    } else {
-        [self waitUntilTappable:YES thenSendMessage:@"setValue('%@')", [text slStringByEscapingForJavaScriptLiteral]];
-    }
+    // Clear any current text before typing the new text.
+    [self waitUntilTappable:YES thenSendMessage:@"setValue('')"];
+    [[SLKeyboard keyboard] typeString:text];
 }
 
 - (BOOL)matchesObject:(NSObject *)object {

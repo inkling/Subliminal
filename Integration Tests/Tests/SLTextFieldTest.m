@@ -60,13 +60,9 @@
 #pragma mark - SLTextField test cases
 
 - (void)testSetText {
-    NSString *const basicExpectedText = @"Foo";
-    SLAssertNoThrow([UIAElement(_textField) setText:basicExpectedText], @"Should not have thrown.");
-    SLAssertTrue([SLAskApp(text) isEqualToString:basicExpectedText], @"Text was not set to expected value.");
-
-    NSString *const complexExpectedText = @"Foo'Bar_123>Baz<Buz";
-    SLAssertNoThrow([UIAElement(_textField) setText:complexExpectedText], @"Should not have thrown.");
-    SLAssertTrue([SLAskApp(text) isEqualToString:complexExpectedText], @"Text was not set to expected value.");
+    NSString *const expectedText = @"foo";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
 }
 
 - (void)testSetTextWhenFieldClearsOnBeginEditing {
