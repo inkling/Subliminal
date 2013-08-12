@@ -39,6 +39,7 @@
     UIView *view = [[UIView alloc] initWithFrame:CGRectZero];
     const CGRect kTextFieldFrame = (CGRect){CGPointZero, CGSizeMake(100.0f, 30.0f)};
     if (testCase == @selector(testSetText) ||
+        testCase == @selector(testSetTextClearsCurrentText) ||
         testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
         testCase == @selector(testGetText) ||
         testCase == @selector(testDoNotMatchEditorAccessibilityObjects) ||
@@ -93,6 +94,7 @@
     }
 
     if (self.testCase != @selector(testSetText) &&
+        self.testCase != @selector(testSetTextClearsCurrentText) &&
         self.testCase != @selector(testSetTextWhenFieldClearsOnBeginEditing) &&
         self.testCase != @selector(testDoNotMatchEditorAccessibilityObjects)) {
         _textField.text = @"foo";
@@ -138,6 +140,7 @@
 - (NSString *)text {
     NSString *text;
     if (self.testCase == @selector(testSetText) ||
+        self.testCase == @selector(testSetTextClearsCurrentText) ||
         self.testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
         self.testCase == @selector(testGetText) ||
         self.testCase == @selector(testDoNotMatchEditorAccessibilityObjects) ||

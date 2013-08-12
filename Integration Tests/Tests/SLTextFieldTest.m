@@ -40,6 +40,7 @@
     [super setUpTestCaseWithSelector:testSelector];
 
     if (testSelector == @selector(testSetText) ||
+        testSelector == @selector(testSetTextClearsCurrentText) ||
         testSelector == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
         testSelector == @selector(testGetText) ||
         testSelector == @selector(testDoNotMatchEditorAccessibilityObjects) ||
@@ -63,6 +64,16 @@
     NSString *const expectedText = @"foo";
     SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
     SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
+}
+
+- (void)testSetTextClearsCurrentText {
+    NSString *const expectedText1 = @"foo";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText1], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText1], @"Text was not set to expected value.");
+
+    NSString *const expectedText2 = @"bar";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText2], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText2], @"Text was not set to expected value.");
 }
 
 - (void)testSetTextWhenFieldClearsOnBeginEditing {
@@ -107,13 +118,9 @@
 }
 
 - (void)testSetSearchBarText {
-    NSString *const expectedText1 = @"foo";
-    SLAssertNoThrow([UIAElement(_textField) setText:expectedText1], @"Should not have thrown.");
-    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText1], @"Text was not set to expected value.");
-
-    NSString *const expectedText2 = @"bar";
-    SLAssertNoThrow([UIAElement(_textField) setText:expectedText2], @"Should not have thrown.");
-    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText2], @"Text was not set to expected value.");
+    NSString *const expectedText = @"bar";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
 }
 
 - (void)testGetSearchBarText {
