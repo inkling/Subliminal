@@ -501,7 +501,8 @@ launch_instruments () {
 }
 
 launch_instruments
-if [ $? -ne 0 ]; then
+RESULT_LOG="$RESULTS_DIR/Run 1/Automation Results.plist"
+if [ $? -ne 0 ] && [ ! -e "$RESULT_LOG" ]; then
 	# Under poorly understood circumstances, in certain CI environments like Travis, 
 	# instruments may fail to launch what otherwise appears to be a perfectly good app 
 	# (in that an app prepared exactly the same way may be run without error on another run), 
@@ -521,8 +522,7 @@ fi
 ### Process results
 echo "\n\nProcessing results..."
 
-# Parse test success or failure out of the run .plist
-RESULT_LOG="$RESULTS_DIR/Run 1/Automation Results.plist"
+# Parse test success or failure out of the result log
 TEST_STATUS=0
 grep -q "This was a focused run." "$RESULT_LOG"
 if [ $? -eq 0 ]; then
