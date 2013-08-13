@@ -17,7 +17,12 @@
 }
 
 - (void)setText:(NSString *)text {
-    [self tap]; // become first responder
+    // Tap to show the keyboard (if the field doesn't already have keyboard focus,
+    // because in that case a real user would probably not tap again before typing)
+    if (![self hasKeyboardFocus]) {
+        [self tap];
+    }
+    
     [[SLKeyboard keyboard] typeString:text];
 }
 
@@ -38,7 +43,12 @@
 }
 
 - (void)setText:(NSString *)text {
-    [self tap];
+    // Tap to show the keyboard (if the field doesn't already have keyboard focus,
+    // because in that case a real user would probably not tap again before typing)
+    if (![self hasKeyboardFocus]) {
+        [self tap];
+    }
+
     [[SLKeyboard keyboard] typeString:text];
 }
 

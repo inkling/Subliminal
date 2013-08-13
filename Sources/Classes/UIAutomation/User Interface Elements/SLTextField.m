@@ -31,22 +31,15 @@
 }
 
 - (void)setText:(NSString *)text {
-    // Normally we want to tap on the view that backs this SLTextField before
-    // attempting to edit the field.  That way we can be confident that the
-    // view will be first responder.  The only exception is when the backing
-    // view is a UITextField and is *already* editing, because in that case
-    // the view is already first responder and a real user would probably not
-    // tap again before typing.
-    __block BOOL tapBeforeSettingText;
-    [self examineMatchingObject:^(NSObject *object) {
-        tapBeforeSettingText = !([object isKindOfClass:[UITextField class]] && [(UITextField *)object isEditing]);
-    }];
-    if (tapBeforeSettingText) {
+    // Tap to show the keyboard (if the field doesn't already have keyboard focus,
+    // because in that case a real user would probably not tap again before typing)
+    if (![self hasKeyboardFocus]) {
         [self tap];
     }
 
     // Clear any current text before typing the new text.
     [self waitUntilTappable:YES thenSendMessage:@"setValue('')"];
+    
     [[SLKeyboard keyboard] typeString:text];
 }
 
@@ -96,7 +89,12 @@
 }
 
 - (void)setText:(NSString *)text {
-    [self tap];
+    // Tap to show the keyboard (if the field doesn't already have keyboard focus,
+    // because in that case a real user would probably not tap again before typing)
+    if (![self hasKeyboardFocus]) {
+        [self tap];
+    }
+
     [[SLKeyboard keyboard] typeString:text];
 }
 
