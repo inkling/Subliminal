@@ -479,31 +479,50 @@ if [[ -z $LIVE ]] || ! $LIVE; then
 	# Track pid to be killed when the parent script ends
 	AUTHORIZE_INSTRUMENTS_PID=$!
 fi
- 
-# Second attempt (in case the dialog does not show, as in certain CI environments 
-# like Travis): enter the login password on the command line, 
-# by piping the password, followed by a newline, to instruments
-# (If the user did not supply a login password, this will just print a newline)
 
-# Note that the Subliminal trace template includes the UIASCRIPT
-# and the environment variables passed to this script
-# are passed to instruments and the app by being exported at the top of this script
-TIMEOUT_ARG=`[[ -n "$TIMEOUT" ]] && echo "-l $TIMEOUT" || echo ""`
-HARDWARE_ARG=`[[ -n "$HW_ID" ]] && echo "-w $HW_ID" || echo ""`
-printf "$LOGIN_PASSWORD\n" | xcrun instruments\
-	-t "${HOME}/Library/Application Support/Instruments/Templates/Subliminal/Subliminal.tracetemplate"\
-	-D "$TRACE_FILE"\
-	$TIMEOUT_ARG\
-	$HARDWARE_ARG\
-	"$APP"\
-	-e UIARESULTSPATH "$RESULTS_DIR"
+launch_instruments () {
+	# Second attempt (in case the dialog does not show, as in certain CI environments 
+	# like Travis): enter the login password on the command line, 
+	# by piping the password, followed by a newline, to instruments
+	# (If the user did not supply a login password, this will just print a newline)
+
+	# Note that the Subliminal trace template includes the UIASCRIPT
+	# and the environment variables passed to this script
+	# are passed to instruments and the app by being exported at the top of this script
+	TIMEOUT_ARG=`[[ -n "$TIMEOUT" ]] && echo "-l $TIMEOUT" || echo ""`
+	HARDWARE_ARG=`[[ -n "$HW_ID" ]] && echo "-w $HW_ID" || echo ""`
+	printf "$LOGIN_PASSWORD\n" | xcrun instruments\
+		-t "${HOME}/Library/Application Support/Instruments/Templates/Subliminal/Subliminal.tracetemplate"\
+		-D "$TRACE_FILE"\
+		$TIMEOUT_ARG\
+		$HARDWARE_ARG\
+		"$APP"\
+		-e UIARESULTSPATH "$RESULTS_DIR"
+}
+
+launch_instruments
+RESULT_LOG="$RESULTS_DIR/Run 1/Automation Results.plist"
+if [ $? -ne 0 ] && [ ! -e "$RESULT_LOG" ]; then
+	# Under poorly understood circumstances, in certain CI environments like Travis, 
+	# instruments may fail to launch what otherwise appears to be a perfectly good app 
+	# (in that an app prepared exactly the same way may be run without error on another run), 
+	# saying "Recording cancelled : At least one target failed to launch; aborting run
+	# Instruments Trace Error : Failed to start trace"
+	# We retry once.
+	echo "\ninstruments hiccuped; retrying..."
+	sleep 1
+	launch_instruments
+	if [ $? -ne 0 ]; then
+		echo "\nERROR: Could not launch instruments. Aborting."
+		cleanup_and_exit 1
+	fi
+fi
 
 
 ### Process results
 echo "\n\nProcessing results..."
 
-# Parse test success or failure out of the run .plist
-RESULT_LOG="$RESULTS_DIR/Run 1/Automation Results.plist"
+# Parse test success or failure out of the result log
 TEST_STATUS=0
 grep -q "This was a focused run." "$RESULT_LOG"
 if [ $? -eq 0 ]; then
