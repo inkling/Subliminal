@@ -8,7 +8,7 @@
 
 #import "TestUtilities.h"
 
-void SLRunTestsAndWaitUntilFinished(NSSet *tests, void (^completionBlock)()) {
+void SLRunTestsAndWaitUntilFinished(NSArray *tests, void (^completionBlock)()) {
     __block BOOL testingHasFinished = NO;
     [[SLTestController sharedTestController] runTests:tests
                                   withCompletionBlock:^{

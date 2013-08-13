@@ -39,7 +39,7 @@
 @end
 
 @implementation SLIntegrationTestsAppDelegate {
-    NSSet *_tests;
+    NSArray *_tests;
     NSString *_terminalStartupResult;
 }
 
@@ -56,7 +56,7 @@
         // Filter the tests for the SLTestController
         // so that the SLTestsViewController only displays appropriate tests
         _tests = [SLTestController testsToRun:[SLTest allTests] withFocus:NULL];
-        rootViewController = [[SLTestsViewController alloc] initWithTests:[_tests allObjects]];
+        rootViewController = [[SLTestsViewController alloc] initWithTests:_tests];
     }
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
     self.window.rootViewController = navController;

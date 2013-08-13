@@ -51,7 +51,7 @@
 
  @return All tests (`SLTest` subclasses) linked against the current target.
  */
-+ (NSSet *)allTests;
++ (NSArray *)allTests;
 
 /**
  Returns the `SLTest` subclass with the specified name.

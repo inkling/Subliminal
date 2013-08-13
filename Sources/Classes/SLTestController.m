@@ -90,7 +90,7 @@ static void SLUncaughtExceptionHandler(NSException *exception)
 @implementation SLTestController {
     dispatch_queue_t _runQueue;
     BOOL _runningWithFocus;
-    NSSet *_testsToRun;
+    NSArray *_testsToRun;
     NSUInteger _numTestsExecuted, _numTestsFailed;
     void(^_completionBlock)(void);
 
@@ -117,21 +117,20 @@ static SLTestController *__sharedController = nil;
     return __sharedController;
 }
 
-+ (NSSet *)testsToRun:(NSSet *)tests withFocus:(BOOL *)withFocus {
++ (NSArray *)testsToRun:(NSArray *)tests withFocus:(BOOL *)withFocus {
     // only run tests that are concrete...
-    NSMutableSet *testsToRun = [NSMutableSet setWithSet:tests];
+    NSMutableArray *testsToRun = [NSMutableArray arrayWithArray:tests];
     [testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"isAbstract == NO"]];
 
     // ...that support the current platform...
     [testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"supportsCurrentPlatform == YES"]];
 
     // ...and that are focused (if any remaining are focused)
-    NSSet *focusedTests = [testsToRun objectsPassingTest:^BOOL(id obj, BOOL *stop) {
-        return [obj isFocused];
-    }];
+    NSArray *focusedTests = [testsToRun filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"isFocused == YES"]];
+
     BOOL runningWithFocus = ([focusedTests count] > 0);
     if (runningWithFocus) {
-        testsToRun = [NSMutableSet setWithSet:focusedTests];
+        testsToRun = [NSMutableArray arrayWithArray:focusedTests];
     }
     if (withFocus) *withFocus = runningWithFocus;
 
@@ -229,7 +228,7 @@ static SLTestController *__sharedController = nil;
 #endif
 
     if (_runningWithFocus) {
-        SLLog(@"Focusing on test cases in specific tests: %@.", [[_testsToRun allObjects] componentsJoinedByString:@","]);
+        SLLog(@"Focusing on test cases in specific tests: %@.", [_testsToRun componentsJoinedByString:@","]);
     }
 
     [self warnIfAccessibilityInspectorIsEnabled];
@@ -237,7 +236,7 @@ static SLTestController *__sharedController = nil;
     [[SLLogger sharedLogger] logTestingStart];
 }
 
-- (void)runTests:(NSSet *)tests withCompletionBlock:(void (^)())completionBlock {
+- (void)runTests:(NSArray *)tests withCompletionBlock:(void (^)())completionBlock {
     dispatch_async(_runQueue, ^{
         _completionBlock = completionBlock;
 
