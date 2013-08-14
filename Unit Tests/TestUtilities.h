@@ -15,7 +15,7 @@
  @param tests The SLTest classes to run.
  @param completionBlock The optional completion block to execute after testing finishes.
  */
-extern void SLRunTestsAndWaitUntilFinished(NSSet *tests, void (^completionBlock)());
+extern void SLRunTestsAndWaitUntilFinished(NSArray *tests, void (^completionBlock)());
 
 
 /**

@@ -199,7 +199,7 @@
     // expect the action to be received
     [[_targetMock expect] actionTakingNoArgumentReturningVoid];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
     STAssertNoThrow([_targetMock verify], @"Target should have received action.");
 }
@@ -219,7 +219,7 @@
     // expect the action to be received with the given argument
     [[_targetMock expect] actionTakingAnArgumentReturningVoid:actionArg];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
     STAssertNoThrow([_targetMock verify], @"Target should have received action.");
 }
@@ -241,7 +241,7 @@
     // expect the action to be received, and return the expected value
     [[[_targetMock expect] andReturn:expectedReturnValue] actionTakingNoArgumentReturningAValue];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
     STAssertNoThrow([_targetMock verify], @"Target should have received action.");
 }
@@ -264,7 +264,7 @@
     // expect the action to be received with the given argument, and return the expected value
     [[[_targetMock expect] andReturn:expectedReturnValue] actionTakingAnArgumentReturningAValue:actionArg];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
     STAssertNoThrow([_targetMock verify], @"Target should have received action.");
 }
@@ -287,7 +287,7 @@
     [[_targetMock expect] actionTakingNoArgumentReturningVoid];
     [[_targetMock reject] actionTakingNoArgumentReturningVoid];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
     STAssertNoThrow([_targetMock verify], @"Target should have received action.");
 }
@@ -300,7 +300,7 @@
                         @"Should have thrown an exception because no target was registered for the action.");
     }] testOne];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
 }
 
@@ -323,7 +323,7 @@
 
     [[_targetMock expect] actionTakingNoArgumentReturningVoid];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
     STAssertNoThrow([_targetMock verify], @"Should have received action.");
 }
@@ -344,7 +344,7 @@
     // expect the action to be received
     [[_targetMock expect] actionTakingNoArgumentReturningVoid];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
     STAssertNoThrow([_targetMock verify], @"Target should have received action.");
 
@@ -362,7 +362,7 @@
     // expect the action to not be received
     [[_targetMock reject] actionTakingNoArgumentReturningVoid];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
     STAssertNoThrow([_targetMock verify], @"Target should not have received action, because it deregistered.");
 }
@@ -391,7 +391,7 @@
     [[_targetMock expect] actionTakingNoArgumentReturningVoid];
     [[_targetMock expect] actionTakingNoArgumentReturningAValue];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
     STAssertNoThrow([_targetMock verify], @"Target should have received actions.");
 
@@ -414,7 +414,7 @@
     [[_targetMock reject] actionTakingNoArgumentReturningVoid];
     [[_targetMock reject] actionTakingNoArgumentReturningAValue];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
     STAssertNoThrow([_targetMock verify], @"Target should not have received actions, because it deregistered.");
 }
@@ -439,7 +439,7 @@
     [[_secondTargetMock expect] actionTakingNoArgumentReturningVoid];
     [[_targetMock reject] actionTakingNoArgumentReturningVoid];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
     STAssertNoThrow([_secondTargetMock verify], @"Second target should have received action.");
     STAssertNoThrow([_targetMock verify], @"First target should not have received action.");
@@ -469,7 +469,7 @@
     // i.e it should not have been deregistered by the above call
     [[_secondTargetMock expect] actionTakingNoArgumentReturningVoid];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
     STAssertNoThrow([_secondTargetMock verify], @"Second target should have received action.");
 }
@@ -497,7 +497,7 @@
     id localTargetMock = [OCMockObject partialMockForObject:localTarget];
     [[localTargetMock expect] actionTakingNoArgumentReturningVoid];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
     STAssertNoThrow([localTargetMock verify], @"Should have received action.");
 
@@ -514,7 +514,7 @@
                        @"Should have thrown an exception because the target dropped out of scope.");
     }] testOne];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
 }
 
@@ -536,7 +536,7 @@
     // note: this causes the mock to expect the invocation of the selector, not that of performSelector:
     [[_targetMock expect] performSelector:@selector(actionName)];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
     STAssertNoThrow([_targetMock verify], @"Target should have received action.");
 #undef actionName
@@ -561,7 +561,7 @@
     // note: this causes the mock to expect the invocation of the selector, not that of performSelector:withObject:
     [[_targetMock expect] performSelector:@selector(actionName) withObject:actionArg];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
     STAssertNoThrow([_targetMock verify], @"Target should have received action.");
 #undef actionName
@@ -588,7 +588,7 @@
     // note: this causes the mock to expect the invocation of the selector, not that of performSelector:
     [[[_targetMock expect] andReturn:@(expectedReturnValue)] performSelector:@selector(actionName)];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
     STAssertNoThrow([_targetMock verify], @"Target should have received action.");
 #undef actionName
@@ -616,7 +616,7 @@
     // note: this causes the mock to expect the invocation of the selector, not that of performSelector:
     [[[_targetMock expect] andReturn:@(expectedReturnValue)] performSelector:@selector(actionName) withObject:actionArg];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:_testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:_testClass], nil);
     STAssertNoThrow([_testMock verify], @"Should have executed test.");
     STAssertNoThrow([_targetMock verify], @"Target should have received action.");
 #undef actionName

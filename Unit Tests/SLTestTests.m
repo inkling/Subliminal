@@ -59,8 +59,8 @@
 #pragma mark - Test lookup
 
 - (void)testAllTestsReturnsExpected {
-    NSSet *allTests = [SLTest allTests];
-    NSSet *expectedTests = [NSSet setWithObjects:
+    NSSet *allTestsSet = [NSSet setWithArray:[SLTest allTests]];
+    NSSet *expectedTestsSet = [NSSet setWithArray:[NSArray arrayWithObjects:
         [SLTest class],
         [TestWithSomeTestCases class],
         [AbstractTest class],
@@ -80,6 +80,33 @@
         [Focus_TestThatIsFocusedButDoesntSupportCurrentPlatform class],
         [Focus_AbstractTestThatIsFocused class],
         [ConcreteTestThatIsFocused class],
+        nil
+    ]];
+    STAssertEqualObjects(allTestsSet, expectedTestsSet, @"Unexpected tests returned.");
+}
+
+- (void)testAllTestsReturnsInAlphaNumericOrder {
+    NSArray *allTests = [SLTest allTests];
+    NSArray *expectedTests = [NSArray arrayWithObjects:
+        [AbstractTest class],
+        [AbstractTestWhichSupportsOnly_iPad class],
+        [ConcreteTestThatIsFocused class],
+        [ConcreteTestWhichSupportsOnlyiPad class],
+        [Focus_AbstractTestThatIsFocused class],
+        [Focus_TestThatIsFocused class],
+        [Focus_TestThatIsFocusedButDoesntSupportCurrentPlatform class],
+        [Focus_TestWhereNarrowestFocusApplies class],
+        [SLTest class],
+        [TestNotSupportingCurrentPlatform class],
+        [TestThatIsNotFocused class],
+        [TestWhichSupportsAllPlatforms class],
+        [TestWhichSupportsOnlyiPad_iPad class],
+        [TestWhichSupportsOnlyiPhone_iPhone class],
+        [TestWithAFocusedPlatformSpecificTestCase class],
+        [TestWithAFocusedTestCase class],
+        [TestWithPlatformSpecificTestCases class],
+        [TestWithSomeFocusedTestCases class],
+        [TestWithSomeTestCases class],
         nil
     ];
     STAssertEqualObjects(allTests, expectedTests, @"Unexpected tests returned.");
@@ -200,7 +227,7 @@
     [[testMock reject] performSelector:unsupportedTestCaseSelector];
 #pragma clang diagnostic pop
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithPlatformSpecificTestCasesTest], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testWithPlatformSpecificTestCasesTest], nil);
     STAssertNoThrow([testMock verify], @"Test cases did not run as expected.");
 }
 
@@ -221,7 +248,7 @@
     [[testNotSupportingCurrentPlatformClassMock reject] performSelector:supportedTestCaseSelector];
 #pragma clang diagnostic pop
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testNotSupportingCurrentPlatformClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testNotSupportingCurrentPlatformClass], nil);
     STAssertNoThrow([testNotSupportingCurrentPlatformClassMock verify],
                     @"Test case supporting current platform was run despite its test not supporting the current platform.");
 }
@@ -308,7 +335,7 @@
     [[testWithAFocusedTestCaseClassMock reject] testOne];
     [[testWithAFocusedTestCaseClassMock expect] focus_testTwo];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithAFocusedTestCaseClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testWithAFocusedTestCaseClass], nil);
     STAssertNoThrow([testWithAFocusedTestCaseClassMock verify], @"Test cases did not execute as expected.");
 }
 
@@ -321,7 +348,7 @@
     [[testWithSomeFocusedTestCasesClassMock expect] focus_testTwo];
     [[testWithSomeFocusedTestCasesClassMock expect] focus_testThree];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeFocusedTestCasesClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testWithSomeFocusedTestCasesClass], nil);
     STAssertNoThrow([testWithSomeFocusedTestCasesClassMock verify], @"Test cases did not execute as expected.");
 }
 
@@ -335,7 +362,7 @@
     id testThatIsFocusedClassMock = [OCMockObject partialMockForClass:testThatIsFocusedClass];
     [[testThatIsFocusedClassMock expect] testFoo];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testThatIsFocusedClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testThatIsFocusedClass], nil);
     STAssertNoThrow([testThatIsFocusedClassMock verify], @"Test cases did not execute as expected.");
 }
 
@@ -350,7 +377,7 @@
     [[testWhereNarrowestFocusAppliesClassMock reject] testOne];
     [[testWhereNarrowestFocusAppliesClassMock expect] focus_testTwo];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWhereNarrowestFocusAppliesClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testWhereNarrowestFocusAppliesClass], nil);
     STAssertNoThrow([testWhereNarrowestFocusAppliesClassMock verify], @"Test cases did not execute as expected.");
 }
 
@@ -370,7 +397,7 @@
     [[testWithAFocusedTestCaseClassMock expect] setUpTestCaseWithSelector:@selector(testTwo)];
     [[testWithAFocusedTestCaseClassMock expect] tearDownTestCaseWithSelector:@selector(testTwo)];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithAFocusedTestCaseClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testWithAFocusedTestCaseClass], nil);
     STAssertNoThrow([testWithAFocusedTestCaseClassObjectMock verify], @"Test cases did not execute as expected.");
     STAssertNoThrow([testWithAFocusedTestCaseClassMock verify], @"Test cases did not execute as expected.");
 }
@@ -389,7 +416,7 @@
     [[testWithAFocusedPlatformSpecificTestCaseClassMock reject] focus_testBar_iPad];
     [[testWithAFocusedPlatformSpecificTestCaseClassMock expect] testFoo];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithAFocusedPlatformSpecificTestCaseClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testWithAFocusedPlatformSpecificTestCaseClass], nil);
     STAssertNoThrow([testWithAFocusedPlatformSpecificTestCaseClassMock verify], @"Test cases did not execute as expected.");
 }
 
@@ -405,7 +432,7 @@
     [[testMock expect] testTwo];
     [[testMock expect] testThree];
     
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeTestCasesTest], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testWithSomeTestCasesTest], nil);
     STAssertNoThrow([testMock verify], @"Test cases did not run as expected.");
 }
 
@@ -420,7 +447,7 @@
     [[testMock reject] testThatIsntATestBecauseItsReturnTypeIsNonVoid];
     [[testMock reject] testThatIsntATestBecauseItTakesAnArgument:OCMOCK_ANY];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeTestCasesTest], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testWithSomeTestCasesTest], nil);
     STAssertNoThrow([testMock verify], @"Invalid test cases were unexpectedly run.");
 }
 
@@ -465,7 +492,7 @@
     // *** End expected test run
     
     // Run tests and verify
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testClass], nil);
     STAssertNoThrow([testSequencer verify], @"Testing did not execute in the expected sequence.");
 }
 
@@ -491,7 +518,7 @@
     // *** End expected test run
 
     // Run tests and verify
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testClass], nil);
     STAssertNoThrow([testMock verify], @"-setUpTest and -tearDownTest did not execute once, at the start and end of the test.");
 }
 
@@ -526,7 +553,7 @@
         // *** End expected test run
 
         // Run tests and verify
-        SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+        SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testClass], nil);
         STAssertNoThrow([testMock verify], @"-setUpTestCaseWithSelector: and -tearDownTestCaseWithSelector: did not execute once before and after each test case.");
     }
 }
@@ -563,7 +590,7 @@
 
     // *** End expected test run
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:failingTestClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:failingTestClass], nil);
     STAssertNoThrow([failingTestSequencer verify], @"Test did not fail/messages were not logged in the expected sequence.");
 }
 
@@ -604,7 +631,7 @@
 
     // *** End expected test run
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObjects:failingTestClass, otherTestClass, nil], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObjects:failingTestClass, otherTestClass, nil], nil);
     STAssertNoThrow([failingTestMock verify], @"Failing test did not run.");
     STAssertNoThrow([otherTestMock verify], @"Other test did not run.");
 }
@@ -630,7 +657,7 @@
     // we expect teardown to still execute
     [[failingTestMock expect] tearDownTest];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObjects:failingTestClass, nil], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObjects:failingTestClass, nil], nil);
     STAssertNoThrow([failingTestMock verify], @"Test did not run as expected.");
 }
 
@@ -647,7 +674,7 @@
     // none of the test cases should have executed
     [[failingTestMock reject] setUpTestCaseWithSelector:[OCMArg anySelector]];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObjects:failingTestClass, nil], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObjects:failingTestClass, nil], nil);
     STAssertNoThrow([failingTestMock verify], @"Test did not run as expected.");
 }
 
@@ -689,7 +716,7 @@
 
     // *** End expected test run
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:failingTestClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:failingTestClass], nil);
     STAssertNoThrow([failingTestSequencer verify], @"Test did not run/messages were not logged in the expected sequence.");
 }
 
@@ -719,7 +746,7 @@
 
     // *** End expected test run
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:failingTestClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:failingTestClass], nil);
     STAssertNoThrow([failingTestMock verify], @"Test did not run as expected.");
 }
 
@@ -741,7 +768,7 @@
 
     // *** End expected test run
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:failingTestClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:failingTestClass], nil);
     STAssertNoThrow([failingTestMock verify], @"Test did not run as expected.");
 }
 
@@ -772,7 +799,7 @@
 
     // *** End expected test run
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:failingTestClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:failingTestClass], nil);
     STAssertNoThrow([failingTestMock verify], @"Test did not run as expected.");
 }
 
@@ -810,7 +837,7 @@
 
     // *** End expected test run
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testClass], nil);
     STAssertNoThrow([failingTestSequencer verify], @"Test did not run/messages were not logged in the expected sequence.");
 }
 
@@ -855,7 +882,7 @@
 
     // *** End expected test run
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:failingTestClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:failingTestClass], nil);
     STAssertNoThrow([failingTestSequencer verify], @"Test did not fail/messages were not logged in the expected sequence.");
 }
 
@@ -885,7 +912,7 @@
 
     // *** End expected test run
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:failingTestClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:failingTestClass], nil);
     STAssertNoThrow([failingTestMock verify], @"Test did not run as expected.");
 }
 
@@ -907,7 +934,7 @@
 
     // *** End expected test run
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:failingTestClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:failingTestClass], nil);
     STAssertNoThrow([failingTestMock verify], @"Test did not run as expected.");
 }
 
@@ -946,7 +973,7 @@
         return [errorMessage hasPrefix:filenameAndLineNumberPrefix];
     }]];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testClass], nil);
     STAssertNoThrow([sequencer verify], @"Test did not run/message was not logged in expected sequence.");
 }
 
@@ -972,7 +999,7 @@
         }], @"Assertion should have failed.");
     }] testTwo];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testClass], nil);
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
@@ -990,7 +1017,7 @@
         }], @"Assertion should not have failed.");
     }] testOne];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testClass], nil);
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
@@ -1016,7 +1043,7 @@
         }], @"Assertion should have failed.");
     }] testTwo];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testClass], nil);
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
@@ -1042,7 +1069,7 @@
         STAssertTrue(waitTimeInterval < .01, @"Test should not have waited for an appreciable interval.");
     }] testOne];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testClass], nil);
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
@@ -1071,7 +1098,7 @@
                      @"Test should have only waited for about the amount of time necessary for the condition to become true.");
     }] testThree];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testClass], nil);
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
@@ -1095,7 +1122,7 @@
                      @"Test should have waited for the specified timeout.");
     }] testTwo];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testClass], nil);
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
@@ -1124,7 +1151,7 @@
         STAssertTrue(waitTimeInterval < .01, @"Test should not have waited for an appreciable interval.");
     }] testOne];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testClass], nil);
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
@@ -1156,7 +1183,7 @@
                      @"Test should have only waited for about the amount of time necessary for the condition to become true.");
     }] testThree];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testClass], nil);
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
@@ -1183,7 +1210,7 @@
                      @"Test should have waited for the specified timeout.");
     }] testTwo];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testClass], nil);
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
@@ -1207,7 +1234,7 @@
         STAssertThrows([test slAssertThrows:^{}], @"Assertion should have failed.");
     }] testTwo];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testClass], nil);
     STAssertNoThrow([testMock verify], @"Test cases did not execute as expected.");
 }
 
@@ -1225,7 +1252,7 @@
         STAssertThrows([test slAssertThrows:^{} named:@"TestException"], @"Assertion should have failed.");
     }] testTwo];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testClass], nil);
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
@@ -1251,7 +1278,7 @@
         } named:exceptionName], @"Assertion should have failed.");
     }] testTwo];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testClass], nil);
     STAssertNoThrow([testMock verify], @"Test cases did not execute as expected.");
 }
 
@@ -1275,7 +1302,7 @@
         }], @"Assertion should have failed.");
     }] testTwo];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testClass], nil);
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
@@ -1301,14 +1328,14 @@
                      @"Test did not delay for expected interval.");
     }] testOne];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testClass], nil);
     STAssertNoThrow([testMock verify], @"Test case was not executed as expected.");
 }
 
 #pragma mark - Internal
 
 - (void)testTestCasesAreDiscoveredAsExpected {
-    NSSet *testCases = [NSSet setWithObjects:@"testOne", @"testTwo", @"testThree", nil];
+    NSSet *testCases = [NSSet setWithArray:[NSArray arrayWithObjects:@"testOne", @"testTwo", @"testThree", nil]];
     STAssertEqualObjects(testCases, [TestWithSomeTestCases testCases],
                          @"Test cases were not discovered as expected.");
 }

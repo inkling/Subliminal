@@ -47,8 +47,8 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
     int _lastKnownLineNumber;
 }
 
-+ (NSSet *)allTests {
-    NSMutableSet *tests = [[NSMutableSet alloc] init];
++ (NSArray *)allTests {
+    NSMutableArray *tests = [[NSMutableArray alloc] init];
     
     int numClasses = objc_getClassList(NULL, 0);
     if (numClasses > 0) {
@@ -68,7 +68,14 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
         free(classes);
     }
     
-    return tests;
+    NSArray *sortedTests;
+    sortedTests = [tests sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
+        NSString* aName = NSStringFromClass(a);
+        NSString* bName = NSStringFromClass(b);
+        return [aName caseInsensitiveCompare:bName] == NSOrderedDescending;
+    }];
+    
+    return sortedTests;
 }
 
 + (Class)testNamed:(NSString *)name {

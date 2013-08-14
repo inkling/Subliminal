@@ -68,7 +68,7 @@
                                         failed:[OCMArg anyPointer]
                             failedUnexpectedly:[OCMArg anyPointer]];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:abstractTestClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:abstractTestClass], nil);
     STAssertNoThrow([testMock verify], @"Test was run despite not having any test cases.");
 }
 
@@ -91,7 +91,7 @@
                                                                     failed:[OCMArg anyPointer]
                                                         failedUnexpectedly:[OCMArg anyPointer]];
 
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObjects:testSupportingCurrentPlatformClass, testNotSupportingCurrentPlatformClass, nil], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObjects:testSupportingCurrentPlatformClass, testNotSupportingCurrentPlatformClass, nil], nil);
     STAssertNoThrow([testSupportingCurrentPlatformMock verify], @"Test supporting current platform was not run as expected.");
     STAssertNoThrow([testNotSupportingCurrentPlatformMock verify], @"Test not supporting current platform was unexpectedly run.");
 }
@@ -105,7 +105,7 @@
     Class testWithSomeFocusedTestCasesClass = [TestWithSomeFocusedTestCases class];
     STAssertTrue([testWithSomeFocusedTestCasesClass isFocused],
                  @"For the purposes of this test, this SLTest must be focused.");
-    NSSet *tests = [NSSet setWithObjects:
+    NSArray *tests = [NSArray arrayWithObjects:
         testThatIsNotFocusedClass,
         testWithSomeFocusedTestCasesClass,
         nil
@@ -128,7 +128,7 @@
 }
 
 - (void)testThatMultipleTestsCanBeFocusedAndRun {
-    NSSet *tests = [NSSet setWithObjects:
+    NSArray *tests = [NSArray arrayWithObjects:
         [TestThatIsNotFocused class],
         [TestWithSomeFocusedTestCases class],
         [Focus_TestThatIsFocused class],
@@ -177,7 +177,7 @@
     STAssertFalse([testThatIsFocusedButDoesntSupportCurrentPlatformClass supportsCurrentPlatform],
                   @"For the purposes of this test, this SLTest must not support current platform.");
 
-    NSSet *tests = [NSSet setWithObjects:
+    NSArray *tests = [NSArray arrayWithObjects:
         testThatIsNotFocusedClass,
         testThatIsFocusedButDoesntSupportCurrentPlatformClass,
         nil
@@ -210,7 +210,7 @@
                  @"For the purposes of this test, this SLTest must be focused.");
 
     // The test controller won't be told to run the focused test, thus it won't be run...
-    NSSet *testsToRun = [NSSet setWithObject:testWithSomeTestCasesClass];
+    NSArray *testsToRun = [NSArray arrayWithObject:testWithSomeTestCasesClass];
 
     id testWithSomeFocusedTestCasesClassMock = [OCMockObject partialMockForClass:testWithSomeFocusedTestCasesClass];
     [[testWithSomeFocusedTestCasesClassMock reject] runAndReportNumExecuted:[OCMArg anyPointer]
@@ -249,7 +249,7 @@
     // warning at end
     [[_loggerMock expect] logWarning:@"This was a focused run. Fewer test cases may have run than normal."];
     
-    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    SLRunTestsAndWaitUntilFinished([NSArray arrayWithObject:testClass], nil);
     STAssertNoThrow([sequencer verify], @"Test was not run/messages were not logged as expected.");
 }
 

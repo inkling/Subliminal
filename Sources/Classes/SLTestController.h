@@ -78,7 +78,7 @@
  @param tests The set of tests to run.
  @param completionBlock An optional block to execute once testing has finished. 
  */
-- (void)runTests:(NSSet *)tests withCompletionBlock:(void (^)())completionBlock;
+- (void)runTests:(NSArray *)tests withCompletionBlock:(void (^)())completionBlock;
 
 @end
 
