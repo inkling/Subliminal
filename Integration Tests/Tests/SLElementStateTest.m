@@ -40,6 +40,13 @@
     _testElement = [SLElement elementWithAccessibilityLabel:@"Test Element"];
 }
 
+- (void)setUpTestCaseWithSelector:(SEL)testCaseSelector {
+    [super setUpTestCaseWithSelector:testCaseSelector];
+    if (testCaseSelector == @selector(testHitpointDoesNotReturnAccessibilityActivationPoint)) {
+        SLAskApp(modifyActivationPoint);
+    }
+}
+
 - (void)testLabel {
     NSString *expectedLabel = SLAskApp(elementLabel);
     NSString *label = [UIAElement(_testElement) label];
@@ -92,6 +99,14 @@
 - (void)testHitpointReturnsNullPointIfElementIsCovered {
     CGPoint hitpoint = [UIAElement(_testElement) hitpoint];
     SLAssertTrue(SLCGPointIsNull(hitpoint), @"-hitpoint did not return expected value.");
+}
+
+// This test case justifies the development of `-[SLElement tapAtActivationPoint]`.
+- (void)testHitpointDoesNotReturnAccessibilityActivationPoint {
+    CGPoint hitpoint = [UIAElement(_testElement) hitpoint];
+    CGPoint activationPoint = [SLAskApp(activationPoint) CGPointValue];
+    SLAssertFalse(CGPointEqualToPoint(hitpoint, activationPoint),
+                  @"-hitpoint should not have returned the button's modified activation point.");
 }
 
 - (void)testElementIsTappableIfItHasANonNullHitpoint {
