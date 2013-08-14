@@ -55,6 +55,7 @@
         testCase == @selector(testValue) ||
         testCase == @selector(testIsEnabledMirrorsUIControlIsEnabledWhenMatchingObjectIsUIControl) ||
         testCase == @selector(testHitpointReturnsRectMidpointByDefault) ||
+        testCase == @selector(testHitpointDoesNotReturnAccessibilityActivationPoint) ||
         testCase == @selector(testRect)) {
         UIView *view = [[UIView alloc] initWithFrame:self.navigationController.view.bounds];
         view.backgroundColor = [UIColor whiteColor];
@@ -119,6 +120,8 @@
         [testController registerTarget:self forAction:@selector(elementValue)];
         [testController registerTarget:self forAction:@selector(disableElement)];
         [testController registerTarget:self forAction:@selector(enableElement)];
+        [testController registerTarget:self forAction:@selector(modifyActivationPoint)];
+        [testController registerTarget:self forAction:@selector(activationPoint)];
         [testController registerTarget:self forAction:@selector(uncoverTestView)];
         [testController registerTarget:self forAction:@selector(makeTextFieldFirstResponder)];
         [testController registerTarget:self forAction:@selector(elementRect)];
@@ -146,6 +149,17 @@
 
 - (void)enableElement {
     _button.enabled = YES;
+}
+
+- (void)modifyActivationPoint {
+    _button.accessibilityActivationPoint = (CGPoint){
+        .x = _button.accessibilityActivationPoint.x - 15.0f,
+        .y = _button.accessibilityActivationPoint.y - 15.0f
+    };
+}
+
+- (NSValue *)activationPoint {
+    return [NSValue valueWithCGPoint:_button.accessibilityActivationPoint];
 }
 
 - (void)uncoverTestView {

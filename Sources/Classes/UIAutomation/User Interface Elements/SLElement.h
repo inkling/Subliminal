@@ -133,6 +133,22 @@
  */
 + (instancetype)anyElement;
 
+#pragma mark - Gestures and Actions
+/// ------------------------------------------
+/// @name Gestures and Actions
+/// ------------------------------------------
+
+/**
+ Taps the specified element at its activation point.
+ 
+ The activation point is by default the midpoint of the accessibility element's 
+ frame (`-rect`), same as the element's hitpoint; but unlike the hitpoint, 
+ the activation point may be modified, to direct VoiceOver to tap on a certain
+ region of the element. See `-[NSObject (UIAccessibility) accessibilityActivationPoint]`
+ for more information and examples.
+ */
+- (void)tapAtActivationPoint;
+
 @end
 
 
