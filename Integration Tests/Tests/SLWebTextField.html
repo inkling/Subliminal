@@ -3,7 +3,8 @@
 	<head>
 		<script type="text/javascript">
 			function setTestCase (selector) {
-				if (selector != "testSetWebTextFieldText") {
+				if ((selector != "testSetWebTextFieldText") &&
+                    (selector != "testSetWebTextFieldTextClearsCurrentText")) {
 					document.getElementById("testField").value = "baz";
 				}
 			}

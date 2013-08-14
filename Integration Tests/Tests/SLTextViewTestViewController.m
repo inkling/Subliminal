@@ -26,6 +26,7 @@
 + (NSString *)nibNameForTestCase:(SEL)testCase {
     NSString *nibName = nil;
     if ((testCase == @selector(testSetText)) ||
+        (testCase == @selector(testSetTextClearsCurrentText)) ||
         (testCase == @selector(testGetText)) ||
         (testCase == @selector(testDoNotMatchEditorAccessibilityObjects))) {
         nibName = @"SLTextViewTestViewController";
@@ -36,6 +37,7 @@
 - (void)loadViewForTestCase:(SEL)testCase {
     if ((testCase == @selector(testMatchesWebTextView)) ||
         (testCase == @selector(testSetWebTextViewText)) ||
+        (testCase == @selector(testSetWebTextViewTextClearsCurrentText)) ||
         (testCase == @selector(testGetWebTextViewText))) {
         UIView *view = [[UIView alloc] initWithFrame:CGRectZero];
 
@@ -82,11 +84,13 @@
 - (NSString *)text {
     NSString *text;
     if ((self.testCase == @selector(testSetText)) ||
+        (self.testCase == @selector(testSetTextClearsCurrentText)) ||
         (self.testCase == @selector(testGetText)) ||
         (self.testCase == @selector(testDoNotMatchEditorAccessibilityObjects))) {
         text = self.textView.text;
     } else if ((self.testCase == @selector(testMatchesWebTextView)) ||
                (self.testCase == @selector(testSetWebTextViewText)) ||
+               (self.testCase == @selector(testSetWebTextViewTextClearsCurrentText)) ||
                (self.testCase == @selector(testGetWebTextViewText))) {
         text = [_webView stringByEvaluatingJavaScriptFromString:@"getText()"];
     }
@@ -95,11 +99,13 @@
 
 - (void)setText:(NSString *)text {
     if ((self.testCase == @selector(testSetText)) ||
+        (self.testCase == @selector(testSetTextClearsCurrentText)) ||
         (self.testCase == @selector(testGetText)) ||
         (self.testCase == @selector(testDoNotMatchEditorAccessibilityObjects))) {
         self.textView.text = text;
     } else if ((self.testCase == @selector(testMatchesWebTextView)) ||
                (self.testCase == @selector(testSetWebTextViewText)) ||
+               (self.testCase == @selector(testSetWebTextViewTextClearsCurrentText)) ||
                (self.testCase == @selector(testGetWebTextViewText))) {
         NSString *setTextString = [NSString stringWithFormat:@"setText('%@')", [text slStringByEscapingForJavaScriptLiteral]];
         (void)[_webView stringByEvaluatingJavaScriptFromString:setTextString];

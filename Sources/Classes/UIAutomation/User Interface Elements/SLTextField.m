@@ -31,38 +31,16 @@
 }
 
 - (void)setText:(NSString *)text {
-    static NSCharacterSet *nonBasicCharacters;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        nonBasicCharacters = [[NSCharacterSet characterSetWithCharactersInString:@"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ,. "] invertedSet];
-    });
-
-    // Normally we want to tap on the view that backs this SLTextField before
-    // attempting to edit the field.  That way we can be confident that the
-    // view will be first responder.  The only exception is when the backing
-    // view is a UITextField and is *already* editing, because in that case
-    // the view is already first responder and a real user would probably not
-    // tap again before typing.
-    __block BOOL tapBeforeSettingText;
-    [self examineMatchingObject:^(NSObject *object) {
-        tapBeforeSettingText = !([object isKindOfClass:[UITextField class]] && [(UITextField *)object isEditing]);
-    }];
-    if (tapBeforeSettingText) {
+    // Tap to show the keyboard (if the field doesn't already have keyboard focus,
+    // because in that case a real user would probably not tap again before typing)
+    if (![self hasKeyboardFocus]) {
         [self tap];
     }
 
-    // If the text contains only characters that appear on the software keyboard
-    // in its default state, then we can use typeString to enter the text in the
-    // field.  If the text contains other characters then the JavaScript
-    // typeString method will fail when Automation can't find the first of those
-    // "non-basic" character's keys on the keyboard, so we use setValue instead.
-    if ([text rangeOfCharacterFromSet:nonBasicCharacters].location == NSNotFound) {
-        // Clear any current text before typing the new text.
-        [self waitUntilTappable:YES thenSendMessage:@"setValue('')"];
-        [[SLKeyboard keyboard] typeString:text];
-    } else {
-        [self waitUntilTappable:YES thenSendMessage:@"setValue('%@')", [text slStringByEscapingForJavaScriptLiteral]];
-    }
+    // Clear any current text before typing the new text.
+    [self waitUntilTappable:YES thenSendMessage:@"setValue('')"];
+    
+    [[SLKeyboard keyboard] typeString:text];
 }
 
 - (BOOL)matchesObject:(NSObject *)object {
@@ -111,7 +89,26 @@
 }
 
 - (void)setText:(NSString *)text {
-    [self tap];
+    // Tap to show the keyboard (if the field doesn't already have keyboard focus,
+    // because in that case a real user would probably not tap again before typing)
+    BOOL didNewlyBecomeFirstResponder = NO;
+    if (![self hasKeyboardFocus]) {
+        didNewlyBecomeFirstResponder = YES;
+        [self tap];
+    }
+
+    // Clear any current text before typing the new text.
+    // Unfortunately, you can't set the value (text) of a web text field to the empty string: `setValue('')` simply fails.
+    // So, if there's text to clear, we set the text to a single space and then delete that.
+    if ([[self text] length]) {
+        // If the field newly became first responder, we must delay for a second or `setValue('')` won't have an effect.
+        if (didNewlyBecomeFirstResponder) {
+            [NSThread sleepForTimeInterval:1.0];
+        }
+        [self waitUntilTappable:YES thenSendMessage:@"setValue(' ')"];
+        [[SLKeyboardKey elementWithAccessibilityLabel:@"Delete"] tap];
+    }
+
     [[SLKeyboard keyboard] typeString:text];
 }
 

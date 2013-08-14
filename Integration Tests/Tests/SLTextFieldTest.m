@@ -40,6 +40,7 @@
     [super setUpTestCaseWithSelector:testSelector];
 
     if (testSelector == @selector(testSetText) ||
+        testSelector == @selector(testSetTextClearsCurrentText) ||
         testSelector == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
         testSelector == @selector(testGetText) ||
         testSelector == @selector(testDoNotMatchEditorAccessibilityObjects) ||
@@ -51,6 +52,7 @@
         _textField = [SLSearchField anyElement];
     } else if (testSelector == @selector(testMatchesWebTextField) ||
                testSelector == @selector(testSetWebTextFieldText) ||
+               testSelector == @selector(testSetWebTextFieldTextClearsCurrentText) ||
                testSelector == @selector(testGetWebTextFieldText)) {
         _textField = [SLWebTextField elementWithAccessibilityLabel:@"Test"];
         SLAssertTrueWithTimeout(SLAskAppYesNo(webViewDidFinishLoad), 5.0, @"Webview did not load test HTML.");
@@ -60,13 +62,19 @@
 #pragma mark - SLTextField test cases
 
 - (void)testSetText {
-    NSString *const basicExpectedText = @"Foo";
-    SLAssertNoThrow([UIAElement(_textField) setText:basicExpectedText], @"Should not have thrown.");
-    SLAssertTrue([SLAskApp(text) isEqualToString:basicExpectedText], @"Text was not set to expected value.");
+    NSString *const expectedText = @"foo";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
+}
 
-    NSString *const complexExpectedText = @"Foo'Bar_123>Baz<Buz";
-    SLAssertNoThrow([UIAElement(_textField) setText:complexExpectedText], @"Should not have thrown.");
-    SLAssertTrue([SLAskApp(text) isEqualToString:complexExpectedText], @"Text was not set to expected value.");
+- (void)testSetTextClearsCurrentText {
+    NSString *const expectedText1 = @"foo";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText1], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText1], @"Text was not set to expected value.");
+
+    NSString *const expectedText2 = @"bar";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText2], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText2], @"Text was not set to expected value.");
 }
 
 - (void)testSetTextWhenFieldClearsOnBeginEditing {
@@ -111,13 +119,9 @@
 }
 
 - (void)testSetSearchBarText {
-    NSString *const expectedText1 = @"foo";
-    SLAssertNoThrow([UIAElement(_textField) setText:expectedText1], @"Should not have thrown.");
-    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText1], @"Text was not set to expected value.");
-
-    NSString *const expectedText2 = @"bar";
-    SLAssertNoThrow([UIAElement(_textField) setText:expectedText2], @"Should not have thrown.");
-    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText2], @"Text was not set to expected value.");
+    NSString *const expectedText = @"bar";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
 }
 
 - (void)testGetSearchBarText {
@@ -137,6 +141,16 @@
     NSString *const expectedText = @"baz";
     SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
     SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
+}
+
+- (void)testSetWebTextFieldTextClearsCurrentText {
+    NSString *const expectedText1 = @"foo";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText1], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText1], @"Text was not set to expected value.");
+
+    NSString *const expectedText2 = @"bar";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText2], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText2], @"Text was not set to expected value.");
 }
 
 - (void)testGetWebTextFieldText {

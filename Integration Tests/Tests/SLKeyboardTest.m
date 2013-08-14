@@ -60,6 +60,29 @@
                  @"Did not type string as expected.");
 }
 
+- (void)testTypeStringChangesKeyplanesAsNecessary {
+    SLAskApp(showKeyboard);
+    [self wait:[SLAskApp(keyboardInfo)[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];
+
+    NSString *specialCharacter = @">";
+    SLKeyboardKey *specialCharacterKey = [SLKeyboardKey elementWithAccessibilityLabel:specialCharacter];
+    SLAssertFalse([UIAElement(specialCharacterKey) isValidAndVisible],
+                  @"For the purposes of this test case, the keyboard should not currently be showing this key.");
+
+    NSString *const kExpectedText = @"Foo'Bar_123>Baz<Buz";
+    // Just to make the test consistent.
+    SLAssertTrue([kExpectedText rangeOfString:specialCharacter].location != NSNotFound,
+                 @"For the purposes of this test case, the string to be typed\
+                 must contain a special character not visible before typing.");
+
+    SLAssertNoThrow([UIAElement([SLKeyboard keyboard]) typeString:kExpectedText],
+                    @"The keyboard was not able to type a string containing a special character\
+                    (not visible before typing).");
+    NSString *actualText = SLAskApp(text);
+    SLAssertTrue([kExpectedText isEqualToString:actualText],
+                 @"Did not type string as expected.");
+}
+
 - (void)testTapKeyboardKey {
     SLAskApp(showKeyboard);
     [self wait:[SLAskApp(keyboardInfo)[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];
