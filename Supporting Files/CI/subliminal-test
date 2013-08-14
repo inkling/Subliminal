@@ -509,8 +509,8 @@ if [ $? -ne 0 ] && [ ! -e "$RESULT_LOG" ]; then
 	# saying "Recording cancelled : At least one target failed to launch; aborting run
 	# Instruments Trace Error : Failed to start trace"
 	# We retry once.
-	echo "\ninstruments hiccuped; retrying..."
-	sleep 1
+	echo "\ninstruments hiccuped; retrying...\n"
+	sleep 3
 	launch_instruments
 	if [ $? -ne 0 ]; then
 		echo "\nERROR: Could not launch instruments. Aborting."
