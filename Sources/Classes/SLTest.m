@@ -39,6 +39,8 @@ NSString *const SLTestAssertionFailedException  = @"SLTestCaseAssertionFailedExc
 NSString *const SLTestExceptionFilenameKey      = @"SLTestExceptionFilenameKey";
 NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey";
 
+const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
+
 
 @implementation SLTest {
     NSString *_lastKnownFilename;

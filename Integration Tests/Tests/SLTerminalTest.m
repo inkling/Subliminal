@@ -239,12 +239,12 @@
 
 static const NSTimeInterval kWaitUntilTrueRetryDelay = 0.25;
 
-// There is some variability in waiting for JS to execute (kWaitUntilTrueRetryDelay)
-// and in communicating with UIAutomation (two SLTerminalReadRetryDelays, one
-// for SLTerminal.js receiving the command and one for SLTerminal receiving the
-// result).
+// There is some variability in waiting for JS to execute (kWaitUntilTrueRetryDelay for the condition,
+// SLTerminalEvaluationDelay for the wait function itself) and in communicating with UIAutomation
+// (two SLTerminalReadRetryDelays, one for SLTerminal.js receiving the command and one for SLTerminal
+// receiving the result).
 - (NSTimeInterval)waitDelayVariability {
-    return kWaitUntilTrueRetryDelay + SLTerminalReadRetryDelay * 2;
+    return kWaitUntilTrueRetryDelay + (SLTerminalReadRetryDelay * 2) + SLTerminalEvaluationDelay;
 }
 
 - (void)testWaitUntilTrueReturnsYESImmediatelyWhenConditionIsTrueUponWait {
@@ -288,8 +288,8 @@ static const NSTimeInterval kWaitUntilTrueRetryDelay = 0.25;
     } timeout:[SLElement defaultTimeout]];
 
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],
-                 @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
+    SLAssertTrue(actualWaitTimeInterval - expectedWaitTimeInterval < [self waitDelayVariability],
+                 @"Test waited for %g but should not have waited appreciably longer than %g.",
                  actualWaitTimeInterval, waitTimeInterval);
 }
 
@@ -311,8 +311,8 @@ static const NSTimeInterval kWaitUntilTrueRetryDelay = 0.25;
     } timeout:[SLElement defaultTimeout]];
 
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],
-                 @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
+    SLAssertTrue(actualWaitTimeInterval - expectedWaitTimeInterval < [self waitDelayVariability],
+                 @"Test waited for %g but should not have waited appreciably longer than %g.",
                  actualWaitTimeInterval, expectedWaitTimeInterval);
 }
 
@@ -342,8 +342,8 @@ static const NSTimeInterval kWaitUntilTrueRetryDelay = 0.25;
     } timeout:[SLElement defaultTimeout]];
 
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],
-                 @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
+    SLAssertTrue(actualWaitTimeInterval - expectedWaitTimeInterval < [self waitDelayVariability],
+                 @"Test waited for %g but should not have waited appreciably longer than %g.",
                  actualWaitTimeInterval, waitTimeInterval);
 }
 

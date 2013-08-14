@@ -462,8 +462,9 @@
  to allow even longer timeouts when using `SLWaitUntilTrue` than when using
  `-wait:`.
 
- `SLWaitUntilTrue` may be used to wait for any condition for which it would be
- equally valid for the condition to return YES or NO. For example:
+ The difference between `SLWaitUntilTrue` and `SLAssertTrueWithTimeout` is that `SLWaitUntilTrue` 
+ may be used to wait upon a condition which might, with equal validity, evaluate to true _or_ false. 
+ For example:
 
  // wait for a confirmation message that may or may not appear, and dismiss it
  BOOL messageDisplayed = SLWaitUntilTrue([UIAElement(messageDismissButton) isValidAndVisible], 10.0);
@@ -479,7 +480,7 @@
     NSDate *_startDate = [NSDate date];\
     BOOL _expressionTrue = NO;\
     while (!(_expressionTrue = (expression)) && ([[NSDate date] timeIntervalSinceDate:_startDate] < timeout)) {\
-        [NSThread sleepForTimeInterval:0.25];\
+        [NSThread sleepForTimeInterval:SLWaitUntilTrueRetryDelay];\
     }\
     _expressionTrue;\
 })
@@ -605,3 +606,7 @@ extern NSString *const SLTestExceptionFilenameKey;
 /// Object is an `NSNumber` whose `integerValue` represents the line number on
 /// which the exception occurred.
 extern NSString *const SLTestExceptionLineNumberKey;
+
+/// The interval for which `SLAssertTrueWithTimeout` and `SLWaitUntilTrue`
+/// wait before re-evaluating their conditions.
+extern const NSTimeInterval SLWaitUntilTrueRetryDelay;
