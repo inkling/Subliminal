@@ -40,6 +40,10 @@
 // `SLWebTextView` does not inherit from `SLTextView`
 // because the elements it matches, web text views, are not instances of `UITextView`
 // but rather a private type of accessibility element.
+//
+// UIAutomation actually considers these elements to be text fields (instances of `UIATextField`)
+// even if they represent multi-line HTML text areas, but Subliminal represents them as a distinct
+// "text view" element for parity with `UIKit` controls (`UITextField`/`SLTextField` vs. `UITextView`/`SLTextView`).
 
 - (NSString *)text {
     return [self value];
