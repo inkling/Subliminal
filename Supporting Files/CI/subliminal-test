@@ -500,8 +500,8 @@ launch_instruments () {
 		-e UIARESULTSPATH "$RESULTS_DIR"
 }
 
-launch_instruments
 RESULT_LOG="$RESULTS_DIR/Run 1/Automation Results.plist"
+launch_instruments
 if [ $? -ne 0 ] && [ ! -e "$RESULT_LOG" ]; then
 	# Under poorly understood circumstances, in certain CI environments like Travis, 
 	# instruments may fail to launch what otherwise appears to be a perfectly good app 
