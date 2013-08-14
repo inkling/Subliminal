@@ -60,6 +60,7 @@
         [view addSubview:_searchBar];
     } else if (testCase == @selector(testMatchesWebTextField) ||
                testCase == @selector(testSetWebTextFieldText) ||
+               testCase == @selector(testSetWebTextFieldTextClearsCurrentText) ||
                testCase == @selector(testGetWebTextFieldText)) {
         _webView = [[UIWebView alloc] initWithFrame:view.bounds];
         _webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -152,6 +153,7 @@
         text = _searchBar.text;
     } else if (self.testCase == @selector(testMatchesWebTextField) ||
                self.testCase == @selector(testSetWebTextFieldText) ||
+               self.testCase == @selector(testSetWebTextFieldTextClearsCurrentText) ||
                self.testCase == @selector(testGetWebTextFieldText)) {
         text = [_webView stringByEvaluatingJavaScriptFromString:@"getText()"];
     }

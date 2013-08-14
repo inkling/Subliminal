@@ -52,6 +52,7 @@
         _textField = [SLSearchField anyElement];
     } else if (testSelector == @selector(testMatchesWebTextField) ||
                testSelector == @selector(testSetWebTextFieldText) ||
+               testSelector == @selector(testSetWebTextFieldTextClearsCurrentText) ||
                testSelector == @selector(testGetWebTextFieldText)) {
         _textField = [SLWebTextField elementWithAccessibilityLabel:@"Test"];
         SLAssertTrueWithTimeout(SLAskAppYesNo(webViewDidFinishLoad), 5.0, @"Webview did not load test HTML.");
@@ -140,6 +141,16 @@
     NSString *const expectedText = @"baz";
     SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
     SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
+}
+
+- (void)testSetWebTextFieldTextClearsCurrentText {
+    NSString *const expectedText1 = @"foo";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText1], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText1], @"Text was not set to expected value.");
+
+    NSString *const expectedText2 = @"bar";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText2], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText2], @"Text was not set to expected value.");
 }
 
 - (void)testGetWebTextFieldText {
