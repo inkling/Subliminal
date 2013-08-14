@@ -180,8 +180,8 @@
 
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariabilityIncludingTappabilityCheck:YES tap:YES],
-                 @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
+    SLAssertTrue(actualWaitTimeInterval - expectedWaitTimeInterval < [self waitDelayVariabilityIncludingTappabilityCheck:YES tap:YES],
+                 @"Test waited for %g but should not have waited appreciably longer than %g.",
                  actualWaitTimeInterval, expectedWaitTimeInterval);
 
     SLAssertTrue(SLAskApp(tapPoint) != nil, @"Tap should have been recognized.");
@@ -204,8 +204,8 @@
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
     // we should have aborted after the tappability check, and not tapped
-    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariabilityIncludingTappabilityCheck:YES tap:NO],
-                 @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
+    SLAssertTrue(actualWaitTimeInterval - expectedWaitTimeInterval < [self waitDelayVariabilityIncludingTappabilityCheck:YES tap:NO],
+                 @"Test waited for %g but should not have waited appreciably longer than %g.",
                  actualWaitTimeInterval, expectedWaitTimeInterval);
 }
 

@@ -288,8 +288,8 @@ static const NSTimeInterval kWaitUntilTrueRetryDelay = 0.25;
     } timeout:[SLElement defaultTimeout]];
 
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],
-                 @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
+    SLAssertTrue(actualWaitTimeInterval - expectedWaitTimeInterval < [self waitDelayVariability],
+                 @"Test waited for %g but should not have waited appreciably longer than %g.",
                  actualWaitTimeInterval, waitTimeInterval);
 }
 
@@ -311,8 +311,8 @@ static const NSTimeInterval kWaitUntilTrueRetryDelay = 0.25;
     } timeout:[SLElement defaultTimeout]];
 
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],
-                 @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
+    SLAssertTrue(actualWaitTimeInterval - expectedWaitTimeInterval < [self waitDelayVariability],
+                 @"Test waited for %g but should not have waited appreciably longer than %g.",
                  actualWaitTimeInterval, expectedWaitTimeInterval);
 }
 
@@ -342,8 +342,8 @@ static const NSTimeInterval kWaitUntilTrueRetryDelay = 0.25;
     } timeout:[SLElement defaultTimeout]];
 
     NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
-    SLAssertTrue(ABS(actualWaitTimeInterval - expectedWaitTimeInterval) < [self waitDelayVariability],
-                 @"Test waited for %g but should not have waited appreciably longer or shorter than %g.",
+    SLAssertTrue(actualWaitTimeInterval - expectedWaitTimeInterval < [self waitDelayVariability],
+                 @"Test waited for %g but should not have waited appreciably longer than %g.",
                  actualWaitTimeInterval, waitTimeInterval);
 }
 

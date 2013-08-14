@@ -1038,7 +1038,8 @@
         NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
         // note that `SLAssertTrueWithTimeout` should not wait at all here, thus the variability
         // is not `SLWaitUntilTrueRetryDelay` like the cases below
-        STAssertEqualsWithAccuracy(endTimeInterval, startTimeInterval, .01, @"Test should not have waited for an appreciable interval.");
+        NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
+        STAssertTrue(waitTimeInterval < .01, @"Test should not have waited for an appreciable interval.");
     }] testOne];
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
@@ -1065,8 +1066,9 @@
 
         NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
         // check that the test waited for about the amount of time for the condition to evaluate to true
-        STAssertEqualsWithAccuracy(endTimeInterval - startTimeInterval, truthTimeout, SLWaitUntilTrueRetryDelay,
-                                   @"Test should have only waited for about the amount of time necessary for the condition to become true.");
+        NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
+        STAssertTrue(waitTimeInterval - truthTimeout < SLWaitUntilTrueRetryDelay,
+                     @"Test should have only waited for about the amount of time necessary for the condition to become true.");
     }] testThree];
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
@@ -1088,8 +1090,9 @@
         } withTimeout:timeout], @"Assertion should have failed.");
 
         NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
-        STAssertEqualsWithAccuracy(endTimeInterval - startTimeInterval, timeout, SLWaitUntilTrueRetryDelay,
-                                   @"Test should have waited for the specified timeout.");
+        NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
+        STAssertTrue(waitTimeInterval - timeout < SLWaitUntilTrueRetryDelay,
+                     @"Test should have waited for the specified timeout.");
     }] testTwo];
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
@@ -1117,7 +1120,8 @@
         NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
         // note that `SLWaitUntilTrue` should not wait at all here, thus the variability
         // is not `SLWaitUntilTrueRetryDelay` like the cases below
-        STAssertEqualsWithAccuracy(endTimeInterval, startTimeInterval, .01, @"Test should not have waited for an appreciable interval.");
+        NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
+        STAssertTrue(waitTimeInterval < .01, @"Test should not have waited for an appreciable interval.");
     }] testOne];
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
@@ -1147,8 +1151,9 @@
 
         NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
         // check that the test waited for about the amount of time for the condition to evaluate to true
-        STAssertEqualsWithAccuracy(endTimeInterval - startTimeInterval, truthTimeout, SLWaitUntilTrueRetryDelay,
-                                   @"Test should have only waited for about the amount of time necessary for the condition to become true.");
+        NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
+        STAssertTrue(waitTimeInterval - truthTimeout < SLWaitUntilTrueRetryDelay,
+                     @"Test should have only waited for about the amount of time necessary for the condition to become true.");
     }] testThree];
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
@@ -1173,8 +1178,9 @@
         STAssertFalse(slWaitUntilTrueReturnValue, @"SLWaitUntilTrue should have returned YES");
 
         NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
-        STAssertEqualsWithAccuracy(endTimeInterval - startTimeInterval, timeout, SLWaitUntilTrueRetryDelay,
-                                   @"Test should have waited for the specified timeout.");
+        NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
+        STAssertTrue(waitTimeInterval - timeout < SLWaitUntilTrueRetryDelay,
+                     @"Test should have waited for the specified timeout.");
     }] testTwo];
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
@@ -1285,11 +1291,14 @@
     [[[testMock expect] andDo:^(NSInvocation *invocation) {
         SLTest *test = [invocation target];
         NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
-        NSTimeInterval waitTimeInterval = 1.5;
-        [test wait:waitTimeInterval];
+        NSTimeInterval expectedWaitTimeInterval = 1.5;
+
+        [test wait:expectedWaitTimeInterval];
+
         NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
-        STAssertEqualsWithAccuracy(endTimeInterval - startTimeInterval, waitTimeInterval, .01,
-                                   @"Test did not delay for expected interval.");
+        NSTimeInterval actualWaitTimeInterval = endTimeInterval - startTimeInterval;
+        STAssertTrue(actualWaitTimeInterval - expectedWaitTimeInterval < .01,
+                     @"Test did not delay for expected interval.");
     }] testOne];
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
