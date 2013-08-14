@@ -480,7 +480,7 @@
     NSDate *_startDate = [NSDate date];\
     BOOL _expressionTrue = NO;\
     while (!(_expressionTrue = (expression)) && ([[NSDate date] timeIntervalSinceDate:_startDate] < timeout)) {\
-        [NSThread sleepForTimeInterval:0.25];\
+        [NSThread sleepForTimeInterval:SLWaitUntilTrueRetryDelay];\
     }\
     _expressionTrue;\
 })
@@ -606,3 +606,7 @@ extern NSString *const SLTestExceptionFilenameKey;
 /// Object is an `NSNumber` whose `integerValue` represents the line number on
 /// which the exception occurred.
 extern NSString *const SLTestExceptionLineNumberKey;
+
+/// The interval for which `SLAssertTrueWithTimeout` and `SLWaitUntilTrue`
+/// wait before re-evaluating their conditions.
+extern const NSTimeInterval SLWaitUntilTrueRetryDelay;

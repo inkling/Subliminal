@@ -1036,6 +1036,8 @@
         } withTimeout:1.5], @"Assertion should not have failed.");
 
         NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+        // note that `SLAssertTrueWithTimeout` should not wait at all here, thus the variability
+        // is not `SLWaitUntilTrueRetryDelay` like the cases below
         STAssertEqualsWithAccuracy(endTimeInterval, startTimeInterval, .01, @"Test should not have waited for an appreciable interval.");
     }] testOne];
 
@@ -1063,7 +1065,7 @@
 
         NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
         // check that the test waited for about the amount of time for the condition to evaluate to true
-        STAssertEqualsWithAccuracy(endTimeInterval - startTimeInterval, truthTimeout, .25,
+        STAssertEqualsWithAccuracy(endTimeInterval - startTimeInterval, truthTimeout, SLWaitUntilTrueRetryDelay,
                                    @"Test should have only waited for about the amount of time necessary for the condition to become true.");
     }] testThree];
 
@@ -1086,7 +1088,7 @@
         } withTimeout:timeout], @"Assertion should have failed.");
 
         NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
-        STAssertEqualsWithAccuracy(endTimeInterval - startTimeInterval, timeout, .01,
+        STAssertEqualsWithAccuracy(endTimeInterval - startTimeInterval, timeout, SLWaitUntilTrueRetryDelay,
                                    @"Test should have waited for the specified timeout.");
     }] testTwo];
 
@@ -1113,6 +1115,8 @@
         STAssertTrue(slWaitUntilTrueReturnValue, @"SLWaitUntilTrue should have returned YES");
 
         NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+        // note that `SLWaitUntilTrue` should not wait at all here, thus the variability
+        // is not `SLWaitUntilTrueRetryDelay` like the cases below
         STAssertEqualsWithAccuracy(endTimeInterval, startTimeInterval, .01, @"Test should not have waited for an appreciable interval.");
     }] testOne];
 
@@ -1143,7 +1147,7 @@
 
         NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
         // check that the test waited for about the amount of time for the condition to evaluate to true
-        STAssertEqualsWithAccuracy(endTimeInterval - startTimeInterval, truthTimeout, .25,
+        STAssertEqualsWithAccuracy(endTimeInterval - startTimeInterval, truthTimeout, SLWaitUntilTrueRetryDelay,
                                    @"Test should have only waited for about the amount of time necessary for the condition to become true.");
     }] testThree];
 
@@ -1169,7 +1173,7 @@
         STAssertFalse(slWaitUntilTrueReturnValue, @"SLWaitUntilTrue should have returned YES");
 
         NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
-        STAssertEqualsWithAccuracy(endTimeInterval - startTimeInterval, timeout, .01,
+        STAssertEqualsWithAccuracy(endTimeInterval - startTimeInterval, timeout, SLWaitUntilTrueRetryDelay,
                                    @"Test should have waited for the specified timeout.");
     }] testTwo];
 
