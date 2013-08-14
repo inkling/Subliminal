@@ -274,4 +274,21 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
     return isVisible;
 }
 
+#pragma mark -
+
+- (void)tapAtActivationPoint {
+    __block CGPoint activationPoint;
+    __block CGRect accessibilityFrame;
+    [self examineMatchingObject:^(NSObject *object) {
+        activationPoint = [object accessibilityActivationPoint];
+        accessibilityFrame = [object accessibilityFrame];
+    }];
+
+    CGPoint activationOffset = (CGPoint){
+        .x = (activationPoint.x - CGRectGetMinX(accessibilityFrame)) / CGRectGetWidth(accessibilityFrame),
+        .y = (activationPoint.y - CGRectGetMinY(accessibilityFrame)) / CGRectGetHeight(accessibilityFrame)
+    };
+    [self waitUntilTappable:YES thenSendMessage:@"tapWithOptions({tapOffset:{x:%g, y:%g}})", activationOffset.x, activationOffset.y];
+}
+
 @end

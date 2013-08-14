@@ -61,6 +61,8 @@
     self = [super initWithTestCaseWithSelector:testCase];
     if (self) {
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(tapPoint)];
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(modifyActivationPoint)];
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(activationPoint)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(scrollViewButtonWasTapped)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(resetTapRecognition)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(hideTestView)];
@@ -119,6 +121,17 @@
 - (NSValue *)tapPoint {
     if (SLCGPointIsNull(_tapPoint)) return nil;
     else return [NSValue valueWithCGPoint:_tapPoint];
+}
+
+- (void)modifyActivationPoint {
+    _testView.accessibilityActivationPoint = (CGPoint){
+        .x = _testView.accessibilityActivationPoint.x - 25.0f,
+        .y = _testView.accessibilityActivationPoint.y - 25.0f
+    };
+}
+
+- (NSValue *)activationPoint {
+    return [NSValue valueWithCGPoint:_testView.accessibilityActivationPoint];
 }
 
 - (NSNumber *)scrollViewButtonWasTapped {

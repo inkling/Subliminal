@@ -50,6 +50,8 @@
         testCaseSelector == @selector(testWaitUntilTappableYESThenPerformActionWithUIARepresentationWaitsUntilTappable) ||
         testCaseSelector == @selector(testWaitUntilTappableYESThenPerformActionWithUIARepresentationThrowsIfElementIsNotTappableAtEndOfTimeout)) {
         SLAskApp(hideTestView); // to make the test view not tappable
+    } else if (testCaseSelector == @selector(testTapAtActivationPointOccursAtActivationPoint)) {
+        SLAskApp(modifyActivationPoint);    // to make sure that we're not just tapping at the hitpoint
     }
 }
 
@@ -92,6 +94,15 @@
     CGPoint expectedTapPoint = [UIAElement(_testElement) hitpoint];
     SLAssertTrue(CGPointEqualToPoint(tapPoint, expectedTapPoint),
                  @"-tap tapped the element at %@, not at %@ as expected.",
+                 NSStringFromCGPoint(tapPoint), NSStringFromCGPoint(expectedTapPoint));
+}
+
+- (void)testTapAtActivationPointOccursAtActivationPoint {
+    [UIAElement(_testElement) tapAtActivationPoint];
+    CGPoint tapPoint = [SLAskApp(tapPoint) CGPointValue];
+    CGPoint expectedTapPoint = [SLAskApp(activationPoint) CGPointValue];
+    SLAssertTrue(CGPointEqualToPoint(tapPoint, expectedTapPoint),
+                 @"-tapAtActivationPoint tapped the element at %@, not at %@ as expected.",
                  NSStringFromCGPoint(tapPoint), NSStringFromCGPoint(expectedTapPoint));
 }
 
