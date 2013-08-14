@@ -39,6 +39,7 @@
     UIView *view = [[UIView alloc] initWithFrame:CGRectZero];
     const CGRect kTextFieldFrame = (CGRect){CGPointZero, CGSizeMake(100.0f, 30.0f)};
     if (testCase == @selector(testSetText) ||
+        testCase == @selector(testSetTextClearsCurrentText) ||
         testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
         testCase == @selector(testGetText) ||
         testCase == @selector(testDoNotMatchEditorAccessibilityObjects) ||
@@ -59,6 +60,7 @@
         [view addSubview:_searchBar];
     } else if (testCase == @selector(testMatchesWebTextField) ||
                testCase == @selector(testSetWebTextFieldText) ||
+               testCase == @selector(testSetWebTextFieldTextClearsCurrentText) ||
                testCase == @selector(testGetWebTextFieldText)) {
         _webView = [[UIWebView alloc] initWithFrame:view.bounds];
         _webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -93,6 +95,7 @@
     }
 
     if (self.testCase != @selector(testSetText) &&
+        self.testCase != @selector(testSetTextClearsCurrentText) &&
         self.testCase != @selector(testSetTextWhenFieldClearsOnBeginEditing) &&
         self.testCase != @selector(testDoNotMatchEditorAccessibilityObjects)) {
         _textField.text = @"foo";
@@ -138,6 +141,7 @@
 - (NSString *)text {
     NSString *text;
     if (self.testCase == @selector(testSetText) ||
+        self.testCase == @selector(testSetTextClearsCurrentText) ||
         self.testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
         self.testCase == @selector(testGetText) ||
         self.testCase == @selector(testDoNotMatchEditorAccessibilityObjects) ||
@@ -149,6 +153,7 @@
         text = _searchBar.text;
     } else if (self.testCase == @selector(testMatchesWebTextField) ||
                self.testCase == @selector(testSetWebTextFieldText) ||
+               self.testCase == @selector(testSetWebTextFieldTextClearsCurrentText) ||
                self.testCase == @selector(testGetWebTextFieldText)) {
         text = [_webView stringByEvaluatingJavaScriptFromString:@"getText()"];
     }

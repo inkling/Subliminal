@@ -27,11 +27,13 @@ static NSString *const kExpectedText = @"foo";
     [super setUpTestCaseWithSelector:testCaseSelector];
 
     if ((testCaseSelector == @selector(testSetText)) ||
+        (testCaseSelector == @selector(testSetTextClearsCurrentText)) ||
         (testCaseSelector == @selector(testGetText)) ||
         (testCaseSelector == @selector(testDoNotMatchEditorAccessibilityObjects))) {
         _textView = [SLTextView elementWithAccessibilityLabel:@"test element"];
     } else if ((testCaseSelector == @selector(testMatchesWebTextView)) ||
                (testCaseSelector == @selector(testSetWebTextViewText)) ||
+               (testCaseSelector == @selector(testSetWebTextViewTextClearsCurrentText)) ||
                (testCaseSelector == @selector(testGetWebTextViewText))) {
         _textView = [SLWebTextView elementWithAccessibilityLabel:@"test element"];
         SLAssertTrueWithTimeout(SLAskAppYesNo(webViewDidFinishLoad), 5.0, @"Webview did not load test HTML.");
@@ -48,6 +50,16 @@ static NSString *const kExpectedText = @"foo";
 - (void)testSetText {
     SLAssertNoThrow([UIAElement(_textView) setText:kExpectedText], @"Should not have thrown.");
     SLAssertTrue([SLAskApp(text) isEqualToString:kExpectedText], @"Text was not set to expected value.");
+}
+
+- (void)testSetTextClearsCurrentText {
+    NSString *const expectedText1 = @"foo";
+    SLAssertNoThrow([UIAElement(_textView) setText:expectedText1], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText1], @"Text was not set to expected value.");
+
+    NSString *const expectedText2 = @"bar";
+    SLAssertNoThrow([UIAElement(_textView) setText:expectedText2], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText2], @"Text was not set to expected value.");
 }
 
 - (void)testGetText {
@@ -75,6 +87,16 @@ static NSString *const kExpectedText = @"foo";
 - (void)testSetWebTextViewText {
     SLAssertNoThrow([UIAElement(_textView) setText:kExpectedText], @"Should not have thrown.");
     SLAssertTrue([SLAskApp(text) isEqualToString:kExpectedText], @"Text was not set to expected value.");
+}
+
+- (void)testSetWebTextViewTextClearsCurrentText {
+    NSString *const expectedText1 = @"foo";
+    SLAssertNoThrow([UIAElement(_textView) setText:expectedText1], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText1], @"Text was not set to expected value.");
+
+    NSString *const expectedText2 = @"bar";
+    SLAssertNoThrow([UIAElement(_textView) setText:expectedText2], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText2], @"Text was not set to expected value.");
 }
 
 - (void)testGetWebTextViewText {
