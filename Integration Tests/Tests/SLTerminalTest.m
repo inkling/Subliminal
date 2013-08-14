@@ -239,12 +239,12 @@
 
 static const NSTimeInterval kWaitUntilTrueRetryDelay = 0.25;
 
-// There is some variability in waiting for JS to execute (kWaitUntilTrueRetryDelay)
-// and in communicating with UIAutomation (two SLTerminalReadRetryDelays, one
-// for SLTerminal.js receiving the command and one for SLTerminal receiving the
-// result).
+// There is some variability in waiting for JS to execute (kWaitUntilTrueRetryDelay for the condition,
+// SLTerminalEvaluationDelay for the wait function itself) and in communicating with UIAutomation
+// (two SLTerminalReadRetryDelays, one for SLTerminal.js receiving the command and one for SLTerminal
+// receiving the result).
 - (NSTimeInterval)waitDelayVariability {
-    return kWaitUntilTrueRetryDelay + SLTerminalReadRetryDelay * 2;
+    return kWaitUntilTrueRetryDelay + (SLTerminalReadRetryDelay * 2) + SLTerminalEvaluationDelay;
 }
 
 - (void)testWaitUntilTrueReturnsYESImmediatelyWhenConditionIsTrueUponWait {
