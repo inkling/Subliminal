@@ -74,7 +74,17 @@
         }
     }
 
-    block(_UIARepresentation);
+    @try {
+        block(_UIARepresentation);
+    }
+    @catch (NSException *exception) {
+        // rename JavaScript exceptions to make the context of the exception clear
+        if ([[exception name] isEqualToString:SLTerminalJavaScriptException]) {
+            exception = [NSException exceptionWithName:SLUIAElementAutomationException
+                                                reason:[exception reason] userInfo:[exception userInfo]];
+        }
+        @throw exception;
+    }
 }
 
 - (BOOL)isValid {

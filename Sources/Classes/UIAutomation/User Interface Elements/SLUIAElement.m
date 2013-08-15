@@ -27,11 +27,12 @@
 
 
 // all exceptions thrown by SLUIAElement must have names beginning with this prefix
-// so that -[SLTest logException:inTestCase:] uses the proper logging format
+// so that `-[SLTest logException:inTestCase:asExpected:]` uses the proper logging format
 NSString *const SLUIAElementExceptionNamePrefix    = @"SLUIAElement";
 
 NSString *const SLUIAElementInvalidException       = @"SLUIAElementInvalidException";
 NSString *const SLUIAElementNotTappableException   = @"SLUIAElementNotTappableException";
+NSString *const SLUIAElementAutomationException    = @"SLUIAElementAutomationException";
 
 const NSTimeInterval SLUIAElementWaitRetryDelay = 0.25;
 
