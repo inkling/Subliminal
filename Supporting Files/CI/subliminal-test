@@ -169,7 +169,7 @@ case $1 in
 		shift 1;;
 
     --quiet_build)
-		BUILD_LOG=`mktemp /tmp/subliminal-test.build-log.XXXXXX`
+		QUIET_BUILD=true
 		shift 1;;
 
 	--verbose_logging)
@@ -287,6 +287,7 @@ cleanup_and_exit () {
 	echo ""
 	enable_SDK_version_or_all
 	echo ""
+
 	kill AUTHORIZE_INSTRUMENTS_PID 2> /dev/null
 
 	# Reset UIAutomation's debug logging if necessary
@@ -318,7 +319,7 @@ trap "cleanup_and_exit 1" SIGINT SIGTERM
 
 
 ### Build app
-QUIETLY=`[[ -e "$BUILD_LOG" ]] && echo " (quietly)" || echo ""`
+QUIETLY=`([[ -n "$QUIET_BUILD" ]] && $QUIET_BUILD) && echo " (quietly)" || echo ""`
 echo "\n\nBuilding app$QUIETLY..."
 
 # Select the build source, taking care to escape spaces in the source using `printf`
@@ -330,7 +331,7 @@ if [[ -z "$SDK" ]]; then
 	SDK=`[[ -n "$SIM_DEVICE" ]] && echo "iphonesimulator" || echo "iphoneos"`
 fi
 
-# Instruments always uses the iPad simulator for universal binaries,
+# instruments always uses the iPad simulator for universal binaries,
 # so to choose a simulated device type we've got to override the TARGETED_DEVICE_FAMILY at build.
 # http://openradar.appspot.com/13607967
 TARGETED_DEVICE_FAMILY_ARG=""
@@ -350,52 +351,65 @@ if [[ -n "$SIM_DEVICE" ]]; then
 	TARGETED_DEVICE_FAMILY_ARG="TARGETED_DEVICE_FAMILY=$DEVICE_FAMILY"
 fi
 
-# Controlling where Xcode builds the app lets us determine where to point Instruments to
-BUILD_DIR=`mktemp -d /tmp/subliminal-test.build.XXXXXX`
-if [ $? -ne 0 ]; then
-	echo "\nERROR: Could not create build directory."
-	cleanup_and_exit 1
-fi
+# This is a function so that it may be called again if instruments hiccups; see below.
+build_app () {
+	# Clear build products from a prior run if any.
+	[[ -n "$BUILD_DIR" ]] && rm -rf "$BUILD_DIR"
+	[[ -n "$BUILD_LOG" ]] && rm -rf "$BUILD_LOG"
 
-# Don't validate the product (its entitlements etc.)
-# --this should not be necessary in the simulator
-# and can cause problems when testing on device
-build_base_command () {
-	$BUILD_TOOL\
-		$BUILD_SOURCE_ARG\
-		-scheme "$SCHEME"\
-		-configuration "$CONFIGURATION"\
-		-sdk "$SDK"\
-		$TARGETED_DEVICE_FAMILY_ARG\
-		SYMROOT="$BUILD_DIR"\
-		VALIDATE_PRODUCT=NO $1
+	# Controlling where Xcode builds the app lets us determine where to point instruments to
+	BUILD_DIR=`mktemp -d /tmp/subliminal-test.build.XXXXXX`
+	if [ $? -ne 0 ]; then
+		echo "\nERROR: Could not create build directory."
+		cleanup_and_exit 1
+	fi
+
+	# Create a file to log the build output to if necessary
+	if [[ -n $QUIET_BUILD ]] && $QUIET_BUILD; then
+		BUILD_LOG=`mktemp /tmp/subliminal-test.build-log.XXXXXX`
+	fi
+
+	# Don't validate the product (its entitlements etc.)
+	# --this should not be necessary in the simulator
+	# and can cause problems when testing on device
+	build_base_command () {
+		$BUILD_TOOL\
+			$BUILD_SOURCE_ARG\
+			-scheme "$SCHEME"\
+			-configuration "$CONFIGURATION"\
+			-sdk "$SDK"\
+			$TARGETED_DEVICE_FAMILY_ARG\
+			SYMROOT="$BUILD_DIR"\
+			VALIDATE_PRODUCT=NO $1
+	}
+
+	# build in a subshell to conditionally redirect its output (and only its output)
+	# to the build log, if one has been created
+	(
+		[[ -e "$BUILD_LOG" ]] && exec >"$BUILD_LOG" 2>&1
+
+		build_base_command "clean build"
+	)
+
+	if [ $? -ne 0 ]; then
+		[[ -e "$BUILD_LOG" ]] && cat "$BUILD_LOG"
+
+		echo "\nERROR: Could not build application."
+		cleanup_and_exit 1
+	fi
+
+	# Note that instruments will install the app in the Simulator when launched
+	APP=`find "$BUILD_DIR" -name "*.app"`
+
+	# Change the app's bundle identifier if a replacement was specified
+	if [[ -n "$REPLACEMENT_BUNDLE_ID" ]]; then
+	    INFO_PLIST_PATH=`build_base_command -showBuildSettings | grep INFOPLIST_PATH | awk 'BEGIN {FS=" = ";} {print $2}'`
+	    INFO_PLIST_NAME=`basename "$INFO_PLIST_PATH"`
+	    INFO_PLIST="$APP/$INFO_PLIST_NAME"
+		defaults write "$INFO_PLIST" CFBundleIdentifier "$REPLACEMENT_BUNDLE_ID"
+	fi
 }
-
-# build in a subshell to conditionally redirect its output (and only its output)
-# to the build log (if one was created because --quiet_build was specified)
-(
-	[[ -e "$BUILD_LOG" ]] && exec >"$BUILD_LOG" 2>&1
-
-	build_base_command "clean build"
-)
-
-if [ $? -ne 0 ]; then
-	[[ -e "$BUILD_LOG" ]] && cat "$BUILD_LOG"
-
-	echo "\nERROR: Could not build application."
-	cleanup_and_exit 1
-fi
-
-# Note that Instruments will install the app in the Simulator when launched
-APP=`find "$BUILD_DIR" -name "*.app"`
-
-# Change the app's bundle identifier if a replacement was specified
-if [[ -n "$REPLACEMENT_BUNDLE_ID" ]]; then
-    INFO_PLIST_PATH=`build_base_command -showBuildSettings | grep INFOPLIST_PATH | awk 'BEGIN {FS=" = ";} {print $2}'`
-    INFO_PLIST_NAME=`basename "$INFO_PLIST_PATH"`
-    INFO_PLIST="$APP/$INFO_PLIST_NAME"
-	defaults write "$INFO_PLIST" CFBundleIdentifier "$REPLACEMENT_BUNDLE_ID"
-fi
+build_app
 
 
 ### Prepare to install app
@@ -424,8 +438,7 @@ if [[ -n "$SIM_DEVICE" ]]; then
 			cleanup_and_exit 1
 		fi
 
-		# By default, the instruments command-line tool 
-		# always runs using the latest SDK
+		# By default, instruments always runs using the latest SDK
 		# http://stackoverflow.com/questions/12836129/launch-a-specific-hardware-version-of-ios-simulator-using-instruments-command-li)
 		# We must disable the SDKs other than the one we're targeting 
 		# to force it to use the simulator's current setting
@@ -450,7 +463,7 @@ if [[ -n "$SIM_DEVICE" ]]; then
 	fi
 fi
 
-# Set paths to save Instruments' output (at least temporarily)
+# Set paths to save instruments' output (at least temporarily)
 RUN_DIR=`mktemp -d /tmp/subliminal-test.run.XXXXXX`
 if [ $? -ne 0 ]; then
 	echo "\nERROR: Could not create temporary test results directory."
@@ -508,9 +521,28 @@ if [ $? -ne 0 ] && [ ! -e "$RESULT_LOG" ]; then
 	# (in that an app prepared exactly the same way may be run without error on another run), 
 	# saying "Recording cancelled : At least one target failed to launch; aborting run
 	# Instruments Trace Error : Failed to start trace"
-	# We retry once.
-	echo "\ninstruments hiccuped; retrying...\n"
-	sleep 3
+	#
+	# We retry once, after resetting the simulator and rebuilding the app--
+	# the error may be caused by instruments rejecting the build for some reason.
+	echo "\ninstruments hiccuped; retrying with clean build...\n"
+
+	# Reset the simulator in case instruments installed the app and then aborted
+	"$SCRIPT_DIR/reset_simulator"
+	if [ $? -ne 0 ]; then
+		echo "\nERROR: Could not reset the simulator."
+		cleanup_and_exit 1
+	fi
+
+	# Re-enable all simulator SDKs while we build
+	echo ""
+	enable_SDK_version_or_all
+	echo ""
+	build_app
+
+	# Now once again disable those other than the one we're targeting
+	[[ -n "$SIM_VERSION" ]] && enable_SDK_version_or_all "$SIM_VERSION"
+	echo ""
+
 	launch_instruments
 	if [ $? -ne 0 ]; then
 		echo "\nERROR: Could not launch instruments. Aborting."
