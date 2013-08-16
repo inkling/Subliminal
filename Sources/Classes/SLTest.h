@@ -607,6 +607,12 @@ extern NSString *const SLTestExceptionFilenameKey;
 /// which the exception occurred.
 extern NSString *const SLTestExceptionLineNumberKey;
 
+/// Prefixes logs of exceptions, caught by the tests, for which call site information could not be determined:
+/// exceptions thrown in contexts other than failures in assertions or `SLUIAElement` methods.
+/// For `SLUIAElement` exceptions to be tagged with call site information, test writers must wrap
+/// elements in the `UIAElement` macro. See that macro's documentation for an example.
+extern NSString *const SLTestUnknownCallSite;
+
 /// The interval for which `SLAssertTrueWithTimeout` and `SLWaitUntilTrue`
 /// wait before re-evaluating their conditions.
 extern const NSTimeInterval SLWaitUntilTrueRetryDelay;

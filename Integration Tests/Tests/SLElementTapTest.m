@@ -73,7 +73,7 @@
         // If we had disallowed the tap on the basis of UIAutomation saying that
         // the scroll view was not tappable, we would have thrown an SLElementNotTappableException.
         SLAssertThrowsNamed([UIAElement(scrollView) tap],
-                            SLTerminalJavaScriptException,
+                            SLUIAElementAutomationException,
                             @"Should have allowed tap, but not have been able to tap element.");
         // sanity check
         SLAssertTrue(SLAskApp(tapPoint) == nil, @"Scroll view should not have been tapped.");
@@ -161,7 +161,7 @@
                                                    thenPerformActionWithUIARepresentation:^(NSString *UIARepresentation) {
                             [[SLTerminal sharedTerminal] evalWithFormat:@"%@.tap()", UIARepresentation];
                         } timeout:[SLElement defaultTimeout]]),
-                        SLTerminalJavaScriptException,
+                        SLUIAElementAutomationException,
                         @"Element should not have been able to be tapped.");
     NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
