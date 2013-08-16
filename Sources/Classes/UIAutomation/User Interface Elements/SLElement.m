@@ -25,6 +25,7 @@
 #import "NSObject+SLAccessibilityHierarchy.h"
 #import "SLAccessibilityPath.h"
 #import "NSObject+SLVisibility.h"
+#import "NSObject+SLAccessibilityDescription.h"
 
 
 // The real value (set in `+load`) is not a compile-time constant,
@@ -295,6 +296,29 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
         .y = (activationPoint.y - CGRectGetMinY(accessibilityFrame)) / CGRectGetHeight(accessibilityFrame)
     };
     [self waitUntilTappable:YES thenSendMessage:@"tapWithOptions({tapOffset:{x:%g, y:%g}})", activationOffset.x, activationOffset.y];
+}
+
+#pragma mark -
+
+- (NSString *)accessibilityDescription {
+    NSString *__block description = nil;
+    [self examineMatchingObject:^(NSObject *object) {
+        description = [object slAccessibilityDescription];
+    }];
+    return description;
+}
+
+- (void)logElement {
+    SLLog(@"%@", [self accessibilityDescription]);
+}
+
+// First log the element using `-slAccessibilityDescription` so the user can see the unbound name
+// (https://github.com/inkling/Subliminal/issues/65 ), but otherwise use UIAutomation to log the tree
+// because it will log just those elements in the accessibility hierarchy,
+// which would be expensive for us to determine.
+- (void)logElementTree {
+    SLLog(@"Logging the tree rooted in %@:", [self accessibilityDescription]);
+    [super logElementTree];
 }
 
 @end
