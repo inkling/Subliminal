@@ -39,6 +39,8 @@ NSString *const SLTestAssertionFailedException  = @"SLTestCaseAssertionFailedExc
 NSString *const SLTestExceptionFilenameKey      = @"SLTestExceptionFilenameKey";
 NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey";
 
+NSString *const SLTestUnknownCallSite           = @"Unknown location";
+
 const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
 
 
@@ -379,7 +381,7 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
          [[exception name] hasPrefix:SLUIAElementExceptionNamePrefix])) {
         callSite = [NSString stringWithFormat:@"%@:%d", _lastKnownFilename, _lastKnownLineNumber];
     } else {
-        callSite = @"Unknown location";
+        callSite = SLTestUnknownCallSite;
     }
     // the call site info is definitely stale at this point
     [self clearLastKnownCallSite];
