@@ -39,6 +39,8 @@ NSString *const SLTestAssertionFailedException  = @"SLTestCaseAssertionFailedExc
 NSString *const SLTestExceptionFilenameKey      = @"SLTestExceptionFilenameKey";
 NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey";
 
+NSString *const SLTestUnknownCallSite           = @"Unknown location";
+
 const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
 
 
@@ -260,6 +262,10 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
                 // because focus is temporary and shouldn't require modifying the test infrastructure
                 SEL unfocusedTestCaseSelector = NSSelectorFromString([[self class] unfocusedTestCaseName:testCaseName]);
 
+                // clear call site information, so at the least it won't be reused between test cases
+                // (though we can't guarantee it won't be reused within a test case)
+                [self clearLastKnownCallSite];
+
                 BOOL caseFailed = NO, failureWasExpected = NO;
                 @try {
                     [self setUpTestCaseWithSelector:unfocusedTestCaseSelector];
@@ -339,6 +345,11 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
     _lastKnownLineNumber = lineNumber;
 }
 
+- (void)clearLastKnownCallSite {
+    _lastKnownFilename = nil;
+    _lastKnownLineNumber = 0;
+}
+
 - (NSException *)exceptionByAddingFileInfo:(NSException *)exception {
     if (_lastKnownFilename) {
         // If there is file information, insert it into the userInfo dictionary
@@ -346,8 +357,8 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
         userInfo[SLTestExceptionFilenameKey] = _lastKnownFilename;
         userInfo[SLTestExceptionLineNumberKey] = @(_lastKnownLineNumber);
 
-        _lastKnownFilename = nil;
-        _lastKnownLineNumber = 0;
+        // call site info is now stale
+        [self clearLastKnownCallSite];
         
         return [NSException exceptionWithName:[exception name] reason:[exception reason] userInfo:userInfo];
     } else {
@@ -360,19 +371,20 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
 }
 
 - (void)logException:(NSException *)exception inTestCase:(NSString *)testCase asExpected:(BOOL)expected {
-    // Only use the call site information if the exception was thrown by SLTest or SLElement,
+    // Only use the call site information if we have information
+    // and if the exception was thrown by `SLTest` or `SLUIAElement`,
     // where the information was likely to have been recorded by an assertion or UIAElement macro.
     // Otherwise it is likely stale.
     NSString *callSite;
-    if ([[exception name] hasPrefix:SLTestExceptionNamePrefix] ||
-        [[exception name] hasPrefix:SLUIAElementExceptionNamePrefix]) {
+    if (_lastKnownFilename &&
+        ([[exception name] hasPrefix:SLTestExceptionNamePrefix] ||
+         [[exception name] hasPrefix:SLUIAElementExceptionNamePrefix])) {
         callSite = [NSString stringWithFormat:@"%@:%d", _lastKnownFilename, _lastKnownLineNumber];
     } else {
-        callSite = @"Unknown location";
+        callSite = SLTestUnknownCallSite;
     }
     // the call site info is definitely stale at this point
-    _lastKnownFilename = nil;
-    _lastKnownLineNumber = 0;
+    [self clearLastKnownCallSite];
 
     NSString *exceptionDescription;
     if (expected) {

@@ -219,7 +219,7 @@
                                   thenPerformActionWithUIARepresentation:^(NSString *UIARepresentation) {
                                       [[SLTerminal sharedTerminal] evalWithFormat:@"%@.tap()", UIARepresentation];
                                   } timeout:[SLStaticElement defaultTimeout]]),
-                            SLTerminalJavaScriptException,
+                            SLUIAElementAutomationException,
                             @"Should have tried to tap the scroll view and found it to not be tappable.");
     } else {
         SLAssertNoThrow(([UIAElement(scrollView) waitUntilTappable:YES

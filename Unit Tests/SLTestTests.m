@@ -1281,6 +1281,61 @@
 
 #pragma mark - Miscellaneous
 
+#pragma mark -UIAElement macro
+
+- (void)runWithTestFailingWithExceptionRecordedByUIAElementMacro:(NSException *)exception
+                                         isSLUIAElementException:(BOOL)isSLUIAElementException {
+    Class testClass = [TestWithSomeTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testClass];
+
+    // verify that the test case is executed, then an error is logged
+    OCMExpectationSequencer *sequencer = [OCMExpectationSequencer sequencerWithMocks:@[ testMock, _loggerMock ]];
+
+    // when testOne is executed, cause it to fail with an `SLUIAElement` exception
+    // and record the filename and line number that the failing assertion should use
+    __block NSString *filenameAndLineNumberPrefix = nil;
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        NSString *__autoreleasing filename = nil; int lineNumber = 0;
+        @try {
+            [test slFailWithExceptionRecordedByUIAElementMacro:exception
+                                          thrownBySLUIAElement:isSLUIAElementException
+                                                    atFilename:&filename lineNumber:&lineNumber];
+        }
+        @catch (NSException *exception) {
+            filenameAndLineNumberPrefix = [NSString stringWithFormat:@"%@:%d: ", filename, lineNumber];
+            @throw exception;
+        }
+    }] testOne];
+
+    // if this exception was a `SLUIAElement` exception,
+    // check that the error logged includes the filename and line number as recorded above
+    // otherwise, check that the error reads "Unknown location: …"
+    [[_loggerMock expect] logError:[OCMArg checkWithBlock:^BOOL(id errorMessage) {
+        NSString *expectedPrefix = isSLUIAElementException ? filenameAndLineNumberPrefix : SLTestUnknownCallSite;
+        return [errorMessage hasPrefix:expectedPrefix];
+    }]];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    STAssertNoThrow([sequencer verify], @"Test did not run/message was not logged in expected sequence.");
+}
+
+- (void)testSLUIAElementExceptionsIncludeFilenameAndLineNumberRecordedByUIAElementMacro {
+    // that the exception name is made-up shouldn't matter, so long as it has the appropriate prefix
+    // we'll have an `SLUIAElement` throw the exception (in `-[TestUtilities slFailWithException:thrownBySLUIAElement:precededByUIAElementUse:atFilename:lineNumber:])
+    // but only so that we can use the `UIAElement` macro before throwing the exception
+    NSString *exceptionName = [NSString stringWithFormat:@"%@%@", SLUIAElementExceptionNamePrefix, NSStringFromSelector(_cmd)];
+    NSException *exception = [NSException exceptionWithName:exceptionName reason:nil userInfo:nil];
+
+    [self runWithTestFailingWithExceptionRecordedByUIAElementMacro:exception isSLUIAElementException:YES];
+}
+
+- (void)testOtherExceptionsDoNotIncludeFilenameAndLineNumberRecordedByUIAElementMacro {
+    NSException *exception = [NSException exceptionWithName:NSInternalInconsistencyException reason:nil userInfo:nil];
+
+    [self runWithTestFailingWithExceptionRecordedByUIAElementMacro:exception isSLUIAElementException:NO];
+}
+
 #pragma mark -Wait
 
 - (void)testWaitDelaysForSpecifiedInterval {

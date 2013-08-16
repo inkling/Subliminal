@@ -210,7 +210,13 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
             block(UIARepresentation);
         }
         @catch (NSException *exception) {
-            actionException = exception;
+            // rename JavaScript exceptions to make the context of the exception clear
+            if ([[exception name] isEqualToString:SLTerminalJavaScriptException]) {
+                actionException = [NSException exceptionWithName:SLUIAElementAutomationException
+                                                          reason:[exception reason] userInfo:[exception userInfo]];
+            } else {
+                actionException = exception;
+            }
         }
     }];
     if (actionException) @throw actionException;

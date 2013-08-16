@@ -49,4 +49,8 @@ extern void SLRunTestsAndWaitUntilFinished(NSSet *tests, void (^completionBlock)
 - (void)slAssertThrows:(void (^)(void))expression named:(NSString *)exceptionName;
 - (void)slAssertNoThrow:(void (^)(void))expression;
 
+- (void)slFailWithExceptionRecordedByUIAElementMacro:(NSException *)exception
+                                thrownBySLUIAElement:(BOOL)haveSLUIAElementThrow
+                                          atFilename:(NSString *__autoreleasing *)filename lineNumber:(int *)lineNumber;
+
 @end
