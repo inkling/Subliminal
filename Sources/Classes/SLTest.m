@@ -360,12 +360,14 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
 }
 
 - (void)logException:(NSException *)exception inTestCase:(NSString *)testCase asExpected:(BOOL)expected {
-    // Only use the call site information if the exception was thrown by `SLTest` or `SLUIAElement`,
+    // Only use the call site information if we have information
+    // and if the exception was thrown by `SLTest` or `SLUIAElement`,
     // where the information was likely to have been recorded by an assertion or UIAElement macro.
     // Otherwise it is likely stale.
     NSString *callSite;
-    if ([[exception name] hasPrefix:SLTestExceptionNamePrefix] ||
-        [[exception name] hasPrefix:SLUIAElementExceptionNamePrefix]) {
+    if (_lastKnownFilename &&
+        ([[exception name] hasPrefix:SLTestExceptionNamePrefix] ||
+         [[exception name] hasPrefix:SLUIAElementExceptionNamePrefix])) {
         callSite = [NSString stringWithFormat:@"%@:%d", _lastKnownFilename, _lastKnownLineNumber];
     } else {
         callSite = @"Unknown location";
