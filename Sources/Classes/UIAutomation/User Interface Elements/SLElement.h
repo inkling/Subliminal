@@ -149,6 +149,23 @@
  */
 - (void)tapAtActivationPoint;
 
+#pragma mark - Logging Element Information
+/// ----------------------------------------
+/// @name Logging Element Information
+/// ----------------------------------------
+
+/**
+ Logs information about the specified element.
+
+ `SLElement` overrides this method to describe the application object
+ corresponding to the specified element, which allows `SLElement` to 
+ provide additional information beyond that logged by the superclass' implementation.
+
+ @exception SLUIAElementInvalidException Raised if the element is not valid
+ by the end of the [default timeout](+defaultTimeout).
+ */
+- (void)logElement;
+
 @end
 
 

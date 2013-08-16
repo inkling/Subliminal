@@ -39,14 +39,14 @@
     [properties addObject:[NSString stringWithFormat:@"%@: %p", NSStringFromClass([self class]), self]];
     CGRect frame = [self accessibilityFrame];
     [properties addObject:[NSString stringWithFormat:@"frame = (%g %g; %g %g)", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height]];
-    if ([self.accessibilityLabel length]) {
-        [properties addObject:[NSString stringWithFormat:@"label = '%@'", [self.accessibilityLabel slStringByEscapingForJavaScriptLiteral]]];
-    }
     if ([self respondsToSelector:@selector(accessibilityIdentifier)]) {
         NSString *identifier = [(id)self accessibilityIdentifier];
         if ([identifier length]) {
             [properties addObject:[NSString stringWithFormat:@"id = '%@'", [identifier slStringByEscapingForJavaScriptLiteral]]];
         }
+    }
+    if ([self.accessibilityLabel length]) {
+        [properties addObject:[NSString stringWithFormat:@"label = '%@'", [self.accessibilityLabel slStringByEscapingForJavaScriptLiteral]]];
     }
     // in iOS 6.1 at least, `UITextView` returns an attributed string from `-accessibilityValue` >.<
     id accessibilityValue = self.accessibilityValue;
