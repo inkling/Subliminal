@@ -116,22 +116,29 @@ static const NSTimeInterval SLAlertHandlerManualDelay = 0.25;
     BOOL _hasBeenAdded;
 }
 
+static BOOL SLAlertHandlerUIAAlertHandlingLoaded = NO;
+static BOOL SLAlertHandlerLoggingEnabled = NO;
 + (void)loadUIAAlertHandling {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         // The onAlert handler returns true for an alert
         // iff Subliminal handles and dismisses that alert.
-        // SLAlertHandler manipulates onAlert via SLAlertHandler.alertHandlers.
+        // SLAlertHandler manipulates onAlert via `SLAlertHandler.alertHandlers` and `SLAlertHandler.loggingEnabled`.
         [[SLTerminal sharedTerminal] evalWithFormat:@"\
             var SLAlertHandler = {};\
             SLAlertHandler.previousOnAlert = UIATarget.onAlert;\
             SLAlertHandler.alertHandlers = [];\
-            UIATarget.onAlert = function(alert) {"
+            SLAlertHandler.loggingEnabled = %@;"
+
+            @"UIATarget.onAlert = function(alert) {\
+                if (SLAlertHandler.loggingEnabled) UIALogger.logMessage('Handling alert \"' + alert.staticTexts()[0].label() + '\"…');"
+         
                 // enumerate registered handlers, from first to last
                 @"for (var handlerIndex = 0; handlerIndex < SLAlertHandler.alertHandlers.length; handlerIndex++) {\
                     var handler = SLAlertHandler.alertHandlers[handlerIndex];"
                     // if a handler matches the alert...
-                    @"if (handler.handleAlert(alert) === true) {"
+                    @"if (handler.handleAlert(alert) === true) {\
+                        if (SLAlertHandler.loggingEnabled) UIALogger.logMessage('Alert was handled by a test.');"
                         // ...ensure that the alert's delegate will receive its callbacks
                         // before the next JS command (i.e. -didHandleAlert) evaluates...
                         @"UIATarget.localTarget().delay(%g);"
@@ -139,8 +146,8 @@ static const NSTimeInterval SLAlertHandlerManualDelay = 0.25;
                         @"SLAlertHandler.alertHandlers.splice(handlerIndex, 1);\
                         return true;\
                     }\
-                }\
-                "
+                }"
+                
                 // The tests haven't handled this alert, so we should attempt to
                 // dismiss it using the default handler. We invoke our default handler
                 // before UIAutomation's, though it has the same behavior,
@@ -148,10 +155,12 @@ static const NSTimeInterval SLAlertHandlerManualDelay = 0.25;
                 // we want to log a message--UIAutomation's handler is supposed
                 // to throw an error, but doesn't; instead, it will just keep retrying.
                 @"if ((function(alert){%@})(alert)) {\
-                      return true;\
+                        if (SLAlertHandler.loggingEnabled) UIALogger.logMessage('Alert was handled by Subliminal\\'s default handler.');\
+                        return true;\
                   } else {"
                       // All we can do is log a message--if we throw an exception, Instruments will crash >.<
-                      @"UIALogger.logError('Alert was not handled by the tests, and could not be dismissed by the default handler.');"
+                      // We always log this error (not respecting `SLAlertHandler.loggingEnabled`) because it's fatal.
+                      @"UIALogger.logError('Alert was not handled by a test, and could not be dismissed by Subliminal\\'s default handler.');"
                       // Reset the onAlert handler so our handler doesn't get called infinitely
                       @"UIATarget.onAlert = SLAlertHandler.previousOnAlert;"
                       // If our default handler was unable to dismiss this alert,
@@ -160,8 +169,23 @@ static const NSTimeInterval SLAlertHandlerManualDelay = 0.25;
                       @"return false;\
                   }\
             }\
-         ", SLAlertHandlerManualDelay, [self defaultUIAAlertHandler]];
+         ", SLAlertHandlerLoggingEnabled ? @"true" : @"false", SLAlertHandlerManualDelay, [self defaultUIAAlertHandler]];
+        SLAlertHandlerUIAAlertHandlingLoaded = YES;
     });
+}
+
++ (void)setLoggingEnabled:(BOOL)enableLogging {
+    if (enableLogging != SLAlertHandlerLoggingEnabled) {
+        SLAlertHandlerLoggingEnabled = enableLogging;
+        if (SLAlertHandlerUIAAlertHandlingLoaded) {
+            [[SLTerminal sharedTerminal] evalWithFormat:@"SLAlertHandler.loggingEnabled = %@",
+                                                        SLAlertHandlerLoggingEnabled ? @"true" : @"false"];
+        }
+    }
+}
+
++ (BOOL)loggingEnabled {
+    return SLAlertHandlerLoggingEnabled;
 }
 
 + (void)addHandler:(SLAlertHandler *)handler {
