@@ -289,6 +289,7 @@ extern const NSTimeInterval SLAlertHandlerDidHandleAlertDelay;
  */
 @interface SLAlert (Debugging)
 
+#pragma mark - Debugging Tests
 /// -------------------------------------------
 /// @name Debugging Tests
 /// -------------------------------------------
@@ -307,6 +308,41 @@ extern const NSTimeInterval SLAlertHandlerDidHandleAlertDelay;
 @end
 
 #endif
+
+/**
+ The methods in the `SLAlertHandler (Debugging)` category may be useful 
+ in debugging Subliminal tests.
+ */
+@interface SLAlertHandler (Debugging)
+
+#pragma mark - Debugging Tests
+/// ------------------------------------------
+/// @name Debugging Tests
+/// ------------------------------------------
+
+/**
+ Enables or disables alert-handling logging.
+ 
+ If logging is enabled, Subliminal will log alerts as they are handled
+ (by handlers registered by tests or by Subliminal's default handler).
+ 
+ Logging is disabled by default.
+ 
+ @param enableLogging   If `YES`, alert-handling logging is enabled; 
+                        otherwise, alert-handling logging is disabled.
+ */
++ (void)setLoggingEnabled:(BOOL)enableLogging;
+
+/**
+ Returns `YES` if Subliminal should log alerts as they are handled.
+
+ @return `YES` if alert-handling logging is enabled, `NO` otherwise.
+
+ @see -setLoggingEnabled:
+ */
++ (BOOL)loggingEnabled;
+
+@end
 
 
 /**
