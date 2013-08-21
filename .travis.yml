@@ -2,13 +2,14 @@ language: objective-c
 
 # These tasks run before cd'ing into Subliminal's repo
 before_install:
-    - brew update
+# Install required tools
+# - `xctool`, required to build the unit test and documentation targets
+# 	nothing to do here because it's already installed on Travis
 
-# `xctool` is required to build the unit test and documentation targets
-# but it is already installed on Travis
+# - `appledoc`, used to build documentation
+# 	Force the usage of appledoc 2.1 until https://github.com/inkling/Subliminal/issues/71 is addressed
+    - brew install https://raw.github.com/mxcl/homebrew/33aa810/Library/Formula/appledoc.rb
 
-# Used to build documentation
-    - brew install appledoc
 # Initialize test dependencies (OCMock)
     - git submodule update --init --recursive
 
