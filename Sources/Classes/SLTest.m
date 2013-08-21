@@ -296,10 +296,12 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
                     [self tearDownTestCaseWithSelector:unfocusedTestCaseSelector];
                 }
                 @catch (NSException *exception) {
+                    BOOL caseHadFailed = caseFailed;
                     caseFailed = YES;
-                    // don't override failureWasExpected if we've already had an unexpected failure
-                    if (!failureWasExpected) failureWasExpected = [[self class] exceptionWasExpected:exception];
-                    [self logException:exception inTestCase:testCaseName asExpected:failureWasExpected];
+                    // don't override `failureWasExpected` if we had already failed
+                    BOOL exceptionWasExpected = [[self class] exceptionWasExpected:exception];
+                    if (!caseHadFailed) failureWasExpected = exceptionWasExpected;
+                    [self logException:exception inTestCase:testCaseName asExpected:exceptionWasExpected];
                 }
 
                 if (caseFailed) {
