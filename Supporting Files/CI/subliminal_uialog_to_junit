@@ -49,6 +49,7 @@ def main(inputPath, outputPath):
             if (action == "started"):
                 testSuite = ET.SubElement(root, "testsuite")
                 testSuite.set("name", testSuiteName)
+            continue
 
         # Test cases
         # NOTE: Don't change the order of "failed unexpectedly" and "failed" or
@@ -67,23 +68,25 @@ def main(inputPath, outputPath):
             elif (action == "failed unexpectedly"):
                 error = ET.SubElement(case, "error")
                 error.set("message", latestErrorMessage)
-        else:
-            match = re.match('^Uncaught exception occurred during test case "\-\[.+ (.+)\]": \*\*\*(.+)\*\*\*(?: for reason: (.+))?', message)
-            if (match is not None):
-                testCaseName = match.group(1)
-                case = ET.SubElement(testSuite, "testcase")
-                case.set("name", testCaseName)
+            continue
 
-                exceptionName = match.group(2)
-                exceptionReason = match.group(3);
-                exceptionMessage = "Uncaught exception occurred: ***%s***" % exceptionName
-                if (exceptionReason is not None):
-                    exceptionMessage += " for reason: %s" % exceptionReason
-                error = ET.SubElement(case, "error");
-                error.set("message", exceptionMessage)
+        match = re.match('^Uncaught exception occurred during test case "\-\[.+ (.+)\]": \*\*\*(.+)\*\*\*(?: for reason: (.+))?', message)
+        if (match is not None):
+            testCaseName = match.group(1)
+            case = ET.SubElement(testSuite, "testcase")
+            case.set("name", testCaseName)
 
-        tree = ET.ElementTree(root)
-        tree.write(outputPath)
+            exceptionName = match.group(2)
+            exceptionReason = match.group(3);
+            exceptionMessage = "Uncaught exception occurred: ***%s***" % exceptionName
+            if (exceptionReason is not None):
+                exceptionMessage += " for reason: %s" % exceptionReason
+            error = ET.SubElement(case, "error");
+            error.set("message", exceptionMessage)
+            continue
+
+    tree = ET.ElementTree(root)
+    tree.write(outputPath)
 
 if __name__ == '__main__':
     parser = OptionParser()
