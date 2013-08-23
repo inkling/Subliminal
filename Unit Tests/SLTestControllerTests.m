@@ -240,9 +240,9 @@
     [[_loggerMock expect] logMessage:[NSString stringWithFormat:@"Focusing on test cases in specific tests: %@.", testClass]];
     [[_loggerMock expect] logTestingStart];
 
-    [[testMock expect] runAndReportNumExecuted:[OCMArg anyPointer]
-                                        failed:[OCMArg anyPointer]
-                            failedUnexpectedly:[OCMArg anyPointer]];
+    [[[testMock expect] andForwardToRealObject] runAndReportNumExecuted:[OCMArg anyPointer]
+                                                                 failed:[OCMArg anyPointer]
+                                                     failedUnexpectedly:[OCMArg anyPointer]];
 
     [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsFailed:0];
     

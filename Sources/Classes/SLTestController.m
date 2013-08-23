@@ -258,21 +258,18 @@ static SLTestController *__sharedController = nil;
                 NSString *testName = NSStringFromClass(testClass);
                 [[SLLogger sharedLogger] logTestStart:testName];
 
-                @try {
-                    NSUInteger numCasesExecuted = 0, numCasesFailed = 0, numCasesFailedUnexpectedly = 0;
+                NSUInteger numCasesExecuted = 0, numCasesFailed = 0, numCasesFailedUnexpectedly = 0;
 
-                    [_currentTest runAndReportNumExecuted:&numCasesExecuted
-                                                   failed:&numCasesFailed
-                                       failedUnexpectedly:&numCasesFailedUnexpectedly];
-
+                BOOL testDidFinish = [_currentTest runAndReportNumExecuted:&numCasesExecuted
+                                                                    failed:&numCasesFailed
+                                                        failedUnexpectedly:&numCasesFailedUnexpectedly];
+                if (testDidFinish) {
                     [[SLLogger sharedLogger] logTestFinish:testName
                                       withNumCasesExecuted:numCasesExecuted
                                             numCasesFailed:numCasesFailed
                                 numCasesFailedUnexpectedly:numCasesFailedUnexpectedly];
                     if (numCasesFailed > 0) _numTestsFailed++;
-                }
-                @catch (NSException *e) {
-                    [[SLLogger sharedLogger] logException:e expected:[SLTest exceptionWasExpected:e]];
+                } else {
                     [[SLLogger sharedLogger] logTestAbort:testName];
                     _numTestsFailed++;
                 }

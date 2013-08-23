@@ -161,16 +161,23 @@
  
  See `SLTest (SLTestCase)` for a discussion of test case execution.
  
- @param numCasesExecuted If this is non-`NULL`, on return, this will be set to
- the number of test cases that were executed--which will be the number of test
- cases defined by the receiver's class.
- @param numCasesFailed If this is non-`NULL`, on return, this will be set to the
- number of test cases that failed (the number of test cases that threw exceptions).
- @param numCasesFailedUnexpectedly If this is non-`NULL`, on return, this will
- be set to the number of test cases that failed unexpectedly (those test cases 
- that threw exceptions for other reasons than test assertion failures).
+ @param numCasesExecuted            If this is non-`NULL`, on return, this will be set to
+                                    the number of test cases that were executed--which will be the number of test
+                                    cases defined by the receiver's class.
+ @param numCasesFailed              If this is non-`NULL`, on return, this will be set to the
+                                    number of test cases that failed (the number of test cases that threw exceptions).
+ @param numCasesFailedUnexpectedly  If this is non-`NULL`, on return, this will
+                                    be set to the number of test cases that failed unexpectedly (those test cases
+                                    that threw exceptions for other reasons than test assertion failures).
+ 
+ @return `YES` if the test successfully finished (all test cases were executed, regardless of their individual 
+ success or failure), `NO` otherwise (an exception occurred in test case [set-up](-setUpTest) or [tear-down](-tearDownTest).
+ 
+ @warning If an exception occurs in test case set-up, the test's cases will be skipped.
+ Thus, the caller should use the values returned in `numCasesExecuted`, `numCasesFailed`, 
+ and `numCasesFailedUnexpectedly` if and only if this method returns `YES`.
  */
-- (void)runAndReportNumExecuted:(NSUInteger *)numCasesExecuted
+- (BOOL)runAndReportNumExecuted:(NSUInteger *)numCasesExecuted
                          failed:(NSUInteger *)numCasesFailed
              failedUnexpectedly:(NSUInteger *)numCasesFailedUnexpectedly;
 

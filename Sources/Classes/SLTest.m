@@ -230,22 +230,23 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
     return YES;
  }
 
-- (void)runAndReportNumExecuted:(NSUInteger *)numCasesExecuted
+- (BOOL)runAndReportNumExecuted:(NSUInteger *)numCasesExecuted
                          failed:(NSUInteger *)numCasesFailed
              failedUnexpectedly:(NSUInteger *)numCasesFailedUnexpectedly {
     NSUInteger numberOfCasesExecuted = 0, numberOfCasesFailed = 0, numberOfCasesFailedUnexpectedly = 0;
 
-    NSException *setUpOrTearDownException = nil;
+    BOOL testDidFailInSetUpOrTearDown = NO;
     @try {
         [self setUpTest];
     }
     @catch (NSException *exception) {
-        // save exception to throw after tearDownTest
-        setUpOrTearDownException = [self exceptionByAddingFileInfo:exception];
+        [[SLLogger sharedLogger] logException:[self exceptionByAddingFileInfo:exception]
+                                     expected:[[self class] exceptionWasExpected:exception]];
+        testDidFailInSetUpOrTearDown = YES;
     }
 
     // if setUpTest failed, skip the test cases
-    if (!setUpOrTearDownException) {
+    if (!testDidFailInSetUpOrTearDown) {
         NSString *test = NSStringFromClass([self class]);
         for (NSString *testCaseName in [[self class] testCasesToRun]) {
             _currentTestCase = testCaseName;
@@ -321,20 +322,16 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
         [self tearDownTest];
     }
     @catch (NSException *exception) {
-        // ignore the exception if we already failed during setUpTest
-        if (!setUpOrTearDownException) {
-            setUpOrTearDownException = [self exceptionByAddingFileInfo:exception];
-        }
-    }
-
-    // if setUpTest or tearDownTest failed, report their failure rather than returning normally
-    if (setUpOrTearDownException) {
-        @throw setUpOrTearDownException;
+        [[SLLogger sharedLogger] logException:[self exceptionByAddingFileInfo:exception]
+                                     expected:[[self class] exceptionWasExpected:exception]];
+        testDidFailInSetUpOrTearDown = YES;
     }
 
     if (numCasesExecuted) *numCasesExecuted = numberOfCasesExecuted;
     if (numCasesFailed) *numCasesFailed = numberOfCasesFailed;
     if (numCasesFailedUnexpectedly) *numCasesFailedUnexpectedly = numberOfCasesFailedUnexpectedly;
+
+    return !testDidFailInSetUpOrTearDown;
 }
 
 - (void)wait:(NSTimeInterval)interval {
