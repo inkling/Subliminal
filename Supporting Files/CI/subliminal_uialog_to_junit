@@ -102,18 +102,23 @@ def main(inputPath, outputPath):
                 currentTestCase = None
             continue
 
-        match = re.match('^Uncaught exception occurred during test case "\-\[.+ (.+)\]": \*\*\*(.+)\*\*\*(?: for reason: (.+))?', message)
+        ## Uncaught exceptions (to be logged as test/test case errors)
+        match = re.match('^Uncaught exception occurred during (?:test case "\-\[.+ .+\]"|test ".+"): \*\*\*(.+)\*\*\*(?: for reason: (.+))?', message)
         if (match is not None):
-            testCaseName = match.group(1)
-            case = ET.SubElement(testSuite, "testcase")
-            case.set("name", testCaseName)
+            # even if the error occurred at the test level, 
+            # we must still create a test case to report the error
+            # see the "Errors" section above
+            erroringTestCase = currentTestCase
+            if (erroringTestCase is None):
+                erroringTestCase = ET.SubElement(testSuite, "testcase")
+                erroringTestCase.set("name", "unknownLocation")
 
-            exceptionName = match.group(2)
-            exceptionReason = match.group(3);
+            exceptionName = match.group(1)
+            exceptionReason = match.group(2);
             exceptionMessage = "Uncaught exception occurred: ***%s***" % exceptionName
             if (exceptionReason is not None):
                 exceptionMessage += " for reason: %s" % exceptionReason
-            error = ET.SubElement(case, "error");
+            error = ET.SubElement(erroringTestCase, "error");
             error.set("message", exceptionMessage)
             continue
 
