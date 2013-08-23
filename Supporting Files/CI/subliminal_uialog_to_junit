@@ -32,42 +32,74 @@ def main(inputPath, outputPath):
     plist = plistlib.readPlist(inputPath)
     samples = plist['All Samples']
     root = ET.Element("testsuites")
+
     testSuite = None
-    latestErrorMessage = None
+    firstTestCase = None
+    currentTestCase = None
+    errorOccurredInTestSetUp = False
     for sample in samples:
         message = sample['Message']
         logType = sample['LogType']
-        if (logType == "Error"):
-            latestErrorMessage = message
+        logSubtype = sample['Type']
+
+        ## Errors
+        # When `UIALogger.logFail()` is called, UIAutomation marks the message 
+        # previously logged using `UIALogger.logStart()` as of "LogType" == "Error", but with "Type" == 4, 
+        # vs. messages logged with `UIALogger.logError()` which have "LogType" == "Error" but "Type" == 3
+        if (logType == "Error" and logSubtype == 3):
+            # log the error under the current test case, 
+            # or under test cases created to represent test set-up or tear-down
+            # (for clarity, also because `testsuite` elements 
+            # may not themselves contain failures or errors)
+            erroringTestCase = currentTestCase
+            if (erroringTestCase is None):
+                erroringTestCase = ET.SubElement(testSuite, "testcase")
+                # If we haven't executed any test cases yet, 
+                # then the error must have occurred in set-up;
+                # if we've already had an error in set-up, then the error must be in tear-down.
+                # Checking `firstTestCase is None` is not sufficient
+                # because when there's an error in set-up, the test cases are be skipped.
+                errorCaseName = ""
+                if (firstTestCase is None and not errorOccurredInTestSetUp):
+                    errorCaseName = "setUpTest"
+                    errorOccurredInTestSetUp = True
+                else:
+                    errorCaseName = "tearDownTest"
+                erroringTestCase.set("name", errorCaseName)
+
+            errorType = "error" if re.match('^.*: Unexpected exception occurred', message) else "failure"
+            error = ET.SubElement(erroringTestCase, errorType)
+            error.set("message", message)
             continue
 
-        # Test suites
-        match = re.match('^Test "(.+)" (started|finished)', message)
+        ## Test suites
+        match = re.match('^Test "(.+)" started', message)
         if (match is not None):
+            # clear test suite state
+            firstTestCase = None
+            currentTestCase = None
+            errorOccurredInTestSetUp = False
+
+            testSuite = ET.SubElement(root, "testsuite")
             testSuiteName = match.group(1)
-            action = match.group(2)
-            if (action == "started"):
-                testSuite = ET.SubElement(root, "testsuite")
-                testSuite.set("name", testSuiteName)
+            testSuite.set("name", testSuiteName)
             continue
 
-        # Test cases
+        ## Test cases
         # NOTE: Don't change the order of "failed unexpectedly" and "failed" or
         # the regular expression matcher will always choose "failed" instead of
         # "failed unexpectedly."
-        match = re.match('^Test case "\-\[.+ (.+)\]" (passed|failed\ unexpectedly|failed)', message)
+        match = re.match('^Test case "\-\[.+ (.+)\]" (started|passed|failed\ unexpectedly|failed)', message)
         if (match is not None):
             testCaseName = match.group(1)
-            case = ET.SubElement(testSuite, "testcase")
-            case.set("name", testCaseName)
-
             action = match.group(2)
-            if (action == "failed"):
-                failure = ET.SubElement(case, "failure")
-                failure.set("message", latestErrorMessage)
-            elif (action == "failed unexpectedly"):
-                error = ET.SubElement(case, "error")
-                error.set("message", latestErrorMessage)
+            if (action == "started"):
+                case = ET.SubElement(testSuite, "testcase")
+                case.set("name", testCaseName)
+                currentTestCase = case
+                if (firstTestCase is None): firstTestCase = case
+            else:
+                currentTestCase = None
             continue
 
         match = re.match('^Uncaught exception occurred during test case "\-\[.+ (.+)\]": \*\*\*(.+)\*\*\*(?: for reason: (.+))?', message)
