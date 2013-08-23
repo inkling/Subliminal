@@ -65,6 +65,18 @@
  */
 + (NSSet *)testCasesToRun;
 
+/**
+ Determines whether the specified exception should be considered "expected" 
+ in the context of a test failing due to this exception being raised.
+
+ See the discussion on the `SLTest (SLTestCase)` category for what constitutes an "expected" exception.
+ 
+ @param exception The exception to analyze.
+ 
+ @return `YES` if the exception should be considered "expected", `NO` otherwise.
+ */
++ (BOOL)exceptionWasExpected:(NSException *)exception;
+
 @end
 
 

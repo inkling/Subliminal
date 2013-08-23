@@ -25,6 +25,7 @@
 
 #import "SLLogger.h"
 #import "SLTest.h"
+#import "SLTest+Internal.h"
 #import "SLTerminal.h"
 #import "SLElement.h"
 #import "SLAlert.h"
@@ -271,19 +272,7 @@ static SLTestController *__sharedController = nil;
                     if (numCasesFailed > 0) _numTestsFailed++;
                 }
                 @catch (NSException *e) {
-                    // If an assertion carries call site info, that suggests it was "expected",
-                    // and we log it more tersely than other exceptions.
-                    NSString *fileName = [[e userInfo] objectForKey:SLTestExceptionFilenameKey];
-                    int lineNumber = [[[e userInfo] objectForKey:SLTestExceptionLineNumberKey] intValue];
-                    NSString *message = nil;
-                    if (fileName) {
-                        message = [NSString stringWithFormat:@"%@:%d: %@",
-                                   fileName, lineNumber, [e reason]];
-                    } else {
-                        message = [NSString stringWithFormat:@"Unexpected exception occurred ***%@*** for reason: %@",
-                                   [e name], [e reason]];
-                    }
-                    [[SLLogger sharedLogger] logError:message];
+                    [[SLLogger sharedLogger] logException:e expected:[SLTest exceptionWasExpected:e]];
                     [[SLLogger sharedLogger] logTestAbort:testName];
                     _numTestsFailed++;
                 }

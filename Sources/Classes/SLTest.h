@@ -596,23 +596,6 @@
 /// Thrown if a test assertion fails.
 extern NSString *const SLTestAssertionFailedException;
 
-/// Keys for the `userInfo` dictionary of exceptions thrown by, and not caught by,
-/// `SLTest`, i.e. assertion failures in `-setUpTest` and `-tearDownTest` which
-/// should cause the tests to abort.
-
-/// Object is an `NSString` representing the name of the file in which
-/// the exception occurred.
-extern NSString *const SLTestExceptionFilenameKey;
-/// Object is an `NSNumber` whose `integerValue` represents the line number on
-/// which the exception occurred.
-extern NSString *const SLTestExceptionLineNumberKey;
-
-/// Prefixes logs of exceptions, caught by the tests, for which call site information could not be determined:
-/// exceptions thrown in contexts other than failures in assertions or `SLUIAElement` methods.
-/// For `SLUIAElement` exceptions to be tagged with call site information, test writers must wrap
-/// elements in the `UIAElement` macro. See that macro's documentation for an example.
-extern NSString *const SLTestUnknownCallSite;
-
 /// The interval for which `SLAssertTrueWithTimeout` and `SLWaitUntilTrue`
 /// wait before re-evaluating their conditions.
 extern const NSTimeInterval SLWaitUntilTrueRetryDelay;

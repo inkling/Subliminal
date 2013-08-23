@@ -35,14 +35,10 @@
 
 @implementation SLTestTests {
     id _loggerMock, _terminalMock;
-    id _loggerClassMock;
 }
 
 - (void)setUp {
-    // Prevent the framework from trying to talk to UIAutomation.
-    _loggerMock = [OCMockObject niceMockForClass:[SLLogger class]];
-    _loggerClassMock = [OCMockObject partialMockForClassObject:[SLLogger class]];
-    [[[_loggerClassMock stub] andReturn:_loggerMock] sharedLogger];
+    _loggerMock = [OCMockObject partialMockForObject:[SLLogger sharedLogger]];
 
     // ensure that Subliminal doesn't get hung up trying to talk to UIAutomation
     _terminalMock = [OCMockObject partialMockForObject:[SLTerminal sharedTerminal]];
@@ -53,7 +49,6 @@
 - (void)tearDown {
     [_terminalMock stopMocking];
     [_loggerMock stopMocking];
-    [_loggerClassMock stopMocking];
 }
 
 #pragma mark - Test lookup
@@ -1370,7 +1365,7 @@
     // check that the error logged includes the filename and line number as recorded above
     // otherwise, check that the error reads "Unknown location: …"
     [[_loggerMock expect] logError:[OCMArg checkWithBlock:^BOOL(id errorMessage) {
-        NSString *expectedPrefix = isSLUIAElementException ? filenameAndLineNumberPrefix : SLTestUnknownCallSite;
+        NSString *expectedPrefix = isSLUIAElementException ? filenameAndLineNumberPrefix : SLLoggerUnknownCallSite;
         return [errorMessage hasPrefix:expectedPrefix];
     }]];
 

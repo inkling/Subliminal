@@ -247,6 +247,20 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 /// -------------------------------------
 
 /**
+ Logs an exception thrown by a test.
+ 
+ The exception will be logged with call-site information if the exception's `userInfo` dictionary 
+ contains both the `SLLoggerExceptionFilenameKey` and `SLLoggerExceptionLineNumberKey` keys.
+
+ See the discussion on the `SLTest (SLTestCase)` category for what constitutes an "expected" exception 
+ (in the context of a test failing due to this exception being raised).
+ 
+ @param exception   The exception to be logged.
+ @param expected    YES if the exception was "expected", otherwise NO.
+ */
+- (void)logException:(NSException *)exception expected:(BOOL)expected;
+
+/**
  Logs that the specified test case has started.
  
  @param test The test that is currently running.
@@ -277,3 +291,19 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 - (void)logTest:(NSString *)test caseFail:(NSString *)testCase expected:(BOOL)expected;
 
 @end
+
+
+#pragma mark - Constants
+
+/// Keys for the `userInfo` dictionary of exceptions logged by `-[SLLogger logTestException:expected]`.
+
+/// Object is an `NSString` representing the name of the file in which
+/// the exception occurred.
+extern NSString *const SLLoggerExceptionFilenameKey;
+/// Object is an `NSNumber` whose `integerValue` represents the line number on
+/// which the exception occurred.
+extern NSString *const SLLoggerExceptionLineNumberKey;
+
+/// Prefixes logs of exceptions logged by `-[SLLogger logTestException:expected]`
+/// for which call site information was not provided.
+extern NSString *const SLLoggerUnknownCallSite;
