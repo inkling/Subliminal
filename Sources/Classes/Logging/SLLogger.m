@@ -147,7 +147,7 @@ void SLLogAsync(NSString *format, ...) {
 }
 
 - (void)logTestAbort:(NSString *)test {
-    [self logError:[NSString stringWithFormat:@"Test \"%@\" terminated abnormally.", test]];
+    [self logMessage:[NSString stringWithFormat:@"Test \"%@\" terminated abnormally.", test]];
 }
 
 - (void)logTestingFinishWithNumTestsExecuted:(NSUInteger)numTestsExecuted
