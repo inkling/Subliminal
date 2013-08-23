@@ -31,7 +31,7 @@
 
 
 // All exceptions thrown by SLTest must have names beginning with this prefix
-// so that `-[SLTest logException:inTestCase:]` uses the proper logging format.
+// so that `-[SLTest logException:asExpected:]` uses the proper logging format.
 static NSString *const SLTestExceptionNamePrefix       = @"SLTest";
 
 NSString *const SLTestAssertionFailedException  = @"SLTestCaseAssertionFailedException";
@@ -273,7 +273,7 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
                 @catch (NSException *exception) {
                     caseFailed = YES;
                     failureWasExpected = [[self class] exceptionWasExpected:exception];
-                    [self logException:exception inTestCase:testCaseName asExpected:failureWasExpected];
+                    [self logException:exception asExpected:failureWasExpected];
                 }
 
                 // Only execute the test case if set-up succeeded.
@@ -286,7 +286,7 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
                     @catch (NSException *exception) {
                         caseFailed = YES;
                         failureWasExpected = [[self class] exceptionWasExpected:exception];
-                        [self logException:exception inTestCase:testCaseName asExpected:failureWasExpected];
+                        [self logException:exception asExpected:failureWasExpected];
                     }
                 }
 
@@ -301,7 +301,7 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
                     // don't override `failureWasExpected` if we had already failed
                     BOOL exceptionWasExpected = [[self class] exceptionWasExpected:exception];
                     if (!caseHadFailed) failureWasExpected = exceptionWasExpected;
-                    [self logException:exception inTestCase:testCaseName asExpected:exceptionWasExpected];
+                    [self logException:exception asExpected:exceptionWasExpected];
                 }
 
                 if (caseFailed) {
@@ -372,7 +372,7 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
     return [[exception name] isEqualToString:SLTestAssertionFailedException];
 }
 
-- (void)logException:(NSException *)exception inTestCase:(NSString *)testCase asExpected:(BOOL)expected {
+- (void)logException:(NSException *)exception asExpected:(BOOL)expected {
     // Only use the call site information if we have information
     // and if the exception was thrown by `SLTest` or `SLUIAElement`,
     // where the information was likely to have been recorded by an assertion or UIAElement macro.
