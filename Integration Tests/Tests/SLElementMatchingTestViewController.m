@@ -132,6 +132,15 @@
             rightLabel.textAlignment = NSTextAlignmentRight;
             rightLabel.text = @"right";
             _rightView = rightLabel;
+        } else if (testCase == @selector(testSubliminalReloadsTheAccessibilityHierarchyAsNecessaryWhenMatching)) {
+            UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
+            label.textAlignment = NSTextAlignmentLeft;
+            label.text = @"foo";
+            _leftView = label;
+
+            UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+            [button setTitle:@"bar" forState:UIControlStateNormal];
+            _rightView = button;
         } else {
             NSAssert(NO, @"Unexpected test case: %@", NSStringFromSelector(testCase));
         }
@@ -149,6 +158,10 @@
     CGRectDivide(contentRect, &leftViewFrame, &rightViewFrame, CGRectGetWidth(contentRect) / 2.0f, CGRectMinXEdge);
     _leftView.frame = leftViewFrame;
     _rightView.frame = rightViewFrame;
+}
+
+- (void)removeRightView {
+    [_rightView removeFromSuperview];
 }
 
 @end
@@ -181,6 +194,8 @@
     UIPopoverController *_popoverController;
 
     UIActionSheet *_actionSheet;
+
+    SLElementMatchingTestHeader *_headerView;
 }
 
 + (NSString *)nibNameForTestCase:(SEL)testCase {
@@ -206,7 +221,8 @@
                (testCase == @selector(testCannotMatchIndividualChildLabelsOfTableViewCell)) ||
                (testCase == @selector(testMatchingNonLabelTableViewCellChildElement)) ||
                (testCase == @selector(testMatchingTableViewHeader)) ||
-               (testCase == @selector(testMatchingTableViewHeaderChildElements))) {
+               (testCase == @selector(testMatchingTableViewHeaderChildElements)) ||
+               (testCase == @selector(testSubliminalReloadsTheAccessibilityHierarchyAsNecessaryWhenMatching))) {
         return @"SLTableViewChildElementMatchingTestViewController";
     } else {
         return nil;
@@ -227,6 +243,7 @@
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showPopoverWithActionSheet)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(showActionSheet)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(hideActionSheet)];
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(invalidateAccessibilityHierarchy)];
     }
     return self;
 }
@@ -278,7 +295,8 @@
     if (self.tableView) {
         if ((self.testCase == @selector(testMatchingTableViewCellTextLabel)) ||
             (self.testCase == @selector(testMatchingTableViewHeader)) ||
-            (self.testCase == @selector(testMatchingTableViewHeaderChildElements))) {
+            (self.testCase == @selector(testMatchingTableViewHeaderChildElements)) ||
+            (self.testCase == @selector(testSubliminalReloadsTheAccessibilityHierarchyAsNecessaryWhenMatching))) {
             _testTableViewCellClass = [UITableViewCell class];
         } else if ((self.testCase == @selector(testMatchingNonLabelTableViewCellChildElement)) ||
                    (self.testCase == @selector(testMatchingTableViewCellWithCombinedLabel)) ||
@@ -316,7 +334,8 @@
 
     if ((self.testCase == @selector(testMatchingTableViewCellTextLabel)) ||
         (self.testCase == @selector(testMatchingTableViewHeader)) ||
-        (self.testCase == @selector(testMatchingTableViewHeaderChildElements))) {
+        (self.testCase == @selector(testMatchingTableViewHeaderChildElements)) ||
+        (self.testCase == @selector(testSubliminalReloadsTheAccessibilityHierarchyAsNecessaryWhenMatching))) {
         cell.textLabel.text = @"fooLabel";
     } else {
         NSAssert([cell isKindOfClass:[SLElementMatchingTestCell class]],
@@ -339,8 +358,11 @@
         label.text = @"fooHeader";
         [label sizeToFit];
         headerView = label;
-    } else if (self.testCase == @selector(testMatchingTableViewHeaderChildElements)) {
-        headerView = [[SLElementMatchingTestHeader alloc] initWithTestCaseWithSelector:self.testCase];
+    } else if ((self.testCase == @selector(testMatchingTableViewHeaderChildElements)) ||
+               (self.testCase == @selector(testSubliminalReloadsTheAccessibilityHierarchyAsNecessaryWhenMatching))) {
+        _headerView = [[SLElementMatchingTestHeader alloc] initWithTestCaseWithSelector:self.testCase];
+        NSAssert([self numberOfSectionsInTableView:tableView] == 1, @"We only expect to track one header.");
+        headerView = _headerView;
     }
 
     return headerView;
@@ -444,6 +466,15 @@
 
 - (void)hideActionSheet {
     [_actionSheet dismissWithClickedButtonIndex:0 animated:NO];
+}
+
+- (void)invalidateAccessibilityHierarchy {
+    // Removing a subview of a table view header from the view hierarchy,
+    // without reloading the header, is one way to invalidate the accessibility hierarchy:
+    // the accessibility container that mocks the header will retain the accessibility element
+    // that mocked that subview until that element is queried by the accessibility system,
+    // at which time all child elements of the container will be replaced.
+    [_headerView removeRightView];
 }
 
 @end
