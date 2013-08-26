@@ -36,6 +36,8 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
 @implementation SLElement {
     BOOL (^_matchesObject)(NSObject*);
     NSString *_description;
+
+    BOOL _shouldDoubleCheckValidity;
 }
 
 + (void)load {
@@ -161,6 +163,14 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
     return canDetermineTappability;
 }
 
+- (BOOL)shouldDoubleCheckValidity {
+    return _shouldDoubleCheckValidity;
+}
+
+- (void)setShouldDoubleCheckValidity:(BOOL)shouldDoubleCheckValidity {
+    _shouldDoubleCheckValidity = shouldDoubleCheckValidity;
+}
+
 - (SLAccessibilityPath *)accessibilityPathWithTimeout:(NSTimeInterval)timeout {
     __block SLAccessibilityPath *accessibilityPath = nil;
     NSDate *startDate = [NSDate date];
@@ -198,6 +208,16 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
         // catch and rethrow exceptions so that we can unbind the path
         @try {
             NSString *UIARepresentation = [boundPath UIARepresentation];
+
+            if (self.shouldDoubleCheckValidity) {
+                BOOL uiaIsValid = [[[SLTerminal sharedTerminal] evalWithFormat:@"%@.isValid()", UIARepresentation] boolValue];
+                if (!uiaIsValid) {
+                    // Subliminal is not properly identifying the element to UIAutomation:
+                    // there is a bug in `SLAccessibilityPath` or `NSObject (SLAccessibilityHierarchy)`
+                    [NSException raise:SLUIAElementInvalidException format:@"Element '%@' does not exist at path '%@'.", self, UIARepresentation];
+                }
+            }
+
             // evaluate canDetermineTappability using the current path
             // because we can't retrieve another while the element is bound
             if (waitUntilTappable && [self canDetermineTappabilityUsingAccessibilityPath:accessibilityPath]) {
@@ -255,7 +275,15 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
 
 - (BOOL)isValid {
     // isValid evaluates the current state, no waiting to resolve the element
-    return ([self accessibilityPathWithTimeout:0.0] != nil);
+    SLAccessibilityPath *accessibilityPath = [self accessibilityPathWithTimeout:0.0];
+    __block BOOL isValid = (accessibilityPath != nil);
+    if (isValid && self.shouldDoubleCheckValidity) {
+        [accessibilityPath bindPath:^(SLAccessibilityPath *boundPath) {
+            NSString *UIARepresentation = [boundPath UIARepresentation];
+            isValid = [[[SLTerminal sharedTerminal] evalWithFormat:@"%@.isValid()", UIARepresentation] boolValue];
+        }];
+    }
+    return isValid;
 }
 
 /*
