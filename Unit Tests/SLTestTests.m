@@ -35,14 +35,10 @@
 
 @implementation SLTestTests {
     id _loggerMock, _terminalMock;
-    id _loggerClassMock;
 }
 
 - (void)setUp {
-    // Prevent the framework from trying to talk to UIAutomation.
-    _loggerMock = [OCMockObject niceMockForClass:[SLLogger class]];
-    _loggerClassMock = [OCMockObject partialMockForClassObject:[SLLogger class]];
-    [[[_loggerClassMock stub] andReturn:_loggerMock] sharedLogger];
+    _loggerMock = [OCMockObject partialMockForObject:[SLLogger sharedLogger]];
 
     // ensure that Subliminal doesn't get hung up trying to talk to UIAutomation
     _terminalMock = [OCMockObject partialMockForObject:[SLTerminal sharedTerminal]];
@@ -53,7 +49,6 @@
 - (void)tearDown {
     [_terminalMock stopMocking];
     [_loggerMock stopMocking];
-    [_loggerClassMock stopMocking];
 }
 
 #pragma mark - Test lookup
@@ -723,6 +718,64 @@
     STAssertNoThrow([failingTestMock verify], @"Test did not run as expected.");
 }
 
+- (void)runWithTestFailingInTestCaseSetupWithExpectedFailure:(BOOL)expectedFailureInSetup
+             andFailingInTestCaseTeardownWithExpectedFailure:(BOOL)expectedFailureInTeardown {
+    Class failingTestClass = [TestWithSomeTestCases class];
+    SEL failingTestCase = @selector(testOne);
+    id failingTestMock = [OCMockObject partialMockForClass:failingTestClass];
+    OCMExpectationSequencer *failingTestSequencer = [OCMExpectationSequencer sequencerWithMocks:@[ failingTestMock, _loggerMock ]];
+
+    NSException *(^exceptionWithReason)(BOOL, NSString *) = ^(BOOL expected, NSString *reason) {
+        NSString *name = expected ? SLTestAssertionFailedException : NSInternalInconsistencyException;
+        return [NSException exceptionWithName:name reason:reason userInfo:nil];
+    };
+
+    // *** Begin expected test run
+
+    // If test case setup fails...
+    NSException *setUpException = exceptionWithReason(expectedFailureInSetup, @"Test case setup failed.");
+    [[[failingTestMock expect] andThrow:setUpException] setUpTestCaseWithSelector:failingTestCase];
+
+    // ...the test catches and logs the exception...
+    [[_loggerMock expect] logError:[OCMArg any]];
+
+    // ...and then if test case teardown fails...
+    NSException *tearDownException = exceptionWithReason(expectedFailureInTeardown, @"Test case teardown failed.");
+    [[[failingTestMock expect] andThrow:tearDownException] tearDownTestCaseWithSelector:failingTestCase];
+
+    // ...the test again catches and logs the exception...
+    [[_loggerMock expect] logError:[OCMArg any]];
+
+    // ...but when the test logs the test case as failing,
+    // that failure is reported as "expected" or not depending on the first exception (setup) thrown...
+    [[_loggerMock expect] logTest:NSStringFromClass(failingTestClass)
+                         caseFail:NSStringFromSelector(failingTestCase)
+                         expected:expectedFailureInSetup];
+
+    // ...and when the test controller reports the test finishing,
+    // that failure is reported as "expected" or not depending on the setup exception.
+    // The values for cases executed, etc. will need to be updated if the test class' definition changes.
+    [[_loggerMock expect] logTestFinish:NSStringFromClass(failingTestClass)
+                   withNumCasesExecuted:3 numCasesFailed:1 numCasesFailedUnexpectedly:(expectedFailureInSetup ? 0 : 1)];
+
+    // *** End expected test run
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:failingTestClass], nil);
+    STAssertNoThrow([failingTestSequencer verify], @"Test did not run/messages were not logged in the expected sequence.");
+
+    // necessary so that subsequent invocations of this method,
+    // within the same turn of the event loop, can create new mocks
+    [failingTestSequencer stopSequencing];
+    [failingTestMock stopMocking];
+}
+
+- (void)testIfBothTestCaseSetupAndTeardownFailSetupFailureDeterminesExpectedStatus {
+    [self runWithTestFailingInTestCaseSetupWithExpectedFailure:YES andFailingInTestCaseTeardownWithExpectedFailure:YES];
+    [self runWithTestFailingInTestCaseSetupWithExpectedFailure:YES andFailingInTestCaseTeardownWithExpectedFailure:NO];
+    [self runWithTestFailingInTestCaseSetupWithExpectedFailure:NO andFailingInTestCaseTeardownWithExpectedFailure:YES];
+    [self runWithTestFailingInTestCaseSetupWithExpectedFailure:NO andFailingInTestCaseTeardownWithExpectedFailure:NO];
+}
+
 - (void)testIfTestCaseSetupFailsTestCaseDoesNotExecute {
     Class failingTestClass = [TestWithSomeTestCases class];
     SEL failingTestCase = @selector(testOne);
@@ -1312,7 +1365,7 @@
     // check that the error logged includes the filename and line number as recorded above
     // otherwise, check that the error reads "Unknown location: …"
     [[_loggerMock expect] logError:[OCMArg checkWithBlock:^BOOL(id errorMessage) {
-        NSString *expectedPrefix = isSLUIAElementException ? filenameAndLineNumberPrefix : SLTestUnknownCallSite;
+        NSString *expectedPrefix = isSLUIAElementException ? filenameAndLineNumberPrefix : SLLoggerUnknownCallSite;
         return [errorMessage hasPrefix:expectedPrefix];
     }]];
 

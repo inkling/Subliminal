@@ -25,6 +25,7 @@
 
 #import "SLLogger.h"
 #import "SLTest.h"
+#import "SLTest+Internal.h"
 #import "SLTerminal.h"
 #import "SLElement.h"
 #import "SLAlert.h"
@@ -257,33 +258,18 @@ static SLTestController *__sharedController = nil;
                 NSString *testName = NSStringFromClass(testClass);
                 [[SLLogger sharedLogger] logTestStart:testName];
 
-                @try {
-                    NSUInteger numCasesExecuted = 0, numCasesFailed = 0, numCasesFailedUnexpectedly = 0;
+                NSUInteger numCasesExecuted = 0, numCasesFailed = 0, numCasesFailedUnexpectedly = 0;
 
-                    [_currentTest runAndReportNumExecuted:&numCasesExecuted
-                                                   failed:&numCasesFailed
-                                       failedUnexpectedly:&numCasesFailedUnexpectedly];
-
+                BOOL testDidFinish = [_currentTest runAndReportNumExecuted:&numCasesExecuted
+                                                                    failed:&numCasesFailed
+                                                        failedUnexpectedly:&numCasesFailedUnexpectedly];
+                if (testDidFinish) {
                     [[SLLogger sharedLogger] logTestFinish:testName
                                       withNumCasesExecuted:numCasesExecuted
                                             numCasesFailed:numCasesFailed
                                 numCasesFailedUnexpectedly:numCasesFailedUnexpectedly];
                     if (numCasesFailed > 0) _numTestsFailed++;
-                }
-                @catch (NSException *e) {
-                    // If an assertion carries call site info, that suggests it was "expected",
-                    // and we log it more tersely than other exceptions.
-                    NSString *fileName = [[e userInfo] objectForKey:SLTestExceptionFilenameKey];
-                    int lineNumber = [[[e userInfo] objectForKey:SLTestExceptionLineNumberKey] intValue];
-                    NSString *message = nil;
-                    if (fileName) {
-                        message = [NSString stringWithFormat:@"%@:%d: %@",
-                                   fileName, lineNumber, [e reason]];
-                    } else {
-                        message = [NSString stringWithFormat:@"Unexpected exception occurred ***%@*** for reason: %@",
-                                   [e name], [e reason]];
-                    }
-                    [[SLLogger sharedLogger] logError:message];
+                } else {
                     [[SLLogger sharedLogger] logTestAbort:testName];
                     _numTestsFailed++;
                 }

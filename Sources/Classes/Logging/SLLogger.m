@@ -27,6 +27,12 @@
 #import "SLStringUtilities.h"
 
 
+NSString *const SLLoggerExceptionFilenameKey      = @"SLLoggerExceptionFilenameKey";
+NSString *const SLLoggerExceptionLineNumberKey    = @"SLLoggerExceptionLineNumberKey";
+
+NSString *const SLLoggerUnknownCallSite           = @"Unknown location";
+
+
 void SLLog(NSString *format, ...) {
     va_list args;
     va_start(args, format);
@@ -141,7 +147,7 @@ void SLLogAsync(NSString *format, ...) {
 }
 
 - (void)logTestAbort:(NSString *)test {
-    [self logError:[NSString stringWithFormat:@"Test \"%@\" terminated abnormally.", test]];
+    [self logMessage:[NSString stringWithFormat:@"Test \"%@\" terminated abnormally.", test]];
 }
 
 - (void)logTestingFinishWithNumTestsExecuted:(NSUInteger)numTestsExecuted
@@ -155,6 +161,28 @@ void SLLogAsync(NSString *format, ...) {
 
 
 @implementation SLLogger (SLTest)
+
+- (void)logException:(NSException *)exception expected:(BOOL)expected {
+    NSString *callSite;
+    NSString *fileName = [exception userInfo][SLLoggerExceptionFilenameKey];
+    NSNumber *lineNumber = [exception userInfo][SLLoggerExceptionLineNumberKey];
+    if (fileName && lineNumber) {
+        callSite = [NSString stringWithFormat:@"%@:%d", fileName, [lineNumber intValue]];
+    } else {
+        callSite = SLLoggerUnknownCallSite;
+    }
+
+    NSString *exceptionDescription;
+    if (expected) {
+        exceptionDescription = [exception reason];
+    } else {
+        exceptionDescription = [NSString stringWithFormat:@"Unexpected exception occurred ***%@*** for reason: %@",
+                                [exception name], [exception reason]];
+    }
+
+    NSString *message = [NSString stringWithFormat:@"%@: %@", callSite, exceptionDescription];
+    [[SLLogger sharedLogger] logError:message];
+}
 
 - (void)logTest:(NSString *)test caseStart:(NSString *)testCase {
     if (dispatch_get_current_queue() != _loggingQueue) {

@@ -161,16 +161,23 @@
  
  See `SLTest (SLTestCase)` for a discussion of test case execution.
  
- @param numCasesExecuted If this is non-`NULL`, on return, this will be set to
- the number of test cases that were executed--which will be the number of test
- cases defined by the receiver's class.
- @param numCasesFailed If this is non-`NULL`, on return, this will be set to the
- number of test cases that failed (the number of test cases that threw exceptions).
- @param numCasesFailedUnexpectedly If this is non-`NULL`, on return, this will
- be set to the number of test cases that failed unexpectedly (those test cases 
- that threw exceptions for other reasons than test assertion failures).
+ @param numCasesExecuted            If this is non-`NULL`, on return, this will be set to
+                                    the number of test cases that were executed--which will be the number of test
+                                    cases defined by the receiver's class.
+ @param numCasesFailed              If this is non-`NULL`, on return, this will be set to the
+                                    number of test cases that failed (the number of test cases that threw exceptions).
+ @param numCasesFailedUnexpectedly  If this is non-`NULL`, on return, this will
+                                    be set to the number of test cases that failed unexpectedly (those test cases
+                                    that threw exceptions for other reasons than test assertion failures).
+ 
+ @return `YES` if the test successfully finished (all test cases were executed, regardless of their individual 
+ success or failure), `NO` otherwise (an exception occurred in test case [set-up](-setUpTest) or [tear-down](-tearDownTest).
+ 
+ @warning If an exception occurs in test case set-up, the test's cases will be skipped.
+ Thus, the caller should use the values returned in `numCasesExecuted`, `numCasesFailed`, 
+ and `numCasesFailedUnexpectedly` if and only if this method returns `YES`.
  */
-- (void)runAndReportNumExecuted:(NSUInteger *)numCasesExecuted
+- (BOOL)runAndReportNumExecuted:(NSUInteger *)numCasesExecuted
                          failed:(NSUInteger *)numCasesFailed
              failedUnexpectedly:(NSUInteger *)numCasesFailedUnexpectedly;
 
@@ -595,23 +602,6 @@
 
 /// Thrown if a test assertion fails.
 extern NSString *const SLTestAssertionFailedException;
-
-/// Keys for the `userInfo` dictionary of exceptions thrown by, and not caught by,
-/// `SLTest`, i.e. assertion failures in `-setUpTest` and `-tearDownTest` which
-/// should cause the tests to abort.
-
-/// Object is an `NSString` representing the name of the file in which
-/// the exception occurred.
-extern NSString *const SLTestExceptionFilenameKey;
-/// Object is an `NSNumber` whose `integerValue` represents the line number on
-/// which the exception occurred.
-extern NSString *const SLTestExceptionLineNumberKey;
-
-/// Prefixes logs of exceptions, caught by the tests, for which call site information could not be determined:
-/// exceptions thrown in contexts other than failures in assertions or `SLUIAElement` methods.
-/// For `SLUIAElement` exceptions to be tagged with call site information, test writers must wrap
-/// elements in the `UIAElement` macro. See that macro's documentation for an example.
-extern NSString *const SLTestUnknownCallSite;
 
 /// The interval for which `SLAssertTrueWithTimeout` and `SLWaitUntilTrue`
 /// wait before re-evaluating their conditions.
