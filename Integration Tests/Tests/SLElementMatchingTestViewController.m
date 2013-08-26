@@ -29,6 +29,8 @@
 @end
 
 
+#pragma mark - SLElementMatchingTestCell
+
 @interface SLElementMatchingTestCell : UITableViewCell
 
 - (void)configureAccessibility;
@@ -58,7 +60,7 @@
             _weatherTemp.textAlignment = NSTextAlignmentRight;
             [self.contentView addSubview:_weatherTemp];
         } else {
-            NSAssert(NO, @"%@ reuse identifier was not of expected format: '%@_<%@ test case>'.",
+            NSAssert(NO, @"%@ reuse identifier was not of expected format ('%@_<%@ test case>') or was unexpected.",
                      NSStringFromClass([self class]), NSStringFromClass([self class]), NSStringFromClass([SLElementMatchingTestViewController class]));
         }
     }
@@ -104,6 +106,55 @@
 
 @end
 
+
+#pragma mark - SLElementMatchingTestHeader
+
+@interface SLElementMatchingTestHeader : UIView
+
+- (instancetype)initWithTestCaseWithSelector:(SEL)testCase;
+
+@end
+
+@implementation SLElementMatchingTestHeader {
+    UIView *_leftView, *_rightView;
+}
+
+- (instancetype)initWithTestCaseWithSelector:(SEL)testCase {
+    self = [super initWithFrame:CGRectZero];
+    if (self) {
+        if (testCase == @selector(testMatchingTableViewHeaderChildElements)) {
+            UILabel *leftLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+            leftLabel.textAlignment = NSTextAlignmentLeft;
+            leftLabel.text = @"left";
+            _leftView = leftLabel;
+
+            UILabel *rightLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+            rightLabel.textAlignment = NSTextAlignmentRight;
+            rightLabel.text = @"right";
+            _rightView = rightLabel;
+        } else {
+            NSAssert(NO, @"Unexpected test case: %@", NSStringFromSelector(testCase));
+        }
+        [self addSubview:_leftView];
+        [self addSubview:_rightView];
+    }
+    return self;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+
+    CGRect contentRect = CGRectInset(self.bounds, 20.0f, 0.0f);
+    CGRect leftViewFrame, rightViewFrame;
+    CGRectDivide(contentRect, &leftViewFrame, &rightViewFrame, CGRectGetWidth(contentRect) / 2.0f, CGRectMinXEdge);
+    _leftView.frame = leftViewFrame;
+    _rightView.frame = rightViewFrame;
+}
+
+@end
+
+
+#pragma mark - SLElementMatchingTestViewController
 
 @interface SLElementMatchingTestViewController () <UITableViewDataSource, UITableViewDelegate, UIWebViewDelegate>
 
@@ -289,31 +340,7 @@
         [label sizeToFit];
         headerView = label;
     } else if (self.testCase == @selector(testMatchingTableViewHeaderChildElements)) {
-        CGFloat headerHeight = [self tableView:tableView heightForHeaderInSection:section];
-        CGRect headerRect = (CGRect){
-            CGPointZero,
-            CGSizeMake(CGRectGetWidth(tableView.frame), headerHeight)
-        };
-        headerView = [[UIView alloc] initWithFrame:headerRect];
-        CGRect contentRect = CGRectInset(headerRect, 20.0f, 0.0f);
-        CGFloat halfWidth = CGRectGetWidth(contentRect) / 2.0;
-        CGSize halfSize = CGSizeMake(halfWidth, CGRectGetHeight(contentRect));
-
-        UILabel *labelLeft = [[UILabel alloc] initWithFrame:(CGRect){
-            contentRect.origin,
-            halfSize
-        }];
-        labelLeft.textAlignment = NSTextAlignmentLeft;
-        labelLeft.text = @"left";
-        [headerView addSubview:labelLeft];
-
-        UILabel *labelRight = [[UILabel alloc] initWithFrame:(CGRect){
-            CGPointMake(CGRectGetMinX(contentRect) + halfWidth, CGRectGetMinY(contentRect)),
-            halfSize
-        }];
-        labelRight.textAlignment = NSTextAlignmentRight;
-        labelRight.text = @"right";
-        [headerView addSubview:labelRight];
+        headerView = [[SLElementMatchingTestHeader alloc] initWithTestCaseWithSelector:self.testCase];
     }
 
     return headerView;
