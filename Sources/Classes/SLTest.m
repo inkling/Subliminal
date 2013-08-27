@@ -31,15 +31,11 @@
 
 
 // All exceptions thrown by SLTest must have names beginning with this prefix
-// so that `-[SLTest logException:inTestCase:]` uses the proper logging format.
+// so that `-[SLTest exceptionByAddingFileInfo:]` can determine whether to attach
+// call site information to exceptions.
 static NSString *const SLTestExceptionNamePrefix       = @"SLTest";
 
 NSString *const SLTestAssertionFailedException  = @"SLTestCaseAssertionFailedException";
-
-NSString *const SLTestExceptionFilenameKey      = @"SLTestExceptionFilenameKey";
-NSString *const SLTestExceptionLineNumberKey    = @"SLTestExceptionLineNumberKey";
-
-NSString *const SLTestUnknownCallSite           = @"Unknown location";
 
 const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
 
@@ -234,22 +230,23 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
     return YES;
  }
 
-- (void)runAndReportNumExecuted:(NSUInteger *)numCasesExecuted
+- (BOOL)runAndReportNumExecuted:(NSUInteger *)numCasesExecuted
                          failed:(NSUInteger *)numCasesFailed
              failedUnexpectedly:(NSUInteger *)numCasesFailedUnexpectedly {
     NSUInteger numberOfCasesExecuted = 0, numberOfCasesFailed = 0, numberOfCasesFailedUnexpectedly = 0;
 
-    NSException *setUpOrTearDownException = nil;
+    BOOL testDidFailInSetUpOrTearDown = NO;
     @try {
         [self setUpTest];
     }
     @catch (NSException *exception) {
-        // save exception to throw after tearDownTest
-        setUpOrTearDownException = [self exceptionByAddingFileInfo:exception];
+        [[SLLogger sharedLogger] logException:[self exceptionByAddingFileInfo:exception]
+                                     expected:[[self class] exceptionWasExpected:exception]];
+        testDidFailInSetUpOrTearDown = YES;
     }
 
     // if setUpTest failed, skip the test cases
-    if (!setUpOrTearDownException) {
+    if (!testDidFailInSetUpOrTearDown) {
         NSString *test = NSStringFromClass([self class]);
         for (NSString *testCaseName in [[self class] testCasesToRun]) {
             _currentTestCase = testCaseName;
@@ -273,7 +270,8 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
                 @catch (NSException *exception) {
                     caseFailed = YES;
                     failureWasExpected = [[self class] exceptionWasExpected:exception];
-                    [self logException:exception inTestCase:testCaseName asExpected:failureWasExpected];
+                    [[SLLogger sharedLogger] logException:[self exceptionByAddingFileInfo:exception]
+                                                 expected:failureWasExpected];
                 }
 
                 // Only execute the test case if set-up succeeded.
@@ -286,7 +284,8 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
                     @catch (NSException *exception) {
                         caseFailed = YES;
                         failureWasExpected = [[self class] exceptionWasExpected:exception];
-                        [self logException:exception inTestCase:testCaseName asExpected:failureWasExpected];
+                        [[SLLogger sharedLogger] logException:[self exceptionByAddingFileInfo:exception]
+                                                     expected:failureWasExpected];
                     }
                 }
 
@@ -296,10 +295,13 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
                     [self tearDownTestCaseWithSelector:unfocusedTestCaseSelector];
                 }
                 @catch (NSException *exception) {
+                    BOOL caseHadFailed = caseFailed;
                     caseFailed = YES;
-                    // don't override failureWasExpected if we've already had an unexpected failure
-                    if (!failureWasExpected) failureWasExpected = [[self class] exceptionWasExpected:exception];
-                    [self logException:exception inTestCase:testCaseName asExpected:failureWasExpected];
+                    // don't override `failureWasExpected` if we had already failed
+                    BOOL exceptionWasExpected = [[self class] exceptionWasExpected:exception];
+                    if (!caseHadFailed) failureWasExpected = exceptionWasExpected;
+                    [[SLLogger sharedLogger] logException:[self exceptionByAddingFileInfo:exception]
+                                                 expected:exceptionWasExpected];
                 }
 
                 if (caseFailed) {
@@ -320,20 +322,16 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
         [self tearDownTest];
     }
     @catch (NSException *exception) {
-        // ignore the exception if we already failed during setUpTest
-        if (!setUpOrTearDownException) {
-            setUpOrTearDownException = [self exceptionByAddingFileInfo:exception];
-        }
-    }
-
-    // if setUpTest or tearDownTest failed, report their failure rather than returning normally
-    if (setUpOrTearDownException) {
-        @throw setUpOrTearDownException;
+        [[SLLogger sharedLogger] logException:[self exceptionByAddingFileInfo:exception]
+                                     expected:[[self class] exceptionWasExpected:exception]];
+        testDidFailInSetUpOrTearDown = YES;
     }
 
     if (numCasesExecuted) *numCasesExecuted = numberOfCasesExecuted;
     if (numCasesFailed) *numCasesFailed = numberOfCasesFailed;
     if (numCasesFailedUnexpectedly) *numCasesFailedUnexpectedly = numberOfCasesFailedUnexpectedly;
+
+    return !testDidFailInSetUpOrTearDown;
 }
 
 - (void)wait:(NSTimeInterval)interval {
@@ -351,52 +349,29 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
 }
 
 - (NSException *)exceptionByAddingFileInfo:(NSException *)exception {
-    if (_lastKnownFilename) {
-        // If there is file information, insert it into the userInfo dictionary
-        NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:[exception userInfo]];
-        userInfo[SLTestExceptionFilenameKey] = _lastKnownFilename;
-        userInfo[SLTestExceptionLineNumberKey] = @(_lastKnownLineNumber);
-
-        // call site info is now stale
-        [self clearLastKnownCallSite];
-        
-        return [NSException exceptionWithName:[exception name] reason:[exception reason] userInfo:userInfo];
-    } else {
-        return exception;
-    }
-}
-
-+ (BOOL)exceptionWasExpected:(NSException *)exception {
-    return [[exception name] isEqualToString:SLTestAssertionFailedException];
-}
-
-- (void)logException:(NSException *)exception inTestCase:(NSString *)testCase asExpected:(BOOL)expected {
     // Only use the call site information if we have information
     // and if the exception was thrown by `SLTest` or `SLUIAElement`,
     // where the information was likely to have been recorded by an assertion or UIAElement macro.
     // Otherwise it is likely stale.
-    NSString *callSite;
     if (_lastKnownFilename &&
         ([[exception name] hasPrefix:SLTestExceptionNamePrefix] ||
          [[exception name] hasPrefix:SLUIAElementExceptionNamePrefix])) {
-        callSite = [NSString stringWithFormat:@"%@:%d", _lastKnownFilename, _lastKnownLineNumber];
-    } else {
-        callSite = SLTestUnknownCallSite;
+        NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:[exception userInfo]];
+        userInfo[SLLoggerExceptionFilenameKey] = _lastKnownFilename;
+        userInfo[SLLoggerExceptionLineNumberKey] = @(_lastKnownLineNumber);
+
+        exception = [NSException exceptionWithName:[exception name] reason:[exception reason] userInfo:userInfo];
     }
-    // the call site info is definitely stale at this point
+
+    // Regardless of whether we used it or not,
+    // call site info is now stale
     [self clearLastKnownCallSite];
 
-    NSString *exceptionDescription;
-    if (expected) {
-        exceptionDescription = [exception reason];
-    } else {
-        exceptionDescription = [NSString stringWithFormat:@"Unexpected exception occurred ***%@*** for reason: %@",
+    return exception;
+}
 
-                                                            [exception name], [exception reason]];
-    }
-
-    NSString *message = [NSString stringWithFormat:@"%@: %@", callSite, exceptionDescription];
-    [[SLLogger sharedLogger] logError:message];
++ (BOOL)exceptionWasExpected:(NSException *)exception {
+    return [[exception name] isEqualToString:SLTestAssertionFailedException];
 }
 
 @end
