@@ -336,6 +336,8 @@ extern const NSTimeInterval SLAlertHandlerDidHandleAlertDelay;
 /**
  Returns `YES` if Subliminal should log alerts as they are handled.
 
+ Logging is disabled by default.
+
  @return `YES` if alert-handling logging is enabled, `NO` otherwise.
 
  @see -setLoggingEnabled:

@@ -402,4 +402,13 @@
                  @"After being matched, an object's identifier should have been restored.");
 }
 
+- (void)testSubliminalReloadsTheAccessibilityHierarchyAsNecessaryWhenMatching {
+    SLElement *fooLabel = [SLElement elementWithAccessibilityLabel:@"foo"];
+    SLAssertTrue([[UIAElement(fooLabel) label] isEqualToString:@"foo"], @"Could not match label.");
+
+    SLAskApp(invalidateAccessibilityHierarchy);
+
+    SLAssertTrue([[UIAElement(fooLabel) label] isEqualToString:@"foo"], @"Could not match label.");
+}
+
 @end
