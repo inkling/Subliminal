@@ -174,3 +174,28 @@
 /// Used with `+[SLElement elementWithAccessibilityLabel:value:traits:]`
 /// to match elements with any combination of accessibility traits.
 extern UIAccessibilityTraits SLUIAccessibilityTraitAny;
+
+
+#pragma mark - Debugging Subliminal
+
+/**
+ The methods in the `SLElement (DebugSettings)` category may be useful in debugging Subliminal.
+ */
+@interface SLElement (DebugSettings)
+
+/**
+ Determines whether the specified element should use UIAutomation to confirm that it [is valid](-isValid)
+ after Subliminal has determined (to the best of its ability) that it is valid.
+ 
+ If Subliminal misidentifies an element to UIAutomation, UIAutomation will not necessarily raise 
+ an exception but instead may silently fail (e.g. it may return `null` from APIs like `UIAElement.hitpoint()`, 
+ causing Subliminal to think that an element isn't tappable when really it's not valid). 
+ Enabling this setting may help in diagnosing such failures.
+ 
+ Validity double-checking is disabled (`NO`) by default, because it is more likely that there is a bug 
+ in a particular test than a bug in Subliminal, and because enabling double-checking will 
+ negatively affect the performance of the tests. 
+ */
+@property (nonatomic) BOOL shouldDoubleCheckValidity;
+
+@end
