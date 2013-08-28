@@ -96,17 +96,17 @@
 
 - (NSArray *)slChildAccessibilityElementsFavoringSubviews:(BOOL)favoringSubviews {
     NSMutableArray *children = [NSMutableArray array];
-    NSInteger count = [self accessibilityElementCount];
-    if (count != NSNotFound && count > 0) {
-        // Certain accessibility containers, like those that mock table view headers,
-        // may contain "stale" accessibility elements: elements which initially carry no information,
-        // but when queried (for some accessibility property) cause their container to reload
-        // and replace _all_ of its elements.
-        // We ensure we return valid children by asking for the accessibility label of each element,
-        // then checking if the container yet vends that element--if it doesn't, we retrieve all children again.
-        BOOL shouldReloadChildren, haveReloadedChildren = NO;
-        do {
-            shouldReloadChildren = NO;
+    // Certain accessibility containers, like those that mock table view headers,
+    // may contain "stale" accessibility elements: elements which initially carry no information,
+    // but when queried (for some accessibility property) cause their container to reload
+    // and replace _all_ of its elements.
+    // We ensure we return valid children by asking for the accessibility label of each element,
+    // then checking if the container yet vends that element--if it doesn't, we retrieve all children again.
+    BOOL shouldReloadChildren, haveReloadedChildren = NO;
+    do {
+        shouldReloadChildren = NO;
+        NSInteger count = [self accessibilityElementCount];
+        if (count != NSNotFound && count > 0) {
             for (NSInteger i = 0; i < count; i++) {
                 id element = [self accessibilityElementAtIndex:i];
                 (void)[element accessibilityLabel];
@@ -124,8 +124,8 @@
                 
                 [children addObject:element];
             }
-        } while (shouldReloadChildren);
-    }
+        }
+    } while (shouldReloadChildren);
     return children;
 }
 
