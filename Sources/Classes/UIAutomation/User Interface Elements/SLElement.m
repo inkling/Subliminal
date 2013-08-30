@@ -189,57 +189,73 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
 - (void)waitUntilTappable:(BOOL)waitUntilTappable
         thenPerformActionWithUIARepresentation:(void(^)(NSString *UIARepresentation))block
                                        timeout:(NSTimeInterval)timeout {
-    NSTimeInterval resolutionStart = [NSDate timeIntervalSinceReferenceDate];
-    SLAccessibilityPath *accessibilityPath = [self accessibilityPathWithTimeout:timeout];
-    if (!accessibilityPath) {
-        [NSException raise:SLUIAElementInvalidException format:@"Element '%@' does not exist.", self];
-    }
+    __block NSTimeInterval remainingTimeout = timeout;
+    __block BOOL didCheckTappability = NO, automationRaisedTappabilityException = NO;
+    NSException *__block actionException;
+    do {
+        actionException = nil;
+        
+        NSDate *resolutionStart = [NSDate date];
+        SLAccessibilityPath *accessibilityPath = [self accessibilityPathWithTimeout:remainingTimeout];
+        NSTimeInterval resolutionDuration = [[NSDate date] timeIntervalSinceDate:resolutionStart];
+        remainingTimeout -= resolutionDuration;
 
-    NSTimeInterval resolutionEnd = [NSDate timeIntervalSinceReferenceDate];
-    NSTimeInterval resolutionDuration = resolutionEnd - resolutionStart;
-    NSTimeInterval remainingTimeout = timeout - resolutionDuration;
-
-    // It's possible, if unlikely, that one or more path components could have dropped
-    // out of scope between the path's construction and its binding/serialization
-    // here. If the representation is invalid, UIAutomation will throw an exception,
-    // and it will be caught by Subliminal.
-    NSException *__block actionException = nil;
-    [accessibilityPath bindPath:^(SLAccessibilityPath *boundPath) {
-        // catch and rethrow exceptions so that we can unbind the path
-        @try {
-            NSString *UIARepresentation = [boundPath UIARepresentation];
-
-            if (self.shouldDoubleCheckValidity) {
-                BOOL uiaIsValid = [[[SLTerminal sharedTerminal] evalWithFormat:@"%@.isValid()", UIARepresentation] boolValue];
-                if (!uiaIsValid) {
-                    // Subliminal is not properly identifying the element to UIAutomation:
-                    // there is a bug in `SLAccessibilityPath` or `NSObject (SLAccessibilityHierarchy)`
-                    [NSException raise:SLUIAElementInvalidException format:@"Element '%@' does not exist at path '%@'.", self, UIARepresentation];
-                }
-            }
-
-            // evaluate canDetermineTappability using the current path
-            // because we can't retrieve another while the element is bound
-            if (waitUntilTappable && [self canDetermineTappabilityUsingAccessibilityPath:accessibilityPath]) {
-                if (![[SLTerminal sharedTerminal] waitUntilFunctionWithNameIsTrue:[[self class]SLElementIsTappableFunctionName]
-                                                            whenEvaluatedWithArgs:@[ UIARepresentation ]
-                                                                       retryDelay:SLUIAElementWaitRetryDelay
-                                                                          timeout:remainingTimeout]) {
-                    [NSException raise:SLUIAElementNotTappableException format:@"Element '%@' is not tappable.", self];
-                }
-            }
-            block(UIARepresentation);
+        if (!accessibilityPath) {
+            [NSException raise:SLUIAElementInvalidException format:@"Element '%@' does not exist.", self];
         }
-        @catch (NSException *exception) {
-            // rename JavaScript exceptions to make the context of the exception clear
-            if ([[exception name] isEqualToString:SLTerminalJavaScriptException]) {
-                actionException = [NSException exceptionWithName:SLUIAElementAutomationException
-                                                          reason:[exception reason] userInfo:[exception userInfo]];
-            } else {
+        
+        // It's possible, if unlikely, that one or more path components could have dropped
+        // out of scope between the path's construction and its binding/serialization
+        // here. If the representation is invalid, UIAutomation will throw an exception,
+        // and it will be caught by Subliminal.
+        [accessibilityPath bindPath:^(SLAccessibilityPath *boundPath) {
+            // catch and rethrow exceptions so that we can unbind the path
+            @try {
+                NSString *UIARepresentation = [boundPath UIARepresentation];
+
+                if (self.shouldDoubleCheckValidity) {
+                    BOOL uiaIsValid = [[[SLTerminal sharedTerminal] evalWithFormat:@"%@.isValid()", UIARepresentation] boolValue];
+                    if (!uiaIsValid) {
+                        // Subliminal is not properly identifying the element to UIAutomation:
+                        // there is a bug in `SLAccessibilityPath` or `NSObject (SLAccessibilityHierarchy)`
+                        [NSException raise:SLUIAElementInvalidException format:@"Element '%@' does not exist at path '%@'.", self, UIARepresentation];
+                    }
+                }
+
+                // evaluate canDetermineTappability using the current path
+                // because we can't retrieve another while the element is bound
+                if (waitUntilTappable && [self canDetermineTappabilityUsingAccessibilityPath:accessibilityPath]) {
+                    NSDate *tappabilityCheckStart = [NSDate date];
+                    BOOL isTappable = [[SLTerminal sharedTerminal] waitUntilFunctionWithNameIsTrue:[[self class]SLElementIsTappableFunctionName]
+                                                                             whenEvaluatedWithArgs:@[ UIARepresentation ]
+                                                                                        retryDelay:SLUIAElementWaitRetryDelay
+                                                                                           timeout:remainingTimeout];
+                    NSTimeInterval tappabilityCheckDuration = [[NSDate date] timeIntervalSinceDate:tappabilityCheckStart];
+                    remainingTimeout -= tappabilityCheckDuration;
+                    didCheckTappability = YES;
+
+                    if (!isTappable) [NSException raise:SLUIAElementNotTappableException format:@"Element '%@' is not tappable.", self];
+                }
+                block(UIARepresentation);
+            }
+            @catch (NSException *exception) {
+                // rename JavaScript exceptions to make the context of the exception clear
+                if ([[exception name] isEqualToString:SLTerminalJavaScriptException]) {
+                    exception = [NSException exceptionWithName:SLUIAElementAutomationException
+                                                        reason:[exception reason] userInfo:[exception userInfo]];
+                }
                 actionException = exception;
             }
-        }
-    }];
+        }];
+
+        // In certain circumstances (e.g. during animations, when the view hierarchy is undergoing rapid modification)
+        // it's possible for Subliminal to identify a valid and tappable element, only for that element to have
+        // been replaced in the accessibility hierarchy by the time that UIAutomation goes to manipulate the element.
+        // This results in UIAutomation raising an exception about the element not being tappable
+        // --despite Subliminal's tappability check having succeeded. If this occurs and time remains, we retry.
+        automationRaisedTappabilityException =  [[actionException name] isEqualToString:SLUIAElementAutomationException] &&
+                                                [[actionException reason] hasSuffix:@"could not be tapped"];
+    } while (didCheckTappability && automationRaisedTappabilityException && (remainingTimeout > 0));
     if (actionException) @throw actionException;
 }
 
@@ -250,27 +266,34 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
 - (void)examineMatchingObject:(void (^)(NSObject *))block timeout:(NSTimeInterval)timeout {
     NSParameterAssert(block);
 
-    SLAccessibilityPath *accessibilityPath = [self accessibilityPathWithTimeout:timeout];
-    if (!accessibilityPath) {
-        [NSException raise:SLUIAElementInvalidException
-                    format:@"Element %@ does not exist.", self];
-    }
+    __block NSTimeInterval remainingTimeout = timeout;
+    NSException *__block examinationException;
+    do {
+        examinationException = nil;
 
-    // It's possible, if unlikely, that the matching object could have dropped
-    // out of scope between the path's construction and its examination here
-    __block BOOL matchingObjectWasOutOfScope = NO;
-    [accessibilityPath examineLastPathComponent:^(NSObject *lastPathComponent) {
-        if (!lastPathComponent) {
-            matchingObjectWasOutOfScope = YES;
-            return;
+        NSDate *resolutionStart = [NSDate date];
+        SLAccessibilityPath *accessibilityPath = [self accessibilityPathWithTimeout:remainingTimeout];
+        NSTimeInterval resolutionDuration = [[NSDate date] timeIntervalSinceDate:resolutionStart];
+        remainingTimeout -= resolutionDuration;
+        
+        if (!accessibilityPath) {
+            [NSException raise:SLUIAElementInvalidException format:@"Element '%@' does not exist.", self];
         }
-        block(lastPathComponent);
-    }];
 
-    if (matchingObjectWasOutOfScope) {
-        [NSException raise:SLUIAElementInvalidException
-                    format:@"Element %@ does not exist.", self];
-    }
+        [accessibilityPath examineLastPathComponent:^(NSObject *lastPathComponent) {
+            // It's possible, if unlikely, that the matching object could have dropped
+            // out of scope between the path's construction and its examination here
+            if (!lastPathComponent) {
+                examinationException = [NSException exceptionWithName:SLUIAElementInvalidException
+                                                               reason:[NSString stringWithFormat:@"Element %@ does not exist.", self] userInfo:nil];
+                return;
+            }
+            block(lastPathComponent);
+        }];
+
+        // if the matching object dropped out of scope, retry while the timeout has not elapsed
+    } while (examinationException && (remainingTimeout > 0));
+    if (examinationException) @throw examinationException;
 }
 
 - (BOOL)isValid {
