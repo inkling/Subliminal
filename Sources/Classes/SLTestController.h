@@ -64,21 +64,40 @@
 /// -------------------------------------------
 
 /**
- Run the specified tests.
- 
- Tests are run on a background queue, in indeterminate order.
- Tests must [support the current platform](+[SLTest supportsCurrentPlatform]) 
- in order to be run.
+ Run the specified tests by invoking `runTests:usingSeed:withCompletionBlock:` 
+ with `SLTestControllerRandomSeed` and the specified completion block.
+
+ @param tests The set of tests to run.
+ @param completionBlock An optional block to execute once testing has finished.
+ */
+- (void)runTests:(NSSet *)tests withCompletionBlock:(void (^)())completionBlock;
+
+/**
+ Runs the specified tests.
+
+ Tests are run on a background queue, in an order randomized using the specified seed.
+ Clients should generally pass `SLTestControllerRandomSeed` to let the test controller choose a seed.
+ If any tests fail, the test controller will log the seed that was used,
+ so that the run order may be reproduced by invoking this method with that seed.
+
+ Tests must [support the current platform](+[SLTest supportsCurrentPlatform]) in order to be run.
  If any tests [are focused](+[SLTest isFocused]), only those tests will be run.
  
+ When using a given seed, tests execute in the same relative order regardless of focus.
+ That is, if a set of tests _| A, B, C, D |_ (all unfocused) 
+ are run in order _[ B, A, C, D ]_ when using a certain seed,
+ when tests _B_ and _C_ are focused, they will be run in order _[ B, C ]_.
+
  When all tests have finished, the completion block (if provided)
  will be executed on the main queue. The test controller will then signal 
  UIAutomation to finish executing commands.
-
- @param tests The set of tests to run.
- @param completionBlock An optional block to execute once testing has finished. 
+ 
+ @param tests           The set of tests to run.
+ @param seed            The seed to use to randomize the tests.
+                        If `SLTestControllerRandomSeed` is passed, the test controller will choose a seed.
+ @param completionBlock An optional block to execute once testing has finished.
  */
-- (void)runTests:(NSSet *)tests withCompletionBlock:(void (^)())completionBlock;
+- (void)runTests:(NSSet *)tests usingSeed:(unsigned int)seed withCompletionBlock:(void (^)())completionBlock;
 
 @end
 
@@ -123,3 +142,10 @@
 @property (nonatomic) BOOL shouldWaitToStartTesting;
 
 @end
+
+
+#pragma mark - Constants
+
+/// A value that may be passed to `-runTests:usingSeed:withCompletionBlock:`
+/// to indicate that the test controller should choose a seed.
+extern const unsigned int SLTestControllerRandomSeed;

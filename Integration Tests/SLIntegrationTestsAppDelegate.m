@@ -39,7 +39,7 @@
 @end
 
 @implementation SLIntegrationTestsAppDelegate {
-    NSSet *_tests;
+    NSArray *_tests;
     NSString *_terminalStartupResult;
 }
 
@@ -53,10 +53,10 @@
     if (DEBUG_TEST_CASE_VIEW_CONTROLLER_CLASS) {
         rootViewController = [[DEBUG_TEST_CASE_VIEW_CONTROLLER_CLASS alloc] initWithTestCaseWithSelector:DEBUG_TEST_CASE];
     } else {
-        // Filter the tests for the SLTestController
-        // so that the SLTestsViewController only displays appropriate tests
-        _tests = [SLTestController testsToRun:[SLTest allTests] withFocus:NULL];
-        rootViewController = [[SLTestsViewController alloc] initWithTests:[_tests allObjects]];
+        // Filter the tests for the `SLTestController`
+        // so that the `SLTestsViewController` only displays appropriate tests
+        _tests = [SLTestController testsToRun:[SLTest allTests] usingSeed:NULL withFocus:NULL];
+        rootViewController = [[SLTestsViewController alloc] initWithTests:_tests];
     }
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
     self.window.rootViewController = navController;
@@ -102,7 +102,7 @@
     }
 
     // Otherwise, run the tests
-    [[SLTestController sharedTestController] runTests:_tests withCompletionBlock:nil];
+    [[SLTestController sharedTestController] runTests:[NSSet setWithArray:_tests] withCompletionBlock:nil];
 }
 
 // Called both by the UIAlertView callback below and the NSTimer above

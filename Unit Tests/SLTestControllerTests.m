@@ -56,6 +56,183 @@
 
 #pragma mark - Test execution
 
+#pragma mark -Randomization
+
+- (NSArray *)mocksToRecordRunOrderOfTests:(NSSet *)testClasses inArray:(NSMutableArray *)runOrder {
+    NSMutableArray *testMocks = [[NSMutableArray alloc] initWithCapacity:[testClasses count]];
+    for (Class testClass in testClasses) {
+        id testMock = [OCMockObject partialMockForClass:testClass];
+        [[[[testMock expect] andDo:^(NSInvocation *invocation) {
+            // actually track the test *class* so that run orders can be compared using `-[NSArray isEqual:]`
+            [runOrder addObject:testClass];
+        }] andForwardToRealObject] runAndReportNumExecuted:[OCMArg anyPointer]
+                                                    failed:[OCMArg anyPointer]
+                                        failedUnexpectedly:[OCMArg anyPointer]];
+        [testMocks addObject:testMock];
+    }
+    return [testMocks copy];
+}
+
+static const NSUInteger kNumSeedTrials = 100;
+- (NSCountedSet *)runOrderDistributionForNumTrials:(NSUInteger)numTrials usingTests:(NSSet *)tests seed:(unsigned int)seed {
+    NSCountedSet *orderDistribution = [[NSCountedSet alloc] init];
+    NSUInteger runCount = 0;
+    for (NSUInteger trialIndex = 0; trialIndex < numTrials; trialIndex++) {
+        NSMutableArray *runOrder = [[NSMutableArray alloc] initWithCapacity:[tests count]];
+        NSArray *testMocks = [self mocksToRecordRunOrderOfTests:tests inArray:runOrder];
+
+        SLRunTestsUsingSeedAndWaitUntilFinished(tests, seed, nil);
+        STAssertNoThrow([testMocks makeObjectsPerformSelector:@selector(verify)], @"One or more tests were not run.");
+        [testMocks makeObjectsPerformSelector:@selector(stopMocking)];
+        [orderDistribution addObject:runOrder];
+        runCount++;
+    }
+
+    return orderDistribution;
+}
+
+- (void)testTestsRunInRandomOrderWhen_SLTestControllerRandomSeed_IsSpecified {
+    NSSet *tests = [NSSet setWithObjects:
+        [TestWithSomeTestCases class],
+        [TestWhichSupportsAllPlatforms class],
+        [TestWithPlatformSpecificTestCases class],
+        nil
+    ];
+
+    // verify that each order was seen with count ~= NUM_TRIALS / NUM_ORDERS
+    // to verify randomness and rough uniformity
+    __block NSUInteger runCount = 0;
+    __block BOOL orderWasRandomized = YES;
+    const NSUInteger kExpectedNumOrders = 6;   // 3!
+    const double kExpectedOrderCount = (double)kNumSeedTrials / kExpectedNumOrders;
+    const double kOrderCountTolerance = kExpectedOrderCount * 0.4;  // observed to fit
+    NSCountedSet *orderDistribution = [self runOrderDistributionForNumTrials:kNumSeedTrials usingTests:tests seed:SLTestControllerRandomSeed];
+    [orderDistribution enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+        NSUInteger orderCount = [orderDistribution countForObject:obj];
+        runCount += orderCount;
+        orderWasRandomized = (orderWasRandomized && (ABS(orderCount - kExpectedOrderCount) <= kOrderCountTolerance));
+    }];
+
+    STAssertTrue(orderWasRandomized, @"Tests did not run in a sufficiently uniformly-random order when `SLTestControllerRandomSeed` was specified.");
+    STAssertTrue(runCount == kNumSeedTrials, @"The order distribution did not account for all trials.");
+}
+
+- (void)testTestsRunInDeterminateOrderWhenASeedIsSpecified {
+    NSSet *tests = [NSSet setWithObjects:
+        [TestWithSomeTestCases class],
+        [TestWhichSupportsAllPlatforms class],
+        [TestWithPlatformSpecificTestCases class],
+        nil
+    ];
+
+    const unsigned int seed = 716839131;
+    NSCountedSet *orderDistribution = [self runOrderDistributionForNumTrials:kNumSeedTrials usingTests:tests seed:seed];
+    STAssertTrue([orderDistribution count] == 1, @"Tests should always execute in the same order when a seed is specified.");
+    STAssertTrue([orderDistribution countForObject:[[orderDistribution allObjects] lastObject]] == kNumSeedTrials,
+                 @"The order distribution did not account for all trials.");
+}
+
+- (void)testTheSeedUsedIsLoggedIfATestFails {
+    NSSet *tests = [NSSet setWithObjects:
+        [TestWithSomeTestCases class],
+        [TestWhichSupportsAllPlatforms class],
+        [TestWithPlatformSpecificTestCases class],
+        nil
+    ];
+
+    NSMutableArray *firstRunOrder = [[NSMutableArray alloc] initWithCapacity:[tests count]];
+    NSArray *testMocks = [self mocksToRecordRunOrderOfTests:tests inArray:firstRunOrder];
+
+    // Cause a test case to fail
+    id failingTestMock;
+    for (id testMock in testMocks) {
+        // find the mock which implements the test case we want to fail
+        if ([testMock respondsToSelector:@selector(testOne)]) {
+            failingTestMock = testMock;
+            break;
+        }
+    }
+    STAssertNotNil(failingTestMock,
+                   @"At least one test (i.e. `TestWithSomeTestCases`) should have a test case called `testOne`,\
+                   and should be mocked to track its execution order.");
+    NSException *exception = [NSException exceptionWithName:SLTestAssertionFailedException
+                                                     reason:@"Test case failed due to assertion failing."
+                                                   userInfo:nil];
+    [[[failingTestMock expect] andThrow:exception] testOne];
+
+    // Expect testing to finish with a failure
+    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:[tests count] numTestsFailed:1];
+
+    // Expect the seed to be logged, and capture it
+    __block unsigned int seed = 0;
+    [[_loggerMock expect] logMessage:[OCMArg checkWithBlock:^BOOL(NSString *message) {
+        NSRegularExpression *seedExpression = [NSRegularExpression regularExpressionWithPattern:@"^The run order may be reproduced using seed (\\d+)\\.$"
+                                                                                        options:0 error:NULL];
+        NSTextCheckingResult *match = [seedExpression firstMatchInString:message options:0 range:NSMakeRange(0, [message length])];
+        if (match) {
+            NSRange rangeOfSeed = [match rangeAtIndex:1];
+            NSString *seedAsString = [message substringWithRange:rangeOfSeed];
+            sscanf([seedAsString UTF8String], "%u", &seed);
+        }
+        return (match != nil);
+    }]];
+
+    // Run tests
+    SLRunTestsAndWaitUntilFinished(tests, nil);
+
+    STAssertNoThrow([testMocks makeObjectsPerformSelector:@selector(verify)], @"One or more tests were not run.");
+    STAssertNoThrow([_loggerMock verify], @"The seed was not logged.");
+    [testMocks makeObjectsPerformSelector:@selector(stopMocking)];
+
+    NSMutableArray *secondRunOrder = [[NSMutableArray alloc] initWithCapacity:[tests count]];
+    testMocks = [self mocksToRecordRunOrderOfTests:tests inArray:secondRunOrder];
+
+    // Run tests again using the seed that we captured
+    SLRunTestsUsingSeedAndWaitUntilFinished(tests, seed, nil);
+    STAssertNoThrow([testMocks makeObjectsPerformSelector:@selector(verify)], @"One or more tests were not run.");
+
+    // And expect the test order to have been reproduced
+    STAssertTrue([secondRunOrder isEqualToArray:firstRunOrder], @"Test order was not reproduced.");
+}
+
+- (void)testTheUserIsWarnedWhenUsingAPredeterminedSeed {
+    NSSet *tests = [NSSet setWithObjects:
+        [TestWithSomeTestCases class],
+        [TestWhichSupportsAllPlatforms class],
+        [TestWithPlatformSpecificTestCases class],
+        nil
+    ];
+
+    const unsigned int seed = 716839131;
+
+    // warning at start
+    [[_loggerMock expect] logMessage:[NSString stringWithFormat:@"Running tests in order as predetermined by seed %u.", seed]];
+    [[_loggerMock expect] logTestingStart];
+
+    // Here we're hardcoding the number of tests that `runTestsUsingSeed:testsRanInSameOrder:` uses
+    // --this will just have to be updated if that method changes
+    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:3 numTestsFailed:0];
+
+    // warning at end
+    NSString *const seedWarning = @"Tests were run in a predetermined order.";
+    [[_loggerMock expect] logWarning:seedWarning];
+
+    // verify that the warning was emitted
+    SLRunTestsUsingSeedAndWaitUntilFinished(tests, seed, nil);
+    STAssertNoThrow([_loggerMock verify], @"The user was not warned that test order was predetermined.");
+
+    // and we don't expect these messages to be logged if we're not using a predetermined seed
+    [[_loggerMock reject] logMessage:[OCMArg checkWithBlock:^BOOL(NSString *message) {
+        NSRegularExpression *seedExpression = [NSRegularExpression regularExpressionWithPattern:@"^Running tests in order as predetermined by seed (\\d+)\\.$"
+                                                                                        options:0 error:NULL];
+        NSTextCheckingResult *match = [seedExpression firstMatchInString:message options:0 range:NSMakeRange(0, [message length])];
+        return (match != nil);
+    }]];
+    [[_loggerMock reject] logWarning:seedWarning];
+    SLRunTestsUsingSeedAndWaitUntilFinished(tests, SLTestControllerRandomSeed, nil);
+    STAssertNoThrow([_loggerMock verify], @"The user should not have been given a warning.");
+}
+
 #pragma mark -Abstract tests
 
 - (void)testAbstractTestsAreNotRun {
@@ -251,6 +428,67 @@
     
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
     STAssertNoThrow([sequencer verify], @"Test was not run/messages were not logged as expected.");
+}
+
+- (void)testTestsExecuteInSameRelativeOrderRegardlessOfFocusWhenUsingASeed {
+    NSSet *testsToBeFocused = [NSSet setWithObjects:
+       [TestWithSomeTestCases class],
+       [TestWhichSupportsAllPlatforms class],
+       [TestWithPlatformSpecificTestCases class],
+       nil
+    ];
+    Class testToNotBeFocused = [TestThatIsNotFocused class];
+    NSSet *allTests = [testsToBeFocused setByAddingObject:testToNotBeFocused];
+
+    NSMutableArray *completeRunOrder = [[NSMutableArray alloc] initWithCapacity:[allTests count]];
+    NSArray *testMocks = [self mocksToRecordRunOrderOfTests:allTests inArray:completeRunOrder];
+
+    // Run all tests once with a seed so we can reproduce the order
+    const unsigned int seed = 716839131;
+    SLRunTestsUsingSeedAndWaitUntilFinished(allTests, seed, nil);
+    STAssertNoThrow([testMocks makeObjectsPerformSelector:@selector(verify)], @"One or more tests were not run.");
+    [testMocks makeObjectsPerformSelector:@selector(stopMocking)];
+
+    // Determine the relative order in which the tests-to-be-focused ran
+    NSMutableArray *unfocusedRunOrder = [[NSMutableArray alloc] initWithCapacity:[testsToBeFocused count]];
+    for (Class testClass in completeRunOrder) {
+        if ([testsToBeFocused member:testClass]) {
+            [unfocusedRunOrder addObject:testClass];
+        }
+    }
+    // sanity check
+    STAssertTrue([unfocusedRunOrder count] == [testsToBeFocused count],
+                 @"We should have just collected only that subset of tests that will be run with focus.");
+
+    // force the tests-to-be-focused to become focused
+    NSMutableArray *testClassMocks = [[NSMutableArray alloc] initWithCapacity:[testsToBeFocused count]];
+    for (Class testClass in testsToBeFocused) {
+        id testClassMock = [OCMockObject partialMockForClassObject:testClass];
+        BOOL isFocused = YES;
+        [[[testClassMock stub] andReturnValue:OCMOCK_VALUE(isFocused)] isFocused];
+        // Ensure that regardless of how the test controller reads the focused state,
+        // we'll return the new value ( https://github.com/inkling/ocmock/issues/15 )
+        [[[testClassMock stub] andReturn:@(isFocused)] valueForKey:@"isFocused"];
+        [testClassMocks addObject:testClassMock];
+    }
+
+    // Run all tests (but really just the focused ones) again
+    NSMutableArray *focusedRunOrder = [[NSMutableArray alloc] initWithCapacity:[testsToBeFocused count]];
+    testMocks = [self mocksToRecordRunOrderOfTests:testsToBeFocused inArray:focusedRunOrder];
+
+    id testToNotBeFocusedMock = [OCMockObject partialMockForClass:testToNotBeFocused];
+    [[testToNotBeFocusedMock reject] runAndReportNumExecuted:[OCMArg anyPointer]
+                                                      failed:[OCMArg anyPointer]
+                                          failedUnexpectedly:[OCMArg anyPointer]];
+
+    SLRunTestsUsingSeedAndWaitUntilFinished(allTests, seed, nil);
+    STAssertNoThrow([testMocks makeObjectsPerformSelector:@selector(verify)], @"One or more focused tests were not run.");
+    STAssertNoThrow([testToNotBeFocusedMock verify], @"Unfocused test was run despite other tests being focused.");
+
+    // Expect the relative order of the focused tests to have been preserved
+    STAssertTrue([focusedRunOrder isEqualToArray:unfocusedRunOrder],
+                 @"The tests that were focused should have executed in the same relative order when focused\
+                 as they had when unfocused.");
 }
 
 #pragma mark - Miscellaneous

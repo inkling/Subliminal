@@ -37,13 +37,15 @@ subliminal-test (-project <project_path> | -workspace <workspace_path>)
 \`subliminal-test\` builds a scheme contained in an Xcode project or Xcode workspace,
 then tests the product using Subliminal.
 
-\`subliminal-test\` returns failure (non-0) if:
+\`subliminal-test\` returns failure in the following conditions, as indicated by their error codes:
 
-  * the tests did not finish
-  * the tests ran in a focused state (see \`+[SLTest isFocused]\`), because then only a subset of tests may have run
-  * one or more tests failed
+  * 1 - the tests did not finish
+  * 2 - one or more tests failed
+  * 3 - the tests ran in a focused state (see \`+[SLTest isFocused]\`), because then only a subset of tests may have run
+  * 4 - the tests ran using a predetermined seed (see \`-[SLTestController runTests:usingSeed:withCompletionBlock:]\`),
+  	because the predetermined test order may have masked test pollution
 
-Otherwise, it returns success (0).
+Otherwise, \`subliminal-test\` returns success (0).
 
 \`subliminal-test\` expects to be run:
 
@@ -649,6 +651,14 @@ if [ $? -eq 0 ]; then
 	echo "\nERROR: Tests were committed with focus--fewer test cases may have run than normal."
 	TEST_STATUS=3
 else
+	grep -q "Tests were run in a predetermined order." "$RESULT_LOG"
+	if [ $? -eq 0 ]; then
+		echo "\nERROR: Tests were run in a predetermined order, possibly masking test pollution."
+		TEST_STATUS=4
+	fi
+fi
+
+if [ $TEST_STATUS -eq 0 ]; then
 	OVERALL_RESULT=`grep "Testing finished" "$RESULT_LOG"`
 	if [[ -z "$OVERALL_RESULT" ]]; then
 		echo "\nERROR: Tests did not finish."
