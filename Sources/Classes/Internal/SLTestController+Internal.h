@@ -34,19 +34,31 @@
 /// ----------------------------------------
 
 /**
- Given a set of tests, returns a new set filtered to those that should be run.
+ Given a set of tests, returns an array ordered by the specified seed 
+ and filtered to those that should be run.
  
- The set of tests is filtered:
+ The set of tests is sorted and randomized using the specified seed. 
+ The resulting array is then filtered:
  
- 1. to those that [are concrete](+[SLTest isAbstract]),
+ 1. to those tests that [are concrete](+[SLTest isAbstract]),
  2. that [support the current platform](+[SLTest supportsCurrentPlatform]),
  3. and that [are focused](+[SLTest isFocused]) (if any remaining are focused).
  
- @param tests The set of `SLTest` subclasses to process.
- @param withFocus If this is non-`NULL`, upon return, it will be set to `YES`
- if any of the tests [are focused](+[SLTest isFocused]), `NO` otherwise.
- @return A filtered set of tests to run.
+ By sorting prior to filtering, the relative order of tests is maintained 
+ regardless of focus.
+
+ @param tests       The set of `SLTest` subclasses to process.
+
+ @param seed        The seed to use to randomize the test order. If this is null, or points to a value of
+                    `SLTestControllerRandomSeed`, the test controller will choose a seed.
+                    If this is non-null, upon return, it will be set to the seed that was used to randomize 
+                    the order (whether chosen by the test controller, or specified by the client).
+ 
+ @param withFocus   If this is non-`NULL`, upon return, it will be set to `YES`
+                    if any of the tests [are focused](+[SLTest isFocused]), `NO` otherwise.
+
+ @return            A filtered and ordered array of tests to run.
  */
-+ (NSSet *)testsToRun:(NSSet *)tests withFocus:(BOOL*)withFocus;
++ (NSArray *)testsToRun:(NSSet *)tests usingSeed:(inout unsigned int *)seed withFocus:(BOOL *)withFocus;
 
 @end
