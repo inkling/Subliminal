@@ -27,6 +27,7 @@
 
 #import "TestUtilities.h"
 #import "SharedSLTests.h"
+#import "chisqr.h"
 
 @interface SLTestControllerTests : SenTestCase
 @end
@@ -93,27 +94,32 @@ static const NSUInteger kNumSeedTrials = 100;
 
 - (void)testTestsRunInRandomOrderWhen_SLTestControllerRandomSeed_IsSpecified {
     NSSet *tests = [NSSet setWithObjects:
-        [TestWithSomeTestCases class],
-        [TestWhichSupportsAllPlatforms class],
-        [TestWithPlatformSpecificTestCases class],
-        nil
-    ];
+                    [TestWithSomeTestCases class],
+                    [TestWhichSupportsAllPlatforms class],
+                    [TestWithPlatformSpecificTestCases class],
+                    nil
+                    ];
 
-    // verify that each order was seen with count ~= NUM_TRIALS / NUM_ORDERS
+    // verify by a chi-squared test that the distribution of test orders we see
+    // has a probability of occurring (assuming that Subliminal chooses every
+    // test order with equal probability) of at least 5%.
     // to verify randomness and rough uniformity
     __block NSUInteger runCount = 0;
-    __block BOOL orderWasRandomized = YES;
-    const NSUInteger kExpectedNumOrders = 6;   // 3!
-    const double kExpectedOrderCount = (double)kNumSeedTrials / kExpectedNumOrders;
-    const double kOrderCountTolerance = kExpectedOrderCount * 0.4;  // observed to fit
     NSCountedSet *orderDistribution = [self runOrderDistributionForNumTrials:kNumSeedTrials usingTests:tests seed:SLTestControllerRandomSeed];
+    const int dslen = 6; // The number of possible orders of three tests: 3 * 2 * 1
+    double *dset = (double *)calloc(dslen, sizeof(double));
+    __block int j = 0;
     [orderDistribution enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
-        NSUInteger orderCount = [orderDistribution countForObject:obj];
-        runCount += orderCount;
-        orderWasRandomized = (orderWasRandomized && (ABS(orderCount - kExpectedOrderCount) <= kOrderCountTolerance));
+        NSUInteger countThisPermutation = [orderDistribution countForObject:obj];
+        runCount += countThisPermutation;
+        dset[j] = countThisPermutation;
+        j++;
+        *stop = (j >= dslen);
     }];
+    bool isUniform = ChiIsUniform(dset, dslen, dslen - 1, 0.05);
+    free(dset);
 
-    STAssertTrue(orderWasRandomized, @"Tests did not run in a sufficiently uniformly-random order when `SLTestControllerRandomSeed` was specified.");
+    STAssertTrue(isUniform, @"Tests did not run in a sufficiently uniformly-random order when `SLTestControllerRandomSeed` was specified.");
     STAssertTrue(runCount == kNumSeedTrials, @"The order distribution did not account for all trials.");
 }
 
