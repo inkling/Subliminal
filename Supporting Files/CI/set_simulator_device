@@ -35,7 +35,10 @@ if [[ -z "$DEVICE" ]]; then
 fi
 
 # Change device type
-defaults write com.apple.iphonesimulator SimulateDevice "'$DEVICE'"
+# If the device type contains punctuation, it needs to be single-quoted to be written into the plist
+# but we only quote it if necessary, because the simulator rejects e.g. "'iPhone'"
+SAFE_DEVICE=`[[ "$DEVICE" =~ [[:punct:]] ]] && echo "'$DEVICE'" || echo "$DEVICE"`
+defaults write com.apple.iphonesimulator SimulateDevice "$SAFE_DEVICE"
 
 # Restart simulator
 killall "iPhone Simulator" 2> /dev/null
