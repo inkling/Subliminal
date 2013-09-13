@@ -31,6 +31,11 @@
 		0696BA5916E013D600DD70CF /* SLElementDraggingTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0696BA5616E013D600DD70CF /* SLElementDraggingTestViewController.m */; };
 		0696BA5A16E013D600DD70CF /* SLElementDraggingTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0696BA5716E013D600DD70CF /* SLElementDraggingTestViewController.xib */; };
 		06F49B6117DA946400143D42 /* chisqr.c in Sources */ = {isa = PBXBuildFile; fileRef = 06F49B6017DA946400143D42 /* chisqr.c */; };
+		2C903BC017F525E700555317 /* SLSwitchTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C903BBD17F525E700555317 /* SLSwitchTest.m */; };
+		2C903BC117F525E700555317 /* SLSwitchTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C903BBE17F525E700555317 /* SLSwitchTestViewController.m */; };
+		2C903BC217F525E700555317 /* SLSwitchTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2C903BBF17F525E700555317 /* SLSwitchTestViewController.xib */; };
+		2CE9AA4C17E3A747007EF0B5 /* SLSwitch.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CE9AA4A17E3A747007EF0B5 /* SLSwitch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2CE9AA4D17E3A747007EF0B5 /* SLSwitch.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CE9AA4B17E3A747007EF0B5 /* SLSwitch.m */; };
 		CA75E78216697A1200D57E92 /* SLDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = CA75E78016697A1200D57E92 /* SLDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CA75E78516697C0000D57E92 /* SLDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = CA75E78116697A1200D57E92 /* SLDevice.m */; };
 		CAC388051641CD7500F995F9 /* SLStringUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC388031641CD7500F995F9 /* SLStringUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -243,6 +248,11 @@
 		0696BA5716E013D600DD70CF /* SLElementDraggingTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementDraggingTestViewController.xib; sourceTree = "<group>"; };
 		06F49B6017DA946400143D42 /* chisqr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = chisqr.c; sourceTree = "<group>"; };
 		06F49B6517DA947000143D42 /* chisqr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = chisqr.h; sourceTree = "<group>"; };
+		2C903BBD17F525E700555317 /* SLSwitchTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLSwitchTest.m; sourceTree = "<group>"; };
+		2C903BBE17F525E700555317 /* SLSwitchTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLSwitchTestViewController.m; sourceTree = "<group>"; };
+		2C903BBF17F525E700555317 /* SLSwitchTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLSwitchTestViewController.xib; sourceTree = "<group>"; };
+		2CE9AA4A17E3A747007EF0B5 /* SLSwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLSwitch.h; sourceTree = "<group>"; };
+		2CE9AA4B17E3A747007EF0B5 /* SLSwitch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLSwitch.m; sourceTree = "<group>"; };
 		CA75E78016697A1200D57E92 /* SLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLDevice.h; sourceTree = "<group>"; };
 		CA75E78116697A1200D57E92 /* SLDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDevice.m; sourceTree = "<group>"; };
 		CAC388031641CD7500F995F9 /* SLStringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLStringUtilities.h; sourceTree = "<group>"; };
@@ -448,6 +458,16 @@
 				F0CC7596173B092300E8F94A /* Dragging */,
 			);
 			name = "SLElement Gestures and Actions Tests";
+			sourceTree = "<group>";
+		};
+		2C903BB917F525C900555317 /* SLSwitch Tests */ = {
+			isa = PBXGroup;
+			children = (
+				2C903BBD17F525E700555317 /* SLSwitchTest.m */,
+				2C903BBE17F525E700555317 /* SLSwitchTestViewController.m */,
+				2C903BBF17F525E700555317 /* SLSwitchTestViewController.xib */,
+			);
+			name = "SLSwitch Tests";
 			sourceTree = "<group>";
 		};
 		CAC388011641CD4800F995F9 /* Internal */ = {
@@ -673,6 +693,8 @@
 				F0C07A371703F95B00C93F93 /* SLAlert.m */,
 				F0C07A451703FEF600C93F93 /* SLButton.h */,
 				F0C07A461703FEF600C93F93 /* SLButton.m */,
+				2CE9AA4A17E3A747007EF0B5 /* SLSwitch.h */,
+				2CE9AA4B17E3A747007EF0B5 /* SLSwitch.m */,
 				F0C07A511704011300C93F93 /* SLKeyboard.h */,
 				F0C07A521704011300C93F93 /* SLKeyboard.m */,
 				F00800CC174C1C64001927AC /* SLPopover.h */,
@@ -796,6 +818,7 @@
 				F089F9DC1745FB3800DF1F25 /* SLKeyboard Tests */,
 				F00800D3174C2871001927AC /* SLPopover Tests */,
 				F089F9FD1746B1D200DF1F25 /* SLStaticElement Tests */,
+				2C903BB917F525C900555317 /* SLSwitch Tests */,
 				F01EBC951701150E00FF6A7C /* SLTextField Tests */,
 				F0A3F63917A716FC007529C3 /* SLTextView Tests */,
 				F013798E16D0843B009BAF22 /* SLTerminal Tests */,
@@ -899,6 +922,7 @@
 				F05C4F90171406EF00A381BC /* SLTerminal+ConvenienceFunctions.h in Headers */,
 				F05C51E5171C8AE000A381BC /* SLMainThreadRef.h in Headers */,
 				F0A04E1D1749F70F002C7520 /* SLElement.h in Headers */,
+				2CE9AA4C17E3A747007EF0B5 /* SLSwitch.h in Headers */,
 				F089F98617445D9A00DF1F25 /* SLStaticElement.h in Headers */,
 				F00800CE174C1C64001927AC /* SLPopover.h in Headers */,
 				F043469F175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.h in Headers */,
@@ -1072,6 +1096,7 @@
 				F0A3F63F17A7172E007529C3 /* SLTextViewTestViewController.xib in Resources */,
 				F0A3F64117A73198007529C3 /* SLWebTextView.html in Resources */,
 				DB2627E117B96974009DA3A6 /* SLStatusBarTestViewController.xib in Resources */,
+				2C903BC217F525E700555317 /* SLSwitchTestViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1119,6 +1144,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2CE9AA4D17E3A747007EF0B5 /* SLSwitch.m in Sources */,
 				F0695DE4160138DF000B05D0 /* SLUIAElement.m in Sources */,
 				F0695DE5160138DF000B05D0 /* SLLogger.m in Sources */,
 				F0695DE7160138DF000B05D0 /* SLTerminal.m in Sources */,
@@ -1151,6 +1177,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C903BC017F525E700555317 /* SLSwitchTest.m in Sources */,
 				F0AC80A016BB299500C5D5C0 /* main.m in Sources */,
 				F0AC80A416BB299500C5D5C0 /* SLIntegrationTestsAppDelegate.m in Sources */,
 				F0AC80BD16BB50FF00C5D5C0 /* SLTestsViewController.m in Sources */,
@@ -1169,6 +1196,7 @@
 				F0AE4C8E16F7F92D00B2BB2B /* SLElementStateTestViewController.m in Sources */,
 				F07DA32D16E43AD3004C2282 /* SLAlertTest.m in Sources */,
 				F07DA32E16E43AD3004C2282 /* SLAlertTestViewController.m in Sources */,
+				2C903BC117F525E700555317 /* SLSwitchTestViewController.m in Sources */,
 				F01EBC9B170115B100FF6A7C /* SLTextFieldTest.m in Sources */,
 				F01EBC9C170115B100FF6A7C /* SLTextFieldTestViewController.m in Sources */,
 				F077D70D16D9D77900908FF5 /* SLElementVisibilityTest.m in Sources */,
