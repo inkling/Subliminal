@@ -90,7 +90,13 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
 
     return [[self alloc] initWithPredicate:^BOOL(NSObject *obj) {
         BOOL matchesLabel   = ((label == nil) || [obj.accessibilityLabel isEqualToString:label]);
-        BOOL matchesValue   = ((value == nil) || [obj.accessibilityValue isEqualToString:value]);
+        // in iOS 6.1 (at least), `UITextView` returns an attributed string from `-accessibilityValue`
+        // as does `UISearchBarTextField` in iOS 7  >.<
+        id accessibilityValue = obj.accessibilityValue;
+        if ([accessibilityValue isKindOfClass:[NSAttributedString class]]) {
+            accessibilityValue = [accessibilityValue string];
+        }
+        BOOL matchesValue   = ((value == nil) || [accessibilityValue isEqualToString:value]);
         BOOL matchesTraits  = ((traits == SLUIAccessibilityTraitAny) || ((obj.accessibilityTraits & traits) == traits));
         return (matchesLabel && matchesValue && matchesTraits);
     } description:[NSString stringWithFormat:@"label: %@; value: %@; traits: %@", label, value, traitsString]];

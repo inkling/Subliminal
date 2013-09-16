@@ -48,7 +48,8 @@
     if ([self.accessibilityLabel length]) {
         [properties addObject:[NSString stringWithFormat:@"label = '%@'", [self.accessibilityLabel slStringByEscapingForJavaScriptLiteral]]];
     }
-    // in iOS 6.1 at least, `UITextView` returns an attributed string from `-accessibilityValue` >.<
+    // in iOS 6.1 (at least), `UITextView` returns an attributed string from `-accessibilityValue`
+    // as does `UISearchBarTextField` in iOS 7  >.<
     id accessibilityValue = self.accessibilityValue;
     if ([accessibilityValue isKindOfClass:[NSAttributedString class]]) {
         accessibilityValue = [accessibilityValue string];
