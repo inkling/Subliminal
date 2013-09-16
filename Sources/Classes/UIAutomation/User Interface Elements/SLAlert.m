@@ -131,7 +131,7 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
             SLAlertHandler.loggingEnabled = %@;"
 
             @"UIATarget.onAlert = function(alert) {\
-                if (SLAlertHandler.loggingEnabled) UIALogger.logMessage('Handling alert \"' + alert.staticTexts()[0].label() + '\"…');"
+                if (SLAlertHandler.loggingEnabled) UIALogger.logMessage('Handling alert \"' + alert.name() + '\"…');"
          
                 // enumerate registered handlers, from first to last
                 @"for (var handlerIndex = 0; handlerIndex < SLAlertHandler.alertHandlers.length; handlerIndex++) {\
@@ -396,7 +396,7 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
 
 - (NSString *)isEqualToUIAAlertPredicate {
     static NSString *const kIsEqualToUIAAlertPredicateFormatString = @"\
-        return alert.staticTexts()[0].label() === \"%@\";\
+        return alert.name() === \"%@\";\
     ";
     NSString *isEqualToUIAAlertPredicate = [NSString stringWithFormat:kIsEqualToUIAAlertPredicateFormatString,
                                             [_title slStringByEscapingForJavaScriptLiteral]];
