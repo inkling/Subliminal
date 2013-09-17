@@ -56,4 +56,16 @@
     }
 }
 
+// prevent test case views from laying out under the nav bar on iOS 7
+// We conditionalize this on the definition of `__IPHONE_7_0` so that Subliminal
+// can be continue to be built using the iOS 6.1 SDK until Travis is updated
+// (https://github.com/travis-ci/travis-ci/issues/1422)
+#ifdef __IPHONE_7_0
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_7_0
+- (UIRectEdge)edgesForExtendedLayout {
+    return UIRectEdgeNone;
+}
+#endif
+#endif
+
 @end
