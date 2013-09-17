@@ -317,8 +317,10 @@
 /**
  Returns the screen position to tap for the element.
  
- This is the midpoint of the element's `-rect`, unless that point cannot be tapped,
- in which case this method returns an alternate point, if possible.
+ Below iOS 7, this defaults to the midpoint of the element's `-rect`;
+ at or above iOS 7, this defaults to the element's [accessibility activation point](-[NSObject (UIAccessibility) accessibilityActivationPoint]).
+ 
+ If the default hitpoint cannot be tapped, this method returns an alternate point, if possible.
  
  @return The position to tap for the user interface element represented by the 
  specified element, in screen coordinates, or `SLCGPointNull` if such a position 
