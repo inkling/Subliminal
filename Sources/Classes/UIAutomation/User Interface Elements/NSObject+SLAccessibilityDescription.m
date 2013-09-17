@@ -57,6 +57,9 @@
     if ([accessibilityValue length]) {
         [properties addObject:[NSString stringWithFormat:@"value = '%@'", [accessibilityValue slStringByEscapingForJavaScriptLiteral]]];
     }
+    if ([self.accessibilityHint length]) {
+        [properties addObject:[NSString stringWithFormat:@"hint = '%@'", [self.accessibilityHint slStringByEscapingForJavaScriptLiteral]]];
+    }
 
     UIAccessibilityTraits traits = self.accessibilityTraits;
     NSMutableArray *traitNames = [NSMutableArray array];
