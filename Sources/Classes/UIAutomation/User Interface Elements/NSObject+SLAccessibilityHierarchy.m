@@ -290,8 +290,9 @@
     return isPopover;
 }
 
-// An object is a mock view if its accessibilityIdentifier tracks
-// the accessibilityIdentifier of the view.
+// An object is a mock view if its `accessibilityIdentifier` tracks
+// the `accessibilityIdentifier` of the view, or, failing that,
+// if its occupies the same region of the same accessibility parent.
 + (BOOL)elementObject:(id)elementObject isMockingViewObject:(id)viewObject {
     if (![viewObject isKindOfClass:[UIView class]]) {
         return NO;
@@ -308,6 +309,15 @@
 
     view.accessibilityIdentifier = previousIdentifier;
 
+    if (!isMocking) {
+        // On iOS 6.1, instances of `UITableViewSectionElement` do not track the `accessibilityIdentifier`s of the views they mock.
+        // We don't actually manipulate the accessibility frame of the `viewObject` because
+        // we might break that property's syncing with the `viewObject`'s `frame`.
+        if ([elementObject slAccessibilityParent] == [viewObject slAccessibilityParent]) {
+            isMocking = CGRectEqualToRect([elementObject accessibilityFrame], [viewObject accessibilityFrame]);
+        }
+    }
+
     return isMocking;
 }
 
@@ -317,6 +327,11 @@
     if ([self classForcesPresenceOfMockingViewsInAccessibilityHierarchy]) {
         return YES;
     }
+
+    // table view headers--which need not themselves be accessible to be mocked
+    // (so long as they contain accessible elements)
+    // and, unlike table view cells, are not necessarily of any particular class
+    if ([[self slAccessibilityParent] isKindOfClass:[UITableView class]]) return YES;
 
     return NO;
 }
