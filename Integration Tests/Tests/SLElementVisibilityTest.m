@@ -23,6 +23,17 @@
 #import "SLIntegrationTest.h"
 #import "SLUIAElement+Subclassing.h"
 
+// Several of the test cases below examine the differential behavior of UIAutomation across SDK versions.
+// We define these version numbers so that Subliminal
+// can be continue to be built using the iOS 6.1 SDK until Travis is updated
+// (https://github.com/travis-ci/travis-ci/issues/1422)
+#ifndef kCFCoreFoundationVersionNumber_iOS_6_0
+#define kCFCoreFoundationVersionNumber_iOS_6_0 793.00
+#endif
+#ifndef kCFCoreFoundationVersionNumber_iOS_6_1
+#define kCFCoreFoundationVersionNumber_iOS_6_1 793.00
+#endif
+
 /**
  Subliminal's implementation of -isVisible does not rely upon UIAutomation, 
  because UIAElement.isVisible() has a number of bugs as exercised in 
@@ -157,7 +168,7 @@
     SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
 }
 
-- (void)testViewIsNotVisibleIfCenterAndUpperLeftHandCornerAreCovered {
+- (void)testViewIsNotVisibleIfCenterAndAnyCornerAreCovered {
     // The upper left hand corner (and any/all other corners) can be hidden and the view will remain visible
     SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
     SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
@@ -179,15 +190,24 @@
     SLAskApp1(hideOtherViewWithTag:, @2);
     SLAskApp1(hideOtherViewWithTag:, @1);
 
-    // But if the center and the upper left hand corner are hidden then the view will become not visible to UIAutomation
-    // and Subliminal.  Subliminal treats the view as visible if the center is visible or all four corners are visible.
-    // Unlike UIAutomation, Subliminal does not give any special privilege to the top left corner.
+    // In iOS 6 and below, if the center and the upper left hand corner are hidden,
+    // then UIAutomation will consider the view to be not visible.
+    // In iOS 7, UIAutomation only reports the view as not visible if the center and all four corners are hidden.
+    //
+    // Subliminal considers the view to be not visible when the center and _any_ corner is hidden:
+    // barring edge cases, much of the view is likely covered if the center and at least one corner is hidden
+    // (without necessarily hiding the center and all four corners); and there is no reason
+    // to privilege the upper left hand corner in this determination.
     SLAskApp1(showOtherViewWithTag:, @5);   // center hidden
     SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
     SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
 
     SLAskApp1(showOtherViewWithTag:, @1);
-    SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible.");
+    if (kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_6_1) {
+        SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible.");
+    } else {
+        SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    }
     SLAssertFalse([_testElement isVisible], @"Subliminal should say that the element is not visible.");
     SLAskApp1(hideOtherViewWithTag:, @1);
 
@@ -208,7 +228,11 @@
 }
 
 - (void)testViewIsVisibleIfItsCenterIsCoveredByClearRegion {
-    SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible (even though it is!).");
+    if (kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_6_1) {
+        SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible (even though it is!).");
+    } else {
+        SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
+    }
     SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
 }
 
@@ -226,9 +250,10 @@
 }
 
 - (void)testAccessibilityElementIsNotVisibleIfContainerIsHiddenEvenInTableViewCell {
-    // on iOS 6, UIAElement.isVisible always returns true
+    // on iOS 6, `UIAElement.isVisible` always returns true
     // for elements in table view cells, even if those elements' containers are hidden
-    if (kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_5_1) {
+    if (kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_5_1 &&
+        kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_6_1) {
         SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible, but it doesn't.");
     } else {
         SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible.");
@@ -238,13 +263,14 @@
     // the test view is the container of the test element
     SLAskApp(showTestView);
 
-    // on iOS 5, table view cells appear to cache their accessibility state,
-    // so, the test view having started out hidden, UIAElement.isVisible will return false
+    // on iOS 5 and iOS 7, table view cells appear to cache their accessibility state,
+    // so, the test view having started out hidden, `UIAElement.isVisible` will return false
     // even though its container is now visible
-    if (kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_5_1) {
-        SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
-    } else {
+    if (kCFCoreFoundationVersionNumber < kCFCoreFoundationVersionNumber_iOS_6_0 ||
+        kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_6_1) {
         SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible, but it doesn't.");
+    } else {
+        SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
     }
     SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
 }
