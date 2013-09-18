@@ -25,6 +25,13 @@
 #import "SLTerminal+ConvenienceFunctions.h"
 #import "SLStringUtilities.h"
 
+// Alert handlers need to account for the structure of `UIAlertView` in iOS 7 vs. older SDKs.
+// We define `kCFCoreFoundationVersionNumber_iOS_6_1` so that Subliminal
+// can be continue to be built using the iOS 6.1 SDK until Travis is updated
+// (https://github.com/travis-ci/travis-ci/issues/1422)
+#ifndef kCFCoreFoundationVersionNumber_iOS_6_1
+#define kCFCoreFoundationVersionNumber_iOS_6_1 793.00
+#endif
 
 const NSTimeInterval SLAlertHandlerDidHandleAlertDelay = 2.0;
 
@@ -232,17 +239,30 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
 }
 
 + (NSString *)defaultUIAAlertHandler {
-    return @"\
-        var didDismissAlert = false;\
-        if (alert.cancelButton().isValid()) {\
-            alert.cancelButton().tap();\
-            didDismissAlert = true;\
-        } else if (alert.defaultButton().isValid()) {\
-            alert.defaultButton().tap();\
-            didDismissAlert = true;\
-        }\
-        return didDismissAlert;\
-    ";
+    static NSString *defaultUIAAlertHandler;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        // in iOS 6 and below, a `UIAlertView`'s buttons are actually buttons.
+        // in iOS 7, each "button" is really a single table view cell in its own table view.
+        // On all platforms, the accessibility hierarchy is structured such that the cancel "button"
+        // will be the first element of its kind, then the rest.
+        // If there's no cancel "button" then the default "button" will be the first.
+        NSString *firstButtonElement;
+        if (kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_6_1) {
+            firstButtonElement = @"alert.buttons()[0]";
+        } else {
+            firstButtonElement = @"alert.tableViews()[0].cells()[0]";
+        }
+        defaultUIAAlertHandler = [NSString stringWithFormat:@"\
+            var didDismissAlert = false;\
+            if (%@.isValid()) {\
+                %@.tap();\
+                didDismissAlert = true;\
+            }\
+            return didDismissAlert;\
+        ", firstButtonElement, firstButtonElement];
+    });
+    return defaultUIAAlertHandler;
 }
 
 - (instancetype)initWithSLAlert:(SLAlert *)alert
@@ -353,19 +373,46 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
 }
 
 - (SLAlertDismissHandler *)dismissWithButtonTitled:(NSString *)buttonTitle {
+    static NSString *buttonElementWithTitleFunction;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        // in iOS 6 and below, a `UIAlertView`'s buttons are actually buttons.
+        // in iOS 7, each "button" is really a single table view cell in its own table view.
+        BOOL isIOS6OrBelow = (kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_6_1);
+        buttonElementWithTitleFunction = [NSString stringWithFormat:@"\
+            function (title) {\
+                if (%@) {\
+                    return alert.buttons()[title];\
+                } else {\
+                    for (var tableViewIndex = 0; tableViewIndex < alert.tableViews().length; tableViewIndex++) {\
+                        var tableView = alert.tableViews()[tableViewIndex];\
+                        var buttonCell = tableView.cells()[title];\
+                        if (buttonCell.isValid()) return buttonCell;\
+                    }"
+                    // I'd really like to return `UIAElementNil` here but I don't know how to use it by itself
+                    @"return null;\
+                }\
+            }", isIOS6OrBelow ? @"true" : @"false"];
+    });
     NSString *UIAAlertHandler = [NSString stringWithFormat:@"\
-                                     var button = alert.buttons()['%@'];\
-                                     if (button.isValid()) {\
-                                        button.tap();\
+                                     var buttonElement = (%@)('%@');\
+                                     if (buttonElement && buttonElement.isValid()) {\
+                                        buttonElement.tap();\
                                         return true;\
                                      } else {\
                                         return false;\
                                      }\
-                                 ", [buttonTitle slStringByEscapingForJavaScriptLiteral]];
+                                 ", buttonElementWithTitleFunction, [buttonTitle slStringByEscapingForJavaScriptLiteral]];
     return [[SLAlertDismissHandler alloc] initWithSLAlert:self andUIAAlertHandler:UIAAlertHandler];
 }
 
 - (SLAlertHandler *)setText:(NSString *)text ofFieldOfType:(SLAlertTextFieldType)fieldType {
+    // in iOS 6 and below, a `UIAlertView`'s text fields are direct children of the alert
+    // on iOS 7, the alert contains an image which then contains the text fields
+    NSString *elementContainerExpression = @"alert";
+    if (kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_6_1) {
+        elementContainerExpression = [elementContainerExpression stringByAppendingString:@".images()[0]"];
+    }
     NSString *elementType;
     switch (fieldType) {
         case SLAlertTextFieldTypeSecureText:
@@ -383,14 +430,14 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
     NSUInteger elementIndex = 0;
 
     NSString *UIAAlertHandler = [NSString stringWithFormat:@"\
-                                    var textField = alert.%@()[%u];\
+                                    var textField = %@.%@()[%u];\
                                     if (textField.isValid()) {\
                                         textField.setValue('%@');\
                                         return true;\
                                     } else {\
                                         return false;\
                                     }\
-                                 ", elementType, elementIndex, [text slStringByEscapingForJavaScriptLiteral]];
+                                 ", elementContainerExpression, elementType, elementIndex, [text slStringByEscapingForJavaScriptLiteral]];
     return [[SLAlertHandler alloc] initWithSLAlert:self andUIAAlertHandler:UIAAlertHandler];
 }
 
