@@ -189,11 +189,8 @@ Integration Tests target.
 
 Also note that this code is conditionalized by the `INTEGRATION_TESTING` preprocessor 
 macro (set by `Integration Tests.xcconfig`), and so will not be built into your 
-main application target. Unlike many other integration testing frameworks, Subliminal 
-does not use private APIs, so it is safe to include calls to Subliminal APIs in 
-any target that links against Subliminal. However, conditionalizing calls to Subliminal 
-helps you keep straight exactly when you expect the tests to be run: when you 
-run the Integration Tests target, not every time you launch your application.
+main application target. This helps you keep straight exactly when you expect the tests 
+to be run: when you run the Integration Tests target, not every time you launch your application.
 
 Usage
 -----
@@ -539,6 +536,13 @@ limitations of Apple's frameworks or bugs therein. Other issues are tracked
 	Testing reveals that tapping scroll views on an iPad simulator or device 
 	running iOS 5.x will fail, but dragging will succeed. Also, UIAutomation 
 	correctly reports scroll view child elements as tappable regardless of platform.
+
+*	UIAutomation cannot drag scroll views when running in the iOS 7 Simulator.
+	`SLElement` implements a workaround.
+
+	> Note: The implementation of the workaround uses a private API. _However_, 
+	poses no risk of discovery by Apple's review team (to projects linking Subliminal) 
+	because the workaround is only compiled for the Simulator.
 
 Contributing
 ------------

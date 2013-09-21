@@ -259,6 +259,10 @@
  This method uses a drag duration of 1.0 seconds (the documented default duration 
  for touch-and-hold gestures according to Apple's `UIAElement` class reference).
  
+ @bug On simulators running iOS 7.x, UIAutomation drag gestures do not cause
+ scroll views to scroll. Instances of `SLElement` are able to work around this; 
+ instances of `SLStaticElement` are not.
+
  @param startOffset The offset, within the element's rect, at which to begin 
  dragging.
  @param endOffset The offset, within the element's rect, at which to end dragging.

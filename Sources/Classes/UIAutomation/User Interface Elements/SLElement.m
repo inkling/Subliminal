@@ -26,6 +26,7 @@
 #import "SLAccessibilityPath.h"
 #import "NSObject+SLVisibility.h"
 #import "NSObject+SLAccessibilityDescription.h"
+#import "UIScrollView+SLProgrammaticScrolling.h"
 
 
 // The real value (set in `+load`) is not a compile-time constant,
@@ -353,6 +354,31 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
         .y = (activationPoint.y - CGRectGetMinY(accessibilityFrame)) / CGRectGetHeight(accessibilityFrame)
     };
     [self waitUntilTappable:YES thenSendMessage:@"tapWithOptions({tapOffset:{x:%g, y:%g}})", activationOffset.x, activationOffset.y];
+}
+
+- (void)dragWithStartOffset:(CGPoint)startOffset endOffset:(CGPoint)endOffset {
+    // In the iOS 7 Simulator, scroll views' pan gesture recognizers fail to cause those views to scroll
+    // in response to UIAutomation drag gestures, so we must programmatically scroll those views.
+    // we conditionally define `kCFCoreFoundationVersionNumber_iOS_6_1` so that Subliminal
+    // can be continue to be built using the iOS 6.1 SDK until Travis is updated
+    // (https://github.com/travis-ci/travis-ci/issues/1422)
+#ifndef kCFCoreFoundationVersionNumber_iOS_6_1
+#define kCFCoreFoundationVersionNumber_iOS_6_1 793.00
+#endif
+#if TARGET_IPHONE_SIMULATOR
+    if (kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_6_1) {
+        [self examineMatchingObject:^(NSObject *object) {
+            if ([object isKindOfClass:[UIScrollView class]]) {
+                [(UIScrollView *)object slScrollWithStartOffset:startOffset endOffset:endOffset];
+            }
+        }];
+    }
+#endif
+
+    // Even if we programmatically dragged a scroll view above, we concurrently ask `UIAutomation` to drag the view,
+    // because scroll views(' `UIResponder` method implementations) do receive the touches involved in drag gestures
+    // and our programmatic scroll method does not deliver such touches.
+    [super dragWithStartOffset:startOffset endOffset:endOffset];
 }
 
 #pragma mark -
