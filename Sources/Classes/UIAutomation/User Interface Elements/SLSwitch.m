@@ -11,14 +11,18 @@
 
 @implementation SLSwitch
 
+- (BOOL)matchesObject:(NSObject *)object {
+    return ([super matchesObject:object] && [object isKindOfClass:[UISwitch class]]);
+}
+
 - (BOOL)isOn
 {
     return [[self value] boolValue];
 }
 
-- (void)setValue:(BOOL)value
+- (void)setOn:(BOOL)on
 {
-    NSString *valueString = value ? @"true" : @"false";
+    NSString *valueString = on ? @"true" : @"false";
     [self waitUntilTappable:NO thenSendMessage:@"setValue(%@)", valueString];
 }
 
