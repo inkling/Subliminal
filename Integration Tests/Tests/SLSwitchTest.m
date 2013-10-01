@@ -31,26 +31,27 @@
     [super setUpTestCaseWithSelector:testCaseSelector];
     SLAssertTrue([UIAElement(_aSwitch) isValidAndVisible], @"Switch should be valid and visible");
     SLAssertTrue([UIAElement(_aSwitch) isTappable], @"Switch should be tappable");
-    [_aSwitch setValue:ON];
+    [_aSwitch setOn:YES];
 }
 
-- (void)testSLSwitchSetValue
+- (void)testSLSwitchSetOn
 {
-    [_aSwitch setValue:OFF];
+    [_aSwitch setOn:NO];
     SLAssertTrue([[_aSwitch value] boolValue] == NO, @"Switch value was not set to OFF");
-    [_aSwitch setValue:ON];
+    [_aSwitch setOn:YES];
     SLAssertTrue([[_aSwitch value] boolValue] == YES, @"Switch value was not set to ON");
 }
 
 - (void)testSLSwitchIsOn
 {
-    [_aSwitch setValue:OFF];
+    [_aSwitch setOn:NO];
     SLAssertTrue([_aSwitch isOn] == NO, @"Switch should be OFF");
-    [_aSwitch setValue:ON];
+    [_aSwitch setOn:YES];
     SLAssertTrue([_aSwitch isOn] == YES, @"Switch should be ON");
 }
 
-- (void)testSLSwitchCanToggleWithTap {
+- (void)testSLSwitchCanToggleWithTap
+{
     BOOL value = [_aSwitch.value boolValue];
     [_aSwitch tap];
     SLAssertFalse(value == [_aSwitch.value boolValue], @"Value should have changed");
