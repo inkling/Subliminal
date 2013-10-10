@@ -382,6 +382,11 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
     // the password field is at index 0--because it is the only element of its type
     NSUInteger elementIndex = 0;
 
+    // The fields in iOS 7 alert views are contained within an image view, so we need to go one level deeper
+    if ((kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_6_1)) {
+        elementType = [NSString stringWithFormat:@"images()[0].%@", elementType];
+    }
+    
     NSString *UIAAlertHandler = [NSString stringWithFormat:@"\
                                     var textField = alert.%@()[%u];\
                                     if (textField.isValid()) {\
@@ -390,7 +395,7 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
                                     } else {\
                                         return false;\
                                     }\
-                                 ", elementType, elementIndex, [text slStringByEscapingForJavaScriptLiteral]];
+                                 ",elementType, elementIndex, [text slStringByEscapingForJavaScriptLiteral]];
     return [[SLAlertHandler alloc] initWithSLAlert:self andUIAAlertHandler:UIAAlertHandler];
 }
 
