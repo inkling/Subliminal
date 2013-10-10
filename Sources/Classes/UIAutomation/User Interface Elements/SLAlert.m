@@ -233,13 +233,19 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
 
 + (NSString *)defaultUIAAlertHandler {
     return @"\
+        var index = 0; \
         var didDismissAlert = false;\
         if (alert.cancelButton().isValid()) {\
             alert.cancelButton().tap();\
             didDismissAlert = true;\
-        } else if (alert.defaultButton().isValid()) {\
-            alert.defaultButton().tap();\
-            didDismissAlert = true;\
+        } else { \
+            while (alert.buttons()[index].isValid()) {\
+                if (alert.buttons()[index] != alert.cancelButton()) {\
+                    alert.buttons()[index].tap();\
+                    didDismissAlert = true;\
+                }\
+            index++;\
+            }\
         }\
         return didDismissAlert;\
     ";
