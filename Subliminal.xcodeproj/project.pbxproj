@@ -99,6 +99,8 @@
 		F077D70D16D9D77900908FF5 /* SLElementVisibilityTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F077D70A16D9D77900908FF5 /* SLElementVisibilityTest.m */; };
 		F077D70E16D9D77900908FF5 /* SLElementVisibilityTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F077D70B16D9D77900908FF5 /* SLElementVisibilityTestViewController.m */; };
 		F077D70F16D9D77900908FF5 /* SLElementVisibilityTestCovered.xib in Resources */ = {isa = PBXBuildFile; fileRef = F077D70C16D9D77900908FF5 /* SLElementVisibilityTestCovered.xib */; };
+		F078C0491808BF24000767D2 /* SLWebViewTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F078C0471808BF24000767D2 /* SLWebViewTest.m */; };
+		F078C04A1808BF24000767D2 /* SLWebViewTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F078C0481808BF24000767D2 /* SLWebViewTestViewController.m */; };
 		F07DA32D16E43AD3004C2282 /* SLAlertTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DA32B16E43AD3004C2282 /* SLAlertTest.m */; };
 		F07DA32E16E43AD3004C2282 /* SLAlertTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DA32C16E43AD3004C2282 /* SLAlertTestViewController.m */; };
 		F08005591730762C00198F6F /* Inklings~iPhone.webarchive in Resources */ = {isa = PBXBuildFile; fileRef = F08005581730762C00198F6F /* Inklings~iPhone.webarchive */; };
@@ -318,6 +320,8 @@
 		F077D70A16D9D77900908FF5 /* SLElementVisibilityTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementVisibilityTest.m; sourceTree = "<group>"; };
 		F077D70B16D9D77900908FF5 /* SLElementVisibilityTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementVisibilityTestViewController.m; sourceTree = "<group>"; };
 		F077D70C16D9D77900908FF5 /* SLElementVisibilityTestCovered.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestCovered.xib; sourceTree = "<group>"; };
+		F078C0471808BF24000767D2 /* SLWebViewTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLWebViewTest.m; sourceTree = "<group>"; };
+		F078C0481808BF24000767D2 /* SLWebViewTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLWebViewTestViewController.m; sourceTree = "<group>"; };
 		F07DA32B16E43AD3004C2282 /* SLAlertTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAlertTest.m; sourceTree = "<group>"; };
 		F07DA32C16E43AD3004C2282 /* SLAlertTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAlertTestViewController.m; sourceTree = "<group>"; };
 		F08005581730762C00198F6F /* Inklings~iPhone.webarchive */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "Inklings~iPhone.webarchive"; sourceTree = "<group>"; };
@@ -666,6 +670,15 @@
 			name = "SLElement Visibility Tests";
 			sourceTree = "<group>";
 		};
+		F078C0431808BF0D000767D2 /* SLWebView Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F078C0471808BF24000767D2 /* SLWebViewTest.m */,
+				F078C0481808BF24000767D2 /* SLWebViewTestViewController.m */,
+			);
+			name = "SLWebView Tests";
+			sourceTree = "<group>";
+		};
 		F07DA31F16E439B7004C2282 /* SLAlert Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -822,6 +835,7 @@
 				F01EBC951701150E00FF6A7C /* SLTextField Tests */,
 				F0A3F63917A716FC007529C3 /* SLTextView Tests */,
 				F013798E16D0843B009BAF22 /* SLTerminal Tests */,
+				F078C0431808BF0D000767D2 /* SLWebView Tests */,
 				F089F98E17458B7400DF1F25 /* SLWindow Tests */,
 			);
 			path = Tests;
@@ -1184,6 +1198,7 @@
 				F0AC80C416BC355D00C5D5C0 /* SLTerminalTest.m in Sources */,
 				F0AC80C116BB559F00C5D5C0 /* SLIntegrationTest.m in Sources */,
 				F0AC80C816BC367E00C5D5C0 /* SLTestViewController.m in Sources */,
+				F078C04A1808BF24000767D2 /* SLWebViewTestViewController.m in Sources */,
 				F0AC80E616BCF91800C5D5C0 /* SLTestCaseViewController.m in Sources */,
 				06953E3F178FDA7100B3D1B7 /* SLElementTouchAndHoldTest.m in Sources */,
 				F01B2B6D16D2C55900DBA391 /* SLElementMatchingTest.m in Sources */,
@@ -1218,6 +1233,7 @@
 				F0A3F63D17A7172E007529C3 /* SLTextViewTest.m in Sources */,
 				F0A3F63E17A7172E007529C3 /* SLTextViewTestViewController.m in Sources */,
 				DB2627DE17B96727009DA3A6 /* SLStatusBarTest.m in Sources */,
+				F078C0491808BF24000767D2 /* SLWebViewTest.m in Sources */,
 				DB2627DF17B96727009DA3A6 /* SLStatusBarTestViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
