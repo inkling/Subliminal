@@ -364,6 +364,13 @@
 @end
 
 
+@implementation UIWebView (SLAccessibilityHierarchy)
+- (BOOL)classForcesPresenceInAccessibilityHierarchy {
+    return YES;
+}
+@end
+
+
 @implementation UITabBar (SLAccessibilityHierarchy)
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
     return YES;
