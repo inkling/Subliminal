@@ -25,6 +25,9 @@
 #import "SLTerminal+ConvenienceFunctions.h"
 #import "SLStringUtilities.h"
 
+#ifndef kCFCoreFoundationVersionNumber_iOS_6_1
+#define kCFCoreFoundationVersionNumber_iOS_6_1 793.00
+#endif
 
 const NSTimeInterval SLAlertHandlerDidHandleAlertDelay = 2.0;
 
