@@ -31,6 +31,7 @@
 #import "SLStaticElement.h"
 #import "SLAlert.h"
 #import "SLButton.h"
+#import "SLEditingMenu.h"
 #import "SLKeyboard.h"
 #import "SLPopover.h"
 #import "SLStatusBar.h"
