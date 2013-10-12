@@ -42,6 +42,9 @@
         SLAskApp(removeFooButtonFromSuperview);
     } else if (testCaseSelector == @selector(testElementWithAccessibilityLabelValueTraits)) {
         SLAskApp(applyUniqueTraitToFooButton);
+    } else if (testCaseSelector == @selector(testMatchingWebViewChildElements_iPhone)) {
+        SLAssertTrueWithTimeout(SLAskAppYesNo(webViewDidFinishLoad), 5.0,
+                                @"Webview did not load test HTML.");
     }
 }
 
@@ -52,9 +55,6 @@
         SLAskApp(hidePopover);
     } else if (testCaseSelector == @selector(testMatchingActionSheetButtons)) {
         SLAskApp(hideActionSheet);
-    } else if (testCaseSelector == @selector(testMatchingWebViewChildElements_iPhone)) {
-        SLAssertTrueWithTimeout(SLAskAppYesNo(webViewDidFinishLoad), 5.0,
-                                @"Webview did not load test HTML.");
     }
     [super tearDownTestCaseWithSelector:testCaseSelector];
 }
