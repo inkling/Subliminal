@@ -25,6 +25,9 @@
 #import "SLTerminal+ConvenienceFunctions.h"
 #import "SLStringUtilities.h"
 
+#ifndef kCFCoreFoundationVersionNumber_iOS_6_1
+#define kCFCoreFoundationVersionNumber_iOS_6_1 793.00
+#endif
 
 const NSTimeInterval SLAlertHandlerDidHandleAlertDelay = 2.0;
 
@@ -37,7 +40,7 @@ const NSTimeInterval SLAlertHandlerDidHandleAlertDelay = 2.0;
  so that their alert's delegate receives its callbacks before the tests
  continue, assuming that the tests are waiting-with-timeout on `didHandleAlert`. 
  */
-static const NSTimeInterval SLAlertHandlerManualDelay = 0.25;
+static const NSTimeInterval SLAlertHandlerManualDelay = 0.5;
 
 
 #pragma mark - SLAlertHandler
@@ -131,7 +134,7 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
             SLAlertHandler.loggingEnabled = %@;"
 
             @"UIATarget.onAlert = function(alert) {\
-                if (SLAlertHandler.loggingEnabled) UIALogger.logMessage('Handling alert \"' + alert.staticTexts()[0].label() + '\"…');"
+                if (SLAlertHandler.loggingEnabled) UIALogger.logMessage('Handling alert \"' + alert.name() + '\"…');"
          
                 // enumerate registered handlers, from first to last
                 @"for (var handlerIndex = 0; handlerIndex < SLAlertHandler.alertHandlers.length; handlerIndex++) {\
@@ -233,13 +236,19 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
 
 + (NSString *)defaultUIAAlertHandler {
     return @"\
+        var index = 0; \
         var didDismissAlert = false;\
         if (alert.cancelButton().isValid()) {\
             alert.cancelButton().tap();\
             didDismissAlert = true;\
-        } else if (alert.defaultButton().isValid()) {\
-            alert.defaultButton().tap();\
-            didDismissAlert = true;\
+        } else { \
+            while (alert.buttons()[index].isValid()) {\
+                if (alert.buttons()[index] != alert.cancelButton()) {\
+                    alert.buttons()[index].tap();\
+                    didDismissAlert = true;\
+                }\
+            index++;\
+            }\
         }\
         return didDismissAlert;\
     ";
@@ -382,6 +391,11 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
     // the password field is at index 0--because it is the only element of its type
     NSUInteger elementIndex = 0;
 
+    // The fields in iOS 7 alert views are contained within an image view, so we need to go one level deeper
+    if ((kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_6_1)) {
+        elementType = [NSString stringWithFormat:@"images()[0].%@", elementType];
+    }
+    
     NSString *UIAAlertHandler = [NSString stringWithFormat:@"\
                                     var textField = alert.%@()[%u];\
                                     if (textField.isValid()) {\
@@ -390,13 +404,13 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
                                     } else {\
                                         return false;\
                                     }\
-                                 ", elementType, elementIndex, [text slStringByEscapingForJavaScriptLiteral]];
+                                 ",elementType, elementIndex, [text slStringByEscapingForJavaScriptLiteral]];
     return [[SLAlertHandler alloc] initWithSLAlert:self andUIAAlertHandler:UIAAlertHandler];
 }
 
 - (NSString *)isEqualToUIAAlertPredicate {
     static NSString *const kIsEqualToUIAAlertPredicateFormatString = @"\
-        return alert.staticTexts()[0].label() === \"%@\";\
+        return alert.name() === \"%@\";\
     ";
     NSString *isEqualToUIAAlertPredicate = [NSString stringWithFormat:kIsEqualToUIAAlertPredicateFormatString,
                                             [_title slStringByEscapingForJavaScriptLiteral]];
