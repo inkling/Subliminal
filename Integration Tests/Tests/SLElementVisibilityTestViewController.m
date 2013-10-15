@@ -206,7 +206,7 @@
         nibName = @"SLElementVisibilityTestLowAlpha";
     } else if (testCase == @selector(testViewIsNotVisibleIfItIsOffscreen)) {
         nibName = @"SLElementVisibilityTestOffscreen";
-    } else if (testCase == @selector(testViewIsNotVisibleIfCenterAndUpperLeftHandCornerAreCovered)) {
+    } else if (testCase == @selector(testViewIsNotVisibleIfCenterAndAnyCornerAreCovered)) {
         nibName = @"SLElementVisibilityTestCovered";
     } else if (testCase == @selector(testViewIsVisibleIfItsCenterIsCoveredByClearRegion)) {
         nibName = @"SLElementVisibilityTestCoveredByClearRegion";
