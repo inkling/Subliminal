@@ -40,7 +40,7 @@
 
 + (NSString *)nibNameForTestCase:(SEL)testCase {
     NSString *nibName = nil;
-    if (testCase == @selector(testHitpointReturnsAlternatePointIfRectMidpointIsCovered)) {
+    if (testCase == @selector(testHitpointReturnsAlternatePointIfDefaultIsCovered)) {
         nibName = @"SLElementStateTestMidpointCovered";
     } else if (testCase == @selector(testHitpointReturnsNullPointIfElementIsCovered) ||
                testCase == @selector(testElementIsTappableIfItHasANonNullHitpoint) ||
@@ -54,8 +54,8 @@
     if (testCase == @selector(testLabel) ||
         testCase == @selector(testValue) ||
         testCase == @selector(testIsEnabledMirrorsUIControlIsEnabledWhenMatchingObjectIsUIControl) ||
-        testCase == @selector(testHitpointReturnsRectMidpointByDefault) ||
-        testCase == @selector(testHitpointDoesNotReturnAccessibilityActivationPoint) ||
+        testCase == @selector(testHitpointDefault) ||
+        testCase == @selector(testHitpointDefaultIsNotAccessibilityActivationPointBelowIOS7) ||
         testCase == @selector(testRect)) {
         UIView *view = [[UIView alloc] initWithFrame:self.navigationController.view.bounds];
         view.backgroundColor = [UIColor whiteColor];

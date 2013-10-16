@@ -23,6 +23,14 @@
 #import "SLIntegrationTest.h"
 #import <Subliminal/SLTerminal.h>
 
+// Several of the test cases below examine the differential behavior of UIAutomation across SDK versions.
+// We define `kCFCoreFoundationVersionNumber_iOS_6_1` so that Subliminal
+// can be continue to be built using the iOS 6.1 SDK until Travis is updated
+// (https://github.com/travis-ci/travis-ci/issues/1422)
+#ifndef kCFCoreFoundationVersionNumber_iOS_6_1
+#define kCFCoreFoundationVersionNumber_iOS_6_1 793.00
+#endif
+
 @interface SLElementStateTest : SLIntegrationTest
 
 @end
@@ -42,7 +50,7 @@
 
 - (void)setUpTestCaseWithSelector:(SEL)testCaseSelector {
     [super setUpTestCaseWithSelector:testCaseSelector];
-    if (testCaseSelector == @selector(testHitpointDoesNotReturnAccessibilityActivationPoint)) {
+    if (testCaseSelector == @selector(testHitpointDefaultIsNotAccessibilityActivationPointBelowIOS7)) {
         SLAskApp(modifyActivationPoint);
     }
 }
@@ -73,21 +81,46 @@
     SLAssertTrue([UIAElement(_testElement) isEnabled], @"isEnabled() should return true.");
 }
 
-- (void)testHitpointReturnsRectMidpointByDefault {
-    CGRect elementRect = [SLAskApp(elementRect) CGRectValue];
-    CGPoint expectedHitpoint = CGPointMake(CGRectGetMidX(elementRect), CGRectGetMidY(elementRect));
-    CGPoint hitpoint = [UIAElement(_testElement) hitpoint];
-    SLAssertTrue(CGPointEqualToPoint(hitpoint, expectedHitpoint), @"-hitpoint did not return expected value.");
+- (CGPoint)defaultHitpoint {
+    // `-hitpoint` returns the midpoint of the element's accessibility frame below iOS 7
+    // (regardless of the element's accessibility point),
+    // the element's accessibility activation point at or above iOS 7
+    CGPoint expectedHitpoint;
+    if (kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_6_1) {
+        expectedHitpoint = [SLAskApp(activationPoint) CGPointValue];
+    } else {
+        CGRect elementRect = [SLAskApp(elementRect) CGRectValue];
+        expectedHitpoint = CGPointMake(CGRectGetMidX(elementRect), CGRectGetMidY(elementRect));
+    }
+    return expectedHitpoint;
 }
 
-- (void)testHitpointReturnsAlternatePointIfRectMidpointIsCovered {
-    CGRect elementRect = [SLAskApp(elementRect) CGRectValue];
-
-    // this is confirmed by the previous test case
-    CGPoint regularHitpoint = CGPointMake(CGRectGetMidX(elementRect), CGRectGetMidY(elementRect));
+- (void)testHitpointDefault {
     CGPoint hitpoint = [UIAElement(_testElement) hitpoint];
+    SLAssertTrue(CGPointEqualToPoint(hitpoint, [self defaultHitpoint]), @"-hitpoint did not return expected value.");
+}
 
-    SLAssertFalse(CGPointEqualToPoint(hitpoint, regularHitpoint), @"-hitpoint did not return expected value.");
+// An element's accessibility activation point is by default the midpoint of its accessibility frame.
+// In this test case's setup we modify the accessibility activation point to show that `-hitpoint` does not
+// return the element's accessibility activation point below iOS 7, and to justify the development
+// of `-[SLElement tapAtActivationPoint]` for use on older SDKs.
+- (void)testHitpointDefaultIsNotAccessibilityActivationPointBelowIOS7 {
+    CGPoint hitpoint = [UIAElement(_testElement) hitpoint];
+    CGPoint activationPoint = [SLAskApp(activationPoint) CGPointValue];
+    if (kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_6_1) {
+        SLAssertFalse(CGPointEqualToPoint(hitpoint, activationPoint),
+                      @"`-hitpoint` should not have returned the button's modified activation point.");
+    } else {
+        SLAssertTrue(CGPointEqualToPoint(hitpoint, activationPoint),
+                     @"-`hitpoint` should have returned the button's modified activation point.");
+    }
+}
+
+// In this test case's setup, we do not modify the accessibility activation point,
+// allowing us to cover the default hitpoint on iOS 7 and below by covering the midpoint of the element.
+- (void)testHitpointReturnsAlternatePointIfDefaultIsCovered {
+    CGPoint hitpoint = [UIAElement(_testElement) hitpoint];
+    SLAssertFalse(CGPointEqualToPoint(hitpoint, [self defaultHitpoint]), @"-hitpoint did not return expected value.");
     SLAssertFalse(SLCGPointIsNull(hitpoint), @"-hitpoint did not return expected value.");
 }
 
@@ -99,14 +132,6 @@
 - (void)testHitpointReturnsNullPointIfElementIsCovered {
     CGPoint hitpoint = [UIAElement(_testElement) hitpoint];
     SLAssertTrue(SLCGPointIsNull(hitpoint), @"-hitpoint did not return expected value.");
-}
-
-// This test case justifies the development of `-[SLElement tapAtActivationPoint]`.
-- (void)testHitpointDoesNotReturnAccessibilityActivationPoint {
-    CGPoint hitpoint = [UIAElement(_testElement) hitpoint];
-    CGPoint activationPoint = [SLAskApp(activationPoint) CGPointValue];
-    SLAssertFalse(CGPointEqualToPoint(hitpoint, activationPoint),
-                  @"-hitpoint should not have returned the button's modified activation point.");
 }
 
 - (void)testElementIsTappableIfItHasANonNullHitpoint {

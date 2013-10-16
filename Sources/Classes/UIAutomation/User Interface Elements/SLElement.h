@@ -142,10 +142,14 @@
  Taps the specified element at its activation point.
  
  The activation point is by default the midpoint of the accessibility element's 
- frame (`-rect`), same as the element's hitpoint; but unlike the hitpoint, 
- the activation point may be modified, to direct VoiceOver to tap on a certain
- region of the element. See `-[NSObject (UIAccessibility) accessibilityActivationPoint]`
+ frame (`-rect`), but the activation point may be modified to direct VoiceOver 
+ to tap at a different point. See `-[NSObject (UIAccessibility) accessibilityActivationPoint]`
  for more information and examples.
+ 
+ This method is most useful when running against SDKs older than iOS 7,
+ because on those platforms, `-hitpoint` and thus `-tap` ignore the value of the element's 
+ accessibility activation point. On or above iOS 7, `-hitpoint` respects the value 
+ of the accessibility activation point and so `-tap` and this method are equivalent.
  */
 - (void)tapAtActivationPoint;
 
