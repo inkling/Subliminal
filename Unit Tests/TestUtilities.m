@@ -9,11 +9,11 @@
 #import "TestUtilities.h"
 #import <OCMock/OCMock.h>
 
-void SLRunTestsAndWaitUntilFinished(NSSet *tests, void (^completionBlock)()) {
+void SLRunTestsAndWaitUntilFinished(id tests, void (^completionBlock)()) {
     SLRunTestsUsingSeedAndWaitUntilFinished(tests, SLTestControllerRandomSeed, completionBlock);
 }
 
-void SLRunTestsUsingSeedAndWaitUntilFinished(NSSet *tests, unsigned int seed, void (^completionBlock)()) {
+void SLRunTestsUsingSeedAndWaitUntilFinished(id tests, unsigned int seed, void (^completionBlock)()) {
     __block BOOL testingHasFinished = NO;
     [[SLTestController sharedTestController] runTests:tests
                                             usingSeed:seed
