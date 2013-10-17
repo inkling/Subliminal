@@ -358,7 +358,7 @@ namespace :test do
     ENV['DEV'] = "yes"; ENV['DOCS'] = "no"
     Rake::Task['install'].invoke
 
-    # Ensure that we use the Xcode 4.6 toolchain for now: https://github.com/inkling/Subliminal/issues/32
+    # Ensure that we use the default Xcode toolchain, not that of a developer preview
     # Note that we can't properly `export` an environment variable from a Ruby script,
     # But adding it to ENV works because `subliminal-test` is run in a subshell
     ENV['DEVELOPER_DIR'] = "/Applications/Xcode.app/Contents/Developer"

@@ -269,7 +269,23 @@
 // the elements tested, because it uses mobile-optimized HTML.
 - (void)testMatchingWebViewChildElements_iPhone {
     SLElement *openMenuLink = [SLElement elementMatching:^BOOL(NSObject *obj) {
-        return [obj.accessibilityHint isEqualToString:@"Open main menu"];
+        // below iOS 7, the value of a link tag's `title` attribute would become the `accessibilityHint`
+        // of its corresponding accessibility element
+        // at or above iOS 7, when the link tag is empty, the attribute's value becomes the `accessibilityLabel` of the element
+        // and there is no hint (see for comparison the memorabilia link below)
+
+        // we conditionally define `kCFCoreFoundationVersionNumber_iOS_6_1` so that Subliminal
+        // can be continue to be built using the iOS 6.1 SDK until Travis is updated
+        // (https://github.com/travis-ci/travis-ci/issues/1422)
+#ifndef kCFCoreFoundationVersionNumber_iOS_6_1
+#define kCFCoreFoundationVersionNumber_iOS_6_1 793.00
+#endif
+        NSString *openMenuLinkTitle = @"Open main menu";
+        if (kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_6_1) {
+            return [obj.accessibilityLabel isEqualToString:openMenuLinkTitle];
+        } else {
+            return [obj.accessibilityHint isEqualToString:openMenuLinkTitle];
+        }
     } withDescription:@"Open main menu link"];
     
     CGRect expectedOpenMenuLinkFrame = CGRectMake(0.0f, 63.0f, 40.0f, 46.0f);
@@ -290,8 +306,17 @@
     SLAssertTrue([[UIAElement(title) label] isEqualToString:@"Inklings"],
                  @"Could not match element in webview.");
 
-    SLElement *memorabiliaLink = [SLElement elementWithAccessibilityLabel:@"memorabilia"];
-    SLAssertTrue([[UIAElement(memorabiliaLink) label] isEqualToString:@"memorabilia"],
+    // below iOS 7, a link tag's contents would become the `accessibilityLabel` of its corresponding
+    // accessibility element, full stop.
+    // at or above iOS 7, if a link tag is non-empty _and_ the link tag has a non-empty `title` attribute,
+    // the value of that attribute gets tacked onto the end of the label (and then separately also becomes
+    // the `accessibilityHint` of the element).
+    NSString *memorabiliaLabel = @"memorabilia";
+    if (kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_6_1) {
+        memorabiliaLabel = [memorabiliaLabel stringByAppendingString:@", Memorabilia"];
+    }
+    SLElement *memorabiliaLink = [SLElement elementWithAccessibilityLabel:memorabiliaLabel];
+    SLAssertTrue([[UIAElement(memorabiliaLink) label] isEqualToString:memorabiliaLabel],
                  @"Could not match element in webview.");
 }
 
