@@ -47,6 +47,12 @@
  as necessary to make the corresponding keys visible.
 
  @param string The string to be typed on the keyboard.
+
+ @bug This method throws an exception if string contains any characters
+ that can be accessed only through a tap-hold gesture, for example
+ “smart-quotes.”  Note that SLTextField, SLTextView, and related classes
+ work around this bug internally when their text contents are set with
+ the -setText: method.
  */
 - (void)typeString:(NSString *)string;
 

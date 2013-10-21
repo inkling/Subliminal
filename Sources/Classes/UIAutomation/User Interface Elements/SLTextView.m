@@ -8,7 +8,7 @@
 
 #import "SLTextView.h"
 #import "SLUIAElement+Subclassing.h"
-#import "SLKeyboard.h"
+#import "SLKeyboard+Internal.h"
 
 @implementation SLTextView
 
@@ -26,7 +26,7 @@
     // Clear any current text before typing the new text.
     [self waitUntilTappable:YES thenSendMessage:@"setValue('')"];
     
-    [[SLKeyboard keyboard] typeString:text];
+    [[SLKeyboard keyboard] typeString:text withSetValueFallbackUsingElement:self];
 }
 
 - (BOOL)matchesObject:(NSObject *)object {
@@ -70,7 +70,7 @@
         [[SLKeyboardKey elementWithAccessibilityLabel:@"Delete"] tap];
     }
 
-    [[SLKeyboard keyboard] typeString:text];
+    [[SLKeyboard keyboard] typeString:text withSetValueFallbackUsingElement:self];
 }
 
 @end
