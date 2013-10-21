@@ -39,6 +39,7 @@
     UIView *view = [[UIView alloc] initWithFrame:CGRectZero];
     const CGRect kTextFieldFrame = (CGRect){CGPointZero, CGSizeMake(100.0f, 30.0f)};
     if (testCase == @selector(testSetText) ||
+        testCase == @selector(testSetTextCanHandleTapHoldCharacters) ||
         testCase == @selector(testSetTextClearsCurrentText) ||
         testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
         testCase == @selector(testGetText) ||
@@ -141,6 +142,7 @@
 - (NSString *)text {
     NSString *text;
     if (self.testCase == @selector(testSetText) ||
+        self.testCase == @selector(testSetTextCanHandleTapHoldCharacters) ||
         self.testCase == @selector(testSetTextClearsCurrentText) ||
         self.testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
         self.testCase == @selector(testGetText) ||

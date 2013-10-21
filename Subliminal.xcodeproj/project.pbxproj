@@ -25,6 +25,8 @@
 		0640035B178FDE7800479173 /* SLElementTouchAndHoldTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 06400359178FDE7800479173 /* SLElementTouchAndHoldTestViewController.xib */; };
 		064B6F55173B13E9004AB1BF /* SLElementVisibilityTestCoveredByClearRegion.xib in Resources */ = {isa = PBXBuildFile; fileRef = 064B6F54173B13E9004AB1BF /* SLElementVisibilityTestCoveredByClearRegion.xib */; };
 		064B6FC7173DCE9A004AB1BF /* SLElementVisibilityWithSubviews.xib in Resources */ = {isa = PBXBuildFile; fileRef = 064B6FC6173DCE9A004AB1BF /* SLElementVisibilityWithSubviews.xib */; };
+		0657C0E2181528B8007E72DF /* SLKeyboard+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 0657C0E0181528B6007E72DF /* SLKeyboard+Internal.h */; };
+		0657C0E3181528B8007E72DF /* SLKeyboard+Internal.m in Sources */ = {isa = PBXBuildFile; fileRef = 0657C0E1181528B7007E72DF /* SLKeyboard+Internal.m */; };
 		068D3E4D16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 068D3E4C16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib */; };
 		06953E3F178FDA7100B3D1B7 /* SLElementTouchAndHoldTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 06953E3E178FDA7100B3D1B7 /* SLElementTouchAndHoldTest.m */; };
 		0696BA5816E013D600DD70CF /* SLElementDraggingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 0696BA5516E013D600DD70CF /* SLElementDraggingTest.m */; };
@@ -245,6 +247,8 @@
 		06400359178FDE7800479173 /* SLElementTouchAndHoldTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementTouchAndHoldTestViewController.xib; sourceTree = "<group>"; };
 		064B6F54173B13E9004AB1BF /* SLElementVisibilityTestCoveredByClearRegion.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestCoveredByClearRegion.xib; sourceTree = "<group>"; };
 		064B6FC6173DCE9A004AB1BF /* SLElementVisibilityWithSubviews.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityWithSubviews.xib; sourceTree = "<group>"; };
+		0657C0E0181528B6007E72DF /* SLKeyboard+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLKeyboard+Internal.h"; sourceTree = "<group>"; };
+		0657C0E1181528B7007E72DF /* SLKeyboard+Internal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SLKeyboard+Internal.m"; sourceTree = "<group>"; };
 		068D3E4C16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLTableViewChildElementMatchingTestViewController.xib; sourceTree = "<group>"; };
 		06953E3E178FDA7100B3D1B7 /* SLElementTouchAndHoldTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementTouchAndHoldTest.m; sourceTree = "<group>"; };
 		0696BA5516E013D600DD70CF /* SLElementDraggingTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLElementDraggingTest.m; sourceTree = "<group>"; };
@@ -716,6 +720,8 @@
 				2CE9AA4B17E3A747007EF0B5 /* SLSwitch.m */,
 				F0C07A511704011300C93F93 /* SLKeyboard.h */,
 				F0C07A521704011300C93F93 /* SLKeyboard.m */,
+				0657C0E0181528B6007E72DF /* SLKeyboard+Internal.h */,
+				0657C0E1181528B7007E72DF /* SLKeyboard+Internal.m */,
 				F00800CC174C1C64001927AC /* SLPopover.h */,
 				F00800CD174C1C64001927AC /* SLPopover.m */,
 				F0C07A491704002100C93F93 /* SLTextField.h */,
@@ -951,6 +957,7 @@
 				F04346A7175AD10200D91F7F /* NSObject+SLVisibility.h in Headers */,
 				F0A3F63417A715AE007529C3 /* SLTextView.h in Headers */,
 				DB501DC917B9669A001658CB /* SLStatusBar.h in Headers */,
+				0657C0E2181528B8007E72DF /* SLKeyboard+Internal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1192,6 +1199,7 @@
 				F04346A8175AD10200D91F7F /* NSObject+SLVisibility.m in Sources */,
 				F0A3F63517A715AE007529C3 /* SLTextView.m in Sources */,
 				DB501DCA17B9669A001658CB /* SLStatusBar.m in Sources */,
+				0657C0E3181528B8007E72DF /* SLKeyboard+Internal.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
