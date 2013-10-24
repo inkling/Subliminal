@@ -1,6 +1,5 @@
 language: objective-c
 
-# These tasks run before cd'ing into Subliminal's repo
 before_install:
 # Install required tools
 # - `xctool`, required to build the unit test and documentation targets
