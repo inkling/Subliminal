@@ -1,16 +1,15 @@
 language: objective-c
 
 before_install:
-# Fully initialize repo (i.e. test dependencies like `OCMock`)
+    # Fully initialize repo (i.e. test dependencies like `OCMock`)
     - git submodule update --init --recursive
 
 install:
-# Install required tools
-# - `xctool`, required to build the unit test and documentation targets
-# 	nothing to do here because it's already installed on Travis
+    # - `xctool`, required to build the unit test and documentation targets
+    #   nothing to do here because it's already installed on Travis
 
-# - `appledoc`, used to build documentation
-# 	Force the usage of appledoc 2.1 until https://github.com/inkling/Subliminal/issues/71 is addressed
+    # - `appledoc`, used to build documentation
+    #   Force the usage of appledoc 2.1 until https://github.com/inkling/Subliminal/issues/71 is addressed
     - brew install https://raw.github.com/mxcl/homebrew/33aa810/Library/Formula/appledoc.rb
 
 # To work around http://openradar.appspot.com/radar?id=1544403,
