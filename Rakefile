@@ -537,7 +537,7 @@ end
 ### Building documentation
 
 desc "Builds the documentation"
-task :build_docs do    
+task :build_docs => 'test:prepare' do    
   puts "\nBuilding documentation...\n\n"
 
   # Use system so we see the build's output
