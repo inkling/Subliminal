@@ -1,18 +1,38 @@
 language: objective-c
 
-# These tasks run before cd'ing into Subliminal's repo
+## Setup
+
 before_install:
-# Install required tools
-# - `xctool`, required to build the unit test and documentation targets
-# 	nothing to do here because it's already installed on Travis
-
-# - `appledoc`, used to build documentation
-# 	Force the usage of appledoc 2.1 until https://github.com/inkling/Subliminal/issues/71 is addressed
-    - brew install https://raw.github.com/mxcl/homebrew/33aa810/Library/Formula/appledoc.rb
-
-# Initialize test dependencies (OCMock)
+    # Fully initialize repo (i.e. test dependencies like `OCMock`)
     - git submodule update --init --recursive
 
-# To work around http://openradar.appspot.com/radar?id=1544403,
-# the tests need the Travis user's password.
-script: rake test build_docs LOGIN_PASSWORD="j4K7CK4oM49ZA27y532b"
+install:
+    # - `xctool`, required to build the unit test and documentation targets
+    #   nothing to do here because it's already installed on Travis
+
+    # - `appledoc`, used to build documentation
+    #   Force the usage of appledoc 2.1 until https://github.com/inkling/Subliminal/issues/71 is addressed
+    - brew install https://raw.github.com/mxcl/homebrew/33aa810/Library/Formula/appledoc.rb
+
+## Test matrix
+
+env:
+    global:
+        # To work around http://openradar.appspot.com/radar?id=1544403,
+        # the tests need the Travis user's password.
+        - LOGIN_PASSWORD="j4K7CK4oM49ZA27y532b"
+    matrix:
+        - TEST_COMMAND=test:unit                TEST_SDK=5.1
+        - TEST_COMMAND=test:unit                TEST_SDK=6.1
+
+        - TEST_COMMAND=test:integration:iphone  TEST_SDK=5.1
+        - TEST_COMMAND=test:integration:iphone  TEST_SDK=6.1
+
+        - TEST_COMMAND=test:integration:ipad    TEST_SDK=5.1
+        - TEST_COMMAND=test:integration:ipad    TEST_SDK=6.1
+
+        - TEST_COMMAND=build_docs
+
+## Test script
+
+script: rake $TEST_COMMAND

@@ -33,6 +33,9 @@ DOCSET_DIR = "#{ENV['HOME']}/Library/Developer/Shared/Documentation/DocSets"
 DOCSET_NAME = "com.inkling.Subliminal.docset"
 DOCSET_VERSION = "1.0.1"
 
+SUPPORTED_SDKS = [ "5.1", "6.1" ]
+TEST_SDKS = ENV["TEST_SDK"] ? [ ENV["TEST_SDK"] ] : SUPPORTED_SDKS
+
 
 task :default => :usage
 
@@ -97,7 +100,12 @@ Subliminal's integration tests are currently configured to use the automatically
 iPhone Developer identity with the wildcard \"iOS Team Provisioning Profile\" managed 
 by Xcode.
 
-\`integration\` options:
+\`test\` options:
+  TEST_SDK=<sdk>            Selects the SDK version against which to run the tests.
+                            Supported values are '5.1' or '6.1'.
+                            If not specified, the tests will be run against all supported SDKs.
+
+\`test:integration\` options:
   LIVE=yes                  Indicates that the tests are being attended by a developer who can 
                             enter their password if instruments asks for authorization. For the tests 
                             to run un-attended, the current user's login password must be specified
@@ -110,7 +118,7 @@ by Xcode.
                             require the current user's password. When running the tests live, 
                             \`LIVE=yes\` may be specified instead.
  
-\`integration:device\` options:
+\`test:integration:device\` options:
   UDID=<udid>               The UDID of the device to target.\n\n"""
 
     when "build_docs"
@@ -383,8 +391,7 @@ namespace :test do
         tests_succeeded = false
       end
     }
-    test_on_sdk.call("5.1")
-    test_on_sdk.call("6.1")
+    TEST_SDKS.each { |sdk| test_on_sdk.call(sdk) }
 
     if tests_succeeded
       puts "\nUnit tests passed.\n\n"
@@ -471,8 +478,7 @@ namespace :test do
           tests_succeeded = false
         end
       }
-      test_on_sdk.call("5.1")
-      test_on_sdk.call("6.1")
+      TEST_SDKS.each { |sdk| test_on_sdk.call(sdk) }
 
       if tests_succeeded
         puts "\niPhone integration tests passed.\n\n"
@@ -498,8 +504,7 @@ namespace :test do
           tests_succeeded = false
         end
       }
-      test_on_sdk.call("5.1")
-      test_on_sdk.call("6.1")
+      TEST_SDKS.each { |sdk| test_on_sdk.call(sdk) }
 
       if tests_succeeded
         puts "\niPad integration tests passed.\n\n"
@@ -532,7 +537,7 @@ end
 ### Building documentation
 
 desc "Builds the documentation"
-task :build_docs do    
+task :build_docs => 'test:prepare' do    
   puts "\nBuilding documentation...\n\n"
 
   # Use system so we see the build's output
