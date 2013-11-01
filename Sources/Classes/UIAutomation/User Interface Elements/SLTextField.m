@@ -22,7 +22,6 @@
 
 #import "SLTextField.h"
 #import "SLUIAElement+Subclassing.h"
-#import "SLKeyboard+Internal.h"
 
 @implementation SLTextField
 
@@ -31,6 +30,11 @@
 }
 
 - (void)setText:(NSString *)text {
+    [self setText:text withKeyboard: _defaultKeyboard ?: [SLKeyboard keyboard]];
+}
+
+- (void)setText:(NSString *)text withKeyboard:(id<SLKeyboard>)keyboard
+{
     // Tap to show the keyboard (if the field doesn't already have keyboard focus,
     // because in that case a real user would probably not tap again before typing)
     if (![self hasKeyboardFocus]) {
@@ -39,8 +43,7 @@
 
     // Clear any current text before typing the new text.
     [self waitUntilTappable:YES thenSendMessage:@"setValue('')"];
-    
-    [[SLKeyboard keyboard] typeString:text withSetValueFallbackUsingElement:self];
+    [keyboard typeString:text withSetValueFallbackUsingElement:self];
 }
 
 - (BOOL)matchesObject:(NSObject *)object {
