@@ -67,10 +67,10 @@
  Run the specified tests by invoking `runTests:usingSeed:withCompletionBlock:` 
  with `SLTestControllerRandomSeed` and the specified completion block.
 
- @param tests The set of tests to run.
+ @param tests The collection of tests to run.
  @param completionBlock An optional block to execute once testing has finished.
  */
-- (void)runTests:(NSSet *)tests withCompletionBlock:(void (^)())completionBlock;
+- (void)runTests:(id)tests withCompletionBlock:(void (^)())completionBlock;
 
 /**
  Runs the specified tests.
@@ -92,12 +92,12 @@
  will be executed on the main queue. The test controller will then signal 
  UIAutomation to finish executing commands.
  
- @param tests           The set of tests to run.
+ @param tests           The collection of tests to run.
  @param seed            The seed to use to randomize the tests.
                         If `SLTestControllerRandomSeed` is passed, the test controller will choose a seed.
  @param completionBlock An optional block to execute once testing has finished.
  */
-- (void)runTests:(NSSet *)tests usingSeed:(unsigned int)seed withCompletionBlock:(void (^)())completionBlock;
+- (void)runTests:(id)tests usingSeed:(unsigned int)seed withCompletionBlock:(void (^)())completionBlock;
 
 @end
 
@@ -149,3 +149,7 @@
 /// A value that may be passed to `-runTests:usingSeed:withCompletionBlock:`
 /// to indicate that the test controller should choose a seed.
 extern const unsigned int SLTestControllerRandomSeed;
+
+/// A value that may be passed to `-runTests:usingSeed:withCompletionBlock:`
+/// to indicate that the test controller should not randomize the tests.
+extern const unsigned int SLTestControllerNoShuffleSeed;

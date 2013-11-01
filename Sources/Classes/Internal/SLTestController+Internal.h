@@ -34,7 +34,7 @@
 /// ----------------------------------------
 
 /**
- Given a set of tests, returns an array ordered by the specified seed 
+ Given a collection of tests, returns an array ordered by the specified seed 
  and filtered to those that should be run.
  
  The set of tests is sorted and randomized using the specified seed. 
@@ -47,7 +47,7 @@
  By sorting prior to filtering, the relative order of tests is maintained 
  regardless of focus.
 
- @param tests       The set of `SLTest` subclasses to process.
+ @param tests       The set or array of `SLTest` subclasses to process.
 
  @param seed        The seed to use to randomize the test order. If this is null, or points to a value of
                     `SLTestControllerRandomSeed`, the test controller will choose a seed.
@@ -59,6 +59,6 @@
 
  @return            A filtered and ordered array of tests to run.
  */
-+ (NSArray *)testsToRun:(NSSet *)tests usingSeed:(inout unsigned int *)seed withFocus:(BOOL *)withFocus;
++ (NSArray *)testsToRun:(id)tests usingSeed:(inout unsigned int *)seed withFocus:(BOOL *)withFocus;
 
 @end
