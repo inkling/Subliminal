@@ -43,7 +43,11 @@
 
     // Clear any current text before typing the new text.
     [self waitUntilTappable:YES thenSendMessage:@"setValue('')"];
-    [keyboard typeString:text withSetValueFallbackUsingElement:self];
+    if ([keyboard respondsToSelector:@selector(typeString:withSetValueFallbackUsingElement:)]) {
+        [keyboard typeString:text withSetValueFallbackUsingElement:self];
+    } else {
+        [keyboard typeString:text];
+    }
 }
 
 - (BOOL)matchesObject:(NSObject *)object {
