@@ -92,6 +92,9 @@
  will be executed on the main queue. The test controller will then signal 
  UIAutomation to finish executing commands.
  
+ Tests are run via the `runTestsSync:usingSeed:finishTesting:withCompletionBlock:` with `finishTesting:YES` but are
+ dispatched to a run queue.
+ 
  @param tests           The set of tests to run.
  @param seed            The seed to use to randomize the tests.
                         If `SLTestControllerRandomSeed` is passed, the test controller will choose a seed.
@@ -99,11 +102,45 @@
  */
 - (void)runTests:(NSSet *)tests usingSeed:(unsigned int)seed withCompletionBlock:(void (^)())completionBlock;
 
-@end
-
+/**
+ Runs the specified tests by invoking `runTestsSync:usingSeed:finishTesting:withCompletionBlock:` with
+ `SLTestControllerRandomSeed`, NO, and the completion block
+ 
+ @param tests           The collection of tests to run.
+ @param completionBlock An optional block to execute once testing has finished.
+ 
+ */
+- (void)runTestsSync:(id)tests withCompletionBlock:(void (^)())completionBlock;
 
 /**
- The methods in the `SLTestController (DebugSettings)` category may be useful 
+ Runs the specified tests by invoking `runTestsSync:usingSeed:finishTesting:withCompletionBlock:` with
+ `SLTestControllerRandomSeed`, finishTesting, and the completion block
+ 
+ @param tests           The collection of tests to run.
+ @param finishTesting   A boolean that, when true, signals the end of the test run and terminates the
+                        Subliminal session.
+ @param completionBlock An optional block to execute once testing has finished.
+ 
+ */
+- (void)runTestsSync:(id)tests finishTesting:(BOOL)finishTesting withCompletionBlock:(void (^)())completionBlock;
+
+/**
+ Runs the specified tests just the `runTests:` methods, however they are run
+ synchronously so dispatching them to another queue is up to the caller.
+ 
+ @param tests           The collection of tests to run.
+ @param seed            The seed to use to randomize the tests.
+                        If `SLTestControllerRandomSeed` is passed, the test controller will choose a seed.
+ @param finishTesting   A boolean that, when true, signals the end of the test run and terminates the
+                        Subliminal session.
+ @param completionBlock An optional block to execute once testing has finished.
+ 
+ */
+- (void)runTestsSync:(id)tests usingSeed:(unsigned int)seed finishTesting:(BOOL)finishTesting withCompletionBlock:(void (^)())completionBlock;
+@end
+
+/**
+ The methods in the `SLTestController (DebugSettings)` category may be useful
  in debugging tests.
  */
 @interface SLTestController (DebugSettings)
