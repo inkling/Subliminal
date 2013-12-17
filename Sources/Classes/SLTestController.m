@@ -359,6 +359,7 @@ u_int32_t random_uniform(u_int32_t upperBound) {
 
 - (void)_finishTesting {
     [[SLLogger sharedLogger] logTestingFinishWithNumTestsExecuted:_numTestsExecuted
+                                                 numTestsExpected:_testsToRun.count
                                                    numTestsFailed:_numTestsFailed];
 
     if (_numTestsFailed > 0) {

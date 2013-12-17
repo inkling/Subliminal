@@ -151,10 +151,13 @@ void SLLogAsync(NSString *format, ...) {
 }
 
 - (void)logTestingFinishWithNumTestsExecuted:(NSUInteger)numTestsExecuted
+                            numTestsExpected:(NSUInteger)numTestsExpected
                               numTestsFailed:(NSUInteger)numTestsFailed {
-    [self logMessage:[NSString stringWithFormat:@"Testing finished: executed %u test%@, with %u failure%@.",
-                                                numTestsExecuted, (numTestsExecuted == 1 ? @"" : @"s"),
-                                                numTestsFailed, (numTestsFailed == 1 ? @"" : @"s")]];
+    [self logMessage:[NSString stringWithFormat:@"Testing %@: executed %u test%@, of %u expected, with %u failure%@.",
+                      (numTestsExecuted == numTestsExpected) ? @"finished" : @"did not finish",
+                      numTestsExecuted, (numTestsExecuted == 1 ? @"" : @"s"),
+                      numTestsExpected,
+                      numTestsFailed, (numTestsFailed == 1 ? @"" : @"s")]];
 }
 
 @end

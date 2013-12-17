@@ -455,7 +455,7 @@
     [[_loggerMock expect] logTestFinish:NSStringFromClass(testClass)
                            withNumCasesExecuted:3 numCasesFailed:0 numCasesFailedUnexpectedly:0];
 
-    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsFailed:0];
+    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsExpected:1 numTestsFailed:0];
 
     // *** End expected test run
     
@@ -554,7 +554,7 @@
     [[_loggerMock expect] logTestAbort:NSStringFromClass(failingTestClass)];
 
     // ...and the test controller logs testing as finishing with one test executed, one test failing.
-    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsFailed:1];
+    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1  numTestsExpected:1 numTestsFailed:1];
 
     // *** End expected test run
 
@@ -680,7 +680,7 @@
                           withNumCasesExecuted:3 numCasesFailed:1 numCasesFailedUnexpectedly:0];
 
     // ...and the test controller logs testing as finishing with one test executed, one test failing.
-    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsFailed:1];
+    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsExpected:1 numTestsFailed:1];
 
     // *** End expected test run
 
@@ -859,7 +859,7 @@
                           withNumCasesExecuted:3 numCasesFailed:0 numCasesFailedUnexpectedly:0];
 
     // ...and the test controller logs testing as finishing with one test executed, no tests failing.
-    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsFailed:0];
+    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsExpected:1 numTestsFailed:0];
 
     // *** End expected test run
 
@@ -904,7 +904,7 @@
              numCasesFailedUnexpectedly:(failWithAssertionException ? 0 : 1)];
 
     // ...and the test controller logs testing as finishing with one test executed, one test failing.
-    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsFailed:1];
+    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsExpected:1 numTestsFailed:1];
 
     // *** End expected test run
 
