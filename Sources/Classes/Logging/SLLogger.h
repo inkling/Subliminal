@@ -221,10 +221,12 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
  This method is called after all tests have run.
  
  @param numTestsExecuted The number of tests that were executed.
- @param numTestsFailed Of `numTestsExecuted`, the number of tests that failed 
+ @param numTestsExpected The number of tests that should have been executed.
+ @param numTestsFailed Of `numTestsExecuted`, the number of tests that failed
  (by throwing an exception in set-up, tear-down, or a test case).
  */
 - (void)logTestingFinishWithNumTestsExecuted:(NSUInteger)numTestsExecuted
+                            numTestsExpected:(NSUInteger)numTestsExpected
                               numTestsFailed:(NSUInteger)numTestsFailed;
 
 @end

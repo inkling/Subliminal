@@ -167,7 +167,7 @@ static const NSUInteger kNumSeedTrials = 100;
     [[[failingTestMock expect] andThrow:exception] testOne];
 
     // Expect testing to finish with a failure
-    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:[tests count] numTestsFailed:1];
+    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:[tests count] numTestsExpected:[tests count] numTestsFailed:1];
 
     // Expect the seed to be logged, and capture it
     __block unsigned int seed = 0;
@@ -217,7 +217,7 @@ static const NSUInteger kNumSeedTrials = 100;
 
     // Here we're hardcoding the number of tests that `runTestsUsingSeed:testsRanInSameOrder:` uses
     // --this will just have to be updated if that method changes
-    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:3 numTestsFailed:0];
+    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:3 numTestsExpected:3 numTestsFailed:0];
 
     // warning at end
     NSString *const seedWarning = @"Tests were run in a predetermined order.";
@@ -427,7 +427,7 @@ static const NSUInteger kNumSeedTrials = 100;
                                                                  failed:[OCMArg anyPointer]
                                                      failedUnexpectedly:[OCMArg anyPointer]];
 
-    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsFailed:0];
+    [[_loggerMock expect] logTestingFinishWithNumTestsExecuted:1 numTestsExpected:1 numTestsFailed:0];
     
     // warning at end
     [[_loggerMock expect] logWarning:@"This was a focused run. Fewer test cases may have run than normal."];
