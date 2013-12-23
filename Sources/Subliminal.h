@@ -40,4 +40,6 @@
 #import "SLWebView.h"
 #import "SLWindow.h"
 
+#import "SLGesture.h"
+#import "SLGesture+SLUIAElement.h"
 #import "SLLogger.h"
