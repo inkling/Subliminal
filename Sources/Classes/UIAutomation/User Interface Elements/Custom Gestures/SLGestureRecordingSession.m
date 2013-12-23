@@ -25,7 +25,7 @@ typedef NS_ENUM(NSInteger, SLGestureRecordingSessionState) {
     SLGestureRecordingSessionStateFinished
 };
 
-@interface SLGestureRecordingSession () <SLGestureRecorderDelegate>
+@interface SLGestureRecordingSession () <SLGestureRecorderDelegate, UIGestureRecognizerDelegate>
 @property (nonatomic, strong, readwrite) SLGesture *recordedGesture;
 // `state` is atomic because it may be read by both the testing and the main threads,
 // though it may only be updated by the main thread
@@ -40,6 +40,7 @@ typedef NS_ENUM(NSInteger, SLGestureRecordingSessionState) {
     dispatch_semaphore_t _sessionSemaphore;
 
     SLCutoutMaskView *_elementHighlightView;
+    UITapGestureRecognizer *_elementHighlightViewDismissRecognizer;
 
     SLRecordingToolbar *_toolbar;
 }
@@ -59,6 +60,15 @@ typedef NS_ENUM(NSInteger, SLGestureRecordingSessionState) {
         _elementHighlightView = [[SLCutoutMaskView alloc] initWithFrame:CGRectZero];
         // ensure that the app will be able to be manipulated behind the highlight view
         _elementHighlightView.userInteractionEnabled = NO;
+
+        // a gesture recognizer must have a target or it will not receive touches,
+        // but the real work is done in `-gestureRecognizer:shouldReceiveTouch:`
+        // so that we can dismiss the element highlight view in response to any touch, not just taps
+        _elementHighlightViewDismissRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissHighlightView:)];
+        _elementHighlightViewDismissRecognizer.delegate = self;
+        // the recognizer must not cancel touches (i.e. upon the toolbar items)
+        _elementHighlightViewDismissRecognizer.cancelsTouchesInView = NO;
+        // recognizer will be added to a view when recording begins (on the main thread)
 
         _toolbar = [[SLRecordingToolbar alloc] initWithFrame:CGRectZero];
 
@@ -103,6 +113,11 @@ typedef NS_ENUM(NSInteger, SLGestureRecordingSessionState) {
         // focus the user's attention by highlighting the element
         CGRect referenceRectInWindow = [keyWindow convertRect:rect fromWindow:nil];
         _elementHighlightView.cutoutRect = [_elementHighlightView convertRect:referenceRectInWindow fromView:keyWindow];
+
+        // dismiss the highlight view if the user interacts with the app before recording begins
+        // we can't add the gesture recognizer to the element highlight view itself
+        // because it has user interaction disabled (see `-initWithElement:`)
+        [keyWindow addGestureRecognizer:_elementHighlightViewDismissRecognizer];
 
         // horizontally center the toolbar just under the status bar
         CGRect toolbarFrame = (CGRect){
@@ -162,9 +177,31 @@ typedef NS_ENUM(NSInteger, SLGestureRecordingSessionState) {
     _recorder = nil;
     
     [_elementHighlightView removeFromSuperview];
+    [_elementHighlightViewDismissRecognizer.view removeGestureRecognizer:_elementHighlightViewDismissRecognizer];
+
     [_toolbar removeFromSuperview];
 
     dispatch_semaphore_signal(_sessionSemaphore);
+}
+
+#pragma mark - Dismissing the Element Highlight View on Touch
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    return YES;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    if ((gestureRecognizer == _elementHighlightViewDismissRecognizer) &&
+        (CGRectContainsPoint(_elementHighlightView.bounds, [touch locationInView:_elementHighlightView]))) {
+        // dismiss the element highlight view immediately in response to a user's touch
+        [_elementHighlightView setMasking:NO animated:NO];
+    }
+    return YES;
+}
+
+- (void)dismissHighlightView:(UITapGestureRecognizer *)recognizer {
+    // nothing to do here--the view is dismissed in `gestureRecognizer:shouldReceiveTouch:`
+    // (see discussion in `-initWithElement:`
 }
 
 #pragma mark - Recording and Playback
