@@ -46,7 +46,7 @@ typedef NS_ENUM(NSInteger, SLGestureRecordingSessionState) {
 @synthesize state = _state;
 
 + (SLGesture *)recordGestureWithElement:(SLUIAElement *)element {
-    return [[[self alloc] initWithElement:element] record];
+    return [[[self alloc] initWithElement:element] recordGesture];
 }
 
 - (instancetype)initWithElement:(SLUIAElement *)element {
@@ -77,9 +77,11 @@ typedef NS_ENUM(NSInteger, SLGestureRecordingSessionState) {
 - (void)dealloc {
     NSAssert(![_recorder isRecording],
              @"%@ was freed without recording having been stopped.", self);
+
+    if (_sessionSemaphore) dispatch_release(_sessionSemaphore);
 }
 
-- (SLGesture *)record {
+- (SLGesture *)recordGesture {
     [self startSession];
 
     return self.recordedGesture;

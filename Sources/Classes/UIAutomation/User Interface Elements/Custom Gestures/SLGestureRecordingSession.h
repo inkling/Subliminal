@@ -16,6 +16,6 @@
 
 - (instancetype)initWithElement:(SLUIAElement *)element;
 
-- (SLGesture *)record;
+- (SLGesture *)recordGesture;
 
 @end
