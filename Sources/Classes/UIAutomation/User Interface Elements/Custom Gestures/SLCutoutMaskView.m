@@ -8,6 +8,10 @@
 
 #import "SLCutoutMaskView.h"
 
+#import <QuartzCore/QuartzCore.h>
+
+static const CGFloat kMaskShowHideDuration = 0.5;
+
 @implementation SLCutoutMaskView
 
 + (UIColor *)maskColor {
@@ -38,12 +42,18 @@
     if (masking != _masking) {
         _masking = masking;
         [self setNeedsDisplay];
-        [UIView transitionWithView:self
-                          duration:(animated ? 0.5 : 0.0)
-                           options:UIViewAnimationOptionTransitionCrossDissolve
-                        animations:^{
-                            [self.layer displayIfNeeded];
-                        } completion:nil];
+        if (animated) {
+            [UIView transitionWithView:self
+                              duration:kMaskShowHideDuration
+                               options:UIViewAnimationOptionTransitionCrossDissolve
+                            animations:^{
+                                [self.layer displayIfNeeded];
+                            } completion:nil];
+        } else {
+            // if we don't want to use an animation, we mustn't use an animation block even with `duration == 0.0`
+            // because `CALayer` will try to apply a default transition duration within an animation block
+            [self.layer displayIfNeeded];
+        }
     }
 }
 

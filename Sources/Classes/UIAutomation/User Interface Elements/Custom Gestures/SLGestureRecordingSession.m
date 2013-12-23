@@ -251,7 +251,8 @@ typedef NS_ENUM(NSInteger, SLGestureRecordingSessionState) {
 - (void)recordingPreflightDidComplete {
     self.state = SLGestureRecordingSessionStateRecording;
 
-    [_elementHighlightView setMasking:NO animated:YES];
+    // dismiss the element highlight view without animation to suggest that recording begins immediately
+    [_elementHighlightView setMasking:NO animated:NO];
 
     [_recorder setRecording:YES];
 }
