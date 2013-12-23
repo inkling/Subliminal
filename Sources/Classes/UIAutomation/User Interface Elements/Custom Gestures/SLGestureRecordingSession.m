@@ -39,6 +39,8 @@ typedef NS_ENUM(NSInteger, SLGestureRecordingSessionState) {
     // and the main thread that receives callbacks from the user interacting with the recording UI
     dispatch_semaphore_t _sessionSemaphore;
 
+    SLCutoutMaskView *_elementHighlightView;
+
     SLRecordingToolbar *_toolbar;
 }
 @synthesize state = _state;
@@ -53,6 +55,10 @@ typedef NS_ENUM(NSInteger, SLGestureRecordingSessionState) {
         _element = element;
 
         _sessionSemaphore = dispatch_semaphore_create(0);
+
+        _elementHighlightView = [[SLCutoutMaskView alloc] initWithFrame:CGRectZero];
+        // ensure that the app will be able to be manipulated behind the highlight view
+        _elementHighlightView.userInteractionEnabled = NO;
 
         _toolbar = [[SLRecordingToolbar alloc] initWithFrame:CGRectZero];
 
@@ -89,6 +95,12 @@ typedef NS_ENUM(NSInteger, SLGestureRecordingSessionState) {
         _recorder.delegate = self;
 
         UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+        _elementHighlightView.frame = keyWindow.bounds;
+        [keyWindow addSubview:_elementHighlightView];
+
+        // focus the user's attention by highlighting the element
+        CGRect referenceRectInWindow = [keyWindow convertRect:rect fromWindow:nil];
+        _elementHighlightView.cutoutRect = [_elementHighlightView convertRect:referenceRectInWindow fromView:keyWindow];
 
         // horizontally center the toolbar just under the status bar
         CGRect toolbarFrame = (CGRect){
@@ -147,6 +159,7 @@ typedef NS_ENUM(NSInteger, SLGestureRecordingSessionState) {
     [_recorder setRecording:NO];
     _recorder = nil;
     
+    [_elementHighlightView removeFromSuperview];
     [_toolbar removeFromSuperview];
 
     dispatch_semaphore_signal(_sessionSemaphore);
@@ -235,6 +248,8 @@ typedef NS_ENUM(NSInteger, SLGestureRecordingSessionState) {
 
 - (void)recordingPreflightDidComplete {
     self.state = SLGestureRecordingSessionStateRecording;
+
+    [_elementHighlightView setMasking:NO animated:YES];
 
     [_recorder setRecording:YES];
 }

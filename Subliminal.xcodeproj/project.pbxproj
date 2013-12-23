@@ -83,6 +83,8 @@
 		F043A9BE1729CFFE00A4FD1D /* SLElementVisibilityTestElementHidden.xib in Resources */ = {isa = PBXBuildFile; fileRef = F043A9BD1729CFFE00A4FD1D /* SLElementVisibilityTestElementHidden.xib */; };
 		F043A9C01729EFD100A4FD1D /* SLElementVisibilityTestUserInteractionDisabled.xib in Resources */ = {isa = PBXBuildFile; fileRef = F043A9BF1729EFD100A4FD1D /* SLElementVisibilityTestUserInteractionDisabled.xib */; };
 		F043A9C7172A160600A4FD1D /* SLElementVisibilityTest.html in Resources */ = {isa = PBXBuildFile; fileRef = F043A9C6172A160600A4FD1D /* SLElementVisibilityTest.html */; };
+		F04608301860FF1000EDF226 /* SLCutoutMaskView.h in Headers */ = {isa = PBXBuildFile; fileRef = F046082E1860FF1000EDF226 /* SLCutoutMaskView.h */; };
+		F04608311860FF1000EDF226 /* SLCutoutMaskView.m in Sources */ = {isa = PBXBuildFile; fileRef = F046082F1860FF1000EDF226 /* SLCutoutMaskView.m */; };
 		F046083418611FAE00EDF226 /* SLGesture+SLUIAElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F046083218611FAE00EDF226 /* SLGesture+SLUIAElement.h */; };
 		F046083518611FAE00EDF226 /* SLGesture+SLUIAElement.m in Sources */ = {isa = PBXBuildFile; fileRef = F046083318611FAE00EDF226 /* SLGesture+SLUIAElement.m */; };
 		F0460838186120BB00EDF226 /* SLAppliedGesture.h in Headers */ = {isa = PBXBuildFile; fileRef = F0460836186120BB00EDF226 /* SLAppliedGesture.h */; };
@@ -323,6 +325,8 @@
 		F043A9BD1729CFFE00A4FD1D /* SLElementVisibilityTestElementHidden.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestElementHidden.xib; sourceTree = "<group>"; };
 		F043A9BF1729EFD100A4FD1D /* SLElementVisibilityTestUserInteractionDisabled.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestUserInteractionDisabled.xib; sourceTree = "<group>"; };
 		F043A9C6172A160600A4FD1D /* SLElementVisibilityTest.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = SLElementVisibilityTest.html; sourceTree = "<group>"; };
+		F046082E1860FF1000EDF226 /* SLCutoutMaskView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLCutoutMaskView.h; sourceTree = "<group>"; };
+		F046082F1860FF1000EDF226 /* SLCutoutMaskView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLCutoutMaskView.m; sourceTree = "<group>"; };
 		F046083218611FAE00EDF226 /* SLGesture+SLUIAElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLGesture+SLUIAElement.h"; sourceTree = "<group>"; };
 		F046083318611FAE00EDF226 /* SLGesture+SLUIAElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SLGesture+SLUIAElement.m"; sourceTree = "<group>"; };
 		F0460836186120BB00EDF226 /* SLAppliedGesture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLAppliedGesture.h; sourceTree = "<group>"; };
@@ -986,6 +990,8 @@
 				F046083B186129C200EDF226 /* SLGesture+Recording.m */,
 				F0D8453517FE2522002F16DB /* SLGestureRecorder.h */,
 				F0D8453617FE2522002F16DB /* SLGestureRecorder.m */,
+				F046082E1860FF1000EDF226 /* SLCutoutMaskView.h */,
+				F046082F1860FF1000EDF226 /* SLCutoutMaskView.m */,
 				F046083E1861459200EDF226 /* SLRecordingToolbar.h */,
 				F046083F1861459200EDF226 /* SLRecordingToolbar.m */,
 			);
@@ -1012,6 +1018,7 @@
 			files = (
 				F0695E1C16014491000B05D0 /* Subliminal.h in Headers */,
 				F0695E1D16014491000B05D0 /* SLTestController.h in Headers */,
+				F04608301860FF1000EDF226 /* SLCutoutMaskView.h in Headers */,
 				F0D8453717FE2522002F16DB /* SLGestureRecorder.h in Headers */,
 				F0695E1E16014491000B05D0 /* SLTest.h in Headers */,
 				F0695E1F16014491000B05D0 /* SLTerminal.h in Headers */,
@@ -1267,6 +1274,7 @@
 				2CE9AA4D17E3A747007EF0B5 /* SLSwitch.m in Sources */,
 				F0695DE4160138DF000B05D0 /* SLUIAElement.m in Sources */,
 				F046083D186129C200EDF226 /* SLGesture+Recording.m in Sources */,
+				F04608311860FF1000EDF226 /* SLCutoutMaskView.m in Sources */,
 				F0460839186120BB00EDF226 /* SLAppliedGesture.m in Sources */,
 				F0695DE5160138DF000B05D0 /* SLLogger.m in Sources */,
 				F0695DE7160138DF000B05D0 /* SLTerminal.m in Sources */,
