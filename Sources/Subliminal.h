@@ -42,4 +42,6 @@
 
 #import "SLGesture.h"
 #import "SLGesture+SLUIAElement.h"
+#import "SLGestureRecordingSession.h"
+
 #import "SLLogger.h"
