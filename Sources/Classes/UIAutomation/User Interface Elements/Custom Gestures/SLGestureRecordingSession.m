@@ -68,6 +68,7 @@ typedef NS_ENUM(NSInteger, SLGestureRecordingSessionState) {
         _elementHighlightViewDismissRecognizer.delegate = self;
         // the recognizer must not cancel touches (i.e. upon the toolbar items)
         _elementHighlightViewDismissRecognizer.cancelsTouchesInView = NO;
+        _elementHighlightViewDismissRecognizer.delaysTouchesEnded = NO;
         // recognizer will be added to a view when recording begins (on the main thread)
 
         _toolbar = [[SLRecordingToolbar alloc] initWithFrame:CGRectZero];
@@ -296,16 +297,13 @@ typedef NS_ENUM(NSInteger, SLGestureRecordingSessionState) {
 
 - (void)stop:(id)sender {
     [_recorder setRecording:NO];
+    self.recordedGesture = _recorder.recordedGesture;
 
     self.state = SLGestureRecordingSessionStateReady;
 }
 
 - (BOOL)gestureRecorder:(SLGestureRecorder *)recorder shouldReceiveTouch:(UITouch *)touch {
     return ![touch.view isDescendantOfView:_toolbar];
-}
-
-- (void)gestureRecorder:(SLGestureRecorder *)recorder didRecordGesture:(SLGesture *)gesture {
-    self.recordedGesture = gesture;
 }
 
 @end

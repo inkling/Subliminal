@@ -37,9 +37,15 @@
     if (self) {
         _rect = rect;
 
+        // a gesture recognizer must be initialized with a target in order to receive touches
+        // but the recorder never recognizes (finishes evaluating) a gesture,
+        // as we wish to receive all touches until we're directed to stop recording
         _gestureRecognizer = [[SLGestureRecorderRecognizer alloc] initWithTarget:self
-                                                                          action:@selector(didRecognizeGesture:)
+                                                                          action:@selector(didFinishRecognition:)
                                                                             rect:rect];
+        // in order to freely manipulate the app, the recognizer must not cancel nor delay touches
+        _gestureRecognizer.cancelsTouchesInView = NO;
+        _gestureRecognizer.delaysTouchesEnded = NO;
         _gestureRecognizer.delegate = self;
     }
     return self;
@@ -62,12 +68,16 @@
 
     if (recording != _recording) {
         if (recording) {
+            _recordedGesture = nil;
+
             [[[UIApplication sharedApplication] keyWindow] addGestureRecognizer:_gestureRecognizer];
             _gestureRecognizer.enabled = YES;
         } else {
             // disable before removing to cancel recognition in the approved way
             _gestureRecognizer.enabled = NO;
             [_gestureRecognizer.view removeGestureRecognizer:_gestureRecognizer];
+
+            _recordedGesture = _gestureRecognizer.gesture;
         }
         _recording = recording;
     }
@@ -85,11 +95,8 @@
     return YES;
 }
 
-- (void)didRecognizeGesture:(SLGestureRecorderRecognizer *)recognizer {
-    // TODO: Handle discrete (multi-sequence) gestures too
-    if (recognizer.state == UIGestureRecognizerStateRecognized) {
-        [self.delegate gestureRecorder:self didRecordGesture:recognizer.gesture];
-    }
+- (void)didFinishRecognition:(SLGestureRecorderRecognizer *)recognizer {
+    // nothing to do here; we don't expect this to be called anyway
 }
 
 @end
@@ -100,8 +107,9 @@
 
 @implementation SLGestureRecorderRecognizer {
     CGRect _rect;
-    NSDate *_gestureStartDate;
+    NSDate *_gestureStartDate, *_touchSequenceStartDate;
     SLMutableGesture *_gesture;
+    SLMutableTouchStateSequence *_currentStateSequence;
 }
 
 - (instancetype)initWithTarget:(id)target action:(SEL)action rect:(CGRect)rect {
@@ -121,7 +129,7 @@
 }
 
 - (void)reset {
-    _gestureStartDate = nil;
+    _gestureStartDate = nil, _touchSequenceStartDate = nil;
     _gesture = [[SLMutableGesture alloc] init];
 }
 
@@ -129,28 +137,32 @@
     return [_gesture copy];
 }
 
-- (void)recordTouches:(NSSet *)touches {
-    NSDate *touchDate = [NSDate date];
-    if (!_gestureStartDate) {
-        _gestureStartDate = touchDate;
-    }
-
-    NSTimeInterval touchTime = [touchDate timeIntervalSinceDate:_gestureStartDate];
-    [_gesture addState:[SLTouchState stateAtTime:touchTime withUITouches:touches rect:_rect]];
+- (void)recordTouches:(NSSet *)touches atDate:(NSDate *)date {
+    NSTimeInterval touchTime = [date timeIntervalSinceDate:_touchSequenceStartDate];
+    [_currentStateSequence addState:[SLTouchState stateAtTime:touchTime withUITouches:touches rect:_rect]];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    [self recordTouches:touches];
+    NSDate *touchDate = [NSDate date];
+    if (!_gestureStartDate) _gestureStartDate = touchDate;
+    _touchSequenceStartDate = touchDate;
+
+    NSTimeInterval touchTime = [touchDate timeIntervalSinceDate:_gestureStartDate];
+    _currentStateSequence = [[SLMutableTouchStateSequence alloc] initAtTime:touchTime];
+
+    // record the first touch state as occurring exactly at the start of the sequence
+    [self recordTouches:touches atDate:touchDate];
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
-    [self recordTouches:touches];
+    [self recordTouches:touches atDate:[NSDate date]];
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-    [self recordTouches:touches];
+    [self recordTouches:touches atDate:[NSDate date]];
 
-    self.state = UIGestureRecognizerStateRecognized;
+    [_gesture addStateSequence:_currentStateSequence];
+    _currentStateSequence = nil;
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {

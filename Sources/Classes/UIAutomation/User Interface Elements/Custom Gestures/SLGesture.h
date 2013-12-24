@@ -9,12 +9,11 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-@class SLTouchState;
 @interface SLGesture : NSObject <NSCoding, NSCopying, NSMutableCopying>
 
-@property (nonatomic, strong, readonly) NSArray *states;
+@property (nonatomic, strong, readonly) NSArray *stateSequences;
 
-+ (instancetype)gestureWithStates:(NSArray *)states;
++ (instancetype)gestureWithStateSequences:(NSArray *)stateSequences;
 
 @end
 
@@ -27,15 +26,34 @@
 
 @end
 
-
+@class SLTouchStateSequence;
 @interface SLMutableGesture : SLGesture
 
-- (void)addState:(SLTouchState *)state;
+- (void)addStateSequence:(SLTouchStateSequence *)state;
 
 @end
 
 
 #pragma mark -
+
+@interface SLTouchStateSequence : NSObject <NSCoding, NSCopying, NSMutableCopying>
+
+@property (nonatomic, readonly) NSTimeInterval time;
+@property (nonatomic, strong, readonly) NSArray *states;
+
++ (instancetype)sequenceAtTime:(NSTimeInterval)time withStates:(NSArray *)states;
+
+@end
+
+@class SLTouchState;
+@interface SLMutableTouchStateSequence : SLTouchStateSequence
+
+- (instancetype)initAtTime:(NSTimeInterval)time;
+
+- (void)addState:(SLTouchState *)state;
+
+@end
+
 
 @interface SLTouchState : NSObject <NSCoding>
 

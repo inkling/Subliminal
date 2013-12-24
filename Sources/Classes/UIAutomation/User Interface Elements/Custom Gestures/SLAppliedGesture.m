@@ -11,27 +11,43 @@
 #import "SLGesture.h"
 
 @implementation SLAppliedGesture {
-    NSMutableArray *_states;
+    NSMutableArray *_stateSequences;
 }
 
 - (instancetype)initWithGesture:(SLGesture *)gesture inRect:(CGRect)rect {
     self = [super init];
     if (self) {
-        _states = [[NSMutableArray alloc] initWithCapacity:[gesture.states count]];
-        for (SLTouchState *state in gesture.states) {
-            NSMutableSet *touches = [[NSMutableSet alloc] initWithCapacity:[state.touches count]];
-            for (SLTouch *touch in state.touches) {
-                CGPoint point = [touch locationInRect:rect];
-                [touches addObject:[SLAppliedTouch touchAtPoint:point]];
+        _stateSequences = [[NSMutableArray alloc] initWithCapacity:[gesture.stateSequences count]];
+        for (SLTouchStateSequence *stateSequence in gesture.stateSequences) {
+            NSMutableArray *states = [[NSMutableArray alloc] initWithCapacity:[stateSequence.states count]];
+            for (SLTouchState *state in stateSequence.states) {
+                NSMutableSet *touches = [[NSMutableSet alloc] initWithCapacity:[state.touches count]];
+                for (SLTouch *touch in state.touches) {
+                    CGPoint point = [touch locationInRect:rect];
+                    [touches addObject:[SLAppliedTouch touchAtPoint:point]];
+                }
+                [states addObject:[SLAppliedTouchState stateAtTime:state.time withTouches:touches]];
             }
-            [_states addObject:[SLAppliedTouchState stateAtTime:state.time withTouches:touches]];
+            [_stateSequences addObject:[SLAppliedTouchStateSequence sequenceAtTime:stateSequence.time withStates:states]];
         }
     }
     return self;
 }
 
-- (NSArray *)states {
-    return [_states copy];
+- (NSArray *)stateSequences {
+    return [_stateSequences copy];
+}
+
+@end
+
+
+@implementation SLAppliedTouchStateSequence
+
++ (instancetype)sequenceAtTime:(NSTimeInterval)time withStates:(NSArray *)states {
+    SLAppliedTouchStateSequence *stateSequence = [[self alloc] init];
+    stateSequence->_time = time;
+    stateSequence->_states = [states copy];
+    return stateSequence;
 }
 
 @end

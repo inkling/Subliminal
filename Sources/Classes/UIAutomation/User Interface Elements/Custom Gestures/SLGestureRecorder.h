@@ -13,10 +13,12 @@
 
 @interface SLGestureRecorder : NSObject
 
+@property (nonatomic, weak) id<SLGestureRecorderDelegate> delegate;
+
 /// may not be set while recording; must be set on the main thread
 @property (nonatomic) CGRect rect;
 @property (nonatomic, getter = isRecording) BOOL recording;
-@property (nonatomic, weak) id<SLGestureRecorderDelegate> delegate;
+@property (nonatomic, strong, readonly) SLGesture *recordedGesture;
 
 - (instancetype)initWithRect:(CGRect)rect;
 
@@ -26,9 +28,5 @@
 @protocol SLGestureRecorderDelegate <NSObject>
 
 - (BOOL)gestureRecorder:(SLGestureRecorder *)recorder shouldReceiveTouch:(UITouch *)touch;
-
-@required
-
-- (void)gestureRecorder:(SLGestureRecorder *)recorder didRecordGesture:(SLGesture *)gesture;
 
 @end

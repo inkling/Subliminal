@@ -12,9 +12,19 @@
 @class SLGesture;
 @interface SLAppliedGesture : NSObject
 
-@property (nonatomic, strong, readonly) NSArray *states;
+@property (nonatomic, strong, readonly) NSArray *stateSequences;
 
 - (instancetype)initWithGesture:(SLGesture *)gesture inRect:(CGRect)rect;
+
+@end
+
+
+@interface SLAppliedTouchStateSequence : NSObject
+
+@property (nonatomic, readonly) NSTimeInterval time;
+@property (nonatomic, strong, readonly) NSArray *states;
+
++ (instancetype)sequenceAtTime:(NSTimeInterval)time withStates:(NSArray *)states;
 
 @end
 
