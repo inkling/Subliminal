@@ -44,7 +44,7 @@ task :default => :usage
 
 desc "Prints usage statement for people unfamiliar with Rake or this particular Rakefile"
 task :usage, [:task_name] do |t, args|
-  task_name = args[:task_name] ||= ""
+  task_name = args[:task_name] || ""
 
   if !task_name.empty?
     case task_name
