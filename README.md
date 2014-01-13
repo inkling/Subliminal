@@ -293,8 +293,12 @@ To use `subliminal-test`, first:
 2. 	"Share" the "Integration Tests" scheme to make it available to the CI server: 
 	in Xcode, click "Product" -> "Schemes" -> "Manage Schemes…", click the "Shared" 
 	checkbox next to the scheme, and check the resulting file into source control.
-3. 	Enable GUI scripting: Open System Preferences and check "Enable Access for 
-	Assistive Devices in the Accessibility" preference pane.
+3.  Enable GUI scripting: if the test machine is running Mac OS X 10.8 Mountain
+	Lion, open System Preferences and check "Enable Access for Assistive Devices"
+	in the Accessibility preference pane.
+	If the test machine runs Mac OS X 10.9 Mavericks, open System Preferences and
+	click on "Security & Privacy". Select "Accessibility" and drag Terminal.app
+	from Applications/Utilities into the list. Do not forget to check the box.
 
 A minimal test runner would then look something like this: 
 
