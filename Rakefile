@@ -34,7 +34,13 @@ DOCSET_NAME = "com.inkling.Subliminal.docset"
 DOCSET_VERSION = "1.0.1"
 
 SUPPORTED_SDKS = [ "5.1", "6.1" ]
-TEST_SDKS = ENV["TEST_SDK"] ? [ ENV["TEST_SDK"] ] : SUPPORTED_SDKS
+TEST_SDK = ENV["TEST_SDK"]
+if TEST_SDK
+  raise "Test SDK #{TEST_SDK} is not supported." unless SUPPORTED_SDKS.include?(TEST_SDK)
+  TEST_SDKS = [ TEST_SDK ]
+else
+  TEST_SDKS = SUPPORTED_SDKS
+end
 
 
 task :default => :usage
