@@ -359,12 +359,6 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
 - (void)dragWithStartOffset:(CGPoint)startOffset endOffset:(CGPoint)endOffset {
     // In the iOS 7 Simulator, scroll views' pan gesture recognizers fail to cause those views to scroll
     // in response to UIAutomation drag gestures, so we must programmatically scroll those views.
-    // we conditionally define `kCFCoreFoundationVersionNumber_iOS_6_1` so that Subliminal
-    // can be continue to be built using the iOS 6.1 SDK until Travis is updated
-    // (https://github.com/travis-ci/travis-ci/issues/1422)
-#ifndef kCFCoreFoundationVersionNumber_iOS_6_1
-#define kCFCoreFoundationVersionNumber_iOS_6_1 793.00
-#endif
 #if TARGET_IPHONE_SIMULATOR
     if (kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_6_1) {
         [self examineMatchingObject:^(NSObject *object) {

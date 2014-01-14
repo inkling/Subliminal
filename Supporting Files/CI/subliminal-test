@@ -352,7 +352,9 @@ cleanup_and_exit () {
 	enable_SDK_version_or_all
 	echo ""
 
-	kill AUTHORIZE_INSTRUMENTS_PID 2> /dev/null
+	kill $AUTHORIZE_INSTRUMENTS_PID 2> /dev/null
+	kill $INSTRUMENTS_PID 2> /dev/null
+	kill $KILL_INSTRUMENTS_PID 2> /dev/null
 
 	# Reset UIAutomation's debug logging if necessary
 	if [[ -z $VERBOSE_LOGGING ]] || ! $VERBOSE_LOGGING; then
@@ -598,16 +600,37 @@ launch_instruments () {
 		$TIMEOUT_ARG\
 		$HARDWARE_ARG\
 		"$APP"\
-		-e UIARESULTSPATH "$RESULTS_DIR"
+		-e UIARESULTSPATH "$RESULTS_DIR" &
+	INSTRUMENTS_PID=$!
+
+	RESULT_LOG="$RESULTS_DIR/Run 1/Automation Results.plist"
+
+	# Abort instruments if it hangs on launch; we'll attempt recovery below
+	kill_instruments_without_output () {
+		sleep 25
+		if [ ! -e "$RESULT_LOG" ]; then
+			kill -9 $INSTRUMENTS_PID
+		fi
+	}
+
+	kill_instruments_without_output &
+	KILL_INSTRUMENTS_PID=$!
+
+	wait $INSTRUMENTS_PID 2> /dev/null
+	local instruments_exit_status=$? 
+	# instruments might have completed before the kill function awoke
+	kill $KILL_INSTRUMENTS_PID 2> /dev/null
+
+	return $instruments_exit_status
 }
 
-RESULT_LOG="$RESULTS_DIR/Run 1/Automation Results.plist"
 launch_instruments
 if [ $? -ne 0 ] && [ ! -e "$RESULT_LOG" ]; then
 	# Under poorly understood circumstances, in certain CI environments like Travis, 
 	# instruments may fail to launch what otherwise appears to be a perfectly good app 
 	# (in that an app prepared exactly the same way may be run without error on another run), 
-	# saying "Recording cancelled : At least one target failed to launch; aborting run
+	# either hanging on launch, or launching but immediately aborting with a message like
+	# "Recording cancelled : At least one target failed to launch; aborting run
 	# Instruments Trace Error : Failed to start trace"
 	#
 	# We retry once, after resetting the simulator and rebuilding the app--
@@ -635,6 +658,13 @@ if [ $? -ne 0 ] && [ ! -e "$RESULT_LOG" ]; then
 	fi
 	[ $? -eq 0 ] || cleanup_and_exit 1
 
+	# Recreate the result files (even if the log wasn't written, the trace may be there)
+	# The trace is actually a directory though it's packaged like a file
+	rm -rf "$TRACE_FILE"
+	rm -rf "$RESULTS_DIR"
+	mkdir "$RESULTS_DIR"
+
+	echo "\nRelaunching tests...\n"
 	launch_instruments
 	if [ $? -ne 0 ]; then
 		echo "\nERROR: Could not launch instruments. Aborting."

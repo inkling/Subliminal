@@ -95,12 +95,6 @@
 #pragma mark -
 
 - (void)dragWithStartOffset:(CGPoint)startOffset endOffset:(CGPoint)endOffset {
-    // We define `kCFCoreFoundationVersionNumber_iOS_6_1` so that Subliminal
-    // can be continue to be built using the iOS 6.1 SDK until Travis is updated
-    // (https://github.com/travis-ci/travis-ci/issues/1422)
-#ifndef kCFCoreFoundationVersionNumber_iOS_6_1
-#define kCFCoreFoundationVersionNumber_iOS_6_1 793.00
-#endif
 #if TARGET_IPHONE_SIMULATOR
     if (self.isScrollView && (kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_6_1)) {
         NSString *warning = [NSString stringWithFormat:@"\
