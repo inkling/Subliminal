@@ -12,6 +12,7 @@ install:
 
     # - `appledoc`, used to build documentation
     #   Force the usage of appledoc 2.1 until https://github.com/inkling/Subliminal/issues/71 is addressed
+    - brew unlink appledoc
     - brew install https://raw.github.com/mxcl/homebrew/33aa810/Library/Formula/appledoc.rb
 
 ## Test matrix
