@@ -349,7 +349,7 @@ cleanup_and_exit () {
 	enable_SDK_version_or_all
 	echo ""
 
-	kill AUTHORIZE_INSTRUMENTS_PID 2> /dev/null
+	kill $AUTHORIZE_INSTRUMENTS_PID 2> /dev/null
 
 	# Reset UIAutomation's debug logging if necessary
 	if [[ -z $VERBOSE_LOGGING ]] || ! $VERBOSE_LOGGING; then
