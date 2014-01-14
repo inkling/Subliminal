@@ -25,14 +25,6 @@
 #import "SLTerminal+ConvenienceFunctions.h"
 #import "SLStringUtilities.h"
 
-// Alert handlers need to account for the structure of `UIAlertView` in iOS 7 vs. older SDKs.
-// We define `kCFCoreFoundationVersionNumber_iOS_6_1` so that Subliminal
-// can be continue to be built using the iOS 6.1 SDK until Travis is updated
-// (https://github.com/travis-ci/travis-ci/issues/1422)
-#ifndef kCFCoreFoundationVersionNumber_iOS_6_1
-#define kCFCoreFoundationVersionNumber_iOS_6_1 793.00
-#endif
-
 const NSTimeInterval SLAlertHandlerDidHandleAlertDelay = 2.0;
 
 /**

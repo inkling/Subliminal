@@ -274,7 +274,8 @@ application and tests.
 Requirements
 ------------
 
-Subliminal currently supports Xcode 4.6.x through 5.0, and iOS 5.0 through 7.0.x.
+Subliminal currently supports projects built using Xcode 5.0 and the iOS 7 SDK,
+and deployment targets running iOS 5.0 through 7.0.3.
 
 Subliminal is not able to guarantee support for Xcode 5.0.1 at this time 
 due to bug(s) in UIAutomation, on which Subliminal relies. See ["Known Issues"](#known-issues) 

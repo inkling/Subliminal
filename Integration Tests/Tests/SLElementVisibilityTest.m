@@ -23,17 +23,6 @@
 #import "SLIntegrationTest.h"
 #import "SLUIAElement+Subclassing.h"
 
-// Several of the test cases below examine the differential behavior of UIAutomation across SDK versions.
-// We define these version numbers so that Subliminal
-// can be continue to be built using the iOS 6.1 SDK until Travis is updated
-// (https://github.com/travis-ci/travis-ci/issues/1422)
-#ifndef kCFCoreFoundationVersionNumber_iOS_6_0
-#define kCFCoreFoundationVersionNumber_iOS_6_0 793.00
-#endif
-#ifndef kCFCoreFoundationVersionNumber_iOS_6_1
-#define kCFCoreFoundationVersionNumber_iOS_6_1 793.00
-#endif
-
 /**
  Subliminal's implementation of -isVisible does not rely upon UIAutomation, 
  because UIAElement.isVisible() has a number of bugs as exercised in 
