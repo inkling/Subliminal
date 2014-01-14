@@ -59,7 +59,7 @@ NSString * SLUIADeviceOrientationFromUIDeviceOrientation(UIDeviceOrientation dev
 {
     [[SLTerminal sharedTerminal] evalWithFormat:@"UIATarget.localTarget().setDeviceOrientation(%@)", SLUIADeviceOrientationFromUIDeviceOrientation(deviceOrientation)];
     // Delay slightly to ensure that UIDevice registers the new orientation
-    [NSThread sleepForTimeInterval:0.1];
+    [NSThread sleepForTimeInterval:0.3];
 }
 
 @end
