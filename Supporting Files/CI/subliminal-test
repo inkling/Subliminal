@@ -624,8 +624,10 @@ launch_instruments () {
 	return $instruments_exit_status
 }
 
+(( MAX_INSTRUMENTS_RETRY_COUNT = 3 ))
+(( INSTRUMENTS_RETRY_COUNT = 0 ))
 launch_instruments
-if [ $? -ne 0 ] && [ ! -e "$RESULT_LOG" ]; then
+while [ $? -ne 0 ] && [ ! -e "$RESULT_LOG" ] && (( INSTRUMENTS_RETRY_COUNT < MAX_INSTRUMENTS_RETRY_COUNT )); do
 	# Under poorly understood circumstances, in certain CI environments like Travis, 
 	# instruments may fail to launch what otherwise appears to be a perfectly good app 
 	# (in that an app prepared exactly the same way may be run without error on another run), 
@@ -633,9 +635,10 @@ if [ $? -ne 0 ] && [ ! -e "$RESULT_LOG" ]; then
 	# "Recording cancelled : At least one target failed to launch; aborting run
 	# Instruments Trace Error : Failed to start trace"
 	#
-	# We retry once, after resetting the simulator and rebuilding the app--
+	# We retry three times, after resetting the simulator and rebuilding the app--
 	# the error may be caused by instruments rejecting the build for some reason.
 	echo "\ninstruments hiccuped; retrying with clean build...\n"	
+	(( INSTRUMENTS_RETRY_COUNT++ ))
 
 	# Re-enable all simulator SDKs (if necessary) while we build
 	echo ""
@@ -666,10 +669,11 @@ if [ $? -ne 0 ] && [ ! -e "$RESULT_LOG" ]; then
 
 	echo "\nRelaunching tests...\n"
 	launch_instruments
-	if [ $? -ne 0 ]; then
-		echo "\nERROR: Could not launch instruments. Aborting."
-		cleanup_and_exit 1
-	fi
+done
+
+if [ $? -ne 0 ]; then
+	echo "\nERROR: Could not launch instruments. Aborting."
+	cleanup_and_exit 1
 fi
 
 

@@ -100,10 +100,8 @@ static const NSUInteger kNumSeedTrials = 100;
                     nil
                     ];
 
-    // verify by a chi-squared test that the distribution of test orders we see
-    // has a probability of occurring (assuming that Subliminal chooses every
-    // test order with equal probability) of at least 5%.
-    // to verify randomness and rough uniformity
+    // verify by a chi-squared test that the probability that the distribution
+    // of test orders we see is not random and uniform is <= 7.5%
     __block NSUInteger runCount = 0;
     NSCountedSet *orderDistribution = [self runOrderDistributionForNumTrials:kNumSeedTrials usingTests:tests seed:SLTestControllerRandomSeed];
     const int dslen = 6; // The number of possible orders of three tests: 3 * 2 * 1
@@ -116,7 +114,7 @@ static const NSUInteger kNumSeedTrials = 100;
         j++;
         *stop = (j >= dslen);
     }];
-    bool isUniform = ChiIsUniform(dset, dslen, dslen - 1, 0.05);
+    bool isUniform = ChiIsUniform(dset, dslen, dslen - 1, 0.075);
     free(dset);
 
     STAssertTrue(isUniform, @"Tests did not run in a sufficiently uniformly-random order when `SLTestControllerRandomSeed` was specified.");
