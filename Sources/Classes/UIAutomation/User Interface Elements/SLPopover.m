@@ -40,7 +40,7 @@
     [self waitUntilTappable:NO thenSendMessage:@"dismiss()"];
 
     // wait for the dismissal animation to finish
-    [NSThread sleepForTimeInterval:0.3];
+    [NSThread sleepForTimeInterval:0.5];
 }
 
 @end
