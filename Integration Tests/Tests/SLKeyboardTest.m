@@ -57,7 +57,7 @@
     [UIAElement([SLKeyboard keyboard]) typeString:kExpectedText];
     NSString *actualText = SLAskApp(text);
     SLAssertTrue([kExpectedText isEqualToString:actualText],
-                 @"Did not type string as expected.");
+                 @"Did not type string as expected: '%@' (expected) vs. '%@' (actual).", kExpectedText, actualText);
 }
 
 - (void)testTypeStringChangesKeyplanesAsNecessary {
@@ -80,7 +80,7 @@
                     (not visible before typing).");
     NSString *actualText = SLAskApp(text);
     SLAssertTrue([kExpectedText isEqualToString:actualText],
-                 @"Did not type string as expected.");
+                 @"Did not type string as expected: '%@' (expected) vs. '%@' (actual).", kExpectedText, actualText);
 }
 
 - (void)testTapKeyboardKey {
