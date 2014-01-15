@@ -58,7 +58,7 @@
  arguments are substituted (optionally prefixed by a leading string) if `format`
  is non-`nil`; otherwise, the empty string.
  */
-extern NSString *SLComposeString(NSString *leadingString, NSString *format, ...);
+extern NSString *SLComposeString(NSString *leadingString, NSString *format, ...) NS_FORMAT_FUNCTION(2,3);
 
 /**
  `SLComposeStringv` composes a format string and arguments for substitution
@@ -80,4 +80,4 @@ extern NSString *SLComposeString(NSString *leadingString, NSString *format, ...)
  arguments are substituted (optionally prefixed by a leading string) if `format` 
  is non-`nil`; otherwise, the empty string.
  */
-extern NSString *SLComposeStringv(NSString *leadingString, NSString *format, va_list args);
+extern NSString *SLComposeStringv(NSString *leadingString, NSString *format, va_list args) NS_FORMAT_FUNCTION(2,0);
