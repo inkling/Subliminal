@@ -36,7 +36,7 @@ const NSTimeInterval SLAlertHandlerDidHandleAlertDelay = 2.0;
  so that their alert's delegate receives its callbacks before the tests
  continue, assuming that the tests are waiting-with-timeout on `didHandleAlert`. 
  */
-static const NSTimeInterval SLAlertHandlerManualDelay = 0.75;
+static const NSTimeInterval SLAlertHandlerManualDelay = 1.0;
 
 
 #pragma mark - SLAlertHandler
