@@ -503,10 +503,9 @@ build_app
 
 
 ### (Prepare to) install app
+echo "\n\nPreparing to install app..."
 
 if [[ -n "$SIM_DEVICE" ]]; then
-	echo "\n\nPreparing to install app..."
-
 	# Set the simulator's device type
 	echo "\nSetting simulator device type..."
 	"$SCRIPT_DIR/set_simulator_device" "$SIM_DEVICE"
