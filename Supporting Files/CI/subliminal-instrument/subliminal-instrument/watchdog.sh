@@ -51,7 +51,7 @@ done
 kill -9 $CHILD_PID 2> /dev/null
 
 # Also kill any subprocesses of the child
-for child in $(ps -o pid,ppid -ax | \
+for child in $(ps -o pid,ppid -ax 2> /dev/null | \
     awk "{ if ( \$2 == $CHILD_PID ) { print \$1 }}")
 do
     kill -9 $child
