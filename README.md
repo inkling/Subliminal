@@ -277,10 +277,6 @@ Requirements
 Subliminal currently supports projects built using Xcode 5.0 and the iOS 7 SDK,
 and deployment targets running iOS 5.0 through 7.0.3.
 
-Subliminal is not able to guarantee support for Xcode 5.0.1 at this time 
-due to bug(s) in UIAutomation, on which Subliminal relies. See ["Known Issues"](#known-issues) 
-for more details.
-
 Continuous Integration
 ----------------------
 
@@ -546,10 +542,6 @@ limitations of Apple's frameworks or bugs therein. Other issues are tracked
 	the GUI by quitting the simulator, then pressing record again. When running 
 	the tests from the command line, `subliminal-test` will detect `instruments`' 
 	failure and retry.
-
-	Xcode 5.0.1 may have additional problems. See [this issue](https://github.com/inkling/Subliminal/issues/98) 
-	for details. Our current recommendation is to use Xcode 5.0, if possible, 
-	until 5.0.2 is released.
 
 Contributing
 ------------
