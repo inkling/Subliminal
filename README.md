@@ -530,6 +530,12 @@ limitations of Apple's frameworks or bugs therein. Other issues are tracked
 *	UIAutomation cannot drag scroll views when running in the iOS 7 Simulator.
 
 	`SLElement` implements a workaround.
+	
+	This issue also affects swiping table view cells since they [now internally use a
+	scroll view](http://www.curiousfind.com/blog/646) to implement the 'swipe-to-delete' 
+	behavior. Using drag gestures will tap the cell but **not** show the deletion 
+	confirmation button in the iOS 7 Simulator. Unfortunately, Subliminal cannot work
+	around this issue at this time.
 
 	> Note: The implementation of the workaround uses a private API. _However_, 
 	this poses no risk of discovery by Apple's review team (to projects linking Subliminal) 
