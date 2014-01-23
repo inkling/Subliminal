@@ -277,10 +277,6 @@ Requirements
 Subliminal currently supports projects built using Xcode 5.0 and the iOS 7 SDK,
 and deployment targets running iOS 5.0 through 7.0.3.
 
-Subliminal is not able to guarantee support for Xcode 5.0.1 at this time 
-due to bug(s) in UIAutomation, on which Subliminal relies. See ["Known Issues"](#known-issues) 
-for more details.
-
 Continuous Integration
 ----------------------
 
@@ -534,6 +530,12 @@ limitations of Apple's frameworks or bugs therein. Other issues are tracked
 *	UIAutomation cannot drag scroll views when running in the iOS 7 Simulator.
 
 	`SLElement` implements a workaround.
+	
+	This issue also affects swiping table view cells since they [now internally use a
+	scroll view](http://www.curiousfind.com/blog/646) to implement the 'swipe-to-delete' 
+	behavior. Using drag gestures will tap the cell but **not** show the deletion 
+	confirmation button in the iOS 7 Simulator. Unfortunately, Subliminal cannot work
+	around this issue at this time.
 
 	> Note: The implementation of the workaround uses a private API. _However_, 
 	this poses no risk of discovery by Apple's review team (to projects linking Subliminal) 
@@ -546,10 +548,6 @@ limitations of Apple's frameworks or bugs therein. Other issues are tracked
 	the GUI by quitting the simulator, then pressing record again. When running 
 	the tests from the command line, `subliminal-test` will detect `instruments`' 
 	failure and retry.
-
-	Xcode 5.0.1 may have additional problems. See [this issue](https://github.com/inkling/Subliminal/issues/98) 
-	for details. Our current recommendation is to use Xcode 5.0, if possible, 
-	until 5.0.2 is released.
 
 Contributing
 ------------
