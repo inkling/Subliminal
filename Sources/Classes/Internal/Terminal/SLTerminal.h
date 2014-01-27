@@ -21,7 +21,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
 
 /**
  The singleton `SLTerminal` instance communicates with the Automation instrument 

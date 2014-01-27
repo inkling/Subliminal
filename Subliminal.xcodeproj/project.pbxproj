@@ -68,6 +68,14 @@
 		F01EBC9C170115B100FF6A7C /* SLTextFieldTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F01EBC9A170115B100FF6A7C /* SLTextFieldTestViewController.m */; };
 		F01EBC9E1701429400FF6A7C /* SLWebTextField.html in Resources */ = {isa = PBXBuildFile; fileRef = F01EBC9D1701429400FF6A7C /* SLWebTextField.html */; };
 		F024BE33168BD70900708350 /* TestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = F024BE32168BD70900708350 /* TestUtilities.m */; };
+		F025788B1890FF7A0084A6DB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F025788A1890FF7A0084A6DB /* Cocoa.framework */; };
+		F02578951890FF7A0084A6DB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F02578931890FF7A0084A6DB /* InfoPlist.strings */; };
+		F02578B6189101410084A6DB /* SLLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DDB160138DF000B05D0 /* SLLogger.m */; };
+		F02578B7189101450084A6DB /* SLLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDA160138DF000B05D0 /* SLLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F02578B81891034F0084A6DB /* SLTerminal.h in Headers */ = {isa = PBXBuildFile; fileRef = F0695DDE160138DF000B05D0 /* SLTerminal.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F02578B9189103670084A6DB /* SLTerminal.m in Sources */ = {isa = PBXBuildFile; fileRef = F0695DDF160138DF000B05D0 /* SLTerminal.m */; };
+		F02578BA189103B70084A6DB /* SLStringUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC388041641CD7500F995F9 /* SLStringUtilities.m */; };
+		F02578BB189103BD0084A6DB /* SLStringUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC388031641CD7500F995F9 /* SLStringUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0271AFF162E0B950098F5F2 /* SLTestController+AppHooks.h in Headers */ = {isa = PBXBuildFile; fileRef = F0271AFD162E0B950098F5F2 /* SLTestController+AppHooks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F0271B00162E0B950098F5F2 /* SLTestController+AppHooks.m in Sources */ = {isa = PBXBuildFile; fileRef = F0271AFE162E0B950098F5F2 /* SLTestController+AppHooks.m */; };
 		F02DF30817EC064F00BE28BF /* UIScrollView+SLProgrammaticScrolling.h in Headers */ = {isa = PBXBuildFile; fileRef = F02DF30617EC064F00BE28BF /* UIScrollView+SLProgrammaticScrolling.h */; };
@@ -293,6 +301,12 @@
 		F01EBC9D1701429400FF6A7C /* SLWebTextField.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = SLWebTextField.html; sourceTree = "<group>"; };
 		F024BE31168BD70900708350 /* TestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestUtilities.h; sourceTree = "<group>"; };
 		F024BE32168BD70900708350 /* TestUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestUtilities.m; sourceTree = "<group>"; };
+		F02578891890FF7A0084A6DB /* SLLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SLLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F025788A1890FF7A0084A6DB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		F025788D1890FF7A0084A6DB /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		F02578921890FF7A0084A6DB /* SLLogger-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SLLogger-Info.plist"; sourceTree = "<group>"; };
+		F02578941890FF7A0084A6DB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F02578961890FF7A0084A6DB /* SLLogger-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SLLogger-Prefix.pch"; sourceTree = "<group>"; };
 		F0271AFD162E0B950098F5F2 /* SLTestController+AppHooks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLTestController+AppHooks.h"; sourceTree = "<group>"; };
 		F0271AFE162E0B950098F5F2 /* SLTestController+AppHooks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SLTestController+AppHooks.m"; sourceTree = "<group>"; };
 		F02DF30617EC064F00BE28BF /* UIScrollView+SLProgrammaticScrolling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIScrollView+SLProgrammaticScrolling.h"; path = "../UIAutomation/User Interface Elements/UIScrollView+SLProgrammaticScrolling.h"; sourceTree = "<group>"; };
@@ -317,8 +331,8 @@
 		F0695D8E16011515000B05D0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F0695DD7160138DF000B05D0 /* SLUIAElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLUIAElement.h; sourceTree = "<group>"; };
 		F0695DD8160138DF000B05D0 /* SLUIAElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLUIAElement.m; sourceTree = "<group>"; };
-		F0695DDA160138DF000B05D0 /* SLLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SLLogger.h; path = Logging/SLLogger.h; sourceTree = "<group>"; };
-		F0695DDB160138DF000B05D0 /* SLLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SLLogger.m; path = Logging/SLLogger.m; sourceTree = "<group>"; };
+		F0695DDA160138DF000B05D0 /* SLLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLLogger.h; sourceTree = "<group>"; };
+		F0695DDB160138DF000B05D0 /* SLLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLLogger.m; sourceTree = "<group>"; };
 		F0695DDE160138DF000B05D0 /* SLTerminal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTerminal.h; sourceTree = "<group>"; };
 		F0695DDF160138DF000B05D0 /* SLTerminal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTerminal.m; sourceTree = "<group>"; };
 		F0695DE0160138DF000B05D0 /* SLTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTest.h; sourceTree = "<group>"; };
@@ -418,6 +432,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		F02578851890FF7A0084A6DB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F025788B1890FF7A0084A6DB /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F0695D8816011515000B05D0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -571,6 +593,34 @@
 			name = "SLTextField Tests";
 			sourceTree = "<group>";
 		};
+		F025788C1890FF7A0084A6DB /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F025788D1890FF7A0084A6DB /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		F02578901890FF7A0084A6DB /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				F0695DDA160138DF000B05D0 /* SLLogger.h */,
+				F0695DDB160138DF000B05D0 /* SLLogger.m */,
+				F02578911890FF7A0084A6DB /* Supporting Files */,
+			);
+			path = Logging;
+			sourceTree = "<group>";
+		};
+		F02578911890FF7A0084A6DB /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F02578921890FF7A0084A6DB /* SLLogger-Info.plist */,
+				F02578931890FF7A0084A6DB /* InfoPlist.strings */,
+				F02578961890FF7A0084A6DB /* SLLogger-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		F043469B175ACC7A00D91F7F /* Terminal */ = {
 			isa = PBXGroup;
 			children = (
@@ -603,6 +653,7 @@
 				F0695DD016013891000B05D0 /* Sources */,
 				F0D240571683F7130031B67C /* Unit Tests */,
 				F0AC809916BB299500C5D5C0 /* Integration Tests */,
+				F02578901890FF7A0084A6DB /* Logging */,
 				F0695D8D16011515000B05D0 /* Frameworks */,
 				F0695D8C16011515000B05D0 /* Products */,
 			);
@@ -615,6 +666,7 @@
 				F0695D8B16011515000B05D0 /* libSubliminal.a */,
 				F0D240521683F7130031B67C /* Subliminal (Unit Tests).octest */,
 				F0AC809416BB299500C5D5C0 /* Subliminal (Integration Tests).app */,
+				F02578891890FF7A0084A6DB /* SLLogger.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -626,6 +678,8 @@
 				F0695E0C16013D77000B05D0 /* UIKit.framework */,
 				F0D240531683F7130031B67C /* SenTestingKit.framework */,
 				F0AC809716BB299500C5D5C0 /* CoreGraphics.framework */,
+				F025788A1890FF7A0084A6DB /* Cocoa.framework */,
+				F025788C1890FF7A0084A6DB /* Other Frameworks */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -649,8 +703,6 @@
 				F0271AFE162E0B950098F5F2 /* SLTestController+AppHooks.m */,
 				F0695DE0160138DF000B05D0 /* SLTest.h */,
 				F0695DE1160138DF000B05D0 /* SLTest.m */,
-				F0695DDA160138DF000B05D0 /* SLLogger.h */,
-				F0695DDB160138DF000B05D0 /* SLLogger.m */,
 				F0695DD6160138DF000B05D0 /* UIAutomation */,
 				CAC388011641CD4800F995F9 /* Internal */,
 			);
@@ -934,6 +986,16 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		F02578861890FF7A0084A6DB /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F02578B7189101450084A6DB /* SLLogger.h in Headers */,
+				F02578B81891034F0084A6DB /* SLTerminal.h in Headers */,
+				F02578BB189103BD0084A6DB /* SLStringUtilities.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F0695E1A16014463000B05D0 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -976,6 +1038,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		F02578881890FF7A0084A6DB /* SLLogger */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F02578B41890FF7B0084A6DB /* Build configuration list for PBXNativeTarget "SLLogger" */;
+			buildPhases = (
+				F02578841890FF7A0084A6DB /* Sources */,
+				F02578851890FF7A0084A6DB /* Frameworks */,
+				F02578861890FF7A0084A6DB /* Headers */,
+				F02578871890FF7A0084A6DB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SLLogger;
+			productName = SLLogger;
+			productReference = F02578891890FF7A0084A6DB /* SLLogger.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		F0695D8A16011515000B05D0 /* Subliminal */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F0695D9916011515000B05D0 /* Build configuration list for PBXNativeTarget "Subliminal" */;
@@ -1063,6 +1143,7 @@
 				F0D240511683F7130031B67C /* Subliminal Unit Tests */,
 				F0AC809316BB299500C5D5C0 /* Subliminal Integration Tests */,
 				F0080141174D7A9E001927AC /* Subliminal Documentation */,
+				F02578881890FF7A0084A6DB /* SLLogger */,
 			);
 		};
 /* End PBXProject section */
@@ -1099,6 +1180,14 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		F02578871890FF7A0084A6DB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F02578951890FF7A0084A6DB /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F0AC809216BB299500C5D5C0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1180,6 +1269,16 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		F02578841890FF7A0084A6DB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F02578B9189103670084A6DB /* SLTerminal.m in Sources */,
+				F02578B6189101410084A6DB /* SLLogger.m in Sources */,
+				F02578BA189103B70084A6DB /* SLStringUtilities.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F0695D8716011515000B05D0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1309,6 +1408,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		F02578931890FF7A0084A6DB /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F02578941890FF7A0084A6DB /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 		F0AC809C16BB299500C5D5C0 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1339,6 +1446,64 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		F02578AD1890FF7B0084A6DB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				COMBINE_HIDPI_IMAGES = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Logging/SLLogger-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				INFOPLIST_FILE = "Logging/SLLogger-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Debug;
+		};
+		F02578AE1890FF7B0084A6DB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Logging/SLLogger-Prefix.pch";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				INFOPLIST_FILE = "Logging/SLLogger-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
 		};
@@ -1539,6 +1704,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		F02578B41890FF7B0084A6DB /* Build configuration list for PBXNativeTarget "SLLogger" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F02578AD1890FF7B0084A6DB /* Debug */,
+				F02578AE1890FF7B0084A6DB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		F0695D8516011515000B05D0 /* Build configuration list for PBXProject "Subliminal" */ = {
 			isa = XCConfigurationList;

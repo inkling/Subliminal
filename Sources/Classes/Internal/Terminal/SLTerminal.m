@@ -21,7 +21,6 @@
 //
 
 #import "SLTerminal.h"
-#import "SLTest.h"
 
 
 NSString *const SLTerminalJavaScriptException = @"SLTerminalJavaScriptException";
@@ -87,7 +86,13 @@ static SLTerminal *__sharedTerminal = nil;
 }
 
 - (void)dealloc {
+    // On OS X 10.8, dispatch objects are NSObjects, and ARC renders it unnecessary
+    // (and impossible) to manually release objects.
+    // But on iOS, dispatch objects only become NSObjects in iOS 6,
+    // and Subliminal still supports 5.1.
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
     dispatch_release(_evalQueue);
+#endif
 }
 
 - (NSString *)scriptNamespace {
