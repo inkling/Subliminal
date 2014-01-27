@@ -163,6 +163,17 @@ void SLLogAsync(NSString *format, ...) {
                                                 (unsigned long)numTestsFailed, (numTestsFailed == 1 ? @"" : @"s")]];
 }
 
+- (void)logUncaughtException:(NSException *)exception {
+    NSMutableString *exceptionMessage = [[NSMutableString alloc] initWithString:@"Uncaught exception occurred"];
+    [exceptionMessage appendFormat:@": ***%@***", [exception name]];
+    NSString *exceptionReason = [exception reason];
+    if ([exceptionReason length]) {
+        [exceptionMessage appendFormat:@" for reason: %@", exceptionReason];
+    }
+
+    [self logError:exceptionMessage];
+}
+
 @end
 
 

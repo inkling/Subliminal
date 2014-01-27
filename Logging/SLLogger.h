@@ -227,6 +227,15 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 - (void)logTestingFinishWithNumTestsExecuted:(NSUInteger)numTestsExecuted
                               numTestsFailed:(NSUInteger)numTestsFailed;
 
+/**
+ Logs an exception that was not caught by the tests or application.
+
+ This method is to be called from the test controller's uncaught exception handler.
+
+ @param exception The exception to be logged.
+ */
+- (void)logUncaughtException:(NSException *)exception;
+
 @end
 
 
