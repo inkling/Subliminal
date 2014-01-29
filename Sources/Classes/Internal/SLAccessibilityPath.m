@@ -220,10 +220,6 @@
 }
 
 - (NSArray *)rawAccessibilityPathToElement:(SLElement *)element favoringSubviews:(BOOL)favoringSubviews {
-    if ([element matchesObject:self]) {
-        return [NSArray arrayWithObject:self];
-    }
-
     for (NSObject *child in [self slChildAccessibilityElementsFavoringSubviews:favoringSubviews]) {
         NSArray *path = [child rawAccessibilityPathToElement:element favoringSubviews:favoringSubviews];
         if (path) {
@@ -231,6 +227,10 @@
             [pathWithSelf insertObject:self atIndex:0];
             return pathWithSelf;
         }
+    }
+
+    if ([element matchesObject:self]) {
+        return [NSArray arrayWithObject:self];
     }
     return nil;
 }
