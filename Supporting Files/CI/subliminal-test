@@ -82,17 +82,16 @@ Required arguments:
 					  1. To authorize \`instruments\` to take control of your application if 
 					     it asks for such permission when launched: http://openradar.appspot.com/radar?id=1544403.
 					  2. To temporarily modify the Xcode folder to force \`instruments\` 
-					     to use the specified SDK to run the tests, where it otherwise 
-					     would only use the latest SDK installed: http://openradar.appspot.com/radar?id=3107401.
+					     to use the specified SDK to run the tests, whereas it would otherwise use
+					     an arbitrary SDK: http://openradar.appspot.com/radar?id=3107401.
 
 					If a developer will be attending the tests as they execute, 
 					they may specify \`--live\` rather than provide their password.
 
 	--live				Indicates that this script is being attended by a developer who can 
-					enter their password to authorize instruments and/or to disable the SDKs 
-					other than that specified by \`-sim_version\`. For this script 
-					to run un-attended, the current user's login password must be specified
-					using \`-login_password\`.
+					enter their password to authorize instruments and/or to disable SDKs not
+					targeted by the tests. For this script to run un-attended, the current user's
+					login password must be specified using \`-login_password\`.
 
 Optional build arguments:
 	-build_tool <tool_name>		The tool to use to build the scheme. Should be either \"xcrun xcodebuild\" 
@@ -516,27 +515,27 @@ if [[ -n "$SIM_DEVICE" ]]; then
 		cleanup_and_exit 1
 	fi
 
-	# Set the simulator's version if specified
-	if [[ -n "$SIM_VERSION" ]]; then
-		echo "\nSetting simulator version..."
+	# Set the simulator's version
+	echo "\nSetting simulator version..."
 
-		"$SCRIPT_DIR/set_simulator_version" "$SIM_VERSION"
-		if [ $? -ne 0 ]; then
-			echo "\nERROR: Could not set the simulator's version."
-			cleanup_and_exit 1
-		fi
-
-		# By default, instruments always runs using the latest SDK
-		# http://stackoverflow.com/questions/12836129/launch-a-specific-hardware-version-of-ios-simulator-using-instruments-command-li)
-		# We must disable the SDKs other than the one we're targeting 
-		# to force it to use the simulator's current setting
-		enable_SDK_version_or_all "$SIM_VERSION"
-
-		echo "\nSuccessfully set simulator version."
-	else
-		# fall back on instruments' default behavior
+	if [[ -z "$SIM_VERSION" ]]; then
 		echo "\nSimulator version not specified. Defaulting to latest simulator installed."
+		SIM_VERSION=`xcrun xcodebuild -showsdks | grep "iphonesimulator" | sort -r | head -n 1 | sed -E 's|^.*iphonesimulator(.*)$|\1|'`
 	fi
+
+	"$SCRIPT_DIR/set_simulator_version" "$SIM_VERSION"
+	if [ $? -ne 0 ]; then
+		echo "\nERROR: Could not set the simulator's version."
+		cleanup_and_exit 1
+	fi
+
+	# The instruments command-line tool picks an arbitrary SDK depending on toolchain version:
+	# http://openradar.appspot.com/radar?id=3107401
+	# We must disable the SDKs other than the one we're targeting 
+	# to force it to use the simulator's current setting
+	enable_SDK_version_or_all "$SIM_VERSION"
+
+	echo "\nSuccessfully set simulator version."
 
 	# Reset the simulator
 	# This has got to be done after setting the simulator's version
