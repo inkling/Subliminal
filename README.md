@@ -490,8 +490,8 @@ FAQ
 	1.	To authorize `instruments` to take control of your application if it asks 
 		for such permission when launched: http://openradar.appspot.com/radar?id=1544403.
 	2.	To temporarily modify the Xcode folder to force `instruments` to use the 
-		specified SDK to run the tests, whereas it otherwise would only use the 
-		latest SDK installed: http://openradar.appspot.com/radar?id=3107401.
+		specified SDK to run the tests, whereas it would otherwise use
+		an arbitrary SDK: http://openradar.appspot.com/radar?id=3107401.
 
 	`subliminal-test` cannot itself be run with superuser privileges because 
 	`instruments` only works properly if it is run as the user.
@@ -499,14 +499,6 @@ FAQ
 	If a developer will be attending the tests as they execute (for instance on 
 	their local machine rather than on the build server), and so can enter their 
 	password as required, they may execute `subliminal-test` with the `--live` option.
-
-	We would gladly welcome alternate workarounds for the issues above. In some 
-	environments, [modifying `/etc/authorization`](http://stackoverflow.com/a/11416025/495611) 
-	will suffice to authorize `instruments`. And, if developers only need to test 
-	on the latest SDK, they can rely on `instruments` using that SDK by default, 
-	and avoid specifying an SDK version--though that behavior may change with the 
-	Xcode 5 developer tools: see the note at the bottom of the bug report 
-	[here](http://openradar.appspot.com/radar?id=3107401).
 
 Known Issues
 ------------

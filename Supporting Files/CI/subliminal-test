@@ -52,7 +52,7 @@ Otherwise, \`subliminal-test\` returns success (0).
   * alongside the other scripts that were originally in \`/Supporting Files/CI\`;
   * with Subliminal having been installed on the test machine, using \`rake install DOCS=no\`;
   * and with GUI scripting enabled: if the test machine runs Mac OS X 10.8 Mountain Lion, open System Preferences and check 
-    \"Enable Access for Assistive Devices\" in the Accessibility preference pane. If the test machine runs Mac OS X 10.9 Mavericks,
+    \"Enable access for assistive devices\" in the Accessibility preference pane. If the test machine runs Mac OS X 10.9 Mavericks,
     open System Preferences and click on "Security & Privacy". Select "Accessibility" and drag Terminal.app from Applications/Utilities 
     into the list. Do not forget to check the box.
 
@@ -82,17 +82,16 @@ Required arguments:
 					  1. To authorize \`instruments\` to take control of your application if 
 					     it asks for such permission when launched: http://openradar.appspot.com/radar?id=1544403.
 					  2. To temporarily modify the Xcode folder to force \`instruments\` 
-					     to use the specified SDK to run the tests, where it otherwise 
-					     would only use the latest SDK installed: http://openradar.appspot.com/radar?id=3107401.
+					     to use the specified SDK to run the tests, whereas it would otherwise use
+					     an arbitrary SDK: http://openradar.appspot.com/radar?id=3107401.
 
 					If a developer will be attending the tests as they execute, 
 					they may specify \`--live\` rather than provide their password.
 
 	--live				Indicates that this script is being attended by a developer who can 
-					enter their password to authorize instruments and/or to disable the SDKs 
-					other than that specified by \`-sim_version\`. For this script 
-					to run un-attended, the current user's login password must be specified
-					using \`-login_password\`.
+					enter their password to authorize instruments and/or to disable SDKs not
+					targeted by the tests. For this script to run un-attended, the current user's
+					login password must be specified using \`-login_password\`.
 
 Optional build arguments:
 	-build_tool <tool_name>		The tool to use to build the scheme. Should be either \"xcrun xcodebuild\" 
@@ -130,7 +129,7 @@ Optional testing arguments:
 					installed. Ignored if \`-sim_device\` is not specified.
 
 					Note that the iOS Simulator does not accept certain combinations 
-					of device type and SDK, e.g. \"iPhone (Retina 4-inch)\" 
+					of device type and SDK, e.g. \"iPhone Retina (4-inch)\" 
 					and \"5.1\".
 
 	-timeout <timeout>		The maximum duration for which to run the tests before aborting.
@@ -255,12 +254,12 @@ enable_SDK_version_or_all () {
 
 		SDK_VERSION=`echo "$SDK_PATH" | perl -pe 's|.*iphonesimulator(.+)\.sdk|$1|i'`
 		SDK_SETTINGS=`find "$SDK_PATH" -maxdepth 1 -name "SDKSettings.*"`
-		if ! $ENABLE && [[ "$SDK_SETTINGS" == *.plist ]]; then
+		if [[ -n "$ENABLE" ]] && ! $ENABLE && [[ "$SDK_SETTINGS" == *.plist ]]; then
 			echo "Disabling SDK $SDK_VERSION by changing the extension of \`$SDK_SETTINGS\` to \`*.disabled\`..."
 
 			# If the user did not specify a login password, this will just print a newline
 			printf "$LOGIN_PASSWORD\n" | sudo $SUDO_INPUT mv "$SDK_SETTINGS" "$SDK_PATH/SDKSettings.disabled"
-		elif $ENABLE && [[ "$SDK_SETTINGS" == *.disabled ]]; then
+		elif [[ -n "$ENABLE" ]] && $ENABLE && [[ "$SDK_SETTINGS" == *.disabled ]]; then
 			echo "Re-enabling SDK $SDK_VERSION by changing the extension of \`$SDK_SETTINGS\` back to \`*.plist\`..."
 
 			printf "$LOGIN_PASSWORD\n" | sudo $SUDO_INPUT mv "$SDK_SETTINGS" "$SDK_PATH/SDKSettings.plist"
@@ -293,7 +292,7 @@ reset_simulator_or_device () {
 	local reset_success=0
 	
 	if [[ -n "$SIM_DEVICE" ]]; then
-		"$SCRIPT_DIR/reset_simulator"
+		"$SCRIPT_DIR/simulator-set" --reset
 		reset_success=$?
 		if [ $reset_success -eq 0 ]; then
 			echo "Successfully reset iOS Simulator."
@@ -503,54 +502,45 @@ build_app
 
 
 ### (Prepare to) install app
+echo "\n\nPreparing to install app..."
 
 if [[ -n "$SIM_DEVICE" ]]; then
-	echo "\n\nPreparing to install app..."
+	# Configure the simulator's properties
+	echo "\nConfiguring the simulator for testing..."
 
-	# Set the simulator's device type
-	echo "\nSetting simulator device type..."
-	"$SCRIPT_DIR/set_simulator_device" "$SIM_DEVICE"
-	if [ $? -eq 0 ]; then
-		echo "Successfully set simulator device type."
+	if [[ -n "$SIM_VERSION" ]]; then
+		echo "- Setting the version to $SIM_VERSION"
 	else
-		echo "\nERROR: Could not set the simulator's device type."
+		SIM_VERSION=`xcrun xcodebuild -showsdks | grep "iphonesimulator" | sort -r | head -n 1 | sed -E 's|^.*iphonesimulator(.*)$|\1|'`
+		echo "- Setting the version to $SIM_VERSION (Simulator version not specified--defaulting to latest simulator installed)"
+	fi
+
+	# The instruments command-line tool picks an arbitrary SDK depending on toolchain version:
+	# http://openradar.appspot.com/radar?id=3107401
+	# We must disable the SDKs other than the one we're targeting 
+	# to force it to use the simulator's current setting
+	enable_SDK_version_or_all "$SIM_VERSION"
+
+	echo "- Setting the device to \"$SIM_DEVICE\""
+	echo "- Resetting simulator content and settings"
+
+	"$SCRIPT_DIR/simulator-set" --device "$SIM_DEVICE" --version "$SIM_VERSION" --reset
+	if [ $? -ne 0 ]; then
+		echo "\nERROR: Could not configure the simulator."
 		cleanup_and_exit 1
 	fi
-
-	# Set the simulator's version if specified
-	if [[ -n "$SIM_VERSION" ]]; then
-		echo "\nSetting simulator version..."
-
-		"$SCRIPT_DIR/set_simulator_version" "$SIM_VERSION"
-		if [ $? -ne 0 ]; then
-			echo "\nERROR: Could not set the simulator's version."
-			cleanup_and_exit 1
-		fi
-
-		# By default, instruments always runs using the latest SDK
-		# http://stackoverflow.com/questions/12836129/launch-a-specific-hardware-version-of-ios-simulator-using-instruments-command-li)
-		# We must disable the SDKs other than the one we're targeting 
-		# to force it to use the simulator's current setting
-		enable_SDK_version_or_all "$SIM_VERSION"
-
-		echo "\nSuccessfully set simulator version."
-	else
-		# fall back on instruments' default behavior
-		echo "\nSimulator version not specified. Defaulting to latest simulator installed."
-	fi
-
-	# Reset the simulator
-	# This has got to be done after setting the simulator's version
-	# so that we wipe the appropriate content and settings
-	echo "\nResetting simulator content and settings..."
-	reset_simulator_or_device
+	echo "Successfully configured the Simulator for testing."
 
 	# instruments will actually install the app in the simulator
 else
 	echo "\n\nInstalling app..."
 	reinstall_app_on_device
+	if [ $? -ne 0 ]; then
+		echo "\nERROR: Could not install the app on the device."
+		cleanup_and_exit 1
+	fi
+	echo "Successfully installed app."
 fi
-[ $? -eq 0 ] || cleanup_and_exit 1
 
 # Set paths to save instruments' output (at least temporarily)
 RUN_DIR=`mktemp -d /tmp/subliminal-test.run.XXXXXX`
