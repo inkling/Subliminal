@@ -133,10 +133,20 @@ if [[ -n "$RESET" ]] && $RESET; then
     SDK_ROOT=`defaults read com.apple.iphonesimulator currentSDKRoot`
     SDK=`echo "$SDK_ROOT" | perl -pe 's|.*iphonesimulator(.+)\.sdk|$1|i'`
 
-    # Delete the `Application Support` directory for this SDK version
-    # This will erase both the content and settings for this version
-    # The Simulator will recreate this support directory when relaunched below
-    rm -rf "$HOME/Library/Application Support/iPhone Simulator/$SDK"
+    # Delete the `Application Support` directory for this SDK version,
+    # which will erase both the content and settings for this version.
+    # The Simulator will recreate this support directory when relaunched below.
+    
+    # There may be multiple support directories for this SDK version,
+    # e.g. 7.0, 7.0.3, 7.0.3-64 --we just delete them all.
+    # We can't quote the directory prefix or we'll disable globbing,
+    # so prevent splitting by unsetting IFS.
+    OLD_IFS="$IFS"; unset IFS
+    SUPPORT_DIRS=`echo $HOME/Library/Application\ Support/iPhone\ Simulator/$SDK* | perl -pe "s| /|\\n/|g"`
+    while read -r dir; do
+        rm -rf "$dir"
+    done <<< "$SUPPORT_DIRS"
+    IFS="$OLD_IFS"
 fi
 
 
