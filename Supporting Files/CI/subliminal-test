@@ -129,7 +129,7 @@ Optional testing arguments:
 					installed. Ignored if \`-sim_device\` is not specified.
 
 					Note that the iOS Simulator does not accept certain combinations 
-					of device type and SDK, e.g. \"iPhone (Retina 4-inch)\" 
+					of device type and SDK, e.g. \"iPhone Retina (4-inch)\" 
 					and \"5.1\".
 
 	-timeout <timeout>		The maximum duration for which to run the tests before aborting.
