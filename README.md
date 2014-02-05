@@ -216,7 +216,7 @@ Here's what a sample `SLTest` implementation looks like:
     [submitButton tap];
 
 	// wait for the login spinner to disappear
-    SLAssertTrueWithTimeout([_loginSpinner isInvalidOrInvisible], 
+    SLAssertTrueWithTimeout([loginSpinner isInvalidOrInvisible], 
     						3.0, @"Log-in was not successful.");
 
     NSString *successMessage = [NSString stringWithFormat:@"Hello, %@!", username];
