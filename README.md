@@ -44,6 +44,10 @@ screencast [here](https://vimeo.com/67771344))
 * Find support [@subliminaltest](https://twitter.com/subliminaltest) and on 
 [Stack Overflow](http://stackoverflow.com/questions/tagged/subliminal)
 
+If you have an existing iOS project and an integration testing target that you want to enhance with Subliminal
+and you are comfortable working with Xcode targets and build settings, you can get started *even faster*
+by following these [minimal instructions](#minimal-instructions-for-using-subliminal-with-an-existing-ios-project-and-target).
+
 Running the Example App
 -----------------------
 
@@ -337,6 +341,25 @@ into JUnit reports using the `subliminal_uialog_to_junit` script:
 Subliminal runs integration tests against itself using [Travis](https://travis-ci.org/). 
 Take a look at its [configuration file](https://github.com/inkling/Subliminal/blob/master/.travis.yml) 
 for an example.
+
+Minimal Instructions for Using Subliminal With an Existing iOS Project and Target
+---------------------------------------------------------------------------------
+
+1. [Download Subliminal](https://github.com/inkling/Subliminal/zipball/master)
+2. In Subliminal's directory run `rake install`.  This installs an Xcode class template and an
+   Instruments trace template that we'll use in steps six and eight below.
+3. Add the `Subliminal.xcodeproj` project file to your existing Xcode project, as a subproject.
+4. Add the Subliminal library target to the `Target Dependencies` of your testing target, and add
+   `libSubliminal.a` to the `Link Binary With Libraries` build phase of your testing target.
+5. Add `$(BUILT_PRODUCTS_DIR)/usr/local/include` to your testing target's `Header Search Paths`.
+6. Create your new integration test classes.  You can use the "Integration
+   test class" template installed in step two for this step.
+7. Add the code `[[SLTestController sharedTestController] runTests:[SLTest allTests] withCompletionBlock:nil];`
+   at the point in your testing target's code where you would like your integration tests to
+   begin executing.  Usually this is just before the `application:didFinishLaunchingWithOptions:`
+   method returns.  (Remember to `#import <Subliminal/Subliminal.h>`.)
+8. Profile your project and select the Subliminal trace template (under `User/All`) when
+   Instruments launches.
 
 FAQ
 ---
