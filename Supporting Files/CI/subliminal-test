@@ -595,9 +595,16 @@ launch_instruments () {
 
 	RESULT_LOG="$RESULTS_DIR/Run 1/Automation Results.plist"
 
+    # Check that a timeout has been passed; if not, fall back on the default
+    if [ -z "$1" ]; then
+        LAUNCH_TIMEOUT=30
+    else
+        LAUNCH_TIMEOUT="$1"
+    fi
+
 	# Abort instruments if it hangs on launch; we'll attempt recovery below
 	kill_instruments_without_output () {
-		sleep 30
+		sleep $LAUNCH_TIMEOUT
 		if [ ! -e "$RESULT_LOG" ]; then
 			kill -9 $INSTRUMENTS_PID
 		fi
@@ -614,10 +621,11 @@ launch_instruments () {
 	return $instruments_exit_status
 }
 
-(( MAX_INSTRUMENTS_RETRY_COUNT = 3 ))
+INSTRUMENTS_LAUNCH_TIMEOUTS=( 30 45 60 120 )
 (( INSTRUMENTS_RETRY_COUNT = 0 ))
-launch_instruments
-while [ $? -ne 0 ] && [ ! -e "$RESULT_LOG" ] && (( INSTRUMENTS_RETRY_COUNT < MAX_INSTRUMENTS_RETRY_COUNT )); do
+
+launch_instruments ${INSTRUMENTS_LAUNCH_TIMEOUTS[INSTRUMENTS_RETRY_COUNT]}
+while [ $? -ne 0 ] && [ ! -e "$RESULT_LOG" ] && (( INSTRUMENTS_RETRY_COUNT < ${#INSTRUMENTS_LAUNCH_TIMEOUTS[@]} )); do
 	# Under poorly understood circumstances, in certain CI environments like Travis, 
 	# instruments may fail to launch what otherwise appears to be a perfectly good app 
 	# (in that an app prepared exactly the same way may be run without error on another run), 
@@ -627,8 +635,8 @@ while [ $? -ne 0 ] && [ ! -e "$RESULT_LOG" ] && (( INSTRUMENTS_RETRY_COUNT < MAX
 	#
 	# We retry three times, after resetting the simulator and rebuilding the app--
 	# the error may be caused by instruments rejecting the build for some reason.
-	echo "\ninstruments hiccuped; retrying with clean build...\n"	
-	(( INSTRUMENTS_RETRY_COUNT++ ))
+    (( INSTRUMENTS_RETRY_COUNT++ ))
+    echo "\nInstruments hiccuped; retrying with clean build and a timeout of ${INSTRUMENTS_LAUNCH_TIMEOUTS[INSTRUMENTS_RETRY_COUNT]} seconds...\n"
 
 	# Re-enable all simulator SDKs (if necessary) while we build
 	echo ""
@@ -658,7 +666,7 @@ while [ $? -ne 0 ] && [ ! -e "$RESULT_LOG" ] && (( INSTRUMENTS_RETRY_COUNT < MAX
 	mkdir "$RESULTS_DIR"
 
 	echo "\nRelaunching tests...\n"
-	launch_instruments
+	launch_instruments ${INSTRUMENTS_LAUNCH_TIMEOUTS[INSTRUMENTS_RETRY_COUNT]}
 done
 
 if [ $? -ne 0 ]; then
