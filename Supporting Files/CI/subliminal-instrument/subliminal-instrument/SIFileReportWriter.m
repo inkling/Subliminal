@@ -26,6 +26,7 @@
 
 #import "NSFileHandle+StringWriting.h"
 #import "NSTask+Utilities.h"
+#import "SITerminalStringFormatter.h"
 
 static const NSUInteger kIndentSize = 4;
 static const NSUInteger kDefaultWidth = 80;
@@ -36,9 +37,30 @@ static const NSUInteger kDefaultWidth = 80;
     NSString *_indentString;
     NSUInteger _dividerWidth;
     NSString *_currentLine, *_pendingLine;
+    SITerminalStringFormatter *_outputFormatter;
 }
 
++ (BOOL)environmentIsATerminal {
+    static BOOL __environmentIsATerminal = NO;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        __environmentIsATerminal = (getenv("TERM") != NULL);
+    });
+    return __environmentIsATerminal;
+}
+
+/**
+ Regarding the three class methods below:
+
+ I don't think there's any guarantee that the terminal environment in which `tput`
+ runs will be the same as as the environment to which a writer instance (with a
+ terminal-directed output handle) will write, but I don't know how to fix that
+ and it's probably safe to assume that the environments are the same.
+ */
 + (NSString *)clearToEOLCharacter {
+    // `tput` will fail below if we're not running in a terminal
+    if (![self environmentIsATerminal]) return nil;
+
     static NSString *__clearToEOLCharacter;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -50,6 +72,46 @@ static const NSUInteger kDefaultWidth = 80;
     return __clearToEOLCharacter;
 }
 
++ (BOOL)environmentSupportsColors {
+    // `tput` will fail below if we're not running in a terminal
+    if (![self environmentIsATerminal]) return NO;
+
+    static BOOL __environmentSupportsColors = NO;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        // method suggested by http://stackoverflow.com/a/12760577/495611
+        // we could theoretically call `tputs` directly but this is sooo much easier
+        NSTask *tputColorsTask = [[NSTask alloc] init];
+        tputColorsTask.launchPath = @"/usr/bin/tput";
+        tputColorsTask.arguments = @[ @"colors" ];
+        NSInteger numberOfColorsSupported = [[tputColorsTask output] integerValue];
+        __environmentSupportsColors = (numberOfColorsSupported >= 8);
+    });
+    return __environmentSupportsColors;
+}
+
++ (BOOL)environmentSupportsUnicode {
+    static BOOL __environmentSupportsUnicode = NO;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+#if DEBUG
+        // The Xcode console does support Unicode even though the technique below fails
+        __environmentSupportsUnicode = YES;
+#else
+        if (getenv("TRAVIS")) {
+            // Travis supports Unicode even though the technique below fails
+            __environmentSupportsUnicode = YES;
+        } else {
+            // from http://rosettacode.org/wiki/Terminal_control/Unicode_output#C
+            char *lang = getenv("LANG");
+            __environmentSupportsUnicode = (lang &&
+                                            ([[@(lang) lowercaseString] rangeOfString:@"utf"].location != NSNotFound));
+        }
+#endif
+    });
+    return __environmentSupportsUnicode;
+}
+
 - (instancetype)initWithOutputHandle:(NSFileHandle *)outputHandle {
     NSParameterAssert(outputHandle);
 
@@ -57,11 +119,11 @@ static const NSUInteger kDefaultWidth = 80;
     if (self) {
         _outputHandle = outputHandle;
 
-        // We need to check both `isatty` and whether the _TERM_ environment variable is set
+        // We need to check both `isatty` and whether we're running in a terminal environment
         // because when running in Xcode, `isatty` will return true for `stdout`,
         // even though neither `ioctl` nor `tput` will work.
         int handleDescriptor = [_outputHandle fileDescriptor];
-        _outputHandleIsATerminal = isatty(handleDescriptor) && getenv("TERM");
+        _outputHandleIsATerminal = isatty(handleDescriptor) && [[self class] environmentIsATerminal];
 
         if (_outputHandleIsATerminal) {
             // Determine the clear-to-EOL character so that there will be no delay while writing the log.
@@ -71,9 +133,14 @@ static const NSUInteger kDefaultWidth = 80;
             ioctl(handleDescriptor, TIOCGWINSZ, &w);
             _dividerWidth = (NSUInteger)w.ws_col;
         }
+
         _dividerWidth = _dividerWidth ?: kDefaultWidth;
 
         _indentString = @"";
+
+        _outputFormatter = [[SITerminalStringFormatter alloc] init];
+        _outputFormatter.useColors = [[self class] environmentSupportsColors];
+        _outputFormatter.useUnicodeCharacters = [[self class] environmentSupportsUnicode];
     }
     return self;
 }
@@ -90,26 +157,35 @@ static const NSUInteger kDefaultWidth = 80;
 
 - (void)setDividerActive:(BOOL)dividerActive {
     if (dividerActive != _dividerActive) {
-        _dividerActive = dividerActive;
-
-        // the down line links back to the indent
-        NSString *divider = [self dividerWithDownLineAtLocation:[_indentString length]];
-
-        // flush output pending before the divider
+        // flush output pending before the divider changes state
         if (![self lineHasEnded]) [self printNewline];
 
-        [self updateLine:divider usingIndent:NO];
+        _dividerActive = dividerActive;
+
+        // the bar links back to the indent
+        NSUInteger barLocation = [_indentString length];
+        // and so faces upward if the divider just became active, downward otherwise
+        NSString *divider = [self dividerWithBarAtLocation:barLocation facingUpward:_dividerActive];
+
+        // print the divider directly--it shouldn't be formatted
+        [_outputHandle writeData:[divider dataUsingEncoding:NSUTF8StringEncoding]];
         [self printNewline];
     }
 }
 
-- (NSString *)dividerWithDownLineAtLocation:(NSInteger)location {
-    NSString *dashStr = @"-";
-    NSString *downLineStr = @"|";
+- (NSString *)dividerWithBarAtLocation:(NSUInteger)barLocation facingUpward:(BOOL)facingUpward {
+    NSString *dashStr, *barStr;
+    if (_outputHandleIsATerminal && [[self class] environmentSupportsUnicode]) {
+        dashStr = @"\u2500";
+        barStr = facingUpward ? @"\u2534" : @"\u252C";
+    } else {
+        dashStr = @"-";
+        barStr = @"|";
+    }
 
     NSString *divider = [@"" stringByPaddingToLength:_dividerWidth withString:dashStr startingAtIndex:0];
-    divider = [divider stringByReplacingCharactersInRange:NSMakeRange(location, [downLineStr length])
-                                               withString:downLineStr];
+    divider = [divider stringByReplacingCharactersInRange:NSMakeRange(barLocation, [barStr length])
+                                               withString:barStr];
     return divider;
 }
 
@@ -119,17 +195,34 @@ static const NSUInteger kDefaultWidth = 80;
     return !(_currentLine || _pendingLine);
 }
 
-- (void)printLine:(NSString *)line {
-    [self updateLine:line];
+- (void)printLine:(NSString *)format, ... {
+    va_list args;
+    va_start(args, format);
+    [self updateLineWithFormat:format arguments:args];
+    va_end(args);
+
     [self printNewline];
 }
 
-- (void)updateLine:(NSString *)line {
-    [self updateLine:line usingIndent:!self.dividerActive];
+- (void)updateLine:(NSString *)format, ... {
+    va_list args;
+    va_start(args, format);
+    [self updateLineWithFormat:format arguments:args];
+    va_end(args);
 }
 
-- (void)updateLine:(NSString *)line usingIndent:(BOOL)usingIndent {
-    NSString *formattedLine = [NSString stringWithFormat:@"%@%@", (usingIndent ? _indentString : @""), line];
+- (void)updateLineWithFormat:(NSString *)format arguments:(va_list)argList {
+    NSString *formattedLine = [[NSString alloc] initWithFormat:format arguments:argList];
+    if (self.dividerActive) {
+        formattedLine = [NSString stringWithFormat:@"<faint>%@</faint>", formattedLine];
+    } else {
+        formattedLine = [NSString stringWithFormat:@"%@%@", _indentString, formattedLine];
+    }
+    formattedLine = [_outputFormatter formattedStringFromString:formattedLine];
+
+    // Unescape entities that were escaped in anticipation of terminal-formatting.
+    formattedLine = CFBridgingRelease(CFXMLCreateStringByUnescapingEntities(kCFAllocatorDefault, (__bridge CFStringRef)formattedLine, NULL));
+
     if (_outputHandleIsATerminal) {
         // The carriage return + clear-to-EOL character will overwrite the current line.
         [_outputHandle printString:@"\r%@", [[self class] clearToEOLCharacter]];

@@ -75,12 +75,20 @@
  `-printLine:`.
  
  The text will be formatted as determined by the report writer's configuration.
+ The text may also contain terminal-formatting markup (see `SITerminalStringFormatter`),
+ which will be rendered as appropriate given the capabilities of the output handle.
 
- @param line The text to print.
+ @warning Any XML entities in the text that are not part of terminal-formatting markup
+          must be escaped using `CFXMLCreateStringByEscapingEntities`. The text
+          will be unescaped, using `CFXMLCreateStringByUnescapingEntities`, after
+          terminal-formatting markup has been processed.
+
+ @param line A format string. This value must not be `nil`.
+ @param ... A comma-separated list of arguments to substitute into _line_.
  
  @see `-printNewline`
  */
-- (void)updateLine:(NSString *)line;
+- (void)updateLine:(NSString *)line, ... NS_FORMAT_FUNCTION(1, 2);
 
 /**
  Prints a newline to the receiver's output handle.
@@ -93,9 +101,17 @@
  Prints text to the receiver's output handle, followed by a newline.
  
  The text will be formatted as determined by the report writer's configuration.
+ The text may also contain terminal-formatting markup (see `SITerminalStringFormatter`),
+ which will be rendered as appropriate given the capabilities of the output handle.
 
- @param line The text to print.
+ @warning Any XML entities in the text that are not part of terminal-formatting markup
+          must be escaped using `CFXMLCreateStringByEscapingEntities`. The text
+          will be unescaped, using `CFXMLCreateStringByUnescapingEntities`, after
+          terminal-formatting markup has been processed.
+
+ @param line A format string. This value must not be `nil`.
+ @param ... A comma-separated list of arguments to substitute into _line_.
  */
-- (void)printLine:(NSString *)line;
+- (void)printLine:(NSString *)line, ... NS_FORMAT_FUNCTION(1, 2);
 
 @end
