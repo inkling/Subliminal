@@ -58,7 +58,7 @@
 
 #pragma mark -Randomization
 
-- (NSArray *)mocksToRecordRunOrderOfTests:(NSSet *)testClasses inArray:(NSMutableArray *)runOrder {
+- (NSArray *)mocksToRecordRunOrderOfTests:(id)testClasses inArray:(NSMutableArray *)runOrder {
     NSMutableArray *testMocks = [[NSMutableArray alloc] initWithCapacity:[testClasses count]];
     for (Class testClass in testClasses) {
         id testMock = [OCMockObject partialMockForClass:testClass];
@@ -74,7 +74,7 @@
 }
 
 static const NSUInteger kNumSeedTrials = 100;
-- (NSCountedSet *)runOrderDistributionForNumTrials:(NSUInteger)numTrials usingTests:(NSSet *)tests seed:(unsigned int)seed {
+- (NSCountedSet *)runOrderDistributionForNumTrials:(NSUInteger)numTrials usingTests:(id)tests seed:(unsigned int)seed {
     NSCountedSet *orderDistribution = [[NSCountedSet alloc] init];
     NSUInteger runCount = 0;
     for (NSUInteger trialIndex = 0; trialIndex < numTrials; trialIndex++) {
@@ -111,6 +111,38 @@ static const NSUInteger kNumSeedTrials = 100;
     }];
 
     STAssertTrue([orderDistribution count] == kNumPossibleOrders, @"Tests did not run in a sufficiently uniformly-random order when `SLTestControllerRandomSeed` was specified.");
+    STAssertTrue(runCount == kNumSeedTrials, @"The order distribution did not account for all trials.");
+}
+
+- (void)testTestsRunInGivenArrayOrderWhen_SLTestControllerNoShuffleSeed_IsSpecified
+{
+    NSArray *tests = @[[TestWithSomeTestCases class], [TestWhichSupportsAllPlatforms class], [TestWithPlatformSpecificTestCases class]];
+    
+    NSCountedSet *orderDistribution = [self runOrderDistributionForNumTrials:kNumSeedTrials usingTests:tests seed:SLTestControllerNoShuffleSeed];
+    STAssertTrue([orderDistribution count] == 1, @"Tests should always execute in the same order when a seed is specified.");
+    STAssertTrue([tests isEqualToArray:[[orderDistribution allObjects] lastObject]], @"Arrays should be the same");
+}
+
+- (void)testTestsRunInRandomOrderWhenGivenAnArray
+{
+    NSArray *tests = @[[TestWithSomeTestCases class], [TestWhichSupportsAllPlatforms class], [TestWithPlatformSpecificTestCases class]];
+    
+    __block NSUInteger runCount = 0;
+    NSCountedSet *orderDistribution = [self runOrderDistributionForNumTrials:kNumSeedTrials usingTests:tests seed:SLTestControllerRandomSeed];
+    const int dslen = 6; // The number of possible orders of three tests: 3 * 2 * 1
+    double *dset = (double *)calloc(dslen, sizeof(double));
+    __block int j = 0;
+    [orderDistribution enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+        NSUInteger countThisPermutation = [orderDistribution countForObject:obj];
+        runCount += countThisPermutation;
+        dset[j] = countThisPermutation;
+        j++;
+        *stop = (j >= dslen);
+    }];
+    bool isUniform = ChiIsUniform(dset, dslen, dslen - 1, 0.05);
+    free(dset);
+    
+    STAssertTrue(isUniform, @"Tests did not run in a sufficiently uniformly-random order when `SLTestControllerRandomSeed` was specified.");
     STAssertTrue(runCount == kNumSeedTrials, @"The order distribution did not account for all trials.");
 }
 
