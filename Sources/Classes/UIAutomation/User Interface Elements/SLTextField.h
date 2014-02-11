@@ -43,6 +43,11 @@
 /**
  Type the text in the text field with a specific keyboard.
  
+ @param text A string to type into the text field
+ 
+ @param keyboard An SLElement that implements the SLKeyboard protocol
+ that will be used to type the given string
+ 
  @exception SLUIAElementInvalidException Raised if the element is not valid 
  by the end of the [default timeout](+defaultTimeout).
  
