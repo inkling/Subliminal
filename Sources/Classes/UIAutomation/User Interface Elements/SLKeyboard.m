@@ -52,6 +52,20 @@
     }
 }
 
+- (void)typeString:(NSString *)string withSetValueFallbackUsingElement:(SLUIAElement *)element {
+    @try {
+        [self typeString:string];
+    } @catch (id exception) {
+        [[SLLogger sharedLogger] logWarning:[NSString stringWithFormat:@"-[SLKeyboard typeString:] will fall back on UIAElement.setValue due to an exception in UIAKeyboard.typeString: %@", exception]];
+        [element waitUntilTappable:YES thenSendMessage:@"setValue('%@')", [string slStringByEscapingForJavaScriptLiteral]];
+    }
+}
+
+- (void)hide
+{
+    [[SLKeyboardKey elementWithAccessibilityLabel:(@"Hide keyboard")] tap];
+}
+
 @end
 
 

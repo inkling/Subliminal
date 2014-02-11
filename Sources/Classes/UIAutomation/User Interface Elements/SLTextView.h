@@ -7,6 +7,7 @@
 //
 
 #import "SLElement.h"
+#import "SLKeyboard.h"
 
 /**
  `SLTextView` matches instances of `UITextView`.
@@ -14,7 +15,7 @@
 @interface SLTextView : SLElement
 
 /**
- The text displayed by the text field.
+ The text displayed by the text view.
  
  @exception SLUIAElementInvalidException Raised by both `-text` and `-setText:`
  if the element is not valid by the end of the [default timeout](+defaultTimeout).
@@ -24,6 +25,30 @@
  timeout after the element becomes valid elapses.
  */
 @property (nonatomic, copy) NSString *text;
+
+/**
+ Type the text in the text view with a specific keyboard.
+ 
+ @param text A string to type into the text view
+ 
+ @param keyboard An SLElement that implements the SLKeyboard protocol
+ that will be used to type the given string
+ 
+ @exception SLUIAElementInvalidException Raised if the element is not valid
+ by the end of the [default timeout](+defaultTimeout).
+ 
+ @exception SLUIAElementNotTappableException Raised if the element is not
+ tappable when whatever amount of time remains of the default timeout after
+ the element becomes valid elapses.
+ */
+- (void)setText:(NSString *)text withKeyboard:(id<SLKeyboard>)keyboard;
+
+/**
+ The default keyboard to be used by `setText:` and `setText:withKeyboard`.
+ 
+ Defaults to SLKeyboard
+ */
+@property (nonatomic) id<SLKeyboard> defaultKeyboard;
 
 @end
 

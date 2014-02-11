@@ -94,4 +94,14 @@
                  @"Did not type character as expected.");
 }
 
+- (void)testHideKeyboard_iPad {
+    SLAskApp(showKeyboard);
+    [self wait:[SLAskApp(keyboardInfo)[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];
+    
+    [[SLKeyboard keyboard] hide];
+    [self wait:[SLAskApp(keyboardInfo)[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];
+    
+    SLAssertTrueWithTimeout([[SLKeyboard keyboard] isValid] == NO, 2.0 , @"Keyboard should not be valid.");
+}
+
 @end
