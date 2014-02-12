@@ -25,15 +25,15 @@
 #import <Subliminal/SLTestController+AppHooks.h>
 #import "SLElement.h"
 
-@interface SLElementTapTestViewController : SLTestCaseViewController
+@interface SLElementTapTestViewController : SLTestCaseViewController <UIGestureRecognizerDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIButton *scrollViewButton;
 @end
 
 @implementation SLElementTapTestViewController {
     UIView *_testView;
-    UITapGestureRecognizer *_tapRecognizer;
-    CGPoint _tapPoint;
+    UITapGestureRecognizer *_tapRecognizer, *_doubleTapRecognizer;
+    CGPoint _tapPoint, _doubleTapPoint;
 
     BOOL _scrollViewButtonWasTapped;
 }
@@ -61,6 +61,7 @@
     self = [super initWithTestCaseWithSelector:testCase];
     if (self) {
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(tapPoint)];
+        [[SLTestController sharedTestController] registerTarget:self forAction:@selector(doubleTapPoint)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(modifyActivationPoint)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(activationPoint)];
         [[SLTestController sharedTestController] registerTarget:self forAction:@selector(scrollViewButtonWasTapped)];
@@ -84,11 +85,18 @@
     _tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
     _tapRecognizer.numberOfTapsRequired = 1;
     _tapRecognizer.numberOfTouchesRequired = 1;
+    _tapRecognizer.delegate = self;
     if (self.testCase == @selector(testCannotTapScrollViewsOnIPad5_x)) {
         [self.scrollView addGestureRecognizer:_tapRecognizer];
     } else {
         [_testView addGestureRecognizer:_tapRecognizer];
     }
+
+    _doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTap:)];
+    _doubleTapRecognizer.numberOfTapsRequired = 2;
+    _doubleTapRecognizer.numberOfTouchesRequired = 1;
+    _doubleTapRecognizer.delegate = self;
+    [_testView addGestureRecognizer:_doubleTapRecognizer];
 
     // we can't make the scroll view accessible in `testCanTapChildElementsOfScrollViewsEvenOnIPad5_x`
     // because that will prevent its child element from appearing in the accessibility hierarchy
@@ -106,10 +114,21 @@
 
 #pragma mark - Gesture recognition
 
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    // doesn't matter if taps and double taps recognize simultaneously
+    return YES;
+}
+
 - (void)tap:(UITapGestureRecognizer *)recognizer {
     // convert the point to screen coordinates (the system used by accessibility)
     CGPoint tapPointInWindowCoordinates = [recognizer locationInView:nil];
     _tapPoint = [self.view.window convertPoint:tapPointInWindowCoordinates toWindow:nil];
+}
+
+- (void)doubleTap:(UITapGestureRecognizer *)recognizer {
+    // convert the point to screen coordinates (the system used by accessibility)
+    CGPoint doubleTapPointInWindowCoordinates = [recognizer locationInView:nil];
+    _doubleTapPoint = [self.view.window convertPoint:doubleTapPointInWindowCoordinates toWindow:nil];
 }
 
 - (void)scrollViewButtonTapped {
@@ -121,6 +140,11 @@
 - (NSValue *)tapPoint {
     if (SLCGPointIsNull(_tapPoint)) return nil;
     else return [NSValue valueWithCGPoint:_tapPoint];
+}
+
+- (NSValue *)doubleTapPoint {
+    if (SLCGPointIsNull(_doubleTapPoint)) return nil;
+    else return [NSValue valueWithCGPoint:_doubleTapPoint];
 }
 
 - (void)modifyActivationPoint {
@@ -139,7 +163,7 @@
 }
 
 - (void)resetTapRecognition {
-    _tapPoint = SLCGPointNull;
+    _tapPoint = SLCGPointNull, _doubleTapPoint = SLCGPointNull;
     _scrollViewButtonWasTapped = NO;
 }
 

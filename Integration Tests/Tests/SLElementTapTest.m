@@ -60,6 +60,11 @@
     SLAssertTrue(SLAskApp(tapPoint) != nil, @"Tap should have been recognized.");
 }
 
+- (void)testCanDoubleTapElement {
+    SLAssertNoThrow([UIAElement(_testElement) doubleTap], @"Should not have thrown.");
+    SLAssertTrue(SLAskApp(doubleTapPoint) != nil, @"Double tap should have been recognized.");
+}
+
 - (void)testCannotTapScrollViewsOnIPad5_x {
     // this test should succeed given an iPhone running iOS 5.1,
     // and an iPad running iOS 6.1
