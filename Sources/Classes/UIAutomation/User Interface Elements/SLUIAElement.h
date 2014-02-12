@@ -242,6 +242,26 @@
 - (void)tap;
 
 /**
+ Double-taps the specified element.
+ 
+ @bug This method will fail if the specified element identifies a scroll view
+ in an application running on an iPad simulator or device running iOS 5.x, due
+ to a bug in UIAutomation (see -isTappable). An `SLTerminalJavaScriptException`
+ will be raised in such a scenario.
+
+ UIAutomation is able to double-tap scroll view child elements
+ regardless of platform.
+ 
+ @exception SLUIAElementInvalidException Raised if the element is not valid
+ by the end of the [default timeout](+defaultTimeout).
+
+ @exception SLUIAElementNotTappableException Raised if the element is not tappable
+ when whatever amount of time remains of the default timeout after the element
+ becomes valid elapses.
+ */
+- (void)doubleTap;
+
+/**
  Touches and holds the specified element.
 
  @param duration The duration for the touch.

@@ -161,6 +161,10 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     [self waitUntilTappable:YES thenSendMessage:@"tap()"];
 }
 
+- (void)doubleTap {
+    [self waitUntilTappable:YES thenSendMessage:@"doubleTap()"];
+}
+
 - (void)touchAndHoldWithDuration:(NSTimeInterval)duration {
     [self waitUntilTappable:YES thenSendMessage:@"touchAndHold(%lf)", duration];
 }
