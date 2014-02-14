@@ -584,8 +584,7 @@ launch_instruments () {
 	# are passed to instruments and the app by being exported at the top of this script
 	TIMEOUT_ARG=`[[ -n "$TIMEOUT" ]] && echo "-l $TIMEOUT" || echo ""`
 	HARDWARE_ARG=`[[ -n "$HW_ID" ]] && echo "-w $HW_ID" || echo ""`
-	printf "$LOGIN_PASSWORD\n" | xcrun instruments\
-		-t "${HOME}/Library/Application Support/Instruments/Templates/Subliminal/Subliminal.tracetemplate"\
+	printf "$LOGIN_PASSWORD\n" | "$SCRIPT_DIR/subliminal-instrument.sh"\
 		-D "$TRACE_FILE"\
 		$TIMEOUT_ARG\
 		$HARDWARE_ARG\
