@@ -30,12 +30,22 @@
  */
 @interface SLDevice : NSObject
 
+#pragma mark - Getting the Shared Instance
+/// ----------------------------------------
+/// @name Getting the Shared Instance
+/// ----------------------------------------
+
 /**
  Returns an object representing the current device.
  
  @return A singleton object that represents the current device.
  */
 + (SLDevice *)currentDevice;
+
+#pragma mark - Interacting with Hardware Buttons
+/// ----------------------------------------
+/// @name Interacting with Hardware Buttons
+/// ----------------------------------------
 
 /**
  Deactivates your application for the specified duration.
@@ -54,7 +64,12 @@
  */
 - (void)deactivateAppForDuration:(NSTimeInterval)duration;
 
-/** 
+#pragma mark - Device Orientation
+/// ----------------------------------------
+/// @name Device Orientation
+/// ----------------------------------------
+
+/**
  Changes the device orientation to the specified new `deviceOrientation` value.
  
  You can access the current device orientation using `[[UIDevice currentDevice] orientation]`
@@ -62,5 +77,37 @@
  @param deviceOrientation The device orientation to rotate to.
  */
 - (void)setOrientation:(UIDeviceOrientation)deviceOrientation;
+
+#pragma mark - Screenshots
+/// ----------------------------------------
+/// @name Screenshots
+/// ----------------------------------------
+
+/**
+ Takes a screenshot of the entire device screen.
+ 
+ The image is viewable from the UIAutomation debug log in Instruments. 
+ 
+ When running `subliminal-test` from the command line, the images are also saved
+ as PNGs within the specified output directory.
+ 
+ @param filename A string to use as the name for the resultant image file.
+ */
+- (void)captureScreenshotWithFilename:(NSString *)filename;
+
+/**
+ Takes a screenshot of the specified rectangular portion of the device screen.
+ 
+ The image is viewable from the UIAutomation debug log in Instruments.
+ 
+ When running `subliminal-test` from the command line, the images are also saved
+ as PNGs within the specified output directory.
+ 
+ @param filename A string to use as the name for the resultant image file.
+ @param rect The rect that defines the area of the screen to capture.
+ 
+ @exception `NSInternalInconsistencyException` if `rect` is `CGRectNull`.
+ */
+- (void)captureScreenshotWithFilename:(NSString *)filename inRect:(CGRect)rect;
 
 @end
