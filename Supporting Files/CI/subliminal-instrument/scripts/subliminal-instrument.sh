@@ -59,4 +59,8 @@ BUILD_OUTPUT_DIR_TOOL_PATH="$SI_DIR"/scripts/build_output_dir.sh
 BUILD_OUTPUT_DIR=$("$BUILD_OUTPUT_DIR_TOOL_PATH")
 SI_PATH="$BUILD_OUTPUT_DIR"/Products/Release/subliminal-instrument
 
-"$SI_PATH" "$@"
+WATCHDOG_TOOL_PATH="$SI_DIR"/scripts/watchdog.sh
+
+# Launch `subliminal-instrument`, watched at a 1 second interval
+# so that it will exit if/when this script is killed
+"$WATCHDOG_TOOL_PATH" $$ 1 "$SI_PATH" "$@"

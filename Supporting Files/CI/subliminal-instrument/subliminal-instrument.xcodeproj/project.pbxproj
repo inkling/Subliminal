@@ -175,12 +175,12 @@
 		F0CFFE55188CEE89009FEB8B /* SIReporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SIReporter.m; sourceTree = "<group>"; };
 		F0CFFE57188CEEE8009FEB8B /* SITerminalReporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SITerminalReporter.h; sourceTree = "<group>"; };
 		F0CFFE58188CEEE8009FEB8B /* SITerminalReporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SITerminalReporter.m; sourceTree = "<group>"; };
-		F0D8A119188DD8A700C90E41 /* watchdog.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = watchdog.sh; sourceTree = "<group>"; };
 		F0E9223E18A087C200E59B1D /* SIFileReportWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SIFileReportWriter.h; sourceTree = "<group>"; };
 		F0E9223F18A087C200E59B1D /* SIFileReportWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SIFileReportWriter.m; sourceTree = "<group>"; };
 		F0F5DB8F18C2F12B006BC976 /* SubliminalInstrumentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubliminalInstrumentTests.m; sourceTree = "<group>"; };
 		F0F5DB9618C36250006BC976 /* NSPipe+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSPipe+Utilities.h"; sourceTree = "<group>"; };
 		F0F5DB9718C36250006BC976 /* NSPipe+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSPipe+Utilities.m"; sourceTree = "<group>"; };
+		F0D8A119188DD8A700C90E41 /* watchdog.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = watchdog.sh; path = ../scripts/watchdog.sh; sourceTree = "<group>"; };
 		F0F726E618B0D33F00D2BBE7 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		F0F726F318B0D6B600D2BBE7 /* subliminal-instrument Tests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "subliminal-instrument Tests.octest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
