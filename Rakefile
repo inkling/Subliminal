@@ -108,7 +108,7 @@ by Xcode.
 
 \`test\` options:
   TEST_SDK=<sdk>            Selects the SDK version against which to run the tests.
-                            Supported values are '5.1' or '6.1'.
+                            Supported values are '5.1', '6.1', and '7.0'.
                             If not specified, the tests will be run against all supported SDKs.
 
 \`test:integration\` options:
