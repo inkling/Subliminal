@@ -22,6 +22,8 @@
 
 #import "SIOptions.h"
 
+#import "SITerminalReporter.h"
+
 static NSString *const SIOptionsErrorDomain = @"SIOptionsError";
 
 @implementation SIOptions
@@ -56,6 +58,14 @@ static NSString *const SIOptionsErrorDomain = @"SIOptionsError";
     return [NSError errorWithDomain:SIOptionsErrorDomain
                                code:0
                            userInfo:@{ NSLocalizedDescriptionKey: description }];
+}
+
+- (id)init {
+    self = [super init];
+    if (self) {
+        _reporters = @[ [[SITerminalReporter alloc] init] ];
+    }
+    return self;
 }
 
 - (BOOL)parseArguments:(NSArray *)arguments error:(NSError *__autoreleasing *)error {

@@ -47,6 +47,16 @@
 @property (nonatomic, readonly) BOOL showHelp;
 
 /**
+ The reporters that the `subliminal-instrument` will use to format its output.
+ 
+ The members of this array are instances of `SIReporter`.
+ 
+ Defaults to a single argument, a instance of `SITerminalReporter`.
+ Currently not configurable.
+ */
+@property (nonatomic, readonly) NSArray *reporters;
+
+/**
  The arguments to pass to the `instruments` executable when launched
  by the `subliminal-instrument` executable.
  

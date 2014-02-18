@@ -22,11 +22,21 @@
 
 #import "SubliminalInstrument.h"
 
+#import "NSFileHandle+StringWriting.h"
 #import "NSTask+Utilities.h"
 #import "SIOptions.h"
-#import "NSFileHandle+StringWriting.h"
 
-@implementation SubliminalInstrument
+#import "SISLLogParser.h"
+#import "SIReporter.h"
+
+@interface SubliminalInstrument () <SISLLogParserDelegate>
+
+@end
+
+@implementation SubliminalInstrument {
+    SIOptions *_options;
+    SISLLogParser *_logParser;
+}
 
 + (NSString *)traceTemplatePath {
     static NSString *__traceTemplatePath = nil;
@@ -56,6 +66,9 @@
     if (self) {
         _standardOutput = [NSFileHandle fileHandleWithStandardOutput];
         _standardError = [NSFileHandle fileHandleWithStandardError];
+
+        _logParser = [[SISLLogParser alloc] init];
+        _logParser.delegate = self;
     }
     return self;
 }
@@ -70,16 +83,16 @@
 }
 
 - (void)run {
-    SIOptions *options = [[SIOptions alloc] init];
+    _options = [[SIOptions alloc] init];
 
     NSError *optionsError = nil;
-    if (![options parseArguments:self.arguments error:&optionsError]) {
+    if (![_options parseArguments:self.arguments error:&optionsError]) {
         [self.standardError printString:@"%@\n", [optionsError localizedDescription]];
         _terminationStatus = 1;
         return;
     }
 
-    if (options.showHelp) {
+    if (_options.showHelp) {
         [self printUsage];
         _terminationStatus = 1;
         return;
@@ -89,22 +102,44 @@
     instrumentsTask.launchPath = [[self class] instrumentsPath];
 
     NSString *traceTemplatePath = [[self class] traceTemplatePath];
-    NSMutableArray *instrumentsArguments = [[NSMutableArray alloc] initWithArray:options.instrumentsArguments];
+    NSMutableArray *instrumentsArguments = [[NSMutableArray alloc] initWithArray:_options.instrumentsArguments];
     [instrumentsArguments insertObject:@"-t" atIndex:0];
     [instrumentsArguments insertObject:traceTemplatePath atIndex:1];
     instrumentsTask.arguments = instrumentsArguments;
 
-    // We want to process the output of `instruments` in realtime. However,
-    // `instruments` buffers its output if it determines that it is being piped to
-    // another process. We can get around this by routing the output through a
-    // pseudoterminal (as suggested by https://github.com/jonathanpenn/AutomationExample/blob/master/unix_instruments ).
+    for (SIReporter *reporter in _options.reporters) {
+        [reporter beginReportingWithStandardOutput:self.standardOutput
+                                     standardError:self.standardError];
+    }
+
+    /*
+     We want to process the output of `instruments` in realtime. However,
+     `instruments` buffers its output if it determines that it is being piped to
+     another process. We can get around this by routing the output through a
+     pseudoterminal (as suggested by https://github.com/jonathanpenn/AutomationExample/blob/master/unix_instruments ).
+
+     The autorelease pools below cover both line parsing,
+     and the event reporting that happens in response to line parsing.
+     */
     [instrumentsTask launchUsingPseudoTerminal:YES outputHandler:^(NSString *line) {
-        [_standardOutput printString:@"%@\n", line];
+        @autoreleasepool {
+            [_logParser parseStdoutLine:line];
+        }
     } errorHandler:^(NSString *line) {
-        [_standardError printString:@"%@\n", line];
+        @autoreleasepool {
+            [_logParser parseStderrLine:line];
+        }
     }];
 
+    [_options.reporters makeObjectsPerformSelector:@selector(finishReporting)];
+
     _terminationStatus = instrumentsTask.terminationStatus;
+}
+
+#pragma - SISLLogParserDelegate
+
+- (void)parser:(SISLLogParser *)parser didParseEvent:(NSDictionary *)event {
+    [_options.reporters makeObjectsPerformSelector:@selector(reportEvent:) withObject:event];
 }
 
 @end
