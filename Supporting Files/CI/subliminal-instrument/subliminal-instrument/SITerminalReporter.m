@@ -22,57 +22,21 @@
 
 #import "SITerminalReporter.h"
 
-#import <sys/ioctl.h>
-
-#import "NSFileHandle+StringWriting.h"
-#import "NSTask+Utilities.h"
-
-static const NSUInteger kIndentSize = 4;
-static const NSUInteger kDefaultWidth = 80;
+#import "SIFileReportWriter.h"
 
 @interface SITerminalReporter ()
-@property (nonatomic) NSUInteger indentLevel;
-@property (nonatomic) BOOL dividerActive;
 @end
 
 @implementation SITerminalReporter {
-    NSString *_indentString;
+    SIFileReportWriter *_outputWriter, *_errorWriter;
 }
 
-+ (BOOL)isRunningInTerminal {
-    static BOOL __isRunningInTerminal = NO;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        __isRunningInTerminal = (getenv("TERM") != NULL);
-    });
-    return __isRunningInTerminal;
-}
-
-+ (NSString *)dividerWithDownLineAtLocation:(NSInteger)location {
-    NSString *dashStr = @"-";
-    NSString *downLineStr = @"|";
-
-    NSUInteger dividerWidth = kDefaultWidth;
-    if ([self isRunningInTerminal]) {
-        struct winsize w = {0};
-        ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-        if (w.ws_col > 0) dividerWidth = (NSUInteger)w.ws_col;
-    }
-
-    NSString *divider = [@"" stringByPaddingToLength:dividerWidth withString:dashStr startingAtIndex:0];
-    if (location != NSNotFound) {
-        divider = [divider stringByReplacingCharactersInRange:NSMakeRange(location, [downLineStr length])
-                                                   withString:downLineStr];
-    }
-    return divider;
-}
-
-- (id)init {
-    self = [super init];
-    if (self) {
-        _indentString = @"";
-    }
-    return self;
+- (void)beginReportingWithStandardOutput:(NSFileHandle *)standardOutput
+                           standardError:(NSFileHandle *)standardError {
+    [super beginReportingWithStandardOutput:standardOutput standardError:standardError];
+    
+    _outputWriter = [[SIFileReportWriter alloc] initWithOutputHandle:self.standardOutput];
+    _errorWriter = [[SIFileReportWriter alloc] initWithOutputHandle:self.standardError];
 }
 
 - (void)reportEvent:(NSDictionary *)event {
@@ -91,33 +55,33 @@ static const NSUInteger kDefaultWidth = 80;
 
                 case SISLLogEventSubtypeTestError:
                 case SISLLogEventSubtypeTestFailure:
-                    if (eventOccurredWithinTest) self.dividerActive = YES;
-                    [self printMessage:message];
+                    if (eventOccurredWithinTest) _outputWriter.dividerActive = YES;
+                    [_outputWriter printLine:message];
                     break;
 
                 case SISLLogEventSubtypeTestingStarted:
-                    [self printMessage:message];
-                    self.indentLevel++;
+                    [_outputWriter printLine:message];
+                    _outputWriter.indentLevel++;
                     break;
                 case SISLLogEventSubtypeTestStarted:
-                    [self printMessage:message];
-                    self.indentLevel++;
+                    [_outputWriter printLine:message];
+                    _outputWriter.indentLevel++;
                     break;
 
                 case SISLLogEventSubtypeTestCaseStarted:
                     // close the test-setup section if present
-                    self.dividerActive = NO;
                     formattedMessage = [NSString stringWithFormat:@"\"%@\" started.", event[@"info"][@"testCase"]];
-                    [self printMessage:formattedMessage];
-                    self.indentLevel++;
+                    _outputWriter.dividerActive = NO;
+                    [_outputWriter printLine:formattedMessage];
+                    _outputWriter.indentLevel++;
                     break;
 
                 case SISLLogEventSubtypeTestCasePassed:
                 case SISLLogEventSubtypeTestCaseFailed:
                 case SISLLogEventSubtypeTestCaseFailedUnexpectedly: {
-                    self.indentLevel--;
+                    _outputWriter.indentLevel--;
                     // close the test case section
-                    self.dividerActive = NO;
+                    _outputWriter.dividerActive = NO;
 
                     NSString *finishDescription;
                     switch (([event[@"subtype"] unsignedIntegerValue])) {
@@ -135,7 +99,7 @@ static const NSUInteger kDefaultWidth = 80;
                             break;
                     }
                     formattedMessage = [NSString stringWithFormat:@"\"%@\" %@.", event[@"info"][@"testCase"], finishDescription];
-                    [self printMessage:formattedMessage];
+                    [_outputWriter printLine:formattedMessage];
                     break;
                 }
 
@@ -143,15 +107,15 @@ static const NSUInteger kDefaultWidth = 80;
                 case SISLLogEventSubtypeTestFinished:
                 case SISLLogEventSubtypeTestTerminatedAbnormally:
                     // close the test-teardown section if present
-                    self.dividerActive = NO;
-                    [self printMessage:message];
+                    _outputWriter.dividerActive = NO;
+                    [_outputWriter printLine:message];
                     // test-finish and terminates-abnormally messages are logged at the same level as the test cases
-                    self.indentLevel--;
+                    _outputWriter.indentLevel--;
                     break;
 
                 case SISLLogEventSubtypeTestingFinished:
-                    self.indentLevel--;
-                    [self printMessage:message];
+                    _outputWriter.indentLevel--;
+                    [_outputWriter printLine:message];
                     break;
             }
             break;
@@ -159,49 +123,13 @@ static const NSUInteger kDefaultWidth = 80;
         case SISLLogEventTypeDefault:
         case SISLLogEventTypeDebug:
         case SISLLogEventTypeWarning:
-            if (eventOccurredWithinTest) self.dividerActive = YES;
-            [self printMessage:message];
+            if (eventOccurredWithinTest) _outputWriter.dividerActive = YES;
+            [_outputWriter printLine:message];
             break;
         case SISLLogEventTypeError:
-            [self printMessage:message asError:YES];
+            [_errorWriter printLine:message];
             break;
     }
-}
-
-#pragma mark -
-
-- (void)setIndentLevel:(NSUInteger)indentLevel {
-    NSAssert(indentLevel != NSUIntegerMax, @"An attempt was made to set the indent level to -1!");
-
-    if (indentLevel != _indentLevel) {
-        _indentLevel = indentLevel;
-        _indentString = [@"" stringByPaddingToLength:(indentLevel * kIndentSize)
-                                          withString:@" " startingAtIndex:0];
-    }
-}
-
-- (void)setDividerActive:(BOOL)dividerActive {
-    if (dividerActive != _dividerActive) {
-        _dividerActive = dividerActive;
-
-        // closing dividers have the down line to link back to the indent
-        BOOL includeDownLine = !_dividerActive;
-        NSString *divider = [[self class] dividerWithDownLineAtLocation:(includeDownLine ? [_indentString length] : NSNotFound)];
-        [self printMessage:divider asError:NO usingIndent:NO];
-    }
-}
-
-- (void)printMessage:(NSString *)message {
-    [self printMessage:message asError:NO];
-}
-
-- (void)printMessage:(NSString *)message asError:(BOOL)error {
-    [self printMessage:message asError:error usingIndent:!self.dividerActive];
-}
-
-- (void)printMessage:(NSString *)message asError:(BOOL)error usingIndent:(BOOL)usingIndent {
-    NSFileHandle *outHandle = error ? self.standardError : self.standardOutput;
-    [outHandle printString:@"%@%@\n", (usingIndent ? _indentString : @""), message];
 }
 
 @end
