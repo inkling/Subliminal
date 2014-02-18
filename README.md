@@ -47,7 +47,7 @@ screencast [here](https://vimeo.com/67771344))
 Running the Example App
 -----------------------
 
-1. Clone the Subliminal repo: `git clone git@github.com:inkling/Subliminal.git`.
+1. Clone the Subliminal repo: `git clone https://github.com/inkling/Subliminal.git`.
 2. `cd` into the directory: `cd Subliminal`.
 3. If you haven't already, setup Subliminal: `rake install`.
 4. Open the Example project: `open Example/SubliminalTest.xcodeproj`.
@@ -66,7 +66,7 @@ you're using git for your project add Subliminal as a submodule:
 ```sh
 mkdir Integration\ Tests
 mkdir Integration\ Tests/Subliminal
-git submodule add git@github.com:inkling/Subliminal.git Integration\ Tests/Subliminal/
+git submodule add https://github.com/inkling/Subliminal.git Integration\ Tests/Subliminal/
 ```
 
 Otherwise manually download and add Subliminal to `Integration Tests/Subliminal`.
