@@ -47,6 +47,27 @@
     STAssertEqualObjects(expectedOutput, actualOutput, @"");
 }
 
+- (void)testFormattingStringWithCharacters {
+    NSString *input = @"<warning/> I wouldn't do that if I were you.";
+    NSString *expectedOutput = @"\u26A0 I wouldn't do that if I were you.";
+    NSString *actualOutput = [_formatter formattedStringFromString:input];
+    STAssertEqualObjects(expectedOutput, actualOutput, @"");
+}
+
+- (void)testFormattingStringWithEscapedCharacters {
+    NSString *input = @"<yellow><warning/></yellow> I wouldn't do that if I were you.";
+    NSString *expectedOutput = @"\033[33m\u26A0\033[0m I wouldn't do that if I were you.";
+    NSString *actualOutput = [_formatter formattedStringFromString:input];
+    STAssertEqualObjects(expectedOutput, actualOutput, @"");
+}
+
+- (void)testFormattingStringWithEscapedCharactersAndText {
+    NSString *input = @"<faint>This is a faint <warning/> (warning).</faint>";
+    NSString *expectedOutput = @"\033[2mThis is a faint \u26A0 (warning).\033[0m";
+    NSString *actualOutput = [_formatter formattedStringFromString:input];
+    STAssertEqualObjects(expectedOutput, actualOutput, @"");
+}
+
 - (void)testFormattingTagsAreCaseInsensitive {
     NSString *input = @"<YELLOW><warning/></YELLOW> I wouldn't do that if I were you.";
     NSString *expectedOutput = @"\033[33m\u26A0\033[0m I wouldn't do that if I were you.";
@@ -63,6 +84,16 @@
     NSString *actualOutput = [_formatter formattedStringFromString:input];
     STAssertEqualObjects(expectedOutput, actualOutput,
                          @"With colors disabled, the escape sequences should have been stripped from the string.");
+}
+
+#pragma mark -Test Formatting With Unicode Characters Disabled
+
+- (void)testFormattingStringWithUnicodeCharactersDisabled {
+    _formatter.useUnicodeCharacters = NO;
+    NSString *input = @"<warning/> I wouldn't do that if I were you.";
+    NSString *expectedOutput = @"! I wouldn't do that if I were you.";
+    NSString *actualOutput = [_formatter formattedStringFromString:input];
+    STAssertEqualObjects(expectedOutput, actualOutput, @"");
 }
 
 #pragma mark - Test Formatting Malformed Strings
@@ -93,6 +124,12 @@
     NSString *expectedOutput = @"This is a \033[1mvery\033[0m important message";
     NSString *actualOutput = [_formatter formattedStringFromString:input];
     STAssertEqualObjects(expectedOutput, actualOutput, @"");
+}
+
+- (void)testCharacterTagsMustBeEmpty {
+    NSLog(@"*** The error message below is expected.");
+    NSString *input = @"<warning>wat</warning> I wouldn't do that if I were you.";
+    STAssertThrows((void)[_formatter formattedStringFromString:input], @"");
 }
 
 @end
