@@ -12,6 +12,7 @@
 		F00CD4F518CAC92300C652DC /* SISLLogParser.m in Sources */ = {isa = PBXBuildFile; fileRef = F0CFFE52188CED2A009FEB8B /* SISLLogParser.m */; };
 		F00CD55318CADCE700C652DC /* SILoggingTerminal.js in Resources */ = {isa = PBXBuildFile; fileRef = F0ACA89D189647C80008D182 /* SILoggingTerminal.js */; };
 		F00CD50A18CACD9200C652DC /* SIFileReportWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E9223F18A087C200E59B1D /* SIFileReportWriter.m */; };
+		F009213B18A87E4400F4CF62 /* SITerminalStringFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = F009213A18A87E4400F4CF62 /* SITerminalStringFormatter.m */; };
 		F026C41F188A1279006B7DB0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F026C41E188A1279006B7DB0 /* Foundation.framework */; };
 		F026C422188A1279006B7DB0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F026C421188A1279006B7DB0 /* main.m */; };
 		F026C426188A1279006B7DB0 /* subliminal_instrument.1 in Copy man page */ = {isa = PBXBuildFile; fileRef = F026C425188A1279006B7DB0 /* subliminal_instrument.1 */; };
@@ -35,6 +36,8 @@
 		F0F7270418B0D6C400D2BBE7 /* SLLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F02578C3189106200084A6DB /* SLLogger.framework */; };
 		F0F7270518B0D6C900D2BBE7 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0ACA872189640580008D182 /* OCMock.framework */; };
 		F0F7270A18B0D70700D2BBE7 /* SISLLogParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F025787D1890F9DB0084A6DB /* SISLLogParserTests.m */; };
+		F0F7270B18B0D70B00D2BBE7 /* SITerminalStringFormatterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F009213C18A8904E00F4CF62 /* SITerminalStringFormatterTests.m */; };
+		F0F7270D18B0D78C00D2BBE7 /* SITerminalStringFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = F009213A18A87E4400F4CF62 /* SITerminalStringFormatter.m */; };
 		F0F7270E18B0D79500D2BBE7 /* SILoggingTerminal.m in Sources */ = {isa = PBXBuildFile; fileRef = F0ACA87E189641170008D182 /* SILoggingTerminal.m */; };
 		F0F7271018B0D7DF00D2BBE7 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F02578C718910E0B0084A6DB /* JavaScriptCore.framework */; };
 /* End PBXBuildFile section */
@@ -139,6 +142,9 @@
 
 /* Begin PBXFileReference section */
 		F00CD4BE18CABDFF00C652DC /* SISLLogEvents.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SISLLogEvents.h; sourceTree = "<group>"; };
+		F009213918A87E4400F4CF62 /* SITerminalStringFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SITerminalStringFormatter.h; sourceTree = "<group>"; };
+		F009213A18A87E4400F4CF62 /* SITerminalStringFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SITerminalStringFormatter.m; sourceTree = "<group>"; };
+		F009213C18A8904E00F4CF62 /* SITerminalStringFormatterTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SITerminalStringFormatterTests.m; sourceTree = "<group>"; };
 		F02578501890F5510084A6DB /* subliminal-instrument Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "subliminal-instrument Tests-Info.plist"; sourceTree = "<group>"; };
 		F02578521890F5510084A6DB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F02578561890F5510084A6DB /* subliminal-instrument Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "subliminal-instrument Tests-Prefix.pch"; sourceTree = "<group>"; };
@@ -212,6 +218,7 @@
 				F0F5DB8F18C2F12B006BC976 /* SubliminalInstrumentTests.m */,
 				F0ACA87C189640BB0008D182 /* Utilities */,
 				F025787D1890F9DB0084A6DB /* SISLLogParserTests.m */,
+				F009213C18A8904E00F4CF62 /* SITerminalStringFormatterTests.m */,
 			);
 			path = "subliminal-instrument Tests";
 			sourceTree = "<group>";
@@ -297,6 +304,8 @@
 				F0CFFE58188CEEE8009FEB8B /* SITerminalReporter.m */,
 				F0E9223E18A087C200E59B1D /* SIFileReportWriter.h */,
 				F0E9223F18A087C200E59B1D /* SIFileReportWriter.m */,
+				F009213918A87E4400F4CF62 /* SITerminalStringFormatter.h */,
+				F009213A18A87E4400F4CF62 /* SITerminalStringFormatter.m */,
 				F026C425188A1279006B7DB0 /* subliminal_instrument.1 */,
 				F026C423188A1279006B7DB0 /* Supporting Files */,
 				F0D8A119188DD8A700C90E41 /* watchdog.sh */,
@@ -517,6 +526,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F0CFFE56188CEE89009FEB8B /* SIReporter.m in Sources */,
+				F009213B18A87E4400F4CF62 /* SITerminalStringFormatter.m in Sources */,
 				F0CFFE53188CED2A009FEB8B /* SISLLogParser.m in Sources */,
 				F0CFFE59188CEEE8009FEB8B /* SITerminalReporter.m in Sources */,
 				F08298B5188A832C002AB6ED /* NSTask+Utilities.m in Sources */,
@@ -543,6 +553,8 @@
 				F00CD4EF18CAC8FF00C652DC /* SITerminalReporter.m in Sources */,
 				F00CD4F318CAC90900C652DC /* SIReporter.m in Sources */,
 				F0F5DB9918C362BC006BC976 /* NSPipe+Utilities.m in Sources */,
+				F0F7270B18B0D70B00D2BBE7 /* SITerminalStringFormatterTests.m in Sources */,
+				F0F7270D18B0D78C00D2BBE7 /* SITerminalStringFormatter.m in Sources */,
 				F0F7270A18B0D70700D2BBE7 /* SISLLogParserTests.m in Sources */,
 				F0F7270E18B0D79500D2BBE7 /* SILoggingTerminal.m in Sources */,
 			);
