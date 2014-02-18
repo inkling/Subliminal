@@ -33,8 +33,19 @@
  *   `subtype`:     the subtype of the event, as an `NSNumber` wrapping a value
                     of type `SISLLogEventSubtype`.
  *   `info`:        additional information about the event, as an `NSDictionary *`.
-                    This field will only be present for certain subtypes of events.
-                    See `SISLLogEventSubtype`.
+                    All events may contain a dictionary with the following fields:
+
+                    * "test":       the test during which the event occurred,
+                                    if a test was ongoing at the time that the event occurred.
+                    * "testCase":   the test case during which the event occurred,
+                                    if a test case was ongoing (either the test case itself,
+                                    or its setup or teardown) at the time that the error occurred.
+                                    If the error occurred in test set-up, this will be "setUpTest".
+                                    If the error occurred in test tear-down, this will be "tearDownTest".
+
+                    The dictionary may contain additional fields based on the event's subtype.
+                    See `SISLLogEventSubtype`. This dictionary may be omitted
+                    if it would be empty.
  *   `message`:     a message describing the event, as an `NSString *`
                     Oftentimes, the type, subtype, and info will convey the same
                     information as the message, but in a more structured manner.

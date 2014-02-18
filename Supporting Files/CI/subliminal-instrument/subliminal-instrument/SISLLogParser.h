@@ -31,7 +31,7 @@
  The logs are intended to be parsed in real-time, by a client feeding each line
  output by an `instruments` executable (running Subliminal tests) to a parser's
  `-parseStdoutLine:` and `-parseStderrLine:` methods. When an event is parsed,
- the log parser will call the client, its delegate, with the event.
+ the log parser will call the client, its delegate, with the event. 
  */
 @interface SISLLogParser : NSObject
 

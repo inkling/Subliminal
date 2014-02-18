@@ -346,4 +346,120 @@ static NSTimeInterval kSampleTimeInterval = 413758794.502608;
     STAssertEqualObjects(expectedEvent, _lastEvent, @"");
 }
 
+#pragma mark -Parsing Test State
+
+- (void)testTestIsTrackedBetweenStartAndFinish {
+    NSString *test = @"FooTest";
+    [[SLLogger sharedLogger] logTestStart:test];
+    STAssertEqualObjects(_lastEvent[@"info"][@"test"], test, @"Test start message did not carry test name.");
+
+    [[SLLogger sharedLogger] logMessage:@"foo"];
+    STAssertEqualObjects(_lastEvent[@"info"][@"test"], test, @"Intra-test message did not carry test name.");
+
+    [[SLLogger sharedLogger] logTestFinish:test withNumCasesExecuted:0 numCasesFailed:0 numCasesFailedUnexpectedly:0];
+    STAssertEqualObjects(_lastEvent[@"info"][@"test"], test, @"Test finish message did not carry test name.");
+
+    // sanity check
+    [[SLLogger sharedLogger] logMessage:@"foo"];
+    STAssertNil(_lastEvent[@"info"][@"test"], @"");
+}
+
+- (void)testTestIsTrackedBetweenStartAndTerminatedAbnormally {
+    NSString *test = @"FooTest";
+    [[SLLogger sharedLogger] logTestStart:test];
+    STAssertEqualObjects(_lastEvent[@"info"][@"test"], test, @"Test start message did not carry test name.");
+
+    [[SLLogger sharedLogger] logMessage:@"foo"];
+    STAssertEqualObjects(_lastEvent[@"info"][@"test"], test, @"Intra-test message did not carry test name.");
+
+    [[SLLogger sharedLogger] logTestAbort:test];
+    STAssertEqualObjects(_lastEvent[@"info"][@"test"], test, @"Test terminated-abnormally message did not carry test name.");
+
+    // sanity check
+    [[SLLogger sharedLogger] logMessage:@"foo"];
+    STAssertNil(_lastEvent[@"info"][@"test"], @"");
+}
+
+- (void)testTestCaseIsReportedAsSetUpTestBetweenTestStartAndTestCaseStart {
+    NSString *test = @"FooTest";
+    [[SLLogger sharedLogger] logTestStart:test];
+    // set-up has not begun at the time this message is logged, strictly speaking
+    STAssertNil(_lastEvent[@"info"][@"testCase"], @"No test case, nor set-up, has yet begun.");
+
+    [[SLLogger sharedLogger] logMessage:@"foo"];
+    STAssertEqualObjects(_lastEvent[@"info"][@"testCase"], @"setUpTest",
+                         @"Message before test case start was not reported as in test set-up.");
+}
+
+- (void)testTestCaseIsReportedAsTearDownTestBetweenTestCaseFinishAndTestFinish {
+    NSString *test = @"FooTest";
+    NSString *testCase = @"testFoo";
+    [[SLLogger sharedLogger] logTestStart:test];
+
+    [[SLLogger sharedLogger] logTest:test caseStart:testCase];
+    [[SLLogger sharedLogger] logTest:test casePass:testCase];
+
+    [[SLLogger sharedLogger] logMessage:@"foo"];
+    STAssertEqualObjects(_lastEvent[@"info"][@"testCase"], @"tearDownTest",
+                         @"Message after test case finish was not reported as in test tear-down.");
+
+    [[SLLogger sharedLogger] logTestFinish:test withNumCasesExecuted:0 numCasesFailed:0 numCasesFailedUnexpectedly:0];
+    // tear-down has now completed
+    STAssertNil(_lastEvent[@"info"][@"testCase"], @"All test cases, and tear-down, have completed.");
+}
+
+- (void)testTestCaseIsTrackedBetweenStartAndPassed {
+    NSString *test = @"FooTest";
+    NSString *testCase = @"testFoo";
+    [[SLLogger sharedLogger] logTestStart:test];
+
+    [[SLLogger sharedLogger] logTest:test caseStart:testCase];
+    STAssertEqualObjects(_lastEvent[@"info"][@"testCase"], testCase,
+                         @"Test case start message did not carry test case name.");
+
+    [[SLLogger sharedLogger] logMessage:@"foo"];
+    STAssertEqualObjects(_lastEvent[@"info"][@"testCase"], testCase,
+                         @"Intra- test case message did not carry test case name.");
+
+    [[SLLogger sharedLogger] logTest:test casePass:testCase];
+    STAssertEqualObjects(_lastEvent[@"info"][@"testCase"], testCase,
+                         @"Test case pass message did not carry test name.");
+}
+
+- (void)testTestCaseIsTrackedBetweenStartAndFailed {
+    NSString *test = @"FooTest";
+    NSString *testCase = @"testFoo";
+    [[SLLogger sharedLogger] logTestStart:test];
+
+    [[SLLogger sharedLogger] logTest:test caseStart:testCase];
+    STAssertEqualObjects(_lastEvent[@"info"][@"testCase"], testCase,
+                         @"Test case start message did not carry test case name.");
+
+    [[SLLogger sharedLogger] logMessage:@"foo"];
+    STAssertEqualObjects(_lastEvent[@"info"][@"testCase"], testCase,
+                         @"Intra- test case message did not carry test case name.");
+
+    [[SLLogger sharedLogger] logTest:test caseFail:testCase expected:YES];
+    STAssertEqualObjects(_lastEvent[@"info"][@"testCase"], testCase,
+                         @"Test case pass message did not carry test name.");
+}
+
+- (void)testTestCaseIsTrackedBetweenStartAndFailedUnexpectedly {
+    NSString *test = @"FooTest";
+    NSString *testCase = @"testFoo";
+    [[SLLogger sharedLogger] logTestStart:test];
+
+    [[SLLogger sharedLogger] logTest:test caseStart:testCase];
+    STAssertEqualObjects(_lastEvent[@"info"][@"testCase"], testCase,
+                         @"Test case start message did not carry test case name.");
+
+    [[SLLogger sharedLogger] logMessage:@"foo"];
+    STAssertEqualObjects(_lastEvent[@"info"][@"testCase"], testCase,
+                         @"Intra- test case message did not carry test case name.");
+
+    [[SLLogger sharedLogger] logTest:test caseFail:testCase expected:NO];
+    STAssertEqualObjects(_lastEvent[@"info"][@"testCase"], testCase,
+                         @"Test case pass message did not carry test name.");
+}
+
 @end

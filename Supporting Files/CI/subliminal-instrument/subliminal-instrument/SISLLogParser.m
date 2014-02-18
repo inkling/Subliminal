@@ -24,7 +24,9 @@
 
 #import "SISLLogEvents.h"
 
-@implementation SISLLogParser
+@implementation SISLLogParser {
+    NSString *_currentTest, *_currentTestCase;
+}
 
 + (NSDateFormatter *)iso8601DateFormatter {
     static NSDateFormatter *__formatter = nil;
@@ -173,14 +175,52 @@
     *info = [infoValue count] ? [infoValue copy] : nil;
 }
 
+// This method reads test (case) names out of "test (case)-beginning" events
+// and saves them to apply to events occurring between those events and "test (case)-ending" events.
+- (void)synchronizeTestStateWithEvent:(NSMutableDictionary *)event {
+    // Determine the test and test case to apply to _event_, but don't override the actual values as they change
+    NSString *currentTest = event[@"info"][@"test"] ?: _currentTest;
+    _currentTest = currentTest;
+    NSString *currentTestCase = event[@"info"][@"testCase"] ?: _currentTestCase;
+    _currentTestCase = currentTestCase;
+
+    // Clear the cached test and test case as necessary;
+    // in most cases we will apply the cached values to the current event
+    // --"test (case)-ending" events are still considered to be part of their test (case).
+    // Also set special test case values.
+    if ([event[@"type"] unsignedIntegerValue] == SISLLogEventTypeTestStatus) {
+        switch ([event[@"subtype"] unsignedIntegerValue]) {
+            case SISLLogEventSubtypeTestStarted:
+                // all messages after test start and before test case start are considered to be part of test set-up
+                _currentTestCase = @"setUpTest";
+                break;
+            case SISLLogEventSubtypeTestCasePassed:
+            case SISLLogEventSubtypeTestCaseFailed:
+            case SISLLogEventSubtypeTestCaseFailedUnexpectedly:
+                // all messages after test case finish and before test finish are considered to be part of test tear-down
+                _currentTestCase = @"tearDownTest";
+                break;
+            case SISLLogEventSubtypeTestFinished:
+            case SISLLogEventSubtypeTestTerminatedAbnormally:
+                _currentTest = nil;
+                _currentTestCase = nil;
+                // since all test cases have finished, don't use the cached test case value
+                currentTestCase = nil;
+                break;
+            default:
+                break;
+        }
+    }
+
+    NSMutableDictionary *mutableInfo = [[NSMutableDictionary alloc] initWithDictionary:event[@"info"]];
+    if (currentTest) mutableInfo[@"test"] = currentTest;
+    if (currentTestCase) mutableInfo[@"testCase"] = currentTestCase;
+    if ([mutableInfo count]) event[@"info"] = [mutableInfo copy];
+}
+
 + (BOOL)shouldFilterStdoutLine:(NSString *)line {
     // filter the trace-completed message: the tests have already completed
     return [line rangeOfString:@"Instruments Trace Complete"].location != NSNotFound;
-}
-
-+ (BOOL)shouldFilterStderrLine:(NSString *)line {
-    // filter diagnostic messages from "ScriptAgent"
-    return [line rangeOfString:@"ScriptAgent"].location != NSNotFound;
 }
 
 - (void)parseStdoutLine:(NSString *)line {
@@ -206,7 +246,13 @@
     }];
     if (info) event[@"info"] = info;
 
-    [self.delegate parser:self didParseEvent:event];
+    [self synchronizeTestStateWithEvent:event];
+    [self.delegate parser:self didParseEvent:[event copy]];
+}
+
++ (BOOL)shouldFilterStderrLine:(NSString *)line {
+    // filter diagnostic messages from "ScriptAgent"
+    return [line rangeOfString:@"ScriptAgent"].location != NSNotFound;
 }
 
 - (void)parseStderrLine:(NSString *)line {
@@ -216,14 +262,15 @@
     // because we can't guarantee that error messages will have timestamps
     NSString *timestamp = [[[self class] iso8601DateFormatter] stringFromDate:[NSDate date]];
 
-    NSDictionary *event = @{
+    NSMutableDictionary *event = [[NSMutableDictionary alloc] initWithDictionary:@{
         @"timestamp": timestamp,
         @"type": @(SISLLogEventTypeError),
         @"subtype": @(SISLLogEventSubtypeNone),
         @"message": line
-    };
+    }];
 
-    [self.delegate parser:self didParseEvent:event];
+    [self synchronizeTestStateWithEvent:event];
+    [self.delegate parser:self didParseEvent:[event copy]];
 }
 
 @end
