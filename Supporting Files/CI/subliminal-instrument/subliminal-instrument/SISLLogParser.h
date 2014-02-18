@@ -74,34 +74,9 @@
  the `instruments` executable's output.
  
  @param parser The parser object.
- @param event The event that was parsed. See the "Event Fields" section of this
-              interface for the format of this dictionary.
+ @param event The event that was parsed. See `SISLLogEvents.h`
+              for the format of this dictionary.
  */
 - (void)parser:(SISLLogParser *)parser didParseEvent:(NSDictionary *)event;
 
 @end
-
-
-#pragma mark - Event Fields
-
-/**
- Each event is a dictionary with the following fields:
- 
-    *   `timestamp`: the date-time at which the event occurred, as an `NSString *`
-        in ISO 8601 format.
-    *   `type`: the type of the event, as an `NSNumber`
-        wrapping a value of type `SISLLogEventType`.
-    *   `message`: the event message, as an `NSString *`.
- 
- */
-typedef NS_ENUM(NSUInteger, SISLLogEventType) {
-    /** The type of most events. */
-    SISLLogEventTypeDefault,
-
-    /**
-     The type of events that indicate that the `instruments` executable
-     encountered an error (as opposed to the tests run by the executable
-     encountering an error).
-     */
-    SISLLogEventTypeError
-};

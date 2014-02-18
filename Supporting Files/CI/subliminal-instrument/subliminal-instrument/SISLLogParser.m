@@ -22,6 +22,8 @@
 
 #import "SISLLogParser.h"
 
+#import "SISLLogEvents.h"
+
 @implementation SISLLogParser
 
 + (NSDateFormatter *)iso8601DateFormatter {
@@ -37,28 +39,138 @@
     return __formatter;
 }
 
-+ (NSString *)parseMessageFromLine:(NSString *)line {
-    NSParameterAssert(line);
++ (void)parseMessageType:(NSString **)messageType andMessage:(NSString **)message fromLine:(NSString *)line {
+    NSParameterAssert(messageType && message && line);
 
     static NSRegularExpression *__instrumentsLogExpression = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        NSString *instrumentsLogPattern = @"^(?:\\d+-\\d+-\\d+ \\d+:\\d+:\\d+ \\+\\d+) (.+)$";
+        NSString *instrumentsLogPattern = @"^(?:\\d+-\\d+-\\d+ \\d+:\\d+:\\d+ \\+\\d+) (.+?): (.+)$";
         __instrumentsLogExpression = [[NSRegularExpression alloc] initWithPattern:instrumentsLogPattern
                                                                           options:0 error:NULL];
     });
 
     NSTextCheckingResult *result = [__instrumentsLogExpression firstMatchInString:line
                                                                           options:0 range:NSMakeRange(0, [line length])];
-    NSString *message = nil;
     if (result) {
-        // the first range is for the whole result
-        message = [line substringWithRange:[result rangeAtIndex:1]];
+        // the zeroth range is for the whole result
+        *messageType = [line substringWithRange:[result rangeAtIndex:1]];
+        *message = [line substringWithRange:[result rangeAtIndex:2]];
     } else {
         // e.g. the message didn't have a timestamp
-        message =  line;
+        *messageType = nil;
+        *message =  line;
     }
-    return message;
+}
+
++ (void)parseEventType:(SISLLogEventType *)type subtype:(SISLLogEventSubtype *)subtype info:(NSDictionary **)info
+       fromMessageType:(NSString *)messageType andMessage:(NSString *)message {
+    NSParameterAssert(type && subtype && message);
+
+    SISLLogEventType typeValue;
+    SISLLogEventSubtype subtypeValue;
+    NSMutableDictionary *infoValue = [[NSMutableDictionary alloc] init];
+
+    if (messageType) {
+        if ([messageType isEqualToString:@"Debug"]) {
+            typeValue = SISLLogEventTypeDebug;
+            subtypeValue = SISLLogEventSubtypeNone;
+        } else if ([messageType isEqualToString:@"Warning"]) {
+            typeValue = SISLLogEventTypeWarning;
+            subtypeValue = SISLLogEventSubtypeNone;
+        } else {
+            static NSRegularExpression *__testExpression = nil, *__testCaseExpression = nil;
+            static dispatch_once_t onceToken;
+            dispatch_once(&onceToken, ^{
+                // TODO: Handle errors, warnings
+                NSString *testPattern = @"Test \"(.*)\" (started\\.|terminated abnormally\\.|finished: executed (\\d+) case(?:s)?, with (\\d+) failure(?:s)? \\((\\d+) unexpected\\)\\.)";
+                __testExpression = [[NSRegularExpression alloc] initWithPattern:testPattern options:0 error:NULL];
+
+                NSString *testCasePattern = @"Test case \"-\\[.+ (.+)\\]\" (started|passed|failed|failed unexpectedly)\\.";
+                __testCaseExpression = [[NSRegularExpression alloc] initWithPattern:testCasePattern options:0 error:NULL];
+            });
+
+            NSRange messageRange = NSMakeRange(0, [message length]);
+            NSTextCheckingResult *testMatch = [__testExpression firstMatchInString:message options:0 range:messageRange];
+            NSTextCheckingResult *testCaseMatch = testMatch ? nil : [__testCaseExpression firstMatchInString:message options:0 range:messageRange];
+
+            // Assume that the message is test-status related to reduce duplication.
+            typeValue = SISLLogEventTypeTestStatus;
+
+            if (testMatch) {
+                // The zeroth range corresponds to the match as a whole.
+                infoValue[@"test"] = [message substringWithRange:[testMatch rangeAtIndex:1]];
+
+                NSString *status = [message substringWithRange:[testMatch rangeAtIndex:2]];
+                if ([status hasPrefix:@"started"]) {
+                    subtypeValue = SISLLogEventSubtypeTestStarted;
+                } else if ([status hasPrefix:@"terminated abnormally"]) {
+                    subtypeValue = SISLLogEventSubtypeTestTerminatedAbnormally;
+                } else {    // finished
+                    subtypeValue = SISLLogEventSubtypeTestFinished;
+
+                    infoValue[@"numCasesExecuted"] = @([[message substringWithRange:[testMatch rangeAtIndex:3]] integerValue]);
+                    infoValue[@"numCasesFailed"] = @([[message substringWithRange:[testMatch rangeAtIndex:4]] integerValue]);
+                    infoValue[@"numCasesFailedUnexpectedly"] = @([[message substringWithRange:[testMatch rangeAtIndex:5]] integerValue]);
+                }
+            } else if (testCaseMatch) {
+                // The zeroth range corresponds to the match as a whole.
+                infoValue[@"testCase"] = [message substringWithRange:[testCaseMatch rangeAtIndex:1]];
+
+                NSString *status = [message substringWithRange:[testCaseMatch rangeAtIndex:2]];
+                if ([status isEqualToString:@"started"]) {
+                    subtypeValue = SISLLogEventSubtypeTestCaseStarted;
+                } else if ([status isEqualToString:@"passed"]) {
+                    subtypeValue = SISLLogEventSubtypeTestCasePassed;
+                } else if ([status isEqualToString:@"failed"]){
+                    subtypeValue = SISLLogEventSubtypeTestCaseFailed;
+                } else {    // failed unexpectedly
+                    subtypeValue = SISLLogEventSubtypeTestCaseFailedUnexpectedly;
+                }
+            } else if ([message hasPrefix:@"Testing started"]) {
+                subtypeValue = SISLLogEventSubtypeTestingStarted;
+            } else if ([message hasPrefix:@"Testing finished"]) {
+                subtypeValue = SISLLogEventSubtypeTestingFinished;
+
+                static NSRegularExpression *__testingFinishedExpression = nil;
+                static dispatch_once_t onceToken;
+                dispatch_once(&onceToken, ^{
+                    NSString *testingFinishedPattern = @".+executed (\\d+) tests, with (\\d+) failure(?:s)?\\.";
+                    __testingFinishedExpression = [[NSRegularExpression alloc] initWithPattern:testingFinishedPattern options:0 error:NULL];
+                });
+
+                NSTextCheckingResult *testingFinishedMatch = [__testingFinishedExpression firstMatchInString:message options:0 range:messageRange];
+                // Don't abort parsing by throwing an assert; unit tests verify consistency.
+                if (testingFinishedMatch) {
+                    // The zeroth range corresponds to the match as a whole.
+                    infoValue[@"numTestsExecuted"] = @([[message substringWithRange:[testingFinishedMatch rangeAtIndex:1]] integerValue]);
+                    infoValue[@"numTestsFailed"] = @([[message substringWithRange:[testingFinishedMatch rangeAtIndex:2]] integerValue]);
+                }
+            } else if ([messageType isEqualToString:@"Error"]) {
+                if (([message rangeOfString:@"^.*: Unexpected exception occurred" options:NSRegularExpressionSearch].location != NSNotFound) ||
+                    ([message hasPrefix:@"Uncaught exception occurred"])) {
+                    subtypeValue = SISLLogEventSubtypeTestError;
+                } else {
+                    subtypeValue = SISLLogEventSubtypeTestFailure;
+
+                    // message format: "SLKeyboardTest.m:62: ..."
+                    NSArray *messageComponents = [message componentsSeparatedByString:@":"];
+                    infoValue[@"fileName"] = messageComponents[0];
+                    infoValue[@"lineNumber"] = @([messageComponents[1] integerValue]);
+                }
+            } else {
+                typeValue = SISLLogEventTypeDefault;
+                subtypeValue = SISLLogEventSubtypeNone;
+            }
+        }
+    } else {
+        typeValue = SISLLogEventTypeDefault;
+        subtypeValue = SISLLogEventSubtypeNone;
+    }
+
+    *type = typeValue;
+    *subtype = subtypeValue;
+    *info = [infoValue count] ? [infoValue copy] : nil;
 }
 
 + (BOOL)shouldFilterStdoutLine:(NSString *)line {
@@ -75,15 +187,24 @@
     if ([[self class] shouldFilterStdoutLine:line]) return;
 
     // we use our own timestamps rather than the timestamp in the line
-    // because we can't guarantee that error messages (below) will have timestamps
+    // because we can't guarantee that error messages (as parsed in `-parseStderrLine:`) will have timestamps
     NSString *timestamp = [[[self class] iso8601DateFormatter] stringFromDate:[NSDate date]];
-    NSString *message = [[self class] parseMessageFromLine:line];
 
-    NSDictionary *event = @{
+    NSString *messageType = nil, *message = nil;
+    [[self class] parseMessageType:&messageType andMessage:&message fromLine:line];
+
+    SISLLogEventType eventType;
+    SISLLogEventSubtype eventSubtype;
+    NSDictionary *info = nil;
+    [[self class] parseEventType:&eventType subtype:&eventSubtype info:&info fromMessageType:messageType andMessage:message];
+
+    NSMutableDictionary *event = [[NSMutableDictionary alloc] initWithDictionary:@{
         @"timestamp": timestamp,
-        @"type": @(SISLLogEventTypeDefault),
+        @"type": @(eventType),
+        @"subtype": @(eventSubtype),
         @"message": message
-    };
+    }];
+    if (info) event[@"info"] = info;
 
     [self.delegate parser:self didParseEvent:event];
 }
@@ -94,12 +215,12 @@
     // we use our own timestamps rather than the timestamp in the line
     // because we can't guarantee that error messages will have timestamps
     NSString *timestamp = [[[self class] iso8601DateFormatter] stringFromDate:[NSDate date]];
-    NSString *message = [[self class] parseMessageFromLine:line];
 
     NSDictionary *event = @{
         @"timestamp": timestamp,
         @"type": @(SISLLogEventTypeError),
-        @"message": message
+        @"subtype": @(SISLLogEventSubtypeNone),
+        @"message": line
     };
 
     [self.delegate parser:self didParseEvent:event];

@@ -22,8 +22,7 @@
 
 #import <Foundation/Foundation.h>
 
-// Imported for the definition of the event fields for the benefit of subclasses.
-#import "SISLLogParser.h"
+#import "SISLLogEvents.h"
 
 /**
  `SIReporter` is the abstract base class for objects that write Subliminal log

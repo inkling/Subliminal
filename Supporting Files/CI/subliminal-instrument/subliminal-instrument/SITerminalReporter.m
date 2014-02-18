@@ -24,19 +24,117 @@
 
 #import "NSFileHandle+StringWriting.h"
 
-@implementation SITerminalReporter
+static const NSUInteger kIndentSize = 4;
+
+@interface SITerminalReporter ()
+@property (nonatomic) NSUInteger indentLevel;
+@end
+
+@implementation SITerminalReporter {
+    NSString *_indentString;
+}
+
+- (id)init {
+    self = [super init];
+    if (self) {
+        _indentString = @"";
+    }
+    return self;
+}
 
 - (void)reportEvent:(NSDictionary *)event {
-    NSString *message = event[@"message"];
+    NSString *message = event[@"message"], *formattedMessage = nil;
 
     switch ([event[@"type"] unsignedIntegerValue]) {
+        case SISLLogEventTypeTestStatus:
+            switch ([event[@"subtype"] unsignedIntegerValue]) {
+                case SISLLogEventSubtypeNone:
+                    NSAssert(NO, @"Unexpected event type and subtype: %lu, %lu.",
+                             (unsigned long)SISLLogEventTypeTestStatus, (unsigned long)SISLLogEventSubtypeNone);
+                    break;
+
+                case SISLLogEventSubtypeTestError:
+                case SISLLogEventSubtypeTestFailure:
+                    [self printMessage:message];
+                    break;
+
+                case SISLLogEventSubtypeTestingStarted:
+                    [self printMessage:message];
+                    self.indentLevel++;
+                    break;
+                case SISLLogEventSubtypeTestStarted:
+                    [self printMessage:message];
+                    self.indentLevel++;
+                    break;
+
+                case SISLLogEventSubtypeTestCaseStarted:
+                    formattedMessage = [NSString stringWithFormat:@"\"%@\" started.", event[@"info"][@"testCase"]];
+                    [self printMessage:formattedMessage];
+                    self.indentLevel++;
+                    break;
+                case SISLLogEventSubtypeTestCasePassed:
+                    self.indentLevel--;
+                    formattedMessage = [NSString stringWithFormat:@"\"%@\" passed.", event[@"info"][@"testCase"]];
+                    [self printMessage:formattedMessage];
+                    break;
+                case SISLLogEventSubtypeTestCaseFailed:
+                    self.indentLevel--;
+                    formattedMessage = [NSString stringWithFormat:@"\"%@\" failed.", event[@"info"][@"testCase"]];
+                    [self printMessage:formattedMessage];
+                    break;
+                case SISLLogEventSubtypeTestCaseFailedUnexpectedly:
+                    self.indentLevel--;
+                    formattedMessage = [NSString stringWithFormat:@"\"%@\" failed unexpectedly.", event[@"info"][@"testCase"]];
+                    [self printMessage:formattedMessage];
+                    break;
+
+                // test-finish and terminates-abnormally messages are logged at the same level as the test cases
+                case SISLLogEventSubtypeTestFinished:
+                    [self printMessage:message];
+                    self.indentLevel--;
+                    break;
+                case SISLLogEventSubtypeTestTerminatedAbnormally:
+                    [self printMessage:message];
+                    self.indentLevel--;
+                    break;
+
+                case SISLLogEventSubtypeTestingFinished:
+                    self.indentLevel--;
+                    [self printMessage:message];
+                    break;
+            }
+            break;
+
         case SISLLogEventTypeDefault:
-            [self.standardOutput printString:@"%@\n", message];
+        case SISLLogEventTypeDebug:
+        case SISLLogEventTypeWarning:
+            [self printMessage:message];
             break;
         case SISLLogEventTypeError:
-            [self.standardError printString:@"%@\n", message];
+            [self printMessage:message asError:YES];
             break;
     }
+}
+
+#pragma mark -
+
+- (void)setIndentLevel:(NSUInteger)indentLevel {
+    NSAssert(indentLevel != NSUIntegerMax, @"An attempt was made to set the indent level to -1!");
+
+    if (indentLevel != _indentLevel) {
+        _indentLevel = indentLevel;
+        _indentString = [@"" stringByPaddingToLength:(indentLevel * kIndentSize)
+                                          withString:@" " startingAtIndex:0];
+    }
+}
+
+- (void)printMessage:(NSString *)message {
+    [self printMessage:message asError:NO];
+}
+
+- (void)printMessage:(NSString *)message asError:(BOOL)error {
+    NSFileHandle *outHandle = error ? self.standardError : self.standardOutput;
+    [outHandle printString:@"%@%@\n", _indentString, message];
 }
 
 @end
