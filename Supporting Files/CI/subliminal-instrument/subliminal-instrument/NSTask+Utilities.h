@@ -29,6 +29,27 @@
 @interface NSTask (Utilities)
 
 /**
+ Creates and returns a watchdog task for a task.
+ 
+ A watchdog task is a task whose executable launches the executable of another task,
+ then monitors the execution of the current process and the child process (that
+ of the other executable). If the current process should die, the watchdog executable
+ will terminate the child process and itself.
+ 
+ _task_ must be fully configured before retrieving a watchdog task for _task_,
+ so that the watchdog task may inherit its configuration. Changes to _task_'s
+ configuration will thereafter be ignored.
+
+ @param task The task to monitor.
+ 
+ @return A new task that will launch _task_'s executable and terminate it
+         if the current process should die before _task_'s executable finishes.
+ 
+ @exception If _task_'s [executable](-launchPath) is not set.
+ */
++ (NSTask *)watchdogTaskForTask:(NSTask *)task;
+
+/**
  Launches the receiver, blocks until it is finished, and returns its output.
  
  @return The data written by the receiver to `stdout`, formatted as a UTF8-encoded string.

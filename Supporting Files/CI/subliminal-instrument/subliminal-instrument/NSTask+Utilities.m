@@ -72,6 +72,42 @@ void SIRegisterHandlerForLinesReadFromHandle(NSFileHandle *handle, void(^lineHan
 
 @implementation NSTask (Utilities)
 
++ (NSTask *)watchdogTaskForTask:(NSTask *)task {
+    static const NSTimeInterval kDefaultWatchInterval = 1.0;
+
+    NSAssert([task.launchPath length],
+             @"The launch path of the task to be watched must be set (and the task otherwise configured) before a watchdog task can be created.");
+
+    NSString *childLaunchPath = task.launchPath;
+    NSMutableArray *arguments = [[NSMutableArray alloc] initWithArray:task.arguments];
+
+    int parentPID = [[NSProcessInfo processInfo] processIdentifier];
+    [arguments insertObject:[NSString stringWithFormat:@"%i", parentPID] atIndex:0];
+    [arguments insertObject:[NSString stringWithFormat:@"%f", kDefaultWatchInterval] atIndex:1];
+    [arguments insertObject:childLaunchPath atIndex:2];
+
+    static NSString *__watchdogPath = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        __watchdogPath = [[NSBundle mainBundle] pathForResource:@"watchdog" ofType:@"sh"];
+    });
+    NSAssert([__watchdogPath length],
+             @"`watchdog.sh` not found in the directory where `subliminal-instrument` is located.");
+
+    NSTask *watchedTask = [[NSTask alloc] init];
+    watchedTask.launchPath = __watchdogPath;
+    watchedTask.arguments = arguments;
+    watchedTask.currentDirectoryPath =  task.currentDirectoryPath;
+    watchedTask.standardError =         task.standardError;
+    watchedTask.standardInput =         task.standardInput;
+    watchedTask.standardOutput =        task.standardOutput;
+
+    // `-[NSTask environment]` defaults to `nil` but can't be set to `nil`
+    if (task.environment) watchedTask.environment = task.environment;
+
+    return watchedTask;
+}
+
 - (NSString *)output {
     NSPipe *outPipe = [NSPipe pipe];
 

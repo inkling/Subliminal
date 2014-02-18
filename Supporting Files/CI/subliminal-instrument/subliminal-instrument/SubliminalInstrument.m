@@ -107,6 +107,9 @@
     [instrumentsArguments insertObject:traceTemplatePath atIndex:1];
     instrumentsTask.arguments = instrumentsArguments;
 
+    // Make sure that instruments exits when we do
+    NSTask *launchTask = [NSTask watchdogTaskForTask:instrumentsTask];
+
     for (SIReporter *reporter in _options.reporters) {
         [reporter beginReportingWithStandardOutput:self.standardOutput
                                      standardError:self.standardError];
@@ -121,7 +124,7 @@
      The autorelease pools below cover both line parsing,
      and the event reporting that happens in response to line parsing.
      */
-    [instrumentsTask launchUsingPseudoTerminal:YES outputHandler:^(NSString *line) {
+    [launchTask launchUsingPseudoTerminal:YES outputHandler:^(NSString *line) {
         @autoreleasepool {
             [_logParser parseStdoutLine:line];
         }
@@ -133,7 +136,7 @@
 
     [_options.reporters makeObjectsPerformSelector:@selector(finishReporting)];
 
-    _terminationStatus = instrumentsTask.terminationStatus;
+    _terminationStatus = launchTask.terminationStatus;
 }
 
 #pragma - SISLLogParserDelegate
