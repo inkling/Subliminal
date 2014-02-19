@@ -109,6 +109,13 @@
         if (count != NSNotFound && count > 0) {
             for (NSInteger i = 0; i < count; i++) {
                 id element = [self accessibilityElementAtIndex:i];
+                if (!element) {
+                    dispatch_async([[SLLogger sharedLogger] loggingQueue], ^{
+                        NSString *message = [NSString stringWithFormat:@"accessibilityElementAtIndex: %d is nil for %@", i, self];
+                        [[SLLogger sharedLogger] logWarning:message];
+                    });
+                    continue;
+                }
                 (void)[element accessibilityLabel];
                 if (element != [self accessibilityElementAtIndex:i]) {
                     // Protect against tests entering an infinite loop,
