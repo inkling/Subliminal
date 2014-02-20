@@ -69,6 +69,24 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
     return tests;
 }
 
++ (NSSet *)testsWithTags:(NSArray *)tags {
+    NSMutableSet *tests = [[NSMutableSet alloc] init];
+
+    for (Class klass in [self allTests]) {
+        Class metaClass = object_getClass(klass);
+        if (class_respondsToSelector(metaClass, @selector(tags)) &&
+            [klass tags] != nil) {
+            NSPredicate *intersectionPredicate = [NSPredicate predicateWithFormat:@"SELF IN %@", [klass tags]];
+            if ([[tags filteredArrayUsingPredicate:intersectionPredicate] count]) {
+                // there is a match on at least one tag
+                [tests addObject:klass];
+            }
+        }
+    }
+
+    return tests;
+}
+
 + (Class)testNamed:(NSString *)name {
     NSParameterAssert(name);
     
@@ -130,6 +148,11 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
 
 - (void)tearDownTestCaseWithSelector:(SEL)testCaseSelector {
     // nothing to do here
+}
+
++ (NSArray *)tags
+{
+    return nil;
 }
 
 + (NSSet *)testCases {

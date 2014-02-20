@@ -75,9 +75,83 @@
         [Focus_TestThatIsFocusedButDoesntSupportCurrentPlatform class],
         [Focus_AbstractTestThatIsFocused class],
         [ConcreteTestThatIsFocused class],
+        [TestWithTagAAA class],
+        [TestWithTagBBB class],
+        [TestWithTagCCC class],
+        [TestWithTagZZZ class],
+        [TestWithTagAAAandZZZ class],
+        [TestWithTagBBBandZZZ class],
+        [Focus_TestWithTagAAA class],
+        [Focus_TestWithTagAAAandZZZ class],
         nil
     ];
     STAssertEqualObjects(allTests, expectedTests, @"Unexpected tests returned.");
+}
+
+- (void)testTestsWithTagsReturnsExpected {
+    // one tag
+    NSSet *taggedTests = [SLTest testsWithTags:@[@"tagAAA"]];
+    NSSet *expectedTests = [NSSet setWithObjects:
+        [TestWithTagAAA class],
+        [TestWithTagAAAandZZZ class],
+        [Focus_TestWithTagAAA class],
+        [Focus_TestWithTagAAAandZZZ class],
+        nil
+    ];
+    STAssertEqualObjects(taggedTests, expectedTests, @"Unexpected tests returned.");
+
+    // one tag
+    taggedTests = [SLTest testsWithTags:@[@"tagZZZ"]];
+    expectedTests = [NSSet setWithObjects:
+        [TestWithTagAAAandZZZ class],
+        [Focus_TestWithTagAAAandZZZ class],
+        [TestWithTagZZZ class],
+        [TestWithTagBBBandZZZ class],
+        nil
+    ];
+    STAssertEqualObjects(taggedTests, expectedTests, @"Unexpected tests returned.");
+
+    // two tags
+    taggedTests = [SLTest testsWithTags:@[@"tagAAA", @"tagBBB"]];
+    expectedTests = [NSSet setWithObjects:
+        [TestWithTagAAA class],
+        [TestWithTagAAAandZZZ class],
+        [Focus_TestWithTagAAA class],
+        [Focus_TestWithTagAAAandZZZ class],
+        [TestWithTagBBB class],
+        [TestWithTagBBBandZZZ class],
+        nil
+    ];
+    STAssertEqualObjects(taggedTests, expectedTests, @"Unexpected tests returned.");
+
+    // three tags
+    taggedTests = [SLTest testsWithTags:@[@"tagAAA", @"tagBBB", @"tagCCC"]];
+    expectedTests = [NSSet setWithObjects:
+        [TestWithTagAAA class],
+        [TestWithTagAAAandZZZ class],
+        [Focus_TestWithTagAAA class],
+        [Focus_TestWithTagAAAandZZZ class],
+        [TestWithTagBBB class],
+        [TestWithTagBBBandZZZ class],
+        [TestWithTagCCC class],
+        nil
+    ];
+    STAssertEqualObjects(taggedTests, expectedTests, @"Unexpected tests returned.");
+
+
+    // union of tags
+    taggedTests = [SLTest testsWithTags:@[@"tagAAA", @"tagBBB", @"tagZZZ"]];
+    expectedTests = [NSSet setWithObjects:
+                     [TestWithTagAAA class],
+                     [TestWithTagAAAandZZZ class],
+                     [Focus_TestWithTagAAA class],
+                     [Focus_TestWithTagAAAandZZZ class],
+                     [TestWithTagBBB class],
+                     [TestWithTagBBBandZZZ class],
+                     [TestWithTagZZZ class],
+                     nil
+                     ];
+    STAssertEqualObjects(taggedTests, expectedTests, @"Unexpected tests returned.");
 }
 
 - (void)testTestNamedReturnsExpected {
