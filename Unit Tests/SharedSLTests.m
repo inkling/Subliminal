@@ -145,3 +145,51 @@
 - (void)testFoo {}
 
 @end
+
+@implementation TestWithTagAAA
++ (NSArray *)tags {
+    return @[@"tagAAA"];
+}
+@end
+
+@implementation TestWithTagBBB
++ (NSArray *)tags {
+    return @[@"tagBBB"];
+}
+@end
+
+@implementation TestWithTagCCC
++ (NSArray *)tags {
+    return @[@"tagCCC"];
+}
+@end
+
+@implementation TestWithTagZZZ
++ (NSArray *)tags {
+    return @[@"tagZZZ"];
+}
+@end
+
+@implementation TestWithTagAAAandZZZ
++ (NSArray *)tags {
+    return @[@"tagAAA", @"tagZZZ"];
+}
+@end
+
+@implementation TestWithTagBBBandZZZ
++ (NSArray *)tags {
+    return @[@"tagBBB", @"tagZZZ"];
+}
+@end
+
+@implementation Focus_TestWithTagAAA
++ (NSArray *)tags {
+    return @[@"tagAAA"];
+}
+@end
+
+@implementation Focus_TestWithTagAAAandZZZ
++ (NSArray *)tags {
+    return @[@"tagAAA", @"tagZZZ"];
+}
+@end

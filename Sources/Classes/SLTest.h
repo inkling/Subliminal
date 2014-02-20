@@ -54,6 +54,19 @@
 + (NSSet *)allTests;
 
 /**
+ Returns tests linked against the current target which contains a tag matching at least one tag specified in `tags`
+
+ This method will include a test in the returned set if any of the specified tags in the `tags` parameter match at least one of the tags in `+[SLTest tags]`. This is essentially a set union operation (i.e. specifying multiple tags will return all tests that match any of them).
+
+ This method may be useful to specify a certain set of tests in your app that pertain to a specific funtionality or to divide up your tests into separate test suites.
+
+ @param tags An array of tags to match against the tags specified in `+[SLTest tags]`
+
+ @return All tests (`SLTest` subclasses) linked against the current target which contains a tag matching at least one tag specified in `tags`
+ */
++ (NSSet *)testsWithTags:(NSArray *)tags;
+
+/**
  Returns the `SLTest` subclass with the specified name.
  
  This method may be used to retrieve a single `SLTest`, e.g. to pass to 
@@ -149,6 +162,19 @@
  @see -[SLTestController runTests:withCompletionBlock:]
  */
 + (BOOL)isFocused;
+
+/**
+ An array of NSStrings which represent tags that are associated with this test case.
+
+ Used by `+[SLTest testsWithTags:]` to determine inclusion in the test set.
+
+ Tags are case sensitive.
+
+ @return array of tags for this test, defaults to `nil` to indicate no tags.
+
+ @see -[SLTestController runTests:withCompletionBlock:]
+ */
++ (NSArray *)tags;
 
 #pragma mark - Running a Test
 /// ----------------------------------------

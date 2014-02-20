@@ -138,3 +138,29 @@
 - (void)testFoo;
 
 @end
+
+@interface TestWithTagAAA : SLTest
+@end
+
+@interface TestWithTagBBB : SLTest
+@end
+
+@interface TestWithTagCCC : SLTest
+@end
+
+@interface TestWithTagZZZ : SLTest
+@end
+
+@interface TestWithTagAAAandZZZ : SLTest
+@end
+
+@interface TestWithTagBBBandZZZ : SLTest
+@end
+
+@interface Focus_TestWithTagAAA : SLTest
+@end
+
+@interface Focus_TestWithTagAAAandZZZ : SLTest
+@end
+
+
