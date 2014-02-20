@@ -27,6 +27,7 @@
 #import "NSObject+SLVisibility.h"
 #import "NSObject+SLAccessibilityDescription.h"
 #import "UIScrollView+SLProgrammaticScrolling.h"
+#import "SLDevice.h"
 
 
 // The real value (set in `+load`) is not a compile-time constant,
@@ -396,6 +397,18 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
 - (void)logElementTree {
     SLLog(@"Logging the tree rooted in %@:", [self accessibilityDescription]);
     [super logElementTree];
+}
+
+#pragma mark -
+
+- (void) screenshotWithFilename:(NSString *)filename
+{
+    // maybe consider using a timestamp? not sure if it's worth introducing the complexity of NSDateFormatter
+    // The UIAutomation framework automatically appends an integer to screenshots with the same name to prevent overwriting
+    if (!filename) {
+        filename = @"element_screenshot";
+    }
+    [[SLDevice currentDevice] captureScreenshotWithFilename:filename inRect:self.rect];
 }
 
 @end
