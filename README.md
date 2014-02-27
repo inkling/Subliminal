@@ -455,6 +455,31 @@ FAQ
 	SLButton *button = [SLButton buttonWithAccessibilityLabel:@"foo"];
 	[UIAElement(button) tap];	// vs. [button tap];
 	```
+*	Why does Subliminal say that an `SLElement` is not visible/tappable when I
+	can see it just fine?
+
+	It's likely that there are multiple objects in your application's view hierarchy
+	with the same accessibility information--Subliminal found a match for your
+	element, but not the one you intended (and the match it found is hidden
+	or offscreen).
+
+	Try calling `-logElement` on your element--does its description match what
+	you had expected? Maybe you find that Subliminal matched a label when you
+	meant to match a button. You can fix this by making your matching criteria
+	more specific, like by using `SLButton` instead of `SLElement`. You can
+	apply more complex criteria using `+[SLElement elementMatching:]`. If you want
+	to restrict matches to visible elements, for instance, you can do:
+
+	```objc
+	// at the top of your test class
+	#import <Subliminal/NSObject+SLVisibility.h>
+
+	// in a test case
+	SLElement *elementToMatch = [SLElement elementMatching:^BOOL(NSObject *obj) {
+		BOOL objIsVisible = [obj slAccessibilityIsVisible];
+		return objIsVisible && /* some other criteria */;
+	}];
+	```
 
 *	How can I debug tests while running?
 
