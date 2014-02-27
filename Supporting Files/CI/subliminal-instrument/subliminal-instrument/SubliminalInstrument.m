@@ -94,8 +94,15 @@
     [instrumentsArguments insertObject:traceTemplatePath atIndex:1];
     instrumentsTask.arguments = instrumentsArguments;
 
-    [instrumentsTask launch];
-    [instrumentsTask waitUntilExit];
+    // We want to process the output of `instruments` in realtime. However,
+    // `instruments` buffers its output if it determines that it is being piped to
+    // another process. We can get around this by routing the output through a
+    // pseudoterminal (as suggested by https://github.com/jonathanpenn/AutomationExample/blob/master/unix_instruments ).
+    [instrumentsTask launchUsingPseudoTerminal:YES outputHandler:^(NSString *line) {
+        [_standardOutput printString:@"%@\n", line];
+    } errorHandler:^(NSString *line) {
+        [_standardError printString:@"%@\n", line];
+    }];
 
     _terminationStatus = instrumentsTask.terminationStatus;
 }

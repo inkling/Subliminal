@@ -35,4 +35,42 @@
  */
 - (NSString *)output;
 
+/**
+ Launches the receiver and feeds its executable's output (and optionally error
+ messages) as it is written, line-by-line, to the specified handler(s).
+ 
+ This method invokes `-launchUsingPseudoTerminal:outputHandler:errorHandler:`
+ with the specified handlers and without using a psuedo-terminal.
+
+ @param outputHandler   A block to be invoked with lines written by the receiver's
+                        executable to `stdout`.
+ @param errorHandler    A block to be invoked with lines written by the receiver's
+                        executable to `stderr`.
+ */
+- (void)launchWithOutputHandler:(void (^)(NSString *line))outputHandler
+                   errorHandler:(void (^)(NSString *line))errorHandler;
+
+/**
+ Launches the receiver and feeds its executable's output (and optionally error
+ messages) as it is written, line-by-line, to the specified handler(s).
+
+ This method will block until the receiver is finished by polling the current
+ run loop using `NSDefaultRunLoopMode`.
+ 
+ A psuedoterminal should be used if the receiver's executable buffers its output
+ if it determines that it is being piped to another process. Using a psuedoterminal
+ will enable such an executable's output to be processed without buffering.
+
+ @param usePseudoTerminal If `YES`, the receiver's standard output will be set to
+                          the slave end of a psuedoterminal. Otherwise, the receiver's
+                          standard output will be set to the write end of an `NSPipe` object.
+ @param outputHandler   A block to be invoked with lines written by the receiver's
+                        executable to `stdout`.
+ @param errorHandler    A block to be invoked with lines written by the receiver's
+                        executable to `stderr`.åå
+ */
+- (void)launchUsingPseudoTerminal:(BOOL)usePsuedoTerminal
+                    outputHandler:(void (^)(NSString *line))outputHandler
+                     errorHandler:(void (^)(NSString *line))errorHandler;
+
 @end
