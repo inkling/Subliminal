@@ -20,6 +20,7 @@
 		F095E85917534B8100FF653A /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F095E85817534B8100FF653A /* Default-568h@2x.png */; };
 		F0E2F5F8175B12DD00BBAA54 /* libSubliminal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E2F5F1175B12A200BBAA54 /* libSubliminal.a */; };
 		F0E5509F162F45FC00F54F57 /* STSimpleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F0E5509D162F45FC00F54F57 /* STSimpleTest.m */; };
+		F0F5DC0018C51D28006BC976 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F0F5DBFF18C51D28006BC976 /* Default-568h@2x.png */; };
 		F0FBC00515F1F3200081C635 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0FBC00415F1F3200081C635 /* UIKit.framework */; };
 		F0FBC00715F1F3200081C635 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0FBC00615F1F3200081C635 /* Foundation.framework */; };
 		F0FBC00915F1F3200081C635 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0FBC00815F1F3200081C635 /* CoreGraphics.framework */; };
@@ -70,6 +71,7 @@
 		F095E86917534C0600FF653A /* Integration Tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "Integration Tests.xcconfig"; path = "../../Supporting Files/Xcode/Integration Tests.xcconfig"; sourceTree = "<group>"; };
 		F0E2F5D0175B115F00BBAA54 /* Integration Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Integration Tests-Info.plist"; sourceTree = "<group>"; };
 		F0E5509D162F45FC00F54F57 /* STSimpleTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STSimpleTest.m; sourceTree = "<group>"; };
+		F0F5DBFF18C51D28006BC976 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		F0FBC00015F1F3200081C635 /* SubliminalTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SubliminalTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F0FBC00415F1F3200081C635 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F0FBC00615F1F3200081C635 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -150,6 +152,7 @@
 		F0FBBFF515F1F3200081C635 = {
 			isa = PBXGroup;
 			children = (
+				F0F5DBFF18C51D28006BC976 /* Default-568h@2x.png */,
 				F0FBC00A15F1F3200081C635 /* SubliminalTest */,
 				F0024D2415F5A51100476EF7 /* Integration Tests */,
 				F095E86817534BD100FF653A /* Resources */,
@@ -316,6 +319,7 @@
 			files = (
 				F0FBC00F15F1F3200081C635 /* InfoPlist.strings in Resources */,
 				1F18743D1606533F000360CA /* STLoginViewController.xib in Resources */,
+				F0F5DC0018C51D28006BC976 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
