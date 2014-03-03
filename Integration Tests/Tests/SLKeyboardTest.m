@@ -91,7 +91,7 @@
     [UIAElement([SLKeyboardKey elementWithAccessibilityLabel:kExpectedText]) tap];
     NSString *actualText = SLAskApp(text);
     SLAssertTrue([kExpectedText isEqualToString:actualText],
-                 @"Did not type character as expected.");
+                 @"Did not type character as expected: '%@' (expected) vs. '%@' (actual).", kExpectedText, actualText);
 }
 
 - (void)testHideKeyboard_iPad {
