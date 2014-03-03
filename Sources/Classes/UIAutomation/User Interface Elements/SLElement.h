@@ -170,29 +170,6 @@
  */
 - (void)logElement;
 
-#pragma mark - Screenshots
-/// ----------------------------------------
-/// @name Screenshot an element
-/// ----------------------------------------
-
-/**
- Takes a screenshot of the specified element.
-
- The rect for the screenshot of the element is automatically provided.
-
- The image is viewable from the UIAutomation debug log in Instruments.
-
- When running `subliminal-test` from the command line, the images are also saved
- as PNGs within the specified output directory.
-
- @param filename A string to use as the name for the resultant image file.
-
- @exception `NSInternalInconsistencyException` if `rect` is `CGRectNull` for specified element.
-
- */
-
-- (void) screenshotWithFilename:(NSString *)filename;
-
 @end
 
 
