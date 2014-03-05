@@ -85,7 +85,11 @@
 
 - (void)testTapKeyboardKey {
     SLAskApp(showKeyboard);
-    [self wait:[SLAskApp(keyboardInfo)[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];
+
+    // On iOS 7 on Travis, tapping this key does not register sometimes,
+    // so we use a longer delay than the notification would suggest (see the other cases)
+    // to try to make sure that the key will be fully visible and tappable.
+    [self wait:0.5];
 
     NSString *const kExpectedText = @"J";
     [UIAElement([SLKeyboardKey elementWithAccessibilityLabel:kExpectedText]) tap];
