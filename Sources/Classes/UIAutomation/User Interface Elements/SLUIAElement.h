@@ -399,6 +399,28 @@
  */
 - (void)logElementTree;
 
+#pragma mark - Screenshots
+/// ----------------------------------------
+/// @name Screenshot an element
+/// ----------------------------------------
+
+/**
+ Takes a screenshot of the specified element.
+
+ The image is viewable from the UIAutomation debug log in Instruments.
+
+ When running `subliminal-test` from the command line, the images are also saved
+ as PNGs within the specified output directory.
+
+ @param filename An optional string to use as the name for the resultant image file (provide nil to use a generic name.).
+
+ @exception SLUIAElementInvalidException Raised if the element is not valid
+ by the end of the [default timeout](+defaultTimeout).
+
+ */
+
+- (void)captureScreenshotWithFilename:(NSString *)filename;
+
 @end
 
 

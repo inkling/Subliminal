@@ -23,6 +23,7 @@
 #import "SLUIAElement.h"
 #import "SLUIAElement+Subclassing.h"
 #import "SLGeometry.h"
+#import "SLDevice.h"
 
 #import <objc/runtime.h>
 
@@ -223,6 +224,22 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 - (void)logElementTree {
     [self waitUntilTappable:NO thenSendMessage:@"logElementTree()"];
+}
+
+#pragma mark -
+
+- (void)captureScreenshotWithFilename:(NSString *)filename
+{
+    // The UIAutomation framework automatically appends an integer to screenshots with the same name to prevent overwriting
+    if (!filename) {
+        filename = @"element_screenshot";
+    }
+    if (CGRectIsNull(self.rect)) {
+        NSString *warningString = [NSString stringWithFormat:@"Could not take screenshot with filename %@: Could not determine element's position on-screen.", filename];
+        [[SLLogger sharedLogger] logWarning:warningString];
+        return;
+    }
+    [[SLDevice currentDevice] captureScreenshotWithFilename:filename inRect:self.rect];
 }
 
 @end
