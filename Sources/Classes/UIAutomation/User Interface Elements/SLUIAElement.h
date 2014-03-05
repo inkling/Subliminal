@@ -412,9 +412,10 @@
  When running `subliminal-test` from the command line, the images are also saved
  as PNGs within the specified output directory.
 
- @param filename An optional string to use as the name for the resultant image file (provide 'nil' if you do not want the screenshot to have a name).
+ @param filename An optional string to use as the name for the resultant image file (provide nil to use a generic name.).
 
- @exception `SLUIAElementInvalidException` if element is not valid.
+ @exception SLUIAElementInvalidException Raised if the element is not valid
+ by the end of the [default timeout](+defaultTimeout).
 
  */
 
