@@ -485,7 +485,7 @@ build_app () {
 		[[ -e "$BUILD_LOG" ]] && exec >"$BUILD_LOG" 2>&1
 
 		if [[ -n $XCPRETTY ]] && $XCPRETTY && xcpretty -v >/dev/null 2>&1; then
-			build_base_command  "clean build" | xcpretty -c --no-utf
+			build_base_command  "clean build" | xcpretty -c --no-utf; exit ${PIPESTATUS[0]}
 		else
 			build_base_command "clean build"
 		fi
