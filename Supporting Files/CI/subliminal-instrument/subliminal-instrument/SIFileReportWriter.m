@@ -25,6 +25,7 @@
 #import <sys/ioctl.h>
 
 #import "NSFileHandle+StringWriting.h"
+#import "NSTask+Utilities.h"
 
 static const NSUInteger kIndentSize = 4;
 static const NSUInteger kDefaultWidth = 80;
@@ -34,6 +35,19 @@ static const NSUInteger kDefaultWidth = 80;
     BOOL _outputHandleIsATerminal;
     NSString *_indentString;
     NSUInteger _dividerWidth;
+    NSString *_currentLine, *_pendingLine;
+}
+
++ (NSString *)clearToEOLCharacter {
+    static NSString *__clearToEOLCharacter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSTask *clearToEOLCharacterTask = [[NSTask alloc] init];
+        clearToEOLCharacterTask.launchPath = @"/usr/bin/tput";
+        clearToEOLCharacterTask.arguments = @[ @"el" ];
+        __clearToEOLCharacter = [[clearToEOLCharacterTask output] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    });
+    return __clearToEOLCharacter;
 }
 
 - (instancetype)initWithOutputHandle:(NSFileHandle *)outputHandle {
@@ -50,6 +64,9 @@ static const NSUInteger kDefaultWidth = 80;
         _outputHandleIsATerminal = isatty(handleDescriptor) && getenv("TERM");
 
         if (_outputHandleIsATerminal) {
+            // Determine the clear-to-EOL character so that there will be no delay while writing the log.
+            (void)[[self class] clearToEOLCharacter];
+
             struct winsize w = {0};
             ioctl(handleDescriptor, TIOCGWINSZ, &w);
             _dividerWidth = (NSUInteger)w.ws_col;
@@ -75,10 +92,14 @@ static const NSUInteger kDefaultWidth = 80;
     if (dividerActive != _dividerActive) {
         _dividerActive = dividerActive;
 
-        // closing dividers have the down line to link back to the indent
-        BOOL includeDownLine = !_dividerActive;
-        NSString *divider = [self dividerWithDownLineAtLocation:(includeDownLine ? [_indentString length] : NSNotFound)];
-        [self printLine:divider usingIndent:NO];
+        // the down line links back to the indent
+        NSString *divider = [self dividerWithDownLineAtLocation:[_indentString length]];
+
+        // flush output pending before the divider
+        if (![self lineHasEnded]) [self printNewline];
+
+        [self updateLine:divider usingIndent:NO];
+        [self printNewline];
     }
 }
 
@@ -92,12 +113,42 @@ static const NSUInteger kDefaultWidth = 80;
     return divider;
 }
 
-- (void)printLine:(NSString *)line {
-    [self printLine:line usingIndent:!self.dividerActive];
+- (BOOL)lineHasEnded {
+    // The line has ended unless we've written something ("current") to the line,
+    // or we're waiting to write something ("pending") to the line.
+    return !(_currentLine || _pendingLine);
 }
 
-- (void)printLine:(NSString *)line usingIndent:(BOOL)usingIndent {
-    [_outputHandle printString:@"%@%@\n", (usingIndent ? _indentString : @""), line];
+- (void)printLine:(NSString *)line {
+    [self updateLine:line];
+    [self printNewline];
+}
+
+- (void)updateLine:(NSString *)line {
+    [self updateLine:line usingIndent:!self.dividerActive];
+}
+
+- (void)updateLine:(NSString *)line usingIndent:(BOOL)usingIndent {
+    NSString *formattedLine = [NSString stringWithFormat:@"%@%@", (usingIndent ? _indentString : @""), line];
+    if (_outputHandleIsATerminal) {
+        // The carriage return + clear-to-EOL character will overwrite the current line.
+        [_outputHandle printString:@"\r%@", [[self class] clearToEOLCharacter]];
+        [_outputHandle printString:@"%@", formattedLine];
+        _currentLine = formattedLine;
+    } else {
+        // Since we can't overwrite the current line, we've got to cache this update
+        // so that we can potentially discard it if another update comes in before a newline.
+        _pendingLine = formattedLine;
+    }
+}
+
+- (void)printNewline {
+    if (_pendingLine) {
+        [_outputHandle printString:@"%@", _pendingLine];
+        _pendingLine = nil;
+    }
+    _currentLine = nil;
+    [_outputHandle printString:@"\n"];
 }
 
 @end

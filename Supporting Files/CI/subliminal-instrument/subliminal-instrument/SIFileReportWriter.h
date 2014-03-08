@@ -69,6 +69,27 @@
 /// ------------------------------------------
 
 /**
+ Prints text to the receiver's output handle _without_ a newline.
+ 
+ The current line of text may be overwritten by calling `-updateLine:` or
+ `-printLine:`.
+ 
+ The text will be formatted as determined by the report writer's configuration.
+
+ @param line The text to print.
+ 
+ @see `-printNewline`
+ */
+- (void)updateLine:(NSString *)line;
+
+/**
+ Prints a newline to the receiver's output handle.
+ 
+ This may be used to "finalize" a line that was being [updated](-updateLine:).
+ */
+- (void)printNewline;
+
+/**
  Prints text to the receiver's output handle, followed by a newline.
  
  The text will be formatted as determined by the report writer's configuration.

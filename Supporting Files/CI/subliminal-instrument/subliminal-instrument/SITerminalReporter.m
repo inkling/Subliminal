@@ -31,10 +31,27 @@
     SIFileReportWriter *_outputWriter, *_errorWriter;
 }
 
++ (NSString *)passIndicatorString {
+    // no particular reason to choose this character except for that it's used by xctool
+    return @"~";
+}
+
++ (NSString *)warningIndicatorString {
+    return @"!";
+}
+
++ (NSString *)failIndicatorString {
+    return @"X";
+}
+
++ (NSString *)placeholderIndicatorString {
+    return @"|";
+}
+
 - (void)beginReportingWithStandardOutput:(NSFileHandle *)standardOutput
                            standardError:(NSFileHandle *)standardError {
     [super beginReportingWithStandardOutput:standardOutput standardError:standardError];
-    
+
     _outputWriter = [[SIFileReportWriter alloc] initWithOutputHandle:self.standardOutput];
     _errorWriter = [[SIFileReportWriter alloc] initWithOutputHandle:self.standardError];
 }
@@ -61,6 +78,8 @@
 
                 case SISLLogEventSubtypeTestingStarted:
                     [_outputWriter printLine:message];
+                    // offset the tests
+                    [_outputWriter printNewline];
                     _outputWriter.indentLevel++;
                     break;
                 case SISLLogEventSubtypeTestStarted:
@@ -70,35 +89,41 @@
 
                 case SISLLogEventSubtypeTestCaseStarted:
                     // close the test-setup section if present
-                    formattedMessage = [NSString stringWithFormat:@"\"%@\" started.", event[@"info"][@"testCase"]];
                     _outputWriter.dividerActive = NO;
-                    [_outputWriter printLine:formattedMessage];
-                    _outputWriter.indentLevel++;
+                    // So that the pass or fail message can overwrite this,
+                    // leave room for an indicator at the beginning and don't print a newline.
+                    formattedMessage = [NSString stringWithFormat:@"%@ \"%@\" started.",
+                                                                [[self class] placeholderIndicatorString], event[@"info"][@"testCase"]];
+                    [_outputWriter updateLine:formattedMessage];
                     break;
 
                 case SISLLogEventSubtypeTestCasePassed:
                 case SISLLogEventSubtypeTestCaseFailed:
                 case SISLLogEventSubtypeTestCaseFailedUnexpectedly: {
-                    _outputWriter.indentLevel--;
                     // close the test case section
                     _outputWriter.dividerActive = NO;
 
-                    NSString *finishDescription;
+                    NSString *statusIndicator, *finishDescription;
                     switch (([event[@"subtype"] unsignedIntegerValue])) {
                         case SISLLogEventSubtypeTestCasePassed:
+                            statusIndicator = [[self class] passIndicatorString];
                             finishDescription = @"passed";
                             break;
                         case SISLLogEventSubtypeTestCaseFailed:
+                            statusIndicator = [[self class] failIndicatorString];
                             finishDescription = @"failed";
                             break;
                         case SISLLogEventSubtypeTestCaseFailedUnexpectedly:
+                            statusIndicator = [[self class] failIndicatorString];
                             finishDescription = @"failed unexpectedly";
                             break;
                         default:
                             NSAssert(NO, @"Should not have reached this point.");
                             break;
                     }
-                    formattedMessage = [NSString stringWithFormat:@"\"%@\" %@.", event[@"info"][@"testCase"], finishDescription];
+                    formattedMessage = [NSString stringWithFormat:@"%@ \"%@\" %@.",
+                                                                    statusIndicator, event[@"info"][@"testCase"], finishDescription];
+                    // This will overwrite the test case-started message.
                     [_outputWriter printLine:formattedMessage];
                     break;
                 }
@@ -111,6 +136,8 @@
                     [_outputWriter printLine:message];
                     // test-finish and terminates-abnormally messages are logged at the same level as the test cases
                     _outputWriter.indentLevel--;
+                    // separate the tests by a newline
+                    [_outputWriter printNewline];
                     break;
 
                 case SISLLogEventSubtypeTestingFinished:
@@ -124,10 +151,16 @@
         case SISLLogEventTypeDebug:
         case SISLLogEventTypeWarning:
             if (eventOccurredWithinTest) _outputWriter.dividerActive = YES;
-            [_outputWriter printLine:message];
+            if ([event[@"type"] unsignedIntegerValue] == SISLLogEventTypeWarning) {
+                formattedMessage = [NSString stringWithFormat:@"%@ %@", [[self class] warningIndicatorString], message];
+            } else {
+                formattedMessage = message;
+            }
+            [_outputWriter printLine:formattedMessage];
             break;
         case SISLLogEventTypeError:
-            [_errorWriter printLine:message];
+            formattedMessage = [NSString stringWithFormat:@"ERROR: %@", message];
+            [_errorWriter printLine:formattedMessage];
             break;
     }
 }
