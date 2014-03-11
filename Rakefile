@@ -83,18 +83,20 @@ rake test\tRuns Subliminal's tests
 
 rake test
 rake test:unit
+rake test:CI_unit
 rake test:integration                  (LIVE=yes | LOGIN_PASSWORD=<password>)
 rake test:integration[:iphone, :ipad]
 rake test:integration:device           UDID=<udid>
 
 Sub-tasks:
-  :unit\tRuns the unit tests
+  :unit\t\tRuns the unit tests
+  :CI_unit\tRuns the unit tests of Subliminal's CI infrastructure
   :integration\tRuns the integration tests
     :iphone\tFor the iPhone Simulator
     :ipad\tFor the iPad Simulator
     :device\tFor a device
 
-\`test\` invokes \`test:unit\` and \`test:integration\`.
+\`test\` invokes \`test:unit\`, \`test:CI_unit\`, and \`test:integration\`.
 \`test:integration\` invokes \`test:integration:iphone\` and \`test:integration:ipad\`.
 \`test:integration:device\` must be explicitly invoked.
 
@@ -107,8 +109,8 @@ iPhone Developer identity with the wildcard \"iOS Team Provisioning Profile\" ma
 by Xcode.
 
 \`test\` options:
-  TEST_SDK=<sdk>            Selects the SDK version against which to run the tests.
-                            Supported values are '5.1' or '6.1'.
+  TEST_SDK=<sdk>            Selects the iPhone Simulator SDK version against which to run the tests.
+                            Supported values are '5.1', '6.1', and '7.0'.
                             If not specified, the tests will be run against all supported SDKs.
 
 \`test:integration\` options:
@@ -359,6 +361,7 @@ task :test => 'test:prepare' do
   # The unit tests guarantee the integrity of the integration tests
   # So no point in running the latter if the unit tests break the build
   Rake::Task['test:unit'].invoke
+  Rake::Task['test:CI_unit'].invoke
   Rake::Task['test:integration'].invoke
 
   puts "Tests passed.\n\n"
@@ -403,6 +406,20 @@ namespace :test do
       puts "\nUnit tests passed.\n\n"
     else
       fail "\nUnit tests failed.\n\n"
+    end
+  end
+
+  desc "Runs the CI unit tests"
+  task :CI_unit do
+    puts "- Running CI unit tests...\n\n"
+
+    test_command = "xctool -project subliminal-instrument.xcodeproj -scheme 'subliminal-instrument Tests' test"
+
+    # Use system so we see the tests' output
+    if system("cd 'Supporting Files/CI/subliminal-instrument/' && #{test_command}")
+      puts "CI unit tests passed.\n\n"
+    else
+      fail "CI unit tests failed.\n\n"
     end
   end
 

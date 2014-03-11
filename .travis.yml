@@ -19,6 +19,11 @@ install:
 
 env:
     global:
+        # Necessary to work around some Travis-only bugs
+        # (This should be set by Travis but is not currently:
+        # https://github.com/travis-ci/travis-ci/issues/1769)
+        - TRAVIS=true
+
         # To work around http://openradar.appspot.com/radar?id=1544403,
         # the tests need the Travis user's password.
         - LOGIN_PASSWORD="j4K7CK4oM49ZA27y532b"
@@ -26,6 +31,8 @@ env:
         - TEST_COMMAND=test:unit                TEST_SDK=5.1
         - TEST_COMMAND=test:unit                TEST_SDK=6.1
         - TEST_COMMAND=test:unit                TEST_SDK=7.0
+
+        - TEST_COMMAND=test:CI_unit
 
         - TEST_COMMAND=test:integration:iphone  TEST_SDK=5.1
         - TEST_COMMAND=test:integration:iphone  TEST_SDK=6.1

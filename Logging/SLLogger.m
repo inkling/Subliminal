@@ -73,7 +73,13 @@ void SLLogAsync(NSString *format, ...) {
 }
 
 - (void)dealloc {
+    // On OS X 10.8, dispatch objects are NSObjects, and ARC renders it unnecessary
+    // (and impossible) to manually release objects.
+    // But on iOS, dispatch objects only become NSObjects in iOS 6,
+    // and Subliminal still supports 5.1.
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
     dispatch_release(_loggingQueue);
+#endif
 }
 
 - (dispatch_queue_t)loggingQueue {
@@ -141,9 +147,9 @@ void SLLogAsync(NSString *format, ...) {
  withNumCasesExecuted:(NSUInteger)numCasesExecuted
        numCasesFailed:(NSUInteger)numCasesFailed
        numCasesFailedUnexpectedly:(NSUInteger)numCasesFailedUnexpectedly {
-    [self logMessage:[NSString stringWithFormat:@"Test \"%@\" finished: executed %u case%@, with %u failure%@ (%u unexpected).",
-                                                test, numCasesExecuted, (numCasesExecuted == 1 ? @"" : @"s"),
-                                                      numCasesFailed, (numCasesFailed == 1 ? @"" : @"s"), numCasesFailedUnexpectedly]];
+    [self logMessage:[NSString stringWithFormat:@"Test \"%@\" finished: executed %lu case%@, with %lu failure%@ (%lu unexpected).",
+                                                test, (unsigned long)numCasesExecuted, (numCasesExecuted == 1 ? @"" : @"s"),
+                                                      (unsigned long)numCasesFailed, (numCasesFailed == 1 ? @"" : @"s"), (unsigned long)numCasesFailedUnexpectedly]];
 }
 
 - (void)logTestAbort:(NSString *)test {
@@ -152,9 +158,20 @@ void SLLogAsync(NSString *format, ...) {
 
 - (void)logTestingFinishWithNumTestsExecuted:(NSUInteger)numTestsExecuted
                               numTestsFailed:(NSUInteger)numTestsFailed {
-    [self logMessage:[NSString stringWithFormat:@"Testing finished: executed %u test%@, with %u failure%@.",
-                                                numTestsExecuted, (numTestsExecuted == 1 ? @"" : @"s"),
-                                                numTestsFailed, (numTestsFailed == 1 ? @"" : @"s")]];
+    [self logMessage:[NSString stringWithFormat:@"Testing finished: executed %lu test%@, with %lu failure%@.",
+                                                (unsigned long)numTestsExecuted, (numTestsExecuted == 1 ? @"" : @"s"),
+                                                (unsigned long)numTestsFailed, (numTestsFailed == 1 ? @"" : @"s")]];
+}
+
+- (void)logUncaughtException:(NSException *)exception {
+    NSMutableString *exceptionMessage = [[NSMutableString alloc] initWithString:@"Uncaught exception occurred"];
+    [exceptionMessage appendFormat:@": ***%@***", [exception name]];
+    NSString *exceptionReason = [exception reason];
+    if ([exceptionReason length]) {
+        [exceptionMessage appendFormat:@" for reason: %@", exceptionReason];
+    }
+
+    [self logError:exceptionMessage];
 }
 
 @end

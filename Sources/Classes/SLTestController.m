@@ -43,45 +43,25 @@ static const NSTimeInterval kDefaultTimeout = 5.0;
 
 @interface SLTestController () <UIAlertViewDelegate>
 
-/// The currently-running test, if any.
-@property (nonatomic, readonly) SLTest *currentTest;
-
 @end
 
 
 /// Uncaught exceptions are logged to Subliminal for visibility.
 static void SLUncaughtExceptionHandler(NSException *exception)
 {
-    NSMutableString *exceptionMessage = [[NSMutableString alloc] initWithString:@"Uncaught exception occurred"];
-    SLTest *currentTest = [[SLTestController sharedTestController] currentTest];
-    if (currentTest) {
-        NSString *currentTestName = NSStringFromClass([currentTest class]);
-        NSString *currentTestCase = currentTest.currentTestCase;
-        if (currentTestCase) {
-            [exceptionMessage appendFormat:@" during test case \"-[%@ %@]\"", currentTestName, currentTestCase];
-        } else {
-            [exceptionMessage appendFormat:@" during test \"%@\"", currentTestName];
-        }
-    }
-    [exceptionMessage appendFormat:@": ***%@***", [exception name]];
-    NSString *exceptionReason = [exception reason];
-    if ([exceptionReason length]) {
-        [exceptionMessage appendFormat:@" for reason: %@", exceptionReason];
-    }
-    
     if ([NSThread isMainThread]) {
         // We need to wait for UIAutomation, but we can't block the main thread,
         // so we spin the run loop instead.
         __block BOOL hasLogged = NO;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            SLLog(@"%@", exceptionMessage);
+            [[SLLogger sharedLogger] logUncaughtException:exception];
             hasLogged = YES;
         });
         while (!hasLogged) {
             [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.25]];
         }
     } else {
-        SLLog(@"%@", exceptionMessage);
+        [[SLLogger sharedLogger] logUncaughtException:exception];
     }
 
     if (appsUncaughtExceptionHandler) {
@@ -327,16 +307,16 @@ u_int32_t random_uniform(u_int32_t upperBound) {
 
         for (Class testClass in _testsToRun) {
             @autoreleasepool {
-                _currentTest = (SLTest *)[[testClass alloc] init];
+                SLTest *test = (SLTest *)[[testClass alloc] init];
 
                 NSString *testName = NSStringFromClass(testClass);
                 [[SLLogger sharedLogger] logTestStart:testName];
 
                 NSUInteger numCasesExecuted = 0, numCasesFailed = 0, numCasesFailedUnexpectedly = 0;
 
-                BOOL testDidFinish = [_currentTest runAndReportNumExecuted:&numCasesExecuted
-                                                                    failed:&numCasesFailed
-                                                        failedUnexpectedly:&numCasesFailedUnexpectedly];
+                BOOL testDidFinish = [test runAndReportNumExecuted:&numCasesExecuted
+                                                            failed:&numCasesFailed
+                                                failedUnexpectedly:&numCasesFailedUnexpectedly];
                 if (testDidFinish) {
                     [[SLLogger sharedLogger] logTestFinish:testName
                                       withNumCasesExecuted:numCasesExecuted
@@ -348,8 +328,6 @@ u_int32_t random_uniform(u_int32_t upperBound) {
                     _numTestsFailed++;
                 }
                 _numTestsExecuted++;
-
-                _currentTest = nil;
             }
         }
 
