@@ -111,7 +111,7 @@
                 id element = [self accessibilityElementAtIndex:i];
                 if (!element) {
                     dispatch_async([[SLLogger sharedLogger] loggingQueue], ^{
-                        NSString *message = [NSString stringWithFormat:@"accessibilityElementAtIndex: %d is nil for %@", i, self];
+                        NSString *message = [NSString stringWithFormat:@"accessibilityElementAtIndex: %ld is nil for %@", (long)i, self];
                         [[SLLogger sharedLogger] logWarning:message];
                     });
                     continue;

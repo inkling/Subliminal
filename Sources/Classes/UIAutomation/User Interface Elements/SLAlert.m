@@ -422,14 +422,14 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
     NSUInteger elementIndex = 0;
 
     NSString *UIAAlertHandler = [NSString stringWithFormat:@"\
-                                    var textField = %@.%@()[%u];\
+                                    var textField = %@.%@()[%lu];\
                                     if (textField.isValid()) {\
                                         textField.setValue('%@');\
                                         return true;\
                                     } else {\
                                         return false;\
                                     }\
-                                 ", elementContainerExpression, elementType, elementIndex, [text slStringByEscapingForJavaScriptLiteral]];
+                                 ", elementContainerExpression, elementType, (unsigned long)elementIndex, [text slStringByEscapingForJavaScriptLiteral]];
     return [[SLAlertHandler alloc] initWithSLAlert:self andUIAAlertHandler:UIAAlertHandler];
 }
 
