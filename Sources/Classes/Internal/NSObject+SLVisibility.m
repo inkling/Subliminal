@@ -255,7 +255,7 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
         NSUInteger col = x - minX;
         NSUInteger row = y - minY;
         NSUInteger pixelIndex = row * columns + col;
-        NSAssert(pixelIndex < columns * rows, @"Encountered invalid pixel index: %ul", pixelIndex);
+        NSAssert(pixelIndex < columns * rows, @"Encountered invalid pixel index: %lul", (unsigned long)pixelIndex);
         if (pixels[4 * pixelIndex + 3] >= kMinVisibleAlphaInt) {
             count++;
         }
