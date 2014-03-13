@@ -51,7 +51,7 @@ Running the Example App
 2. `cd` into the directory: `cd Subliminal`.
 3. If you haven't already, setup Subliminal: `rake install`.
 4. Open the Example project: `open Example/SubliminalTest.xcodeproj`.
-5. Using the `Integration Tests` scheme, using an iOS 6.x Simulator, choose Product > Profile (⌘+I).
+5. Using the `Integration Tests` scheme, choose Product > Profile (⌘+I).
 6. Under the User Templates, choose Subliminal.
 
 Installing Subliminal
