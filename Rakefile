@@ -375,10 +375,14 @@ namespace :test do
     ENV['DEV'] = "yes"; ENV['DOCS'] = "no"
     Rake::Task['install'].invoke
 
-    # Ensure that we use the default Xcode toolchain, not that of a developer preview
+    # Ensure that we use the default Xcode toolchain unless the developer
+    # has specified otherwise (`DEVELOPER_DIR` should always be specified one way
+    # or the other to be sure of the version we use--when preview versions are
+    # installed, they may change the response of `xcode-select`).
+    #
     # Note that we can't properly `export` an environment variable from a Ruby script,
     # But adding it to ENV works because `subliminal-test` is run in a subshell
-    ENV['DEVELOPER_DIR'] = "/Applications/Xcode.app/Contents/Developer"
+    ENV['DEVELOPER_DIR'] ||= "/Applications/Xcode.app/Contents/Developer"
   end
 
   desc "Runs the unit tests"
