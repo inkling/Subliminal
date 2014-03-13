@@ -51,8 +51,10 @@ Running the Example App
 2. `cd` into the directory: `cd Subliminal`.
 3. If you haven't already, setup Subliminal: `rake install`.
 4. Open the Example project: `open Example/SubliminalTest.xcodeproj`.
-5. Using the `Integration Tests` scheme, using an iOS 6.x Simulator, choose Product > Profile (⌘+I).
-6. Under the User Templates, choose Subliminal.
+5. Switch to the "Integration Tests" scheme.
+> You may also see a scheme called "Subliminal Integration tests"--make sure you choose "Integration Tests."
+6. Choose Product > Profile (⌘+I).
+7. Under the User Templates, choose Subliminal.
 
 Installing Subliminal
 ---------------------
@@ -129,9 +131,10 @@ will be built before your application.
 Subliminal provides an `xcconfig` file to configure the rest of your target's 
 settings. To apply this file to your target, expand Subliminal's project reference 
 in your navigator pane, then drag the `Integration Tests.xcconfig` file into the 
-base level of your Integration Tests group. Now, select your project within the 
-project inspector, navigate to the "Info" tab, and base the configurations used to 
-build your Integration Tests target off `Integration Tests.xcconfig`.
+base level of your Integration Tests group (don't copy the file, just drag the reference).
+Now, select your project within the project inspector, navigate to the "Info" tab,
+and base the configurations used to build your Integration Tests target off
+`Integration Tests.xcconfig`.
 
 ![](http://inkling.github.io/Subliminal/readme-images/SetConfigurations.png)
 
