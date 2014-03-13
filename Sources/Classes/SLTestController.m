@@ -136,7 +136,7 @@ unsigned int time_seed(){
 
 /// a condensed version of the `uniform_deviate` function
 /// also from http://eternallyconfuzzled.com/arts/jsw_art_rand.aspx
-u_int32_t random_uniform(u_int32_t upperBound) {
+unsigned long random_uniform(unsigned long upperBound) {
     return ( random() / ( RAND_MAX + 1.0 ) ) * upperBound;
 }
 
