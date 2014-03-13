@@ -162,9 +162,10 @@ u_int32_t random_uniform(u_int32_t upperBound) {
     unsigned int seedUsed = (seedSpecified == SLTestControllerRandomSeed) ? time_seed() : seedSpecified;
     if (seed) *seed = seedUsed;
     srandom(seedUsed);
+    NSAssert([testsToRun count] <= (uint32_t)-1, @"The cast below is unsafe.");
     // http://en.wikipedia.org/wiki/Fisher–Yates_shuffle
     for (NSUInteger i = [testsToRun count] - 1; i > 0; --i) {
-        [testsToRun exchangeObjectAtIndex:i withObjectAtIndex:random_uniform(i + 1)];
+        [testsToRun exchangeObjectAtIndex:i withObjectAtIndex:random_uniform((u_int32_t)(i + 1))];
     }
 
     // now filter the array: only run tests that are concrete...
