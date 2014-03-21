@@ -51,7 +51,7 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
  Returns the number of points from a set of test points for which the receiver is visible in a given window.
 
  @param testPointsInWindow a C array of points to test for visibility
- @param count the number of elements in testPointsInWindow
+ @param numPoints the number of elements in testPointsInWindow
  @param window the UIWindow in which to test visibility.  This should usually be
  the receiver's window, but could be a different window, for example if the
  point is to test whether the view is in one window or a different window.
