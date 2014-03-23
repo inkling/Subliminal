@@ -103,18 +103,16 @@ group.
 
 Creating a separate target for your integration tests will allow you to control
 exactly when your tests are run. To begin with, right click your application 
-target and select "Duplicate".
+target and select "Duplicate". Rename your new target to "Integration Tests".
 
 ![](http://inkling.github.io/Subliminal/readme-images/CreateTarget.png)
 
-Next, rename both your new target to "Integration Tests" and the info.plist 
-created for it to "Integration Tests-Info.plist". Move the reference to the 
-newly created target's Info.plist file into your Integration Tests group using the 
-navigator pane, and move the actual Info.plist file into your 
-Integration Tests directory using the Finder. After this step you will need to
-update Xcode's reference to the `plist`.
+Duplicating the target will have generated a `<target name> copy-Info.plist` file.
+Delete this file. Then, from the "General" tab of your Integration Tests target settings,
+use the "Choose Info.plist File..." button to select the plist file of your main target.
+This will keep the plist file of your Integration Tests target in sync with your main target.
 
-![](http://inkling.github.io/Subliminal/readme-images/UpdatePlistReference.png)
+![](http://inkling.github.io/Subliminal/readme-images/ChoosePlistFile.png)
 
 Now, link Subliminal to the Integration Tests target. To do this open the 
 project inspector by selecting your project in the navigator pane. Then select 
@@ -137,18 +135,6 @@ and base the configurations used to build your Integration Tests target off
 `Integration Tests.xcconfig`.
 
 ![](http://inkling.github.io/Subliminal/readme-images/SetConfigurations.png)
-
-Finally, to ensure that this `xcconfig` file takes effect, you must delete two 
-default build settings. Select your Integration Tests target in the project 
-inspector and then select the Build Settings tab. Search for and delete the 
-settings for "Product Name" and "Info.plist File": these values will be provided by 
-the `Integration Tests.xcconfig` file. NOTE: To delete the "Info.plist File" setting, 
-you must have renamed and moved your Integration Tests target's Info.plist file as 
-described above.
-
-![](http://inkling.github.io/Subliminal/readme-images/DeleteProductNameSetting.png)
-
-![](http://inkling.github.io/Subliminal/readme-images/DeletePlistSetting.png)
 
 ### Creating a Scheme for Your Integration Tests Target
 
