@@ -161,9 +161,6 @@
  @param elementObject An object which may or may not be a mock view.
  @param viewObject An object which may or may not be a view.
 
- @param elementObject An object which may or may not be a mock view.
- @param viewObject An object which may or may not be a view.
-
  @return YES if viewObject is a UIView and elementObject is mocking that view, otherwise NO.
  */
 + (BOOL)elementObject:(id)elementObject isMockingViewObject:(id)viewObject;
