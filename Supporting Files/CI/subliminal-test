@@ -624,16 +624,24 @@ INSTRUMENTS_LAUNCH_TIMEOUTS=( 30 45 60 120 )
 (( INSTRUMENTS_RETRY_COUNT = 0 ))
 
 launch_instruments ${INSTRUMENTS_LAUNCH_TIMEOUTS[INSTRUMENTS_RETRY_COUNT]}
-while [ $? -ne 0 ] && [ ! -e "$RESULT_LOG" ] && (( INSTRUMENTS_RETRY_COUNT < ${#INSTRUMENTS_LAUNCH_TIMEOUTS[@]} )); do
+while ([ ! -e "$RESULT_LOG" ] || grep -qi "Please relaunch the tests" "$RESULT_LOG") &&
+	  (( INSTRUMENTS_RETRY_COUNT < ${#INSTRUMENTS_LAUNCH_TIMEOUTS[@]} )); do
 	# Under poorly understood circumstances, in certain CI environments like Travis, 
-	# instruments may fail to launch what otherwise appears to be a perfectly good app 
+	# instruments may fail to run what otherwise appears to be a perfectly good app 
 	# (in that an app prepared exactly the same way may be run without error on another run), 
-	# either hanging on launch, or launching but immediately aborting with a message like
-	# "Recording cancelled : At least one target failed to launch; aborting run
-	# Instruments Trace Error : Failed to start trace"
+	# doing one of the following:
+	# 
+	# * hanging on launch
+	# * launching but immediately aborting with a message like
+	#	"Recording cancelled : At least one target failed to launch; aborting run
+	#	Instruments Trace Error : Failed to start trace"
+	# * hanging part-way through the tests
+	#
+	# In the first two scenarios, there will be no result log; in the third,
+	# Subliminal will have aborted the run after writing the message above to the log.
 	#
 	# We retry three times, after resetting the simulator and rebuilding the app--
-	# the error may be caused by instruments rejecting the build for some reason.
+	# these errors may be caused by instruments rejecting the build for some reason.
     (( INSTRUMENTS_RETRY_COUNT++ ))
     echo "\nInstruments hiccuped; retrying with clean build and a timeout of ${INSTRUMENTS_LAUNCH_TIMEOUTS[INSTRUMENTS_RETRY_COUNT]} seconds...\n"
 
