@@ -29,6 +29,7 @@
 #import "SLTerminal.h"
 #import "SLElement.h"
 #import "SLAlert.h"
+#import "SLDevice.h"
 
 #import "SLStringUtilities.h"
 
@@ -215,6 +216,29 @@ u_int32_t random_uniform(u_int32_t upperBound) {
     }
 }
 
+// In certain environments like Travis, `instruments` intermittently hangs.
+// When this occurs, it seems that the simulator is also in an inconsistent state
+// such that it can't be rotated, web pages don't load, etc.
+// If we detect that we are running in such an environment,
+// abort so that the test runner can relaunch.
+//
+// Don't try to do this when unit testing; it shouldn't be necessary
+// and communication with UIAutomation is disabled anyway.
+#if TARGET_IPHONE_SIMULATOR
+- (void)abortIfSimulatorIsInconsistent {
+    if ([SLTestController isBeingUnitTested]) return;
+    
+    const UIDeviceOrientation testOrientation = UIDeviceOrientationPortrait;
+
+    [[SLDevice currentDevice] setOrientation:testOrientation];
+    BOOL simulatorIsConsistent = ([UIDevice currentDevice].orientation == testOrientation);
+    if (!simulatorIsConsistent) {
+        [[SLLogger sharedLogger] logError:@"Please relaunch the tests: the simulator is in an inconsistent state. This run will now abort."];
+        abort();
+    }
+}
+#endif
+
 // Having the Accessibility Inspector enabled while tests are running
 // can cause problems with touch handling and/or prevent UIAutomation's alert
 // handler from being called.
@@ -249,6 +273,10 @@ u_int32_t random_uniform(u_int32_t upperBound) {
     NSSetUncaughtExceptionHandler(&SLUncaughtExceptionHandler);
 
     SLLog(@"Tests are starting up... ");
+
+#if TARGET_IPHONE_SIMULATOR
+    [self abortIfSimulatorIsInconsistent];
+#endif
 
     // we use a local element resolution timeout
     // and suppress UIAutomation's timeout, to better control the timing of the tests
