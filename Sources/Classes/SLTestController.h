@@ -110,7 +110,7 @@
  @param completionBlock An optional block to execute once testing has finished.
  
  */
-- (void)runTestsSync:(id)tests withCompletionBlock:(void (^)())completionBlock;
+- (void)runTestsSync:(NSSet *)tests withCompletionBlock:(void (^)())completionBlock;
 
 /**
  Runs the specified tests by invoking `runTestsSync:usingSeed:finishTesting:withCompletionBlock:` with
@@ -122,7 +122,7 @@
  @param completionBlock An optional block to execute once testing has finished.
  
  */
-- (void)runTestsSync:(id)tests finishTesting:(BOOL)finishTesting withCompletionBlock:(void (^)())completionBlock;
+- (void)runTestsSync:(NSSet *)tests finishTesting:(BOOL)finishTesting withCompletionBlock:(void (^)())completionBlock;
 
 /**
  Runs the specified tests just the `runTests:` methods, however they are run
@@ -136,7 +136,7 @@
  @param completionBlock An optional block to execute once testing has finished.
  
  */
-- (void)runTestsSync:(id)tests usingSeed:(unsigned int)seed finishTesting:(BOOL)finishTesting withCompletionBlock:(void (^)())completionBlock;
+- (void)runTestsSync:(NSSet *)tests usingSeed:(unsigned int)seed finishTesting:(BOOL)finishTesting withCompletionBlock:(void (^)())completionBlock;
 @end
 
 /**

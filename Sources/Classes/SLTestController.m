@@ -316,17 +316,17 @@ u_int32_t random_uniform(u_int32_t upperBound) {
     });
 }
 
-- (void)runTestsSync:(id)tests withCompletionBlock:(void (^)())completionBlock
+- (void)runTestsSync:(NSSet *)tests withCompletionBlock:(void (^)())completionBlock
 {
     [self runTestsSync:tests finishTesting:NO withCompletionBlock:completionBlock];
 }
 
-- (void)runTestsSync:(id)tests finishTesting:(BOOL)finishTesting withCompletionBlock:(void (^)())completionBlock
+- (void)runTestsSync:(NSSet *)tests finishTesting:(BOOL)finishTesting withCompletionBlock:(void (^)())completionBlock
 {
     [self runTestsSync:tests usingSeed:SLTestControllerRandomSeed finishTesting:finishTesting withCompletionBlock:nil];
 }
 
-- (void)runTestsSync:(id)tests usingSeed:(unsigned int)seed finishTesting:(BOOL)finishTesting withCompletionBlock:(void (^)())completionBlock
+- (void)runTestsSync:(NSSet *)tests usingSeed:(unsigned int)seed finishTesting:(BOOL)finishTesting withCompletionBlock:(void (^)())completionBlock
 {
     _completionBlock = completionBlock;
     
