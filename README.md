@@ -2,7 +2,7 @@
   <img src="http://inkling.github.io/Subliminal/readme-images/subliminal-hero.png" alt="Subliminal" title="Subliminal">
 </p>
 
-[![Build Status](https://travis-ci.org/inkling/Subliminal.png?branch=master)](https://travis-ci.org/inkling/Subliminal)
+[![Build Status](https://travis-ci.org/inkling/Subliminal.svg?branch=master)](https://travis-ci.org/inkling/Subliminal)
 
 Subliminal is an framework for writing iOS integration tests. Subliminal provides 
 a familiar OCUnit/SenTest-like interface to Apple's UIAutomation framework, 
