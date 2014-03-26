@@ -23,15 +23,6 @@
 //  limitations under the License.
 //
 
-// Rename the duplicated target's product
-// from the default "<source target name> copy"
-PRODUCT_NAME = $(PROJECT_NAME) ($(TARGET_NAME))
-
-// Rename the duplicated target's info.plist file
-// from the default "<source target name> copy-Info.plist"
-// This assumes that the file has been moved to this path
-INFOPLIST_FILE = $(TARGET_NAME)/$(TARGET_NAME)-Info.plist
-
 // Locate Subliminal's headers
 HEADER_SEARCH_PATHS = $(inherited) $(BUILT_PRODUCTS_DIR)/usr/local/include
 
@@ -41,3 +32,18 @@ OTHER_LDFLAGS = $(inherited) -ObjC
 // Add an "INTEGRATION_TESTING" preprocessor flag
 // so that you can conditionally add testing code throughout your app
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) INTEGRATION_TESTING=1
+
+// DEPRECATED
+// The INFOPLIST_FILE and PRODUCT_NAME settings are maintained so as not
+// to make a breaking change, but they won't affect new users
+// who don't delete the default values in the .xcodeproj file.
+// See https://github.com/inkling/Subliminal/issues/144
+
+// Rename the duplicated target's info.plist file
+// from the default "<source target name> copy-Info.plist"
+// This assumes that the file has been moved to this path
+INFOPLIST_FILE = $(TARGET_NAME)/$(TARGET_NAME)-Info.plist
+
+// Rename the duplicated target's product
+// from the default "<source target name> copy"
+PRODUCT_NAME = $(PROJECT_NAME) ($(TARGET_NAME))
