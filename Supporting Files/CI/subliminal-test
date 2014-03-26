@@ -292,7 +292,8 @@ reset_simulator_or_device () {
 	local reset_success=0
 	
 	if [[ -n "$SIM_DEVICE" ]]; then
-		"$SCRIPT_DIR/simulator-set" --reset
+		# Make sure to maintain the previously set device type/version
+		"$SCRIPT_DIR/simulator-set" --device "$SIM_DEVICE" --version "$SIM_VERSION" --reset
 		reset_success=$?
 		if [ $reset_success -eq 0 ]; then
 			echo "Successfully reset iOS Simulator."
