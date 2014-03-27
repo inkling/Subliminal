@@ -643,8 +643,9 @@ while ([ ! -e "$RESULT_LOG" ] || grep -qi "Please relaunch the tests" "$RESULT_L
 	#
 	# We retry three times, after resetting the simulator and rebuilding the app--
 	# these errors may be caused by instruments rejecting the build for some reason.
-    (( INSTRUMENTS_RETRY_COUNT++ ))
-    echo "\nInstruments hiccuped; retrying with clean build and a timeout of ${INSTRUMENTS_LAUNCH_TIMEOUTS[INSTRUMENTS_RETRY_COUNT]} seconds...\n"
+	CURRENT_LAUNCH_TIMEOUT=${INSTRUMENTS_LAUNCH_TIMEOUTS[INSTRUMENTS_RETRY_COUNT]}
+	(( INSTRUMENTS_RETRY_COUNT++ ))
+	echo "\nInstruments hiccuped; retrying with clean build and a timeout of $CURRENT_LAUNCH_TIMEOUT seconds...\n"
 
 	# Re-enable all simulator SDKs (if necessary) while we build
 	echo ""
@@ -674,7 +675,9 @@ while ([ ! -e "$RESULT_LOG" ] || grep -qi "Please relaunch the tests" "$RESULT_L
 	mkdir "$RESULTS_DIR"
 
 	echo "\nRelaunching tests...\n"
-	launch_instruments ${INSTRUMENTS_LAUNCH_TIMEOUTS[INSTRUMENTS_RETRY_COUNT]}
+
+	# note: `launch_instruments` must be the last call here so that we can check its exit status below
+	launch_instruments $CURRENT_LAUNCH_TIMEOUT
 done
 
 if [ $? -ne 0 ]; then
