@@ -128,8 +128,10 @@ will be built before your application.
 
 Subliminal provides an `xcconfig` file to configure the rest of your target's 
 settings. To apply this file to your target, expand Subliminal's project reference 
-in your navigator pane, then drag the `Integration Tests.xcconfig` file into the 
-base level of your Integration Tests group (don't copy the file, just drag the reference).
+in your navigator pane, right-click on the `Integration Tests.xcconfig` file to show
+it in the Finder, and then drag it from the Finder into the base level of your
+Integration Tests group as a reference (don't copy the file).
+
 Now, select your project within the project inspector, navigate to the "Info" tab,
 and base the configurations used to build your Integration Tests target off
 `Integration Tests.xcconfig`.
