@@ -142,34 +142,55 @@ u_int32_t random_uniform(u_int32_t upperBound) {
 }
 
 + (NSArray *)testsToRun:(NSSet *)tests usingSeed:(inout unsigned int *)seed withFocus:(BOOL *)withFocus {
-    NSMutableArray *testsToRun = [NSMutableArray arrayWithArray:[tests allObjects]];
+    NSMutableArray *testsToRun = [[NSMutableArray alloc] initWithCapacity:[tests count]];
 
-    // sort the array to produce a consistent basis for randomization
-    [testsToRun sortUsingComparator:^NSComparisonResult(Class test1, Class test2) {
-        // make sure to strip the focus prefix if present
-        NSString *test1Name = [NSStringFromClass(test1) lowercaseString];
-        if ([test1Name hasPrefix:SLTestFocusPrefix]) {
-            test1Name = [test1Name substringFromIndex:[SLTestFocusPrefix length]];
+    // identify run groups
+    NSMutableDictionary *runGroups = [[NSMutableDictionary alloc] init];
+    for (Class test in tests) {
+        NSNumber *groupNumber = @([test runGroup]);
+        NSMutableArray *group = runGroups[groupNumber];
+        if (!group) {
+            group = [[NSMutableArray alloc] init];
+            runGroups[groupNumber] = group;
         }
-        NSString *test2Name = [NSStringFromClass(test2) lowercaseString];
-        if ([test2Name hasPrefix:SLTestFocusPrefix]) {
-            test2Name = [test2Name substringFromIndex:[SLTestFocusPrefix length]];
-        }
-        return [test1Name compare:test2Name];
-    }];
+        [group addObject:test];
+    }
 
-    // randomize the array
+    // add the tests of each group to the array to run,
+    // sorted by group number, but randomized within each group
     unsigned int seedSpecified = seed ? *seed : SLTestControllerRandomSeed;
     unsigned int seedUsed = (seedSpecified == SLTestControllerRandomSeed) ? time_seed() : seedSpecified;
     if (seed) *seed = seedUsed;
     srandom(seedUsed);
-    NSAssert([testsToRun count] <= (uint32_t)-1, @"The cast below is unsafe.");
-    // http://en.wikipedia.org/wiki/Fisher–Yates_shuffle
-    for (NSUInteger i = [testsToRun count] - 1; i > 0; --i) {
-        [testsToRun exchangeObjectAtIndex:i withObjectAtIndex:random_uniform((u_int32_t)(i + 1))];
+
+    for (NSNumber *groupNumber in [[runGroups allKeys] sortedArrayUsingSelector:@selector(compare:)]) {
+        NSMutableArray *group = runGroups[groupNumber];
+
+        // sort the group to produce a consistent basis for randomization
+        [group sortUsingComparator:^NSComparisonResult(Class test1, Class test2) {
+            // make sure to strip the focus prefix if present
+            NSString *test1Name = [NSStringFromClass(test1) lowercaseString];
+            if ([test1Name hasPrefix:SLTestFocusPrefix]) {
+                test1Name = [test1Name substringFromIndex:[SLTestFocusPrefix length]];
+            }
+            NSString *test2Name = [NSStringFromClass(test2) lowercaseString];
+            if ([test2Name hasPrefix:SLTestFocusPrefix]) {
+                test2Name = [test2Name substringFromIndex:[SLTestFocusPrefix length]];
+            }
+            return [test1Name compare:test2Name];
+        }];
+
+        // randomize the group
+        NSAssert([group count] <= (uint32_t)-1, @"The cast below is unsafe.");
+        // http://en.wikipedia.org/wiki/Fisher–Yates_shuffle
+        for (NSUInteger i = [group count] - 1; i > 0; --i) {
+            [group exchangeObjectAtIndex:i withObjectAtIndex:random_uniform((u_int32_t)(i + 1))];
+        }
+
+        [testsToRun addObjectsFromArray:group];
     }
 
-    // now filter the array: only run tests that are concrete...
+    // now filter the tests to run: only run tests that are concrete...
     [testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"isAbstract == NO"]];
 
     // ...that support the current platform...

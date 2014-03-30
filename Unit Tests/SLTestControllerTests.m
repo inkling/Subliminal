@@ -34,6 +34,8 @@
 @implementation SLTestControllerTests {
     id _loggerMock, _terminalMock;
     id _loggerClassMock;
+
+    NSSet *_testsUsedToTestRandomizationWithinRunGroups;
 }
 
 - (void)setUp {
@@ -48,6 +50,22 @@
     [[_terminalMock stub] shutDown];
 }
 
+- (void)setUpTestWithSelector:(SEL)testMethod {
+    if ((testMethod == @selector(testTestsRunInRandomOrderWithinRunGroupsWhen_SLTestControllerRandomSeed_IsSpecified)) ||
+        (testMethod == @selector(testTestsRunInDeterminateOrderWithinRunGroupsWhenASeedIsSpecified)) ||
+        (testMethod == @selector(testTheSeedUsedIsLoggedIfATestFails)) ||
+        (testMethod == @selector(testTheUserIsWarnedWhenUsingAPredeterminedSeed))) {
+        _testsUsedToTestRandomizationWithinRunGroups = [NSSet setWithObjects:
+            [TestWithSomeTestCases class],
+            [TestWhichSupportsAllPlatforms class],
+            [TestWithPlatformSpecificTestCases class],
+            nil
+        ];
+        STAssertTrue([[_testsUsedToTestRandomizationWithinRunGroups valueForKey:@"runGroup"] count] == 1,
+                     @"All tests used to test randomization within run groups must be of the same run group.");
+    }
+}
+
 - (void)tearDown {
     [_terminalMock stopMocking];
     [_loggerMock stopMocking];
@@ -56,7 +74,41 @@
 
 #pragma mark - Test execution
 
-#pragma mark -Randomization
+#pragma mark -Sorting by run group
+
+- (void)testTestsRunInAscendingOrderOfGroup {
+    NSSet *tests = [NSSet setWithObjects:
+        [TestOneOfRunGroupOne class],
+        [TestTwoOfRunGroupOne class],
+        [TestOneOfRunGroupTwo class],
+        [TestTwoOfRunGroupTwo class],
+        [TestThreeOfRunGroupTwo class],
+        [TestOneOfRunGroupThree class],
+        nil
+    ];
+
+    NSArray *const expectedRunOrder = [[[tests allObjects] valueForKey:@"runGroup"] sortedArrayUsingSelector:@selector(compare:)];
+
+    // Record the run group of each test in the order they execute
+    NSMutableArray *runOrder = [[NSMutableArray alloc] initWithCapacity:[tests count]];
+    NSMutableArray *testMocks = [[NSMutableArray alloc] initWithCapacity:[tests count]];
+    for (Class test in tests) {
+        id testMock = [OCMockObject partialMockForClass:test];
+        [[[[testMock expect] andDo:^(NSInvocation *invocation) {
+            [runOrder addObject:@([test runGroup])];
+        }] andForwardToRealObject] runAndReportNumExecuted:[OCMArg anyPointer]
+                                                    failed:[OCMArg anyPointer]
+                                        failedUnexpectedly:[OCMArg anyPointer]];
+        [testMocks addObject:testMock];
+    }
+
+    SLRunTestsAndWaitUntilFinished(tests, nil);
+    [testMocks makeObjectsPerformSelector:@selector(stopMocking)];
+
+    STAssertEqualObjects(runOrder, expectedRunOrder, @"Tests were not run in ascending order of group.");
+}
+
+#pragma mark -Randomization within run groups
 
 - (NSArray *)mocksToRecordRunOrderOfTests:(NSSet *)testClasses inArray:(NSMutableArray *)runOrder {
     NSMutableArray *testMocks = [[NSMutableArray alloc] initWithCapacity:[testClasses count]];
@@ -91,13 +143,8 @@ static const NSUInteger kNumSeedTrials = 100;
     return orderDistribution;
 }
 
-- (void)testTestsRunInRandomOrderWhen_SLTestControllerRandomSeed_IsSpecified {
-    NSSet *tests = [NSSet setWithObjects:
-                    [TestWithSomeTestCases class],
-                    [TestWhichSupportsAllPlatforms class],
-                    [TestWithPlatformSpecificTestCases class],
-                    nil
-                    ];
+- (void)testTestsRunInRandomOrderWithinRunGroupsWhen_SLTestControllerRandomSeed_IsSpecified {
+    NSSet *tests = _testsUsedToTestRandomizationWithinRunGroups;
 
     // We'd like to verify that the distribution is uniform.
     // The real way to do that would be by a chi-squared test, but that math is tricky.
@@ -114,13 +161,8 @@ static const NSUInteger kNumSeedTrials = 100;
     STAssertTrue(runCount == kNumSeedTrials, @"The order distribution did not account for all trials.");
 }
 
-- (void)testTestsRunInDeterminateOrderWhenASeedIsSpecified {
-    NSSet *tests = [NSSet setWithObjects:
-        [TestWithSomeTestCases class],
-        [TestWhichSupportsAllPlatforms class],
-        [TestWithPlatformSpecificTestCases class],
-        nil
-    ];
+- (void)testTestsRunInDeterminateOrderWithinRunGroupsWhenASeedIsSpecified {
+    NSSet *tests = _testsUsedToTestRandomizationWithinRunGroups;
 
     const unsigned int seed = 716839131;
     NSCountedSet *orderDistribution = [self runOrderDistributionForNumTrials:kNumSeedTrials usingTests:tests seed:seed];
@@ -130,12 +172,7 @@ static const NSUInteger kNumSeedTrials = 100;
 }
 
 - (void)testTheSeedUsedIsLoggedIfATestFails {
-    NSSet *tests = [NSSet setWithObjects:
-        [TestWithSomeTestCases class],
-        [TestWhichSupportsAllPlatforms class],
-        [TestWithPlatformSpecificTestCases class],
-        nil
-    ];
+    NSSet *tests = _testsUsedToTestRandomizationWithinRunGroups;
 
     NSMutableArray *firstRunOrder = [[NSMutableArray alloc] initWithCapacity:[tests count]];
     NSArray *testMocks = [self mocksToRecordRunOrderOfTests:tests inArray:firstRunOrder];
@@ -193,12 +230,7 @@ static const NSUInteger kNumSeedTrials = 100;
 }
 
 - (void)testTheUserIsWarnedWhenUsingAPredeterminedSeed {
-    NSSet *tests = [NSSet setWithObjects:
-        [TestWithSomeTestCases class],
-        [TestWhichSupportsAllPlatforms class],
-        [TestWithPlatformSpecificTestCases class],
-        nil
-    ];
+    NSSet *tests = _testsUsedToTestRandomizationWithinRunGroups;
 
     const unsigned int seed = 716839131;
 

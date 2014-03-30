@@ -75,7 +75,8 @@
 /**
  Runs the specified tests.
 
- Tests are run on a background queue, in an order randomized using the specified seed.
+ Tests are run on a background queue. Tests run in ascending order of [group](+[SLTest runGroup]),
+ and then within each group, in an order randomized using the specified seed.
  Clients should generally pass `SLTestControllerRandomSeed` to let the test controller choose a seed.
  If any tests fail, the test controller will log the seed that was used,
  so that the run order may be reproduced by invoking this method with that seed.

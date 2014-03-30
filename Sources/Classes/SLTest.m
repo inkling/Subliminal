@@ -116,6 +116,10 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
     return testSupportsCurrentDevice;
 }
 
++ (NSUInteger)runGroup {
+    return 1;
+}
+
 - (void)setUpTest {
     // nothing to do here
 }

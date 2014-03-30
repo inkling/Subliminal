@@ -75,6 +75,14 @@
         [Focus_TestThatIsFocusedButDoesntSupportCurrentPlatform class],
         [Focus_AbstractTestThatIsFocused class],
         [ConcreteTestThatIsFocused class],
+        [AbstractRunGroupOneTest class],
+        [TestOneOfRunGroupOne class],
+        [TestTwoOfRunGroupOne class],
+        [AbstractRunGroupTwoTest class],
+        [TestOneOfRunGroupTwo class],
+        [TestTwoOfRunGroupTwo class],
+        [TestThreeOfRunGroupTwo class],
+        [TestOneOfRunGroupThree class],
         nil
     ];
     STAssertEqualObjects(allTests, expectedTests, @"Unexpected tests returned.");

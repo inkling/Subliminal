@@ -145,3 +145,62 @@
 - (void)testFoo {}
 
 @end
+
+
+@implementation AbstractRunGroupOneTest
+
++ (NSUInteger)runGroup {
+    return 1;
+}
+
+@end
+
+@implementation TestOneOfRunGroupOne
+
+- (void)testFoo {}
+
+@end
+
+@implementation TestTwoOfRunGroupOne
+
+- (void)testFoo {}
+
+@end
+
+
+@implementation AbstractRunGroupTwoTest
+
++ (NSUInteger)runGroup {
+    return 2;
+}
+
+@end
+
+@implementation TestOneOfRunGroupTwo
+
+- (void)testFoo {}
+
+@end
+
+@implementation TestTwoOfRunGroupTwo
+
+- (void)testFoo {}
+
+@end
+
+@implementation TestThreeOfRunGroupTwo
+
+- (void)testFoo {}
+
+@end
+
+
+@implementation TestOneOfRunGroupThree
+
++ (NSUInteger)runGroup {
+    return 3;
+}
+
+- (void)testFoo {}
+
+@end
