@@ -66,11 +66,58 @@ Requirements
 Subliminal currently supports projects built using Xcode 5.x and iOS 7.x SDKs,
 and deployment targets running iOS 5.1 through 7.1.
 
+Usage
+-----
 
-FAQ
----
+Subliminal is designed to be instantly familiar to users of OCUnit/SenTest. 
+In Subliminal, subclasses of `SLTest` define tests as methods beginning with `test`. 
+At run-time, Subliminal discovers and runs these tests. 
 
-### Subliminal and Other Integration Test Frameworks
+Tests manipulate the user interface and can even [manipulate the application directly](https://github.com/inkling/Subliminal/wiki/Writing-Tests#manipulate-the-application-directly).
+Here's what a sample test case looks like:
+
+```objc
+@implementation STLoginTest
+
+- (void)testLogInSucceedsWithUsernameAndPassword {
+	SLTextField *usernameField = [SLTextField elementWithAccessibilityLabel:@"username field"];
+	SLTextField *passwordField = [SLTextField elementWithAccessibilityLabel:@"password field" isSecure:YES];
+	SLElement *submitButton = [SLElement elementWithAccessibilityLabel:@"Submit"];
+	SLElement *loginSpinner = [SLElement elementWithAccessibilityLabel:@"Logging in..."];
+	
+    NSString *username = @"Jeff", *password = @"foo";
+    [usernameField setText:username];
+    [passwordField setText:password];
+
+    [submitButton tap];
+
+	// wait for the login spinner to disappear
+    SLAssertTrueWithTimeout([loginSpinner isInvalidOrInvisible], 
+    						3.0, @"Log-in was not successful.");
+
+    NSString *successMessage = [NSString stringWithFormat:@"Hello, %@!", username];
+    SLAssertTrue([[SLElement elementWithAccessibilityLabel:successMessage] isValid], 
+    			@"Log-in did not succeed.");
+    
+    // Check the internal state of the app.			
+    SLAssertTrue(SLAskAppYesNo(isUserLoggedIn), @"User is not logged in.")
+}
+
+@end
+```
+
+For more information, see [Subliminal's wiki](https://github.com/inkling/Subliminal/wiki/Writing-Tests).
+
+Continuous Integration
+----------------------
+
+Subliminal includes end-to-end CI support for building your project, running its tests on the appropriate simulator or device, and outputting results in a variety of formats.
+
+For example scripts and guides to integrate with popular CI services like Travis and Jenkins, see [Subliminal's wiki](https://github.com/inkling/Subliminal/wiki/Continuous-Integration).
+
+
+Comparison to Other Integration Test Frameworks
+-----------------------------------------------
 
 * 	How is Subliminal different from other integration test frameworks?
 
