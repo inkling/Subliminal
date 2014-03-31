@@ -48,6 +48,11 @@ const NSTimeInterval SLTerminalReadRetryDelay = 0.1;
 // is closer to 0.05.
 const NSTimeInterval SLTerminalEvaluationDelay = 0.075;
 
+/**
+ Identifier for the `evalQueue` for use with `dispatch_get_specific`.
+ */
+static const void *const kEvalQueueIdentifier = &kEvalQueueIdentifier;
+
 @implementation SLTerminal {
     NSString *_scriptNamespace;
     dispatch_queue_t _evalQueue;
@@ -81,6 +86,7 @@ static SLTerminal *__sharedTerminal = nil;
     if (self) {
         _scriptNamespace = SLTerminalNamespace;
         _evalQueue = dispatch_queue_create("com.inkling.subliminal.SLTerminal.evalQueue", DISPATCH_QUEUE_SERIAL);
+        dispatch_queue_set_specific(_evalQueue, kEvalQueueIdentifier, (void *)kEvalQueueIdentifier, NULL);
     }
     return self;
 }
@@ -101,6 +107,11 @@ static SLTerminal *__sharedTerminal = nil;
 
 - (dispatch_queue_t)evalQueue {
     return _evalQueue;
+}
+
+- (BOOL)currentQueueIsEvalQueue
+{
+    return dispatch_get_specific(kEvalQueueIdentifier) != NULL;
 }
 
 #if TARGET_IPHONE_SIMULATOR
@@ -161,7 +172,7 @@ static SLTerminal *__sharedTerminal = nil;
     NSParameterAssert(script);
     NSAssert(![NSThread isMainThread], @"-eval: must not be called from the main thread.");
 
-    if (dispatch_get_current_queue() != self.evalQueue) {
+    if (![self currentQueueIsEvalQueue]) {
         id __block result;
         NSException *__block evalException;
         dispatch_sync(self.evalQueue, ^{
@@ -250,7 +261,7 @@ static SLTerminal *__sharedTerminal = nil;
 }
 
 - (void)enableScriptLogging:(BOOL)enableScriptLogging {
-    if (dispatch_get_current_queue() != self.evalQueue) {
+    if (![self currentQueueIsEvalQueue]) {
         // dispatch_async so that this can be called by the application
         // before testing has started
         dispatch_async(self.evalQueue, ^{

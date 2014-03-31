@@ -57,7 +57,7 @@
 }
 
 - (BOOL)functionWithNameIsLoaded:(NSString *)name {
-    if (dispatch_get_current_queue() != self.evalQueue) {
+    if (![self currentQueueIsEvalQueue]) {
         __block BOOL functionIsLoaded;
         dispatch_sync(self.evalQueue, ^{
             functionIsLoaded = [self functionWithNameIsLoaded:name];
@@ -69,7 +69,7 @@
 }
 
 - (void)loadFunctionWithName:(NSString *)name params:(NSArray *)params body:(NSString *)body {
-    if (dispatch_get_current_queue() != self.evalQueue) {
+    if (![self currentQueueIsEvalQueue]) {
         NSException *__block loadException;
         dispatch_sync(self.evalQueue, ^{
             @try {
@@ -97,7 +97,7 @@
 }
 
 - (NSString *)evalFunctionWithName:(NSString *)name withArgs:(NSArray *)args {
-    if (dispatch_get_current_queue() != self.evalQueue) {
+    if (![self currentQueueIsEvalQueue]) {
         NSString *__block result;
         NSException *__block evalException;
         dispatch_sync(self.evalQueue, ^{
@@ -121,7 +121,7 @@
                             params:(NSArray *)params
                               body:(NSString *)body
                           withArgs:(NSArray *)args {
-    if (dispatch_get_current_queue() != self.evalQueue) {
+    if (![self currentQueueIsEvalQueue]) {
         NSString *__block result;
         NSException *__block evalException;
         dispatch_sync(self.evalQueue, ^{
