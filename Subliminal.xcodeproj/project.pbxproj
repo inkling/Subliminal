@@ -38,6 +38,7 @@
 		50A59BD617848D67002A863A /* SLGeometryUnitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 50A59BD517848D67002A863A /* SLGeometryUnitTests.m */; };
 		50A59BD81784908D002A863A /* SLGeometryTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 50A59BD71784908D002A863A /* SLGeometryTest.m */; };
 		50A59BDB178490C2002A863A /* SLGeometryTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 50A59BDA178490C2002A863A /* SLGeometryTestViewController.m */; };
+		50F2B7C818E9C0D700F21635 /* SLDispatchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 50F2B7C718E9C0D700F21635 /* SLDispatchTests.m */; };
 		50F3E18C1783A5CB00C6BD1B /* SLGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 50F3E18A1783A5CB00C6BD1B /* SLGeometry.h */; };
 		50F3E18E1783A60100C6BD1B /* SLGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 50F3E18B1783A5CB00C6BD1B /* SLGeometry.m */; };
 		CA75E78216697A1200D57E92 /* SLDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = CA75E78016697A1200D57E92 /* SLDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -270,6 +271,7 @@
 		50A59BD517848D67002A863A /* SLGeometryUnitTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLGeometryUnitTests.m; sourceTree = "<group>"; };
 		50A59BD71784908D002A863A /* SLGeometryTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLGeometryTest.m; sourceTree = "<group>"; };
 		50A59BDA178490C2002A863A /* SLGeometryTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLGeometryTestViewController.m; sourceTree = "<group>"; };
+		50F2B7C718E9C0D700F21635 /* SLDispatchTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDispatchTests.m; sourceTree = "<group>"; };
 		50F3E18A1783A5CB00C6BD1B /* SLGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLGeometry.h; sourceTree = "<group>"; };
 		50F3E18B1783A5CB00C6BD1B /* SLGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLGeometry.m; sourceTree = "<group>"; };
 		CA75E78016697A1200D57E92 /* SLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLDevice.h; sourceTree = "<group>"; };
@@ -969,6 +971,7 @@
 				F05C51EB171C90B000A381BC /* SLMainThreadRefTests.m */,
 				F0C59ED71752B1D40051FEF0 /* SLStringUtilitiesTests.m */,
 				50A59BD517848D67002A863A /* SLGeometryUnitTests.m */,
+				50F2B7C718E9C0D700F21635 /* SLDispatchTests.m */,
 			);
 			path = "Unit Tests";
 			sourceTree = "<group>";
@@ -1376,6 +1379,7 @@
 				F08B87F21685A00400C4FE44 /* SharedSLTests.m in Sources */,
 				F08B87F51685A07B00C4FE44 /* SLTestTests.m in Sources */,
 				F024BE33168BD70900708350 /* TestUtilities.m in Sources */,
+				50F2B7C818E9C0D700F21635 /* SLDispatchTests.m in Sources */,
 				F0A040131698ECDE009D8157 /* SLTestController+AppContextTests.m in Sources */,
 				F05C51EC171C90B000A381BC /* SLMainThreadRefTests.m in Sources */,
 				F0C59ED81752B1D40051FEF0 /* SLStringUtilitiesTests.m in Sources */,

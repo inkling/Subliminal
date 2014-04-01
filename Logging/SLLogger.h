@@ -111,6 +111,15 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 - (dispatch_queue_t)loggingQueue;
 
 /**
+ Whether or not the current queue is the `loggingQueue`.
+ 
+ To avoid deadlocks, use this method to check if you're on the `loggingQueue` before `dispatch_sync`ing a block to it.
+ 
+ @return Whether or not the current queue is the `loggingQueue`.
+ */
+- (BOOL)currentQueueIsLoggingQueue;
+
+/**
  Logs a message.
  
  This method is the primitive logging method used by all other logging methods 
