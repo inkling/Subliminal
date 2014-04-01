@@ -251,7 +251,7 @@ u_int32_t random_uniform(u_int32_t upperBound) {
 
     // We detect if the Inspector is enabled by examining the simulator's Accessibility preferences
     // 1. get into the simulator's app support directory by fetching the sandboxed Library's path
-    NSString *userDirectoryPath = [[[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject] path];
+    NSString *userDirectoryPath = [(NSURL *)[[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject] path];
 
     // 2. get out of our application directory, back to the root support directory for this system version
     NSString *plistRootPath = [userDirectoryPath substringToIndex:([userDirectoryPath rangeOfString:@"Applications"].location)];

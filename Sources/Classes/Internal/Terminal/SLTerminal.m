@@ -126,7 +126,7 @@ static SLTerminal *__sharedTerminal = nil;
         NSString *plistName = [NSString stringWithFormat:@"%@.plist", [[NSBundle mainBundle] bundleIdentifier]];
 
         // 1. get into the simulator's app support directory by fetching the sandboxed Library's path
-        NSString *userDirectoryPath = [[[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject] path];
+        NSString *userDirectoryPath = [(NSURL *)[[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject] path];
         // 2. get out of our application directory, back to the root support directory for this system version
         plistRootPath = [userDirectoryPath substringToIndex:([userDirectoryPath rangeOfString:@"Applications"].location)];
 
