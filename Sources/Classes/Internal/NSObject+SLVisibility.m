@@ -133,11 +133,6 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
             // if another element comes before us/our parent in the array
             // (thus is z-ordered before us/our parent)
             // and contains our hitpoint, it covers us
-//            SLLogAsync(@"element is %@", [element description]);
-//            SLLogAsync(@"element is %@", element);
-//            SLLogAsync(@"element frame is %@", NSStringFromCGRect([element accessibilityFrame]));
-//            SLLogAsync(@"testPoint is %@", NSStringFromCGPoint(testPoint));
-//            SLLogAsync(@"container frame is %@", NSStringFromCGRect([container accessibilityFrame]));
             if (![NSStringFromClass([element class]) isEqualToString:@"UITableTextAccessibilityElement"] && CGRectContainsPoint([element accessibilityFrame], testPoint)) return NO;
         }
 

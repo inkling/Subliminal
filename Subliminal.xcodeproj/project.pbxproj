@@ -48,6 +48,8 @@
 		97068F9018ECB5AF005FE660 /* SLTableViewCellChildElementsTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 97068F8B18ECB5AF005FE660 /* SLTableViewCellChildElementsTestViewController.xib */; };
 		97068F9718ECB5EA005FE660 /* SLAccessibilityContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 97068F9518ECB5EA005FE660 /* SLAccessibilityContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		97068F9818ECB5EA005FE660 /* SLAccessibilityContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 97068F9618ECB5EA005FE660 /* SLAccessibilityContainer.m */; };
+		97068F9B18ECCFCB005FE660 /* SLTableViewCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 97068F9918ECCFCB005FE660 /* SLTableViewCell.h */; };
+		97068F9C18ECCFCB005FE660 /* SLTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 97068F9A18ECCFCB005FE660 /* SLTableViewCell.m */; };
 		CA75E78216697A1200D57E92 /* SLDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = CA75E78016697A1200D57E92 /* SLDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CA75E78516697C0000D57E92 /* SLDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = CA75E78116697A1200D57E92 /* SLDevice.m */; };
 		CAC388051641CD7500F995F9 /* SLStringUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC388031641CD7500F995F9 /* SLStringUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -288,6 +290,8 @@
 		97068F8B18ECB5AF005FE660 /* SLTableViewCellChildElementsTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLTableViewCellChildElementsTestViewController.xib; sourceTree = "<group>"; };
 		97068F9518ECB5EA005FE660 /* SLAccessibilityContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLAccessibilityContainer.h; sourceTree = "<group>"; };
 		97068F9618ECB5EA005FE660 /* SLAccessibilityContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAccessibilityContainer.m; sourceTree = "<group>"; };
+		97068F9918ECCFCB005FE660 /* SLTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTableViewCell.h; sourceTree = "<group>"; };
+		97068F9A18ECCFCB005FE660 /* SLTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTableViewCell.m; sourceTree = "<group>"; };
 		CA75E78016697A1200D57E92 /* SLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLDevice.h; sourceTree = "<group>"; };
 		CA75E78116697A1200D57E92 /* SLDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDevice.m; sourceTree = "<group>"; };
 		CAC388031641CD7500F995F9 /* SLStringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLStringUtilities.h; sourceTree = "<group>"; };
@@ -800,6 +804,8 @@
 				F0A04E1C1749F70F002C7520 /* SLElement.m */,
 				97068F9518ECB5EA005FE660 /* SLAccessibilityContainer.h */,
 				97068F9618ECB5EA005FE660 /* SLAccessibilityContainer.m */,
+				97068F9918ECCFCB005FE660 /* SLTableViewCell.h */,
+				97068F9A18ECCFCB005FE660 /* SLTableViewCell.m */,
 				F043469D175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.h */,
 				F043469E175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.m */,
 				CAC3883D1643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.h */,
@@ -1035,6 +1041,7 @@
 				F0695E1C16014491000B05D0 /* Subliminal.h in Headers */,
 				F0695E1D16014491000B05D0 /* SLTestController.h in Headers */,
 				F0695E1E16014491000B05D0 /* SLTest.h in Headers */,
+				97068F9B18ECCFCB005FE660 /* SLTableViewCell.h in Headers */,
 				F0695E1F16014491000B05D0 /* SLTerminal.h in Headers */,
 				F0695E2016014491000B05D0 /* SLUIAElement.h in Headers */,
 				97068F9718ECB5EA005FE660 /* SLAccessibilityContainer.h in Headers */,
@@ -1334,6 +1341,7 @@
 				CA75E78516697C0000D57E92 /* SLDevice.m in Sources */,
 				F0C07A391703F95B00C93F93 /* SLAlert.m in Sources */,
 				F0C07A481703FEF600C93F93 /* SLButton.m in Sources */,
+				97068F9C18ECCFCB005FE660 /* SLTableViewCell.m in Sources */,
 				F0C07A4C1704002100C93F93 /* SLTextField.m in Sources */,
 				F0C07A501704009E00C93F93 /* SLWindow.m in Sources */,
 				F0C07A541704011400C93F93 /* SLKeyboard.m in Sources */,
