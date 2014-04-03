@@ -48,7 +48,7 @@
 		97068F9018ECB5AF005FE660 /* SLTableViewCellChildElementsTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 97068F8B18ECB5AF005FE660 /* SLTableViewCellChildElementsTestViewController.xib */; };
 		97068F9718ECB5EA005FE660 /* SLAccessibilityContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 97068F9518ECB5EA005FE660 /* SLAccessibilityContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		97068F9818ECB5EA005FE660 /* SLAccessibilityContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 97068F9618ECB5EA005FE660 /* SLAccessibilityContainer.m */; };
-		97068F9B18ECCFCB005FE660 /* SLTableViewCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 97068F9918ECCFCB005FE660 /* SLTableViewCell.h */; };
+		97068F9B18ECCFCB005FE660 /* SLTableViewCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 97068F9918ECCFCB005FE660 /* SLTableViewCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		97068F9C18ECCFCB005FE660 /* SLTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 97068F9A18ECCFCB005FE660 /* SLTableViewCell.m */; };
 		CA75E78216697A1200D57E92 /* SLDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = CA75E78016697A1200D57E92 /* SLDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CA75E78516697C0000D57E92 /* SLDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = CA75E78116697A1200D57E92 /* SLDevice.m */; };
