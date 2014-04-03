@@ -48,12 +48,10 @@
 
             id accessibilityParent = [obj slAccessibilityParent];
 
-            //SLLogAsync(@"starting: accessibilityParent is %@", accessibilityParent);
             // then look for child element having matching parent
             while (accessibilityParent && ![_containerElement matchesObject:accessibilityParent]) {
 
                 accessibilityParent = [accessibilityParent slAccessibilityParent];
-                //SLLogAsync(@"get accessibilityParent that is now %@", accessibilityParent);
 
             }
 
