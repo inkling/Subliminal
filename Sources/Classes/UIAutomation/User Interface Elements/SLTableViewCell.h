@@ -10,13 +10,14 @@
 
 @interface SLTableViewCell : SLAccessibilityContainer
 
-- (instancetype)initTableViewCellWithElement:(SLElement *)element;
 
 + (instancetype)tableViewCellWithElement:(SLElement *)element;
 
 + (instancetype)tableViewCellWithIdentifier:(NSString *)identifer;
 + (instancetype)tableViewCellWithLabel:(NSString *)label;
 + (instancetype)tableViewCellWithLabel:(NSString *)label value:(NSString *)value traits:(UIAccessibilityTraits)traits;
+
+//+ (instancetype)tableViewCellAtIndexPath:(NSIndexPath *)indexPath;
 
 //- (id)childElementMatching:(SLElement *)childElement;
 + (id)childElementMatching:(SLElement *)childElement inContainerElement:(SLElement *)containerElement;

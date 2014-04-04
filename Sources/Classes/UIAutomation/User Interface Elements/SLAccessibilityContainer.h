@@ -10,15 +10,15 @@
 
 typedef NS_ENUM(NSInteger, SLAccessibilityContainerType) {
     SLTableViewAccessibilityContainer,
-    SLCollectionViewAccessibilityContainer
+    SLCollectionViewAccessibilityContainer,
+    SLNavigationBarContainer,
+    SLToolbarContainer,
+    SLTabBarContainer
 };
 
 @interface SLAccessibilityContainer : SLElement
 
-@property (nonatomic) SLElement *containerElement;
 @property (nonatomic, assign) SLAccessibilityContainerType containerType;
-
-- (instancetype)initContainerWithElement:(SLElement *)element andContainerType:(SLAccessibilityContainerType)accessibilityContainerType;
 
 + (instancetype)containerWithElement:(SLElement *)element andContainerType:(SLAccessibilityContainerType)accessibilityContainerType;
 

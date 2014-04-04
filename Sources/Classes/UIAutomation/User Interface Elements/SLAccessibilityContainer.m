@@ -12,32 +12,38 @@
 
 @implementation SLAccessibilityContainer
 
-- (instancetype)initContainerWithElement:(SLElement *)element andContainerType:(SLAccessibilityContainerType)accessibilityContainerType
-{
-    self = [super init];
-    if (self) {
-        _containerElement = element;
-        _containerType = accessibilityContainerType;
-    }
-    return self;
-}
-
 + (instancetype)containerWithElement:(SLElement *)element andContainerType:(SLAccessibilityContainerType)accessibilityContainerType
 {
-    return [[self alloc] initContainerWithElement:element andContainerType:accessibilityContainerType];
+    SLAccessibilityContainer *container = [SLAccessibilityContainer elementMatching:^BOOL(NSObject *obj) {
+        return [element matchesObject:obj];
+    } withDescription:@"container"];
+    container.containerType = accessibilityContainerType;
+    return container;
 }
 
 + (instancetype)containerWithIdentifier:(NSString *)identifer andContainerType:(SLAccessibilityContainerType)accessibilityContainerType
 {
-    return [[self alloc] initContainerWithElement:[SLElement elementWithAccessibilityIdentifier:identifer] andContainerType:accessibilityContainerType];
+    SLAccessibilityContainer *container = [SLAccessibilityContainer elementMatching:^BOOL(NSObject *obj) {
+        return [[SLElement elementWithAccessibilityIdentifier:identifer] matchesObject:obj];
+    } withDescription:@"container"];
+    container.containerType = accessibilityContainerType;
+    return container;
 }
 + (instancetype)containerWithLabel:(NSString *)label andContainerType:(SLAccessibilityContainerType)accessibilityContainerType
 {
-    return [[self alloc] initContainerWithElement:[SLElement elementWithAccessibilityLabel:label] andContainerType:accessibilityContainerType];
+    SLAccessibilityContainer *container = [SLAccessibilityContainer elementMatching:^BOOL(NSObject *obj) {
+        return [[SLElement elementWithAccessibilityLabel:label] matchesObject:obj];
+    } withDescription:@"container"];
+    container.containerType = accessibilityContainerType;
+    return container;
 }
 + (instancetype)containerWithLabel:(NSString *)label value:(NSString *)value traits:(UIAccessibilityTraits)traits andContainerType:(SLAccessibilityContainerType)accessibilityContainerType
 {
-    return [[self alloc] initContainerWithElement:[SLElement elementWithAccessibilityLabel:label value:value traits:traits] andContainerType:accessibilityContainerType];
+    SLAccessibilityContainer *container = [SLAccessibilityContainer elementMatching:^BOOL(NSObject *obj) {
+        return [[SLElement elementWithAccessibilityLabel:label value:value traits:traits] matchesObject:obj];
+    } withDescription:@"container"];
+    container.containerType = accessibilityContainerType;
+    return container;
 }
 
 - (id)childElementMatching:(SLElement *)childElement
@@ -49,15 +55,11 @@
             id accessibilityParent = [obj slAccessibilityParent];
 
             // then look for child element having matching parent
-            while (accessibilityParent && ![_containerElement matchesObject:accessibilityParent]) {
+            while (accessibilityParent && ![self matchesObject:accessibilityParent]) {
 
                 accessibilityParent = [accessibilityParent slAccessibilityParent];
 
             }
-
-
-            id doubleAccessibilityParent = [accessibilityParent slAccessibilityParent];
-
             Class compareClass;
             switch (_containerType) {
                 case SLTableViewAccessibilityContainer:
@@ -66,11 +68,26 @@
                 case SLCollectionViewAccessibilityContainer:
                     compareClass = [UICollectionView class];
                     break;
-                    
+                case SLNavigationBarContainer:
+                    compareClass = [UINavigationBar class];
+                    break;
+                case SLTabBarContainer:
+                    compareClass = [UITabBar class];
+                    break;
+                case SLToolbarContainer:
+                    compareClass = [UIToolbar class];
+                    break;
+
                 default:
                     compareClass = [UIView class];
                     break;
             }
+            if ((_containerType == SLNavigationBarContainer) || (_containerType == SLTabBarContainer) || (_containerType == SLToolbarContainer)) {
+                return [accessibilityParent isKindOfClass:compareClass];
+            }
+
+
+            id doubleAccessibilityParent = [accessibilityParent slAccessibilityParent];
 
             while (doubleAccessibilityParent && ![doubleAccessibilityParent isKindOfClass:compareClass]) {
                 doubleAccessibilityParent = [doubleAccessibilityParent slAccessibilityParent];
