@@ -12,20 +12,20 @@
 
 @implementation SLTableViewCell
 
-+ (instancetype)tableViewCellWithElement:(SLElement *)element
++ (instancetype)cellWithElement:(SLElement *)element
 {
     return [SLTableViewCell containerWithElement:element andContainerType:SLTableViewAccessibilityContainer];
 }
 
-+ (instancetype)tableViewCellWithIdentifier:(NSString *)identifer
++ (instancetype)cellWithIdentifier:(NSString *)identifer
 {
     return [SLTableViewCell containerWithIdentifier:identifer andContainerType:SLTableViewAccessibilityContainer];
 }
-+ (instancetype)tableViewCellWithLabel:(NSString *)label
++ (instancetype)cellWithLabel:(NSString *)label
 {
     return [SLTableViewCell containerWithLabel:label andContainerType:SLTableViewAccessibilityContainer];
 }
-+ (instancetype)tableViewCellWithLabel:(NSString *)label value:(NSString *)value traits:(UIAccessibilityTraits)traits
++ (instancetype)cellWithLabel:(NSString *)label value:(NSString *)value traits:(UIAccessibilityTraits)traits
 {
     return [SLTableViewCell containerWithLabel:label value:value traits:traits andContainerType:SLTableViewAccessibilityContainer];
 }

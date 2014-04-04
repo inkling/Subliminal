@@ -11,11 +11,11 @@
 @interface SLTableViewCell : SLAccessibilityContainer
 
 
-+ (instancetype)tableViewCellWithElement:(SLElement *)element;
++ (instancetype)cellWithElement:(SLElement *)element;
 
-+ (instancetype)tableViewCellWithIdentifier:(NSString *)identifer;
-+ (instancetype)tableViewCellWithLabel:(NSString *)label;
-+ (instancetype)tableViewCellWithLabel:(NSString *)label value:(NSString *)value traits:(UIAccessibilityTraits)traits;
++ (instancetype)cellWithIdentifier:(NSString *)identifer;
++ (instancetype)cellWithLabel:(NSString *)label;
++ (instancetype)cellWithLabel:(NSString *)label value:(NSString *)value traits:(UIAccessibilityTraits)traits;
 
 //+ (instancetype)tableViewCellAtIndexPath:(NSIndexPath *)indexPath;
 
