@@ -132,7 +132,6 @@
     }
 
     cell.textLabel.text = [_tableViewElements objectAtIndex:indexPath.row];
-
     //UIButton *favoriteButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     //[favoriteButton setTitle:@"Favorite" forState:UIControlStateNormal];
     UIButton *favoriteButton = [UIButton buttonWithType:UIButtonTypeCustom];
