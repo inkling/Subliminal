@@ -33,7 +33,7 @@ DOCSET_DIR = "#{ENV['HOME']}/Library/Developer/Shared/Documentation/DocSets"
 DOCSET_NAME = "com.inkling.Subliminal.docset"
 DOCSET_VERSION = "1.0.1"
 
-SUPPORTED_SDKS = [ "5.1", "6.1", "7.0" ]
+SUPPORTED_SDKS = [ "6.1", "7.1" ]
 TEST_SDK = ENV["TEST_SDK"]
 if TEST_SDK
   raise "Test SDK #{TEST_SDK} is not supported." unless SUPPORTED_SDKS.include?(TEST_SDK)
@@ -110,7 +110,7 @@ by Xcode.
 
 \`test\` options:
   TEST_SDK=<sdk>            Selects the iPhone Simulator SDK version against which to run the tests.
-                            Supported values are '5.1', '6.1', and '7.0'.
+                            Supported values are '6.1' and '7.1'.
                             If not specified, the tests will be run against all supported SDKs.
 
 \`test:integration\` options:
@@ -498,7 +498,7 @@ namespace :test do
 
         # Use system so we see the tests' output
         results_dir = fresh_results_dir!("iphone", sdk)
-        # Use the 3.5" iPhone Retina because that can support all 3 of our target SDKs
+        # Use the 3.5" iPhone Retina because that can support both our target SDKs
         if system("#{base_test_command} -output \"#{results_dir}\" -sim_device 'iPhone Retina (3.5-inch)' -sim_version #{sdk}")
           puts "iPhone integration tests succeeded on iOS #{sdk}.\n\n"
         else
