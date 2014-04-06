@@ -53,7 +53,7 @@ Otherwise, \`subliminal-test\` returns success (0).
   * with Subliminal having been installed on the test machine, using \`rake install DOCS=no\`;
   * and with GUI scripting enabled: if the test machine runs Mac OS X 10.8 Mountain Lion, open System Preferences and check 
     \"Enable access for assistive devices\" in the Accessibility preference pane. If the test machine runs Mac OS X 10.9 Mavericks,
-    open System Preferences and click on "Security & Privacy". Select "Accessibility" and drag Terminal.app from Applications/Utilities 
+    open System Preferences and click on \"Security & Privacy\". Select \"Accessibility\" and drag Terminal.app from Applications/Utilities 
     into the list. Do not forget to check the box.
 
 Also make sure that your \"Integration Tests\" scheme is shared (in Xcode, click \`Product -> Schemes -> Manage Schemes…\`
