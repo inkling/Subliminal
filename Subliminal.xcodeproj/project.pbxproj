@@ -41,6 +41,8 @@
 		50F2B7C818E9C0D700F21635 /* SLDispatchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 50F2B7C718E9C0D700F21635 /* SLDispatchTests.m */; };
 		50F3E18C1783A5CB00C6BD1B /* SLGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 50F3E18A1783A5CB00C6BD1B /* SLGeometry.h */; };
 		50F3E18E1783A60100C6BD1B /* SLGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 50F3E18B1783A5CB00C6BD1B /* SLGeometry.m */; };
+		695037F5BAC77774724610F8 /* UIAlertView+SLDelayShow.m in Sources */ = {isa = PBXBuildFile; fileRef = 69503E64456E11DE29675F39 /* UIAlertView+SLDelayShow.m */; };
+		69503AC5F9FEF220472EE767 /* UIAlertView+SLDelayShow.h in Headers */ = {isa = PBXBuildFile; fileRef = 69503814C08E15A426192980 /* UIAlertView+SLDelayShow.h */; };
 		CA75E78216697A1200D57E92 /* SLDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = CA75E78016697A1200D57E92 /* SLDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CA75E78516697C0000D57E92 /* SLDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = CA75E78116697A1200D57E92 /* SLDevice.m */; };
 		CAC388051641CD7500F995F9 /* SLStringUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC388031641CD7500F995F9 /* SLStringUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -274,6 +276,8 @@
 		50F2B7C718E9C0D700F21635 /* SLDispatchTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDispatchTests.m; sourceTree = "<group>"; };
 		50F3E18A1783A5CB00C6BD1B /* SLGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLGeometry.h; sourceTree = "<group>"; };
 		50F3E18B1783A5CB00C6BD1B /* SLGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLGeometry.m; sourceTree = "<group>"; };
+		69503814C08E15A426192980 /* UIAlertView+SLDelayShow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+SLDelayShow.h"; sourceTree = "<group>"; };
+		69503E64456E11DE29675F39 /* UIAlertView+SLDelayShow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+SLDelayShow.m"; sourceTree = "<group>"; };
 		CA75E78016697A1200D57E92 /* SLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLDevice.h; sourceTree = "<group>"; };
 		CA75E78116697A1200D57E92 /* SLDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDevice.m; sourceTree = "<group>"; };
 		CAC388031641CD7500F995F9 /* SLStringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLStringUtilities.h; sourceTree = "<group>"; };
@@ -532,6 +536,8 @@
 				F05C51E4171C8AE000A381BC /* SLMainThreadRef.m */,
 				F02DF30617EC064F00BE28BF /* UIScrollView+SLProgrammaticScrolling.h */,
 				F02DF30717EC064F00BE28BF /* UIScrollView+SLProgrammaticScrolling.m */,
+				69503E64456E11DE29675F39 /* UIAlertView+SLDelayShow.m */,
+				69503814C08E15A426192980 /* UIAlertView+SLDelayShow.h */,
 			);
 			path = Internal;
 			sourceTree = "<group>";
@@ -1035,6 +1041,7 @@
 				F0A3F63417A715AE007529C3 /* SLTextView.h in Headers */,
 				DB501DC917B9669A001658CB /* SLStatusBar.h in Headers */,
 				50F3E18C1783A5CB00C6BD1B /* SLGeometry.h in Headers */,
+				69503AC5F9FEF220472EE767 /* UIAlertView+SLDelayShow.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1315,6 +1322,7 @@
 				F04346A8175AD10200D91F7F /* NSObject+SLVisibility.m in Sources */,
 				F0A3F63517A715AE007529C3 /* SLTextView.m in Sources */,
 				DB501DCA17B9669A001658CB /* SLStatusBar.m in Sources */,
+				695037F5BAC77774724610F8 /* UIAlertView+SLDelayShow.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
