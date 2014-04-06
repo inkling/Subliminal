@@ -68,29 +68,32 @@ Required arguments:
 					Either this or \`-project\` must be specified.
 
 	-sim_device <device_type>	The type of device to simulate.
-					Acceptable values are listed in the iOS Simulator's 
-					\"Hardware -> Device\" menu. Either this or \`-hw_id\` must 
-					be specified.
+					Acceptable values are listed by executing \`instruments -s devices\`:
+					given a listing like \"iPad - Simulator - iOS 7.1\", the device
+					type is the first dash-separated component, trimmed of spaces,
+					e.g. \"iPad\".
+
+					Note that (despite the response of \`instruments -s devices\`)
+					the iOS Simulator does not accept certain combinations 
+					of device type and SDK (as specified using the \`-sim_version\`
+					argument), e.g. \"iPhone\" and \"7.1\".
+
+					Either this or \`-hw_id\` must be specified.
 
 	-hw_id <udid>			The UDID of the hardware to target.
 					Either this or \`-sim_device\` must be specified.
 
 	-login_password <password>	The current user's login password. This permits 
-					this script to work around several bugs in Apple's \`instruments\` 
-					tool while running un-attended. The password is used: 
-
-					  1. To authorize \`instruments\` to take control of your application if 
-					     it asks for such permission when launched: http://openradar.appspot.com/radar?id=1544403.
-					  2. To temporarily modify the Xcode folder to force \`instruments\` 
-					     to use the specified SDK to run the tests, whereas it would otherwise use
-					     an arbitrary SDK: http://openradar.appspot.com/radar?id=3107401.
+					this script to authorize \`instruments\` to take control
+					of your application if it asks for such permission when
+					launched: http://openradar.appspot.com/radar?id=1544403.
 
 					If a developer will be attending the tests as they execute, 
 					they may specify \`--live\` rather than provide their password.
 
-	--live				Indicates that this script is being attended by a developer who can 
-					enter their password to authorize instruments and/or to disable SDKs not
-					targeted by the tests. For this script to run un-attended, the current user's
+	--live				Indicates that this script is being attended by a developer
+					who can enter their password to authorize instruments.
+					For this script to run un-attended, the current user's
 					login password must be specified using \`-login_password\`.
 
 Optional build arguments:
@@ -125,12 +128,11 @@ Optional build arguments:
 
 Optional testing arguments:
 	-sim_version <version>		The version of the iOS Simulator SDK to test with, 
-					e.g. 5.1 or 6.1. Defaults to the latest iOS Simulator SDK 
+					e.g. 6.1 or 7.1. Defaults to the latest iOS Simulator SDK 
 					installed. Ignored if \`-sim_device\` is not specified.
 
 					Note that the iOS Simulator does not accept certain combinations 
-					of device type and SDK, e.g. \"iPhone Retina (4-inch)\" 
-					and \"5.1\".
+					of device type and SDK, e.g. \"iPhone\" and \"7.1\".
 
 	-timeout <timeout>		The maximum duration for which to run the tests before aborting.
 					Specified in milliseconds and as a number rather than a string. Defaults to infinite.
@@ -237,53 +239,6 @@ if [[ ( -z "$PROJECT" && -z "$WORKSPACE" ) ||
 	print_usage_and_fail
 fi
 
-# This function allows simulator SDKs to be enabled/disabled 
-# to work around http://openradar.appspot.com/radar?id=3107401
-# It must be declared here because it is called from `cleanup_and_exit`
-enable_SDK_version_or_all () {
-	SDK_VERSION="$1"
-
-	# An SDK is disabled by changing its settings plist's extension to "disabled",
-	# causing it to be ignored by instruments
-	enable_SDK_at_path () {
-		SDK_PATH="$1"
-		ENABLE="$2"
-
-		# Modifying the Xcode folder will require authorization 
-		SUDO_INPUT=`([[ -z $LIVE ]] || ! $LIVE) && echo "-S" || echo ""`
-
-		SDK_VERSION=`echo "$SDK_PATH" | perl -pe 's|.*iphonesimulator(.+)\.sdk|$1|i'`
-		SDK_SETTINGS=`find "$SDK_PATH" -maxdepth 1 -name "SDKSettings.*"`
-		if [[ -n "$ENABLE" ]] && ! $ENABLE && [[ "$SDK_SETTINGS" == *.plist ]]; then
-			echo "Disabling SDK $SDK_VERSION by changing the extension of \`$SDK_SETTINGS\` to \`*.disabled\`..."
-
-			# If the user did not specify a login password, this will just print a newline
-			printf "$LOGIN_PASSWORD\n" | sudo $SUDO_INPUT mv "$SDK_SETTINGS" "$SDK_PATH/SDKSettings.disabled"
-		elif [[ -n "$ENABLE" ]] && $ENABLE && [[ "$SDK_SETTINGS" == *.disabled ]]; then
-			echo "Re-enabling SDK $SDK_VERSION by changing the extension of \`$SDK_SETTINGS\` back to \`*.plist\`..."
-
-			printf "$LOGIN_PASSWORD\n" | sudo $SUDO_INPUT mv "$SDK_SETTINGS" "$SDK_PATH/SDKSettings.plist"
-		fi
-	}
-	# so that the subshell used by find -exec can call this function
-	export -f enable_SDK_at_path
-	export LOGIN_PASSWORD
-	export LIVE
-
-	# If a SDK version is passed, disable all other SDKs 
-	if [[ -n "$SDK_VERSION" ]]; then
-		# The quoting of "xcode-select" is just so that "select" doesn't mess up this file's syntax highlighting
-		find "$('xcode-select' -print-path)" \
-			-iname "iphonesimulator*.sdk" -and -not -iname "iphonesimulator${SDK_VERSION}.sdk" \
-			-exec bash -c 'enable_SDK_at_path "$0" $1' {} false ';'
-	else
-		# Otherwise, (re)enable all SDKs
-		find "$('xcode-select' -print-path)" \
-			-iname "iphonesimulator*.sdk" \
-			-exec bash -c 'enable_SDK_at_path "$0" $1' {} true ';'
-	fi
-}
-
 # resets the simulator, or uninstalls the app from the device 
 # (the best that we can do, given device support
 # --also probably better not to be as destructive as a reset on a device)
@@ -347,11 +302,6 @@ reinstall_app_on_device () {
 
 # This function allows the script to abort at any point below without duplicating cleanup logic
 cleanup_and_exit () {
-	# Re-enable all simulator SDKs if necessary
-	echo ""
-	enable_SDK_version_or_all
-	echo ""
-
 	kill -9 $AUTHORIZE_INSTRUMENTS_PID 2> /dev/null
 	kill -9 $INSTRUMENTS_PID 2> /dev/null
 	kill -9 $KILL_INSTRUMENTS_PID 2> /dev/null
@@ -409,26 +359,6 @@ if [[ -z "$SDK" ]]; then
 	SDK=`[[ -n "$SIM_DEVICE" ]] && echo "iphonesimulator" || echo "iphoneos"`
 fi
 
-# instruments always uses the iPad simulator for universal binaries,
-# so to choose a simulated device type we've got to override the TARGETED_DEVICE_FAMILY at build.
-# http://openradar.appspot.com/13607967
-TARGETED_DEVICE_FAMILY_ARG=""
-if [[ -n "$SIM_DEVICE" ]]; then
-	case $SIM_DEVICE in
-		iPhone*)
-			DEVICE_FAMILY=1
-			;;
-		iPad*)
-			DEVICE_FAMILY=2
-			;;
-		*)
-			echo "\nERROR: Unrecognized device type."
-			cleanup_and_exit 1
-			;;
-	esac
-	TARGETED_DEVICE_FAMILY_ARG="TARGETED_DEVICE_FAMILY=$DEVICE_FAMILY"
-fi
-
 # This is a function so that it may be called again if instruments hiccups; see below.
 build_app () {
 	# Clear build products from a prior run if any.
@@ -461,7 +391,6 @@ build_app () {
 			-scheme "$SCHEME"\
 			-configuration "$CONFIGURATION"\
 			-sdk "$SDK"\
-			$TARGETED_DEVICE_FAMILY_ARG\
 			SYMROOT="$BUILD_DIR"\
 			VALIDATE_PRODUCT=NO $1
 	}
@@ -516,12 +445,9 @@ if [[ -n "$SIM_DEVICE" ]]; then
 		echo "- Setting the version to $SIM_VERSION (Simulator version not specified--defaulting to latest simulator installed)"
 	fi
 
-	# The instruments command-line tool picks an arbitrary SDK depending on toolchain version:
-	# http://openradar.appspot.com/radar?id=3107401
-	# We must disable the SDKs other than the one we're targeting 
-	# to force it to use the simulator's current setting
-	enable_SDK_version_or_all "$SIM_VERSION"
-
+	# We don't strictly need to set the device type here--instruments uses whatever
+	# device is specified when it is launched, not what was previously in use
+	# --but it's nice to see in the logs, also we need to reset the simulator anyway
 	echo "- Setting the device to \"$SIM_DEVICE\""
 	echo "- Resetting simulator content and settings"
 
@@ -583,12 +509,12 @@ launch_instruments () {
 	# Note that the Subliminal trace template includes the UIASCRIPT
 	# and the environment variables passed to this script
 	# are passed to instruments and the app by being exported at the top of this script
-	TIMEOUT_ARG=`[[ -n "$TIMEOUT" ]] && echo "-l $TIMEOUT" || echo ""`
-	HARDWARE_ARG=`[[ -n "$HW_ID" ]] && echo "-w $HW_ID" || echo ""`
+	local timeout_arg=`[[ -n "$TIMEOUT" ]] && echo "-l $TIMEOUT" || echo ""`
+	local device=`[[ -n "$HW_ID" ]] && echo "$HW_ID" || echo "$SIM_DEVICE - Simulator - iOS $SIM_VERSION"`
 	printf "$LOGIN_PASSWORD\n" | "$SCRIPT_DIR/subliminal-instrument.sh"\
 		-D "$TRACE_FILE"\
-		$TIMEOUT_ARG\
-		$HARDWARE_ARG\
+		$timeout_arg\
+		-w "$device"\
 		"$APP"\
 		-e UIARESULTSPATH "$RESULTS_DIR" &
 	INSTRUMENTS_PID=$!
@@ -647,17 +573,8 @@ while ([ ! -e "$RESULT_LOG" ] || grep -qi "Please relaunch the tests" "$RESULT_L
 	(( INSTRUMENTS_RETRY_COUNT++ ))
 	echo "\nInstruments hiccuped; retrying with clean build and a timeout of $CURRENT_LAUNCH_TIMEOUT seconds...\n"
 
-	# Re-enable all simulator SDKs (if necessary) while we build
-	echo ""
-	enable_SDK_version_or_all
-	echo ""
-
 	build_app
 	[ $? -eq 0 ] || cleanup_and_exit 1
-
-	# Now once again disable those other than the one we're targeting
-	[[ -n "$SIM_VERSION" ]] && enable_SDK_version_or_all "$SIM_VERSION"
-	echo ""
 
 	# Reset the simulator/reinstall the app on the device 
 	# in case instruments installed the app and then aborted
