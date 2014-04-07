@@ -62,19 +62,19 @@
             }
             Class compareClass;
             switch (_containerType) {
-                case SLTableViewAccessibilityContainer:
+                case SLAccessibilityContainerTypeTableViewCell:
                     compareClass = [UITableView class];
                     break;
-                case SLCollectionViewAccessibilityContainer:
+                case SLAccessibilityContainerTypeCollectionViewCell:
                     compareClass = [UICollectionView class];
                     break;
-                case SLNavigationBarContainer:
+                case SLAccessibilityContainerTypeNavigationBar:
                     compareClass = [UINavigationBar class];
                     break;
-                case SLTabBarContainer:
+                case SLAccessibilityContainerTypeTabBar:
                     compareClass = [UITabBar class];
                     break;
-                case SLToolbarContainer:
+                case SLAccessibilityContainerTypeToolbar:
                     compareClass = [UIToolbar class];
                     break;
 
@@ -82,7 +82,7 @@
                     compareClass = [UIView class];
                     break;
             }
-            if ((_containerType == SLNavigationBarContainer) || (_containerType == SLTabBarContainer) || (_containerType == SLToolbarContainer)) {
+            if ((_containerType == SLAccessibilityContainerTypeTabBar) || (_containerType == SLAccessibilityContainerTypeNavigationBar) || (_containerType == SLAccessibilityContainerTypeToolbar)) {
                 return [accessibilityParent isKindOfClass:compareClass];
             }
 

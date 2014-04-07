@@ -14,24 +14,24 @@
 
 + (instancetype)cellWithElement:(SLElement *)element
 {
-    return [SLTableViewCell containerWithElement:element andContainerType:SLTableViewAccessibilityContainer];
+    return [SLTableViewCell containerWithElement:element andContainerType:SLAccessibilityContainerTypeTableViewCell];
 }
 
 + (instancetype)cellWithIdentifier:(NSString *)identifer
 {
-    return [SLTableViewCell containerWithIdentifier:identifer andContainerType:SLTableViewAccessibilityContainer];
+    return [SLTableViewCell containerWithIdentifier:identifer andContainerType:SLAccessibilityContainerTypeTableViewCell];
 }
 + (instancetype)cellWithLabel:(NSString *)label
 {
-    return [SLTableViewCell containerWithLabel:label andContainerType:SLTableViewAccessibilityContainer];
+    return [SLTableViewCell containerWithLabel:label andContainerType:SLAccessibilityContainerTypeTableViewCell];
 }
 + (instancetype)cellWithLabel:(NSString *)label value:(NSString *)value traits:(UIAccessibilityTraits)traits
 {
-    return [SLTableViewCell containerWithLabel:label value:value traits:traits andContainerType:SLTableViewAccessibilityContainer];
+    return [SLTableViewCell containerWithLabel:label value:value traits:traits andContainerType:SLAccessibilityContainerTypeTableViewCell];
 }
 + (id)childElementMatching:(SLElement *)childElement inContainerElement:(SLElement *)containerElement
 {
-    return [SLTableViewCell childElementMatching:childElement inContainerElement:containerElement ofContainerType:SLTableViewAccessibilityContainer];
+    return [SLTableViewCell childElementMatching:childElement inContainerElement:containerElement ofContainerType:SLAccessibilityContainerTypeTableViewCell];
 }
 
 //+ (id)tableViewCellAtIndexPath:(NSIndexPath *)indexPath

@@ -9,11 +9,11 @@
 #import "SLElement.h"
 
 typedef NS_ENUM(NSInteger, SLAccessibilityContainerType) {
-    SLTableViewAccessibilityContainer,
-    SLCollectionViewAccessibilityContainer,
-    SLNavigationBarContainer,
-    SLToolbarContainer,
-    SLTabBarContainer
+    SLAccessibilityContainerTypeTableViewCell,
+    SLAccessibilityContainerTypeCollectionViewCell,
+    SLAccessibilityContainerTypeNavigationBar,
+    SLAccessibilityContainerTypeToolbar,
+    SLAccessibilityContainerTypeTabBar
 };
 
 @interface SLAccessibilityContainer : SLElement

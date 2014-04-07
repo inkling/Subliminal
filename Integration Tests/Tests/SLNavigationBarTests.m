@@ -33,7 +33,7 @@
 
 - (void)testRightButtonWithNewMethod
 {
-    SLAccessibilityContainer *navBar = [SLAccessibilityContainer containerWithIdentifier:@"NavigationBar" andContainerType:SLNavigationBarContainer];
+    SLAccessibilityContainer *navBar = [SLAccessibilityContainer containerWithIdentifier:@"NavigationBar" andContainerType:SLAccessibilityContainerTypeNavigationBar];
     SLLogAsync(@"navBar is %@", navBar);
     SLAssertTrue([UIAElement(navBar) isValidAndVisible], @"Couldn't find nav bar matching specifications");
     SLButton *rightButton = [navBar childElementMatching:[SLButton elementWithAccessibilityLabel:@"Right"]];
@@ -45,7 +45,7 @@
 
 - (void)testTitleLabel
 {
-    SLAccessibilityContainer *navBar = [SLAccessibilityContainer containerWithIdentifier:@"NavigationBar" andContainerType:SLNavigationBarContainer];
+    SLAccessibilityContainer *navBar = [SLAccessibilityContainer containerWithIdentifier:@"NavigationBar" andContainerType:SLAccessibilityContainerTypeNavigationBar];
     SLLogAsync(@"navBar is %@", navBar);
     SLAssertTrue([UIAElement(navBar) isValidAndVisible], @"Couldn't find nav bar matching specifications");
     SLElement *title = [navBar childElementMatching:[SLElement elementWithAccessibilityLabel:@"Testing" value:nil traits:UIAccessibilityTraitStaticText]];

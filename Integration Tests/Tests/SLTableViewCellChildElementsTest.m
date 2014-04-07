@@ -115,7 +115,7 @@
 - (void)testMatchingTableViewCellWithAccessibilityContainerMethod
 {
     [[SLDevice currentDevice] captureScreenshotWithFilename:@"start"];
-    SLAccessibilityContainer *tableViewCell = [SLAccessibilityContainer containerWithLabel:@"Cell 2" andContainerType:SLTableViewAccessibilityContainer];
+    SLAccessibilityContainer *tableViewCell = [SLAccessibilityContainer containerWithLabel:@"Cell 2" andContainerType:SLAccessibilityContainerTypeTableViewCell];
     SLButton *favoriteButton = [tableViewCell childElementMatching:[SLButton elementWithAccessibilityLabel:@"Favorite"]];
 
     SLLogAsync(@"favoriteButton.value is %@", UIAElement(favoriteButton.value));
