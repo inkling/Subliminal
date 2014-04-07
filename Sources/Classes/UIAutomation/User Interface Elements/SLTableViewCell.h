@@ -12,6 +12,7 @@
 
 
 + (instancetype)cellWithElement:(SLElement *)element;
+//+ (instancetype)cellWithElement:(SLElement *)element inTableViewWithIdentifier:(NSString *)identifier;
 
 + (instancetype)cellWithIdentifier:(NSString *)identifer;
 + (instancetype)cellWithLabel:(NSString *)label;
