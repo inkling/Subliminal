@@ -10,7 +10,7 @@ To install Subliminal see the [installation walkthrough](https://github.com/inkl
 
 _Because of the significant period of time between the 1.0.1 and 1.1 releases, the 1.1 changelog is heavily abridged._
 
-###### Notable Features
+##### Notable Features
 
 * Cocoapods support  
   [Max Tagher](https://github.com/MaxGabriel) [#30](https://github.com/inkling/Subliminal/pull/30)
@@ -69,7 +69,7 @@ _Because of the significant period of time between the 1.0.1 and 1.1 releases, t
   
 
 
-###### Notable bug fixes
+##### Notable bug fixes
 
 * Detect the simulator launching in an inconsistent state (Travis CI Stability improvement)  
   [Jeffrey Wear](https://github.com/wearhere) [#148](https://github.com/inkling/Subliminal/pull/148)
