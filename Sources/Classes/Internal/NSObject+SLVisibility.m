@@ -241,7 +241,7 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
     NSAssert(maxY >= minY, @"maxY (%d) should be greater than or equal to minY (%d)", maxY, minY);
     size_t columns = maxX - minX + 1;
     size_t rows = maxY - minY + 1;
-    unsigned char *pixels = (unsigned char *)malloc(columns * rows * 4);
+    unsigned char *pixels = (unsigned char *)calloc(columns * rows * 4, 1);
     CGContextRef context = CGBitmapContextCreate(pixels, columns, rows, 8, 4 * columns, rgbColorSpace, kCGBitmapAlphaInfoMask & kCGImageAlphaPremultipliedLast);
     CGContextTranslateCTM(context, -minX, -minY);
     [self renderViewRecursively:window inContext:context withTargetView:self baseView:window];
