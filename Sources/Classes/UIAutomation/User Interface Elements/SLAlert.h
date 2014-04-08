@@ -377,4 +377,6 @@ extern const NSTimeInterval SLAlertHandlerDidHandleAlertDelay;
  */
 + (void)loadUIAAlertHandling;
 
++ (BOOL)UIAAlertHandlingLoaded;
+
 @end

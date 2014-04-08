@@ -173,6 +173,11 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
     });
 }
 
++ (BOOL)UIAAlertHandlingLoaded {
+    return SLAlertHandlerUIAAlertHandlingLoaded;
+}
+
+
 + (void)setLoggingEnabled:(BOOL)enableLogging {
     if (enableLogging != SLAlertHandlerLoggingEnabled) {
         SLAlertHandlerLoggingEnabled = enableLogging;
