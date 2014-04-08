@@ -29,7 +29,6 @@ print_usage_and_fail () {
 	echo """
 subliminal-test (-project <project_path> | -workspace <workspace_path>) 
 		( -sim_device <device_type> | -hw_id <udid> )
-		(-login_password <password> | --live)
 		[-build_tool <tool_name>] [-scheme <scheme_name>] [-sdk <sdk>] [-replacement_bundle_id <id>] [--quiet_build]
 		[-sim_version <version>] [-timeout <timeout>] [-output <output_dir>] 
 		[-e <variable> <value>]
@@ -51,10 +50,8 @@ Otherwise, \`subliminal-test\` returns success (0).
 
   * alongside the other scripts that were originally in \`/Supporting Files/CI\`;
   * with Subliminal having been installed on the test machine, using \`rake install DOCS=no\`;
-  * and with GUI scripting enabled: if the test machine runs Mac OS X 10.8 Mountain Lion, open System Preferences and check 
-    \"Enable access for assistive devices\" in the Accessibility preference pane. If the test machine runs Mac OS X 10.9 Mavericks,
-    open System Preferences and click on \"Security & Privacy\". Select \"Accessibility\" and drag Terminal.app from Applications/Utilities 
-    into the list. Do not forget to check the box.
+  * and with \`instruments\` having been \"pre-authorized\" to take control of the application,
+  	as described here: https://github.com/inkling/Subliminal/wiki/Continuous-Integration#faq.
 
 Also make sure that your \"Integration Tests\" scheme is shared (in Xcode, click \`Product -> Schemes -> Manage Schemes…\`
 and then click the \"Shared\" checkbox next to the scheme) and checked into source control:
@@ -82,19 +79,6 @@ Required arguments:
 
 	-hw_id <udid>			The UDID of the hardware to target.
 					Either this or \`-sim_device\` must be specified.
-
-	-login_password <password>	The current user's login password. This permits 
-					this script to authorize \`instruments\` to take control
-					of your application if it asks for such permission when
-					launched: http://openradar.appspot.com/radar?id=1544403.
-
-					If a developer will be attending the tests as they execute, 
-					they may specify \`--live\` rather than provide their password.
-
-	--live				Indicates that this script is being attended by a developer
-					who can enter their password to authorize instruments.
-					For this script to run un-attended, the current user's
-					login password must be specified using \`-login_password\`.
 
 Optional build arguments:
 	-build_tool <tool_name>		The tool to use to build the scheme. Should be either \"xcrun xcodebuild\" 
@@ -170,12 +154,22 @@ BUILD_TOOL="xcrun xcodebuild"
 SCHEME="Integration Tests"
 CONFIGURATION="Release"
 
+LOGIN_PASSWORD_DEPRECATION_MESSAGE="""\n
+WARNING: The \`--live\` and \`-login_password\` options have been deprecated\n
+as of Subliminal 1.1. https://github.com/inkling/Subliminal/wiki/Continuous-Integration#faq\n
+describes how to \"pre-authorize\" \`instruments\` so that \`subliminal-test\`\n
+may run un-attended without the current user's login password.\n
+\n
+In an upcoming release, \`subliminal-instrument\` will reject the \`--live\` and\n
+\`-login_password\` options and require that \`instruments\` be pre-authorized.
+"""
+
 while :
 do
 case $1 in
 	# Must check these before the single dash options (because -* would match them)
 	--live)
-		LIVE=true
+		echo $LOGIN_PASSWORD_DEPRECATION_MESSAGE
 		shift 1;;
 
     --quiet_build)
@@ -187,7 +181,7 @@ case $1 in
 		shift 1;;
 
 	# Set argument, wait for value
-    -project|-workspace|-sim_device|-hw_id|-login_password|-build_tool|-scheme|-configuration|-sdk|-replacement_bundle_id|-sim_version|-timeout|-output|-e)
+    -project|-workspace|-sim_device|-hw_id|-build_tool|-scheme|-configuration|-sdk|-replacement_bundle_id|-sim_version|-timeout|-output|-e)
 		if [[ -n "$CURRENT_ARG" ]]; then
 			echo "Missing value for argument: $CURRENT_ARG"
 			print_usage_and_fail
@@ -199,6 +193,13 @@ case $1 in
 			*)	CURRENT_ARG=`echo ${1#-} | tr [[:lower:]] [[:upper:]]`;;
 		esac
 	    shift 1;;
+
+	-login_password)
+		echo $LOGIN_PASSWORD_DEPRECATION_MESSAGE
+		# While `-login_password` is deprecated, we still need to use it (if present)
+		# to try to authorize `instruments` in case the user has not yet pre-authorized `instruments`
+		CURRENT_ARG=LOGIN_PASSWORD
+		shift 1;;
 
     -*)	
 		echo "Unrecognized argument: $1"
@@ -233,8 +234,7 @@ fi
 
 # Enforce required args
 if [[ ( -z "$PROJECT" && -z "$WORKSPACE" ) || 
-	( -z "$SIM_DEVICE" && -z "$HW_ID" ) || 
-	( -z "$LOGIN_PASSWORD" && -z "$LIVE" ) ]]; then
+	  ( -z "$SIM_DEVICE" && -z "$HW_ID" ) ]]; then
 	echo "Missing required arguments"
 	print_usage_and_fail
 fi
@@ -490,10 +490,10 @@ if [[ -z $VERBOSE_LOGGING ]] || ! $VERBOSE_LOGGING; then
 	defaults write com.apple.dt.InstrumentsCLI UIAVerboseLogging 4096
 fi
 
-# Attempt to authorize instruments to take control of the application
-# Unless the user indicated otherwise
-if [[ -z $LIVE ]] || ! $LIVE; then
-	# First attempt to authorize instruments when it is launched: 
+# If `-login_password` was specified (i.e. the user has not yet pre-authorized `instruments`)
+# attempt to authorize instruments using the password
+if [[ -n "$LOGIN_PASSWORD" ]]; then
+	# First attempt to authorize `instruments` when it is launched: 
 	# in the background, monitor for, and dismiss, the dialog it shows
 	osascript "$SCRIPT_DIR/authorize_instruments.scpt" "$LOGIN_PASSWORD" &
 	# Track pid to be killed when the parent script ends
@@ -501,7 +501,8 @@ if [[ -z $LIVE ]] || ! $LIVE; then
 fi
 
 launch_instruments () {
-	# Second attempt (in case the dialog does not show, as in certain CI environments 
+	# Second attempt to authorize `instruments` ourselves
+	# (in case the dialog does not show, as in certain CI environments 
 	# like Travis): enter the login password on the command line, 
 	# by piping the password, followed by a newline, to instruments
 	# (If the user did not supply a login password, this will just print a newline)

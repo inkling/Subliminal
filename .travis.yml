@@ -18,10 +18,6 @@ install:
 ## Test matrix
 
 env:
-    global:
-        # To work around http://openradar.appspot.com/radar?id=1544403,
-        # the tests need the Travis user's password.
-        - LOGIN_PASSWORD="j4K7CK4oM49ZA27y532b"
     matrix:
         - TEST_COMMAND=test:unit                TEST_SDK=6.1
         - TEST_COMMAND=test:unit                TEST_SDK=7.1
