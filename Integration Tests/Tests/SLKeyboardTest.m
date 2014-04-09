@@ -108,4 +108,14 @@
     SLAssertTrueWithTimeout([[SLKeyboard keyboard] isValid] == NO, 2.0 , @"Keyboard should not be valid.");
 }
 
+- (void)testHideKeyboard {
+    SLAskApp(showKeyboard);
+    [self wait:[SLAskApp(keyboardInfo)[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];
+    
+    [[SLKeyboard keyboard] hide];
+    [self wait:[SLAskApp(keyboardInfo)[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];
+    
+    SLAssertTrueWithTimeout([[SLKeyboard keyboard] isValid] == NO, 2.0 , @"Keyboard should not be valid.");
+}
+
 @end

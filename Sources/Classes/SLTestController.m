@@ -37,6 +37,7 @@
 
 
 const unsigned int SLTestControllerRandomSeed = UINT_MAX;
+const unsigned int SLTestControllerNoShuffleSeed = 0;
 
 static NSUncaughtExceptionHandler *appsUncaughtExceptionHandler = NULL;
 static const NSTimeInterval kDefaultTimeout = 5.0;
@@ -141,34 +142,40 @@ u_int32_t random_uniform(u_int32_t upperBound) {
     return ( random() / ( RAND_MAX + 1.0 ) ) * upperBound;
 }
 
-+ (NSArray *)testsToRun:(NSSet *)tests usingSeed:(inout unsigned int *)seed withFocus:(BOOL *)withFocus {
-    NSMutableArray *testsToRun = [NSMutableArray arrayWithArray:[tests allObjects]];
-
-    // sort the array to produce a consistent basis for randomization
-    [testsToRun sortUsingComparator:^NSComparisonResult(Class test1, Class test2) {
-        // make sure to strip the focus prefix if present
-        NSString *test1Name = [NSStringFromClass(test1) lowercaseString];
-        if ([test1Name hasPrefix:SLTestFocusPrefix]) {
-            test1Name = [test1Name substringFromIndex:[SLTestFocusPrefix length]];
-        }
-        NSString *test2Name = [NSStringFromClass(test2) lowercaseString];
-        if ([test2Name hasPrefix:SLTestFocusPrefix]) {
-            test2Name = [test2Name substringFromIndex:[SLTestFocusPrefix length]];
-        }
-        return [test1Name compare:test2Name];
-    }];
-
-    // randomize the array
-    unsigned int seedSpecified = seed ? *seed : SLTestControllerRandomSeed;
-    unsigned int seedUsed = (seedSpecified == SLTestControllerRandomSeed) ? time_seed() : seedSpecified;
-    if (seed) *seed = seedUsed;
-    srandom(seedUsed);
-    NSAssert([testsToRun count] <= (uint32_t)-1, @"The cast below is unsafe.");
-    // http://en.wikipedia.org/wiki/Fisher–Yates_shuffle
-    for (NSUInteger i = [testsToRun count] - 1; i > 0; --i) {
-        [testsToRun exchangeObjectAtIndex:i withObjectAtIndex:random_uniform((u_int32_t)(i + 1))];
++ (NSArray *)testsToRun:(id)tests usingSeed:(inout unsigned int *)seed withFocus:(BOOL *)withFocus {
+    NSMutableArray *testsToRun = nil;
+    if ([tests isKindOfClass:[NSSet class]]) {
+        testsToRun = [NSMutableArray arrayWithArray:[tests allObjects]];
+    } else if ([tests isKindOfClass:[NSArray class]]){
+        testsToRun = [NSMutableArray arrayWithArray:tests];
     }
+    NSAssert(testsToRun, @"testsToRun cannot be nil. Was something other than an array or set passed in?");
 
+    // randomize the array unless the seed is SLTestControllerNoShuffleSeed
+    unsigned int seedSpecified = seed ? *seed : SLTestControllerRandomSeed;
+    unsigned int seedUsed = (seedSpecified == SLTestControllerRandomSeed && seedSpecified != SLTestControllerNoShuffleSeed) ? time_seed() : seedSpecified;
+    if (seed) *seed = seedUsed;
+    if (seedUsed != SLTestControllerNoShuffleSeed) {
+        // sort the array to produce a consistent basis for randomization
+        [testsToRun sortUsingComparator:^NSComparisonResult(Class test1, Class test2) {
+            // make sure to strip the focus prefix if present
+            NSString *test1Name = [NSStringFromClass(test1) lowercaseString];
+            if ([test1Name hasPrefix:SLTestFocusPrefix]) {
+                test1Name = [test1Name substringFromIndex:[SLTestFocusPrefix length]];
+            }
+            NSString *test2Name = [NSStringFromClass(test2) lowercaseString];
+            if ([test2Name hasPrefix:SLTestFocusPrefix]) {
+                test2Name = [test2Name substringFromIndex:[SLTestFocusPrefix length]];
+            }
+            return [test1Name compare:test2Name];
+        }];
+        
+        srandom(seedUsed);
+        // http://en.wikipedia.org/wiki/Fisher–Yates_shuffle
+        for (NSUInteger i = [testsToRun count] - 1; i > 0; --i) {
+            [testsToRun exchangeObjectAtIndex:i withObjectAtIndex:random_uniform((u_int32_t)(i + 1))];
+        }
+    }
     // now filter the array: only run tests that are concrete...
     [testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"isAbstract == NO"]];
 
@@ -315,11 +322,11 @@ u_int32_t random_uniform(u_int32_t upperBound) {
     [[SLLogger sharedLogger] logTestingStart];
 }
 
-- (void)runTests:(NSSet *)tests withCompletionBlock:(void (^)())completionBlock {
+- (void)runTests:(id)tests withCompletionBlock:(void (^)())completionBlock {
     [self runTests:tests usingSeed:SLTestControllerRandomSeed withCompletionBlock:completionBlock];
 }
 
-- (void)runTests:(NSSet *)tests usingSeed:(unsigned int)seed withCompletionBlock:(void (^)())completionBlock {
+- (void)runTests:(id)tests usingSeed:(unsigned int)seed withCompletionBlock:(void (^)())completionBlock {
     dispatch_async(_runQueue, ^{
         _completionBlock = completionBlock;
 
