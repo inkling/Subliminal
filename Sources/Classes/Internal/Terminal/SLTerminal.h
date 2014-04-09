@@ -21,7 +21,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
 
 /**
  The singleton `SLTerminal` instance communicates with the Automation instrument 
@@ -139,6 +138,15 @@
 
 /** The serial queue on which the receiver evaluates all JavaScript. */
 @property (nonatomic, readonly) dispatch_queue_t evalQueue;
+
+/**
+ Whether or not the current queue is the `evalQueue`.
+ 
+ To avoid deadlocks, use this method to check if you're on the `evalQueue` before `dispatch_sync`ing a block to it.
+ 
+ @return Whether or not the current queue is the `evalQueue`.
+ */
+- (BOOL)currentQueueIsEvalQueue;
 
 /**
  Causes `SLTerminal.js` to finish evaluating commands.

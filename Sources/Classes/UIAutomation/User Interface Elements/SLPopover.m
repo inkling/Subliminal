@@ -38,6 +38,9 @@
      by tapping _outside_ the popover.
      */
     [self waitUntilTappable:NO thenSendMessage:@"dismiss()"];
+
+    // wait for the dismissal animation to finish
+    [NSThread sleepForTimeInterval:0.5];
 }
 
 @end

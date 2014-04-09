@@ -29,6 +29,7 @@
 #import "SLTerminal.h"
 #import "SLElement.h"
 #import "SLAlert.h"
+#import "SLDevice.h"
 
 #import "SLStringUtilities.h"
 
@@ -44,45 +45,25 @@ static const NSTimeInterval kDefaultTimeout = 5.0;
 
 @interface SLTestController () <UIAlertViewDelegate>
 
-/// The currently-running test, if any.
-@property (nonatomic, readonly) SLTest *currentTest;
-
 @end
 
 
 /// Uncaught exceptions are logged to Subliminal for visibility.
 static void SLUncaughtExceptionHandler(NSException *exception)
 {
-    NSMutableString *exceptionMessage = [[NSMutableString alloc] initWithString:@"Uncaught exception occurred"];
-    SLTest *currentTest = [[SLTestController sharedTestController] currentTest];
-    if (currentTest) {
-        NSString *currentTestName = NSStringFromClass([currentTest class]);
-        NSString *currentTestCase = currentTest.currentTestCase;
-        if (currentTestCase) {
-            [exceptionMessage appendFormat:@" during test case \"-[%@ %@]\"", currentTestName, currentTestCase];
-        } else {
-            [exceptionMessage appendFormat:@" during test \"%@\"", currentTestName];
-        }
-    }
-    [exceptionMessage appendFormat:@": ***%@***", [exception name]];
-    NSString *exceptionReason = [exception reason];
-    if ([exceptionReason length]) {
-        [exceptionMessage appendFormat:@" for reason: %@", exceptionReason];
-    }
-    
     if ([NSThread isMainThread]) {
         // We need to wait for UIAutomation, but we can't block the main thread,
         // so we spin the run loop instead.
         __block BOOL hasLogged = NO;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            SLLog(@"%@", exceptionMessage);
+            [[SLLogger sharedLogger] logUncaughtException:exception];
             hasLogged = YES;
         });
         while (!hasLogged) {
             [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.25]];
         }
     } else {
-        SLLog(@"%@", exceptionMessage);
+        [[SLLogger sharedLogger] logUncaughtException:exception];
     }
 
     if (appsUncaughtExceptionHandler) {
@@ -192,7 +173,7 @@ u_int32_t random_uniform(u_int32_t upperBound) {
         srandom(seedUsed);
         // http://en.wikipedia.org/wiki/Fisher–Yates_shuffle
         for (NSUInteger i = [testsToRun count] - 1; i > 0; --i) {
-            [testsToRun exchangeObjectAtIndex:i withObjectAtIndex:random_uniform(i + 1)];
+            [testsToRun exchangeObjectAtIndex:i withObjectAtIndex:random_uniform((u_int32_t)(i + 1))];
         }
     }
     // now filter the array: only run tests that are concrete...
@@ -242,6 +223,29 @@ u_int32_t random_uniform(u_int32_t upperBound) {
     }
 }
 
+// In certain environments like Travis, `instruments` intermittently hangs.
+// When this occurs, it seems that the simulator is also in an inconsistent state
+// such that it can't be rotated, web pages don't load, etc.
+// If we detect that we are running in such an environment,
+// abort so that the test runner can relaunch.
+//
+// Don't try to do this when unit testing; it shouldn't be necessary
+// and communication with UIAutomation is disabled anyway.
+#if TARGET_IPHONE_SIMULATOR
+- (void)abortIfSimulatorIsInconsistent {
+    if ([SLTestController isBeingUnitTested]) return;
+    
+    const UIDeviceOrientation testOrientation = UIDeviceOrientationPortrait;
+
+    [[SLDevice currentDevice] setOrientation:testOrientation];
+    BOOL simulatorIsConsistent = ([UIDevice currentDevice].orientation == testOrientation);
+    if (!simulatorIsConsistent) {
+        [[SLLogger sharedLogger] logError:@"Please relaunch the tests: the simulator is in an inconsistent state. This run will now abort."];
+        abort();
+    }
+}
+#endif
+
 // Having the Accessibility Inspector enabled while tests are running
 // can cause problems with touch handling and/or prevent UIAutomation's alert
 // handler from being called.
@@ -254,7 +258,7 @@ u_int32_t random_uniform(u_int32_t upperBound) {
 
     // We detect if the Inspector is enabled by examining the simulator's Accessibility preferences
     // 1. get into the simulator's app support directory by fetching the sandboxed Library's path
-    NSString *userDirectoryPath = [[[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject] path];
+    NSString *userDirectoryPath = [(NSURL *)[[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject] path];
 
     // 2. get out of our application directory, back to the root support directory for this system version
     NSString *plistRootPath = [userDirectoryPath substringToIndex:([userDirectoryPath rangeOfString:@"Applications"].location)];
@@ -276,6 +280,10 @@ u_int32_t random_uniform(u_int32_t upperBound) {
     NSSetUncaughtExceptionHandler(&SLUncaughtExceptionHandler);
 
     SLLog(@"Tests are starting up... ");
+
+#if TARGET_IPHONE_SIMULATOR
+    [self abortIfSimulatorIsInconsistent];
+#endif
 
     // we use a local element resolution timeout
     // and suppress UIAutomation's timeout, to better control the timing of the tests
@@ -335,16 +343,16 @@ u_int32_t random_uniform(u_int32_t upperBound) {
 
         for (Class testClass in _testsToRun) {
             @autoreleasepool {
-                _currentTest = (SLTest *)[[testClass alloc] init];
+                SLTest *test = (SLTest *)[[testClass alloc] init];
 
                 NSString *testName = NSStringFromClass(testClass);
                 [[SLLogger sharedLogger] logTestStart:testName];
 
                 NSUInteger numCasesExecuted = 0, numCasesFailed = 0, numCasesFailedUnexpectedly = 0;
 
-                BOOL testDidFinish = [_currentTest runAndReportNumExecuted:&numCasesExecuted
-                                                                    failed:&numCasesFailed
-                                                        failedUnexpectedly:&numCasesFailedUnexpectedly];
+                BOOL testDidFinish = [test runAndReportNumExecuted:&numCasesExecuted
+                                                            failed:&numCasesFailed
+                                                failedUnexpectedly:&numCasesFailedUnexpectedly];
                 if (testDidFinish) {
                     [[SLLogger sharedLogger] logTestFinish:testName
                                       withNumCasesExecuted:numCasesExecuted
@@ -356,8 +364,6 @@ u_int32_t random_uniform(u_int32_t upperBound) {
                     _numTestsFailed++;
                 }
                 _numTestsExecuted++;
-
-                _currentTest = nil;
             }
         }
 

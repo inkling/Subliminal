@@ -23,6 +23,16 @@
 #import "SLStaticElement.h"
 #import "SLButton.h"
 
+/**
+ The iOS 7 SDK exposes the UIInputView class which allows the creation of
+ custom keyboards and other input views.
+ https://developer.apple.com/library/iOS/documentation/UIKit/Reference/UIInputView_class/Reference/Reference.html
+ 
+ The SLKeyboard protocol declares a standard way to interact with these custom
+ keyboards, such as -typeString:, where classes implementing the protocol define
+ any logic required to enter a string via their accosiated custom UIInputView
+ */
+
 @protocol SLKeyboard <NSObject>
 
 /**

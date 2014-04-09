@@ -22,6 +22,8 @@
 
 #import "SLUIAElement.h"
 #import "SLUIAElement+Subclassing.h"
+#import "SLGeometry.h"
+#import "SLDevice.h"
 
 #import <objc/runtime.h>
 
@@ -161,6 +163,10 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     [self waitUntilTappable:YES thenSendMessage:@"tap()"];
 }
 
+- (void)doubleTap {
+    [self waitUntilTappable:YES thenSendMessage:@"doubleTap()"];
+}
+
 - (void)touchAndHoldWithDuration:(NSTimeInterval)duration {
     [self waitUntilTappable:YES thenSendMessage:@"touchAndHold(%lf)", duration];
 }
@@ -202,18 +208,14 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 }
 
 - (CGRect)rect {
-    NSString *__block CGRectString = nil;
+    CGRect __block rect;
     [self waitUntilTappable:NO
           thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
-        NSString *rectString = [NSString stringWithFormat:@"%@.rect()", uiaRepresentation];
-        CGRectString = [[SLTerminal sharedTerminal] evalFunctionWithName:@"SLCGRectStringFromJSRect"
-                                                                  params:@[ @"rect" ]
-                                                                    body:@"if (!rect) return '';\
-                                                                           else return '{{' + rect.origin.x + ',' + rect.origin.y + '},\
-                                                                                         {' + rect.size.width + ',' + rect.size.height + '}}';"
-                                                                withArgs:@[ rectString ]];
+        NSString *javaScriptToReachRect = [NSString stringWithFormat:@"%@.rect()", uiaRepresentation];
+        rect = SLCGRectFromUIARect(javaScriptToReachRect);
     } timeout:[[self class] defaultTimeout]];
-    return ([CGRectString length] ? CGRectFromString(CGRectString) : CGRectNull);
+    
+    return rect;
 }
 
 - (void)logElement {
@@ -222,6 +224,22 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
 
 - (void)logElementTree {
     [self waitUntilTappable:NO thenSendMessage:@"logElementTree()"];
+}
+
+#pragma mark -
+
+- (void)captureScreenshotWithFilename:(NSString *)filename
+{
+    // The UIAutomation framework automatically appends an integer to screenshots with the same name to prevent overwriting
+    if (!filename) {
+        filename = @"element_screenshot";
+    }
+    if (CGRectIsNull(self.rect)) {
+        NSString *warningString = [NSString stringWithFormat:@"Could not take screenshot with filename %@: Could not determine element's position on-screen.", filename];
+        [[SLLogger sharedLogger] logWarning:warningString];
+        return;
+    }
+    [[SLDevice currentDevice] captureScreenshotWithFilename:filename inRect:self.rect];
 }
 
 @end

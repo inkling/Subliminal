@@ -39,6 +39,8 @@
 /**
  Dismisses the specified popover by tapping outside the popover 
  and within the region defined for dismissal.
+ 
+ This method will block until the popover has been fully dismissed.
  */
 - (void)dismiss;
 

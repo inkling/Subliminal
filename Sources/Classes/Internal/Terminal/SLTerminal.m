@@ -21,7 +21,6 @@
 //
 
 #import "SLTerminal.h"
-#import "SLTest.h"
 
 
 NSString *const SLTerminalJavaScriptException = @"SLTerminalJavaScriptException";
@@ -48,6 +47,11 @@ const NSTimeInterval SLTerminalReadRetryDelay = 0.1;
 // Travis' execution times, and what we (had) thought would suffice,
 // is closer to 0.05.
 const NSTimeInterval SLTerminalEvaluationDelay = 0.075;
+
+/**
+ Identifier for the `evalQueue` for use with `dispatch_get_specific`.
+ */
+static const void *const kEvalQueueIdentifier = &kEvalQueueIdentifier;
 
 @implementation SLTerminal {
     NSString *_scriptNamespace;
@@ -82,12 +86,19 @@ static SLTerminal *__sharedTerminal = nil;
     if (self) {
         _scriptNamespace = SLTerminalNamespace;
         _evalQueue = dispatch_queue_create("com.inkling.subliminal.SLTerminal.evalQueue", DISPATCH_QUEUE_SERIAL);
+        dispatch_queue_set_specific(_evalQueue, kEvalQueueIdentifier, (void *)kEvalQueueIdentifier, NULL);
     }
     return self;
 }
 
 - (void)dealloc {
+    // On OS X 10.8, dispatch objects are NSObjects, and ARC renders it unnecessary
+    // (and impossible) to manually release objects.
+    // But on iOS, dispatch objects only become NSObjects in iOS 6,
+    // and Subliminal still supports 5.1.
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
     dispatch_release(_evalQueue);
+#endif
 }
 
 - (NSString *)scriptNamespace {
@@ -96,6 +107,11 @@ static SLTerminal *__sharedTerminal = nil;
 
 - (dispatch_queue_t)evalQueue {
     return _evalQueue;
+}
+
+- (BOOL)currentQueueIsEvalQueue
+{
+    return dispatch_get_specific(kEvalQueueIdentifier) != NULL;
 }
 
 #if TARGET_IPHONE_SIMULATOR
@@ -110,7 +126,7 @@ static SLTerminal *__sharedTerminal = nil;
         NSString *plistName = [NSString stringWithFormat:@"%@.plist", [[NSBundle mainBundle] bundleIdentifier]];
 
         // 1. get into the simulator's app support directory by fetching the sandboxed Library's path
-        NSString *userDirectoryPath = [[[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject] path];
+        NSString *userDirectoryPath = [(NSURL *)[[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject] path];
         // 2. get out of our application directory, back to the root support directory for this system version
         plistRootPath = [userDirectoryPath substringToIndex:([userDirectoryPath rangeOfString:@"Applications"].location)];
 
@@ -156,7 +172,7 @@ static SLTerminal *__sharedTerminal = nil;
     NSParameterAssert(script);
     NSAssert(![NSThread isMainThread], @"-eval: must not be called from the main thread.");
 
-    if (dispatch_get_current_queue() != self.evalQueue) {
+    if (![self currentQueueIsEvalQueue]) {
         id __block result;
         NSException *__block evalException;
         dispatch_sync(self.evalQueue, ^{
@@ -245,7 +261,7 @@ static SLTerminal *__sharedTerminal = nil;
 }
 
 - (void)enableScriptLogging:(BOOL)enableScriptLogging {
-    if (dispatch_get_current_queue() != self.evalQueue) {
+    if (![self currentQueueIsEvalQueue]) {
         // dispatch_async so that this can be called by the application
         // before testing has started
         dispatch_async(self.evalQueue, ^{

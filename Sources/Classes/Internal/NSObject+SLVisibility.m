@@ -51,7 +51,7 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
  Returns the number of points from a set of test points for which the receiver is visible in a given window.
 
  @param testPointsInWindow a C array of points to test for visibility
- @param count the number of elements in testPointsInWindow
+ @param numPoints the number of elements in testPointsInWindow
  @param window the UIWindow in which to test visibility.  This should usually be
  the receiver's window, but could be a different window, for example if the
  point is to test whether the view is in one window or a different window.
@@ -241,7 +241,7 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
     NSAssert(maxY >= minY, @"maxY (%d) should be greater than or equal to minY (%d)", maxY, minY);
     size_t columns = maxX - minX + 1;
     size_t rows = maxY - minY + 1;
-    unsigned char *pixels = (unsigned char *)malloc(columns * rows * 4);
+    unsigned char *pixels = (unsigned char *)calloc(columns * rows * 4, 1);
     CGContextRef context = CGBitmapContextCreate(pixels, columns, rows, 8, 4 * columns, rgbColorSpace, kCGBitmapAlphaInfoMask & kCGImageAlphaPremultipliedLast);
     CGContextTranslateCTM(context, -minX, -minY);
     [self renderViewRecursively:window inContext:context withTargetView:self baseView:window];
@@ -255,7 +255,7 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
         NSUInteger col = x - minX;
         NSUInteger row = y - minY;
         NSUInteger pixelIndex = row * columns + col;
-        NSAssert(pixelIndex < columns * rows, @"Encountered invalid pixel index: %ul", pixelIndex);
+        NSAssert(pixelIndex < columns * rows, @"Encountered invalid pixel index: %lu", (unsigned long)pixelIndex);
         if (pixels[4 * pixelIndex + 3] >= kMinVisibleAlphaInt) {
             count++;
         }

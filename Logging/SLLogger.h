@@ -111,6 +111,15 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 - (dispatch_queue_t)loggingQueue;
 
 /**
+ Whether or not the current queue is the `loggingQueue`.
+ 
+ To avoid deadlocks, use this method to check if you're on the `loggingQueue` before `dispatch_sync`ing a block to it.
+ 
+ @return Whether or not the current queue is the `loggingQueue`.
+ */
+- (BOOL)currentQueueIsLoggingQueue;
+
+/**
  Logs a message.
  
  This method is the primitive logging method used by all other logging methods 
@@ -226,6 +235,15 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
  */
 - (void)logTestingFinishWithNumTestsExecuted:(NSUInteger)numTestsExecuted
                               numTestsFailed:(NSUInteger)numTestsFailed;
+
+/**
+ Logs an exception that was not caught by the tests or application.
+
+ This method is to be called from the test controller's uncaught exception handler.
+
+ @param exception The exception to be logged.
+ */
+- (void)logUncaughtException:(NSException *)exception;
 
 @end
 

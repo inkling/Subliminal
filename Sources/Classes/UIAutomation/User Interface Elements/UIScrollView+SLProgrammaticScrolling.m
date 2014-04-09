@@ -28,12 +28,6 @@
 - (void)slScrollWithStartOffset:(CGPoint)startOffset endOffset:(CGPoint)endOffset {
     // `-[UIScrollViewAccessibility(SafeCategory) accessibilityApplyScrollContent:sendScrollStatus:animated:]`
     // is only present in iOS 7
-    // we conditionally define `kCFCoreFoundationVersionNumber_iOS_6_1` so that Subliminal
-    // can be continue to be built using the iOS 6.1 SDK until Travis is updated
-    // (https://github.com/travis-ci/travis-ci/issues/1422)
-#ifndef kCFCoreFoundationVersionNumber_iOS_6_1
-#define kCFCoreFoundationVersionNumber_iOS_6_1 793.00
-#endif
     NSAssert(kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_6_1,
              @"%s is only supported on iOS 7.", __PRETTY_FUNCTION__);
 

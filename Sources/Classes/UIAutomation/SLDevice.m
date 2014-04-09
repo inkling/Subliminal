@@ -23,6 +23,8 @@
 #import "SLDevice.h"
 
 #import "SLTerminal.h"
+#import "SLStringUtilities.h"
+#import "SLGeometry.h"
 
 
 @implementation SLDevice
@@ -59,7 +61,21 @@ NSString * SLUIADeviceOrientationFromUIDeviceOrientation(UIDeviceOrientation dev
 {
     [[SLTerminal sharedTerminal] evalWithFormat:@"UIATarget.localTarget().setDeviceOrientation(%@)", SLUIADeviceOrientationFromUIDeviceOrientation(deviceOrientation)];
     // Delay slightly to ensure that UIDevice registers the new orientation
-    [NSThread sleepForTimeInterval:0.1];
+    [NSThread sleepForTimeInterval:0.3];
+}
+
+#pragma mark - Screenshots
+
+- (void)captureScreenshotWithFilename:(NSString *)filename
+{
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIATarget.localTarget().captureScreenWithName(\"%@\")",
+                                                [filename slStringByEscapingForJavaScriptLiteral]];
+}
+
+- (void)captureScreenshotWithFilename:(NSString *)filename inRect:(CGRect)rect
+{
+    [[SLTerminal sharedTerminal] evalWithFormat:@"UIATarget.localTarget().captureRectWithName(%@,\"%@\")",
+                                                SLUIARectFromCGRect(rect),[filename slStringByEscapingForJavaScriptLiteral]];
 }
 
 @end

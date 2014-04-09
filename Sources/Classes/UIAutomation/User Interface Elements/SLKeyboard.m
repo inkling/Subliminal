@@ -30,12 +30,20 @@
 }
 
 - (void)typeString:(NSString *)string {
-    // There appears to be a bug in versions of iOS prior to 6.0 which prevents
-    // UIAKeyboard.typeString from working correctly for strings longer than one
-    // character.  To work around this issue on older versions of iOS we send a
-    // separate typeString message for each character of the string to be typed.
+    /*
+     The following bugs prevent `UIAKeyboard.typeString` from working correctly:
+     
+        *   in versions of iOS prior to 6.0, the function throws an exception
+            when asked to type strings longer than one character
+        *   on iOS 7, certain characters are mistyped--incorrectly capitalized, skipped entirely,
+            or reported as not tappable
+
+     We work around these by sending a separate `typeString` message
+     for each character of the string to be typed.
+     */
     NSString *escapedString = [string slStringByEscapingForJavaScriptLiteral];
-    if (kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_5_1) {
+    if ((kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_5_1) &&
+        (kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_6_1)) {
         [self waitUntilTappable:YES
                 thenSendMessage:@"typeString('%@')", escapedString];
     } else {

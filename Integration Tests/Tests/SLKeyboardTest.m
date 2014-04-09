@@ -57,7 +57,7 @@
     [UIAElement([SLKeyboard keyboard]) typeString:kExpectedText];
     NSString *actualText = SLAskApp(text);
     SLAssertTrue([kExpectedText isEqualToString:actualText],
-                 @"Did not type string as expected.");
+                 @"Did not type string as expected: '%@' (expected) vs. '%@' (actual).", kExpectedText, actualText);
 }
 
 - (void)testTypeStringChangesKeyplanesAsNecessary {
@@ -80,18 +80,32 @@
                     (not visible before typing).");
     NSString *actualText = SLAskApp(text);
     SLAssertTrue([kExpectedText isEqualToString:actualText],
-                 @"Did not type string as expected.");
+                 @"Did not type string as expected: '%@' (expected) vs. '%@' (actual).", kExpectedText, actualText);
 }
 
 - (void)testTapKeyboardKey {
     SLAskApp(showKeyboard);
-    [self wait:[SLAskApp(keyboardInfo)[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];
+
+    // On iOS 7 on Travis, tapping this key does not register sometimes,
+    // so we use a longer delay than the notification would suggest (see the other cases)
+    // to try to make sure that the key will be fully visible and tappable.
+    [self wait:0.5];
 
     NSString *const kExpectedText = @"J";
     [UIAElement([SLKeyboardKey elementWithAccessibilityLabel:kExpectedText]) tap];
     NSString *actualText = SLAskApp(text);
     SLAssertTrue([kExpectedText isEqualToString:actualText],
-                 @"Did not type character as expected.");
+                 @"Did not type character as expected: '%@' (expected) vs. '%@' (actual).", kExpectedText, actualText);
+}
+
+- (void)testHideKeyboard_iPad {
+    SLAskApp(showKeyboard);
+    [self wait:[SLAskApp(keyboardInfo)[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];
+    
+    [[SLKeyboard keyboard] hide];
+    [self wait:[SLAskApp(keyboardInfo)[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];
+    
+    SLAssertTrueWithTimeout([[SLKeyboard keyboard] isValid] == NO, 2.0 , @"Keyboard should not be valid.");
 }
 
 - (void)testHideKeyboard {

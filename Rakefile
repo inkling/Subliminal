@@ -33,8 +33,14 @@ DOCSET_DIR = "#{ENV['HOME']}/Library/Developer/Shared/Documentation/DocSets"
 DOCSET_NAME = "com.inkling.Subliminal.docset"
 DOCSET_VERSION = "1.0.1"
 
-SUPPORTED_SDKS = [ "5.1", "6.1" ]
-TEST_SDKS = ENV["TEST_SDK"] ? [ ENV["TEST_SDK"] ] : SUPPORTED_SDKS
+SUPPORTED_SDKS = [ "5.1", "6.1", "7.0" ]
+TEST_SDK = ENV["TEST_SDK"]
+if TEST_SDK
+  raise "Test SDK #{TEST_SDK} is not supported." unless SUPPORTED_SDKS.include?(TEST_SDK)
+  TEST_SDKS = [ TEST_SDK ]
+else
+  TEST_SDKS = SUPPORTED_SDKS
+end
 
 
 task :default => :usage
@@ -44,7 +50,7 @@ task :default => :usage
 
 desc "Prints usage statement for people unfamiliar with Rake or this particular Rakefile"
 task :usage, [:task_name] do |t, args|
-  task_name = args[:task_name] ||= ""
+  task_name = args[:task_name] || ""
 
   if !task_name.empty?
     case task_name
@@ -77,18 +83,20 @@ rake test\tRuns Subliminal's tests
 
 rake test
 rake test:unit
+rake test:CI_unit
 rake test:integration                  (LIVE=yes | LOGIN_PASSWORD=<password>)
 rake test:integration[:iphone, :ipad]
 rake test:integration:device           UDID=<udid>
 
 Sub-tasks:
-  :unit\tRuns the unit tests
+  :unit\t\tRuns the unit tests
+  :CI_unit\tRuns the unit tests of Subliminal's CI infrastructure
   :integration\tRuns the integration tests
     :iphone\tFor the iPhone Simulator
     :ipad\tFor the iPad Simulator
     :device\tFor a device
 
-\`test\` invokes \`test:unit\` and \`test:integration\`.
+\`test\` invokes \`test:unit\`, \`test:CI_unit\`, and \`test:integration\`.
 \`test:integration\` invokes \`test:integration:iphone\` and \`test:integration:ipad\`.
 \`test:integration:device\` must be explicitly invoked.
 
@@ -101,8 +109,8 @@ iPhone Developer identity with the wildcard \"iOS Team Provisioning Profile\" ma
 by Xcode.
 
 \`test\` options:
-  TEST_SDK=<sdk>            Selects the SDK version against which to run the tests.
-                            Supported values are '5.1' or '6.1'.
+  TEST_SDK=<sdk>            Selects the iPhone Simulator SDK version against which to run the tests.
+                            Supported values are '5.1', '6.1', and '7.0'.
                             If not specified, the tests will be run against all supported SDKs.
 
 \`test:integration\` options:
@@ -353,6 +361,7 @@ task :test => 'test:prepare' do
   # The unit tests guarantee the integrity of the integration tests
   # So no point in running the latter if the unit tests break the build
   Rake::Task['test:unit'].invoke
+  Rake::Task['test:CI_unit'].invoke
   Rake::Task['test:integration'].invoke
 
   puts "Tests passed.\n\n"
@@ -366,10 +375,14 @@ namespace :test do
     ENV['DEV'] = "yes"; ENV['DOCS'] = "no"
     Rake::Task['install'].invoke
 
-    # Ensure that we use the default Xcode toolchain, not that of a developer preview
+    # Ensure that we use the default Xcode toolchain unless the developer
+    # has specified otherwise (`DEVELOPER_DIR` should always be specified one way
+    # or the other to be sure of the version we use--when preview versions are
+    # installed, they may change the response of `xcode-select`).
+    #
     # Note that we can't properly `export` an environment variable from a Ruby script,
     # But adding it to ENV works because `subliminal-test` is run in a subshell
-    ENV['DEVELOPER_DIR'] = "/Applications/Xcode.app/Contents/Developer"
+    ENV['DEVELOPER_DIR'] ||= "/Applications/Xcode.app/Contents/Developer"
   end
 
   desc "Runs the unit tests"
@@ -397,6 +410,20 @@ namespace :test do
       puts "\nUnit tests passed.\n\n"
     else
       fail "\nUnit tests failed.\n\n"
+    end
+  end
+
+  desc "Runs the CI unit tests"
+  task :CI_unit do
+    puts "- Running CI unit tests...\n\n"
+
+    test_command = "xctool -project subliminal-instrument.xcodeproj -scheme 'subliminal-instrument Tests' test"
+
+    # Use system so we see the tests' output
+    if system("cd 'Supporting Files/CI/subliminal-instrument/' && #{test_command}")
+      puts "CI unit tests passed.\n\n"
+    else
+      fail "CI unit tests failed.\n\n"
     end
   end
 
@@ -471,7 +498,8 @@ namespace :test do
 
         # Use system so we see the tests' output
         results_dir = fresh_results_dir!("iphone", sdk)
-        if system("#{base_test_command} -output \"#{results_dir}\" -sim_device 'iPhone' -sim_version #{sdk}")
+        # Use the 3.5" iPhone Retina because that can support all 3 of our target SDKs
+        if system("#{base_test_command} -output \"#{results_dir}\" -sim_device 'iPhone Retina (3.5-inch)' -sim_version #{sdk}")
           puts "iPhone integration tests succeeded on iOS #{sdk}.\n\n"
         else
           puts "iPhone integration tests failed on iOS #{sdk}.\n\n"

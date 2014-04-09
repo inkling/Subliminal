@@ -25,14 +25,6 @@
 #import "SLTerminal+ConvenienceFunctions.h"
 #import "SLStringUtilities.h"
 
-// Alert handlers need to account for the structure of `UIAlertView` in iOS 7 vs. older SDKs.
-// We define `kCFCoreFoundationVersionNumber_iOS_6_1` so that Subliminal
-// can be continue to be built using the iOS 6.1 SDK until Travis is updated
-// (https://github.com/travis-ci/travis-ci/issues/1422)
-#ifndef kCFCoreFoundationVersionNumber_iOS_6_1
-#define kCFCoreFoundationVersionNumber_iOS_6_1 793.00
-#endif
-
 const NSTimeInterval SLAlertHandlerDidHandleAlertDelay = 2.0;
 
 /**
@@ -44,7 +36,7 @@ const NSTimeInterval SLAlertHandlerDidHandleAlertDelay = 2.0;
  so that their alert's delegate receives its callbacks before the tests
  continue, assuming that the tests are waiting-with-timeout on `didHandleAlert`. 
  */
-static const NSTimeInterval SLAlertHandlerManualDelay = 0.5;
+static const NSTimeInterval SLAlertHandlerManualDelay = 1.0;
 
 
 #pragma mark - SLAlertHandler
@@ -430,14 +422,14 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
     NSUInteger elementIndex = 0;
 
     NSString *UIAAlertHandler = [NSString stringWithFormat:@"\
-                                    var textField = %@.%@()[%u];\
+                                    var textField = %@.%@()[%lu];\
                                     if (textField.isValid()) {\
                                         textField.setValue('%@');\
                                         return true;\
                                     } else {\
                                         return false;\
                                     }\
-                                 ", elementContainerExpression, elementType, elementIndex, [text slStringByEscapingForJavaScriptLiteral]];
+                                 ", elementContainerExpression, elementType, (unsigned long)elementIndex, [text slStringByEscapingForJavaScriptLiteral]];
     return [[SLAlertHandler alloc] initWithSLAlert:self andUIAAlertHandler:UIAAlertHandler];
 }
 

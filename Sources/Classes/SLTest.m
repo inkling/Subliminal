@@ -249,7 +249,6 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
     if (!testDidFailInSetUpOrTearDown) {
         NSString *test = NSStringFromClass([self class]);
         for (NSString *testCaseName in [[self class] testCasesToRun]) {
-            _currentTestCase = testCaseName;
             @autoreleasepool {
                 // all logs below use the focused name, so that the logs are consistent
                 // with what's actually running
@@ -313,7 +312,6 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
                 }
                 numberOfCasesExecuted++;
             }
-            _currentTestCase = nil;
         }
     }
 
