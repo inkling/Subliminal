@@ -138,3 +138,50 @@
 - (void)testFoo;
 
 @end
+
+
+@interface AbstractRunGroupOneTest : SLTest
+
+@end
+
+@interface TestOneOfRunGroupOne : AbstractRunGroupOneTest
+
+- (void)testFoo;
+
+@end
+
+@interface TestTwoOfRunGroupOne : AbstractRunGroupOneTest
+
+- (void)testFoo;
+
+@end
+
+
+@interface AbstractRunGroupTwoTest : SLTest
+
+@end
+
+@interface TestOneOfRunGroupTwo : AbstractRunGroupTwoTest
+
+- (void)testFoo;
+
+@end
+
+@interface TestTwoOfRunGroupTwo : AbstractRunGroupTwoTest
+
+- (void)testFoo;
+
+@end
+
+@interface TestThreeOfRunGroupTwo : AbstractRunGroupTwoTest
+
+- (void)testFoo;
+
+@end
+
+
+@interface TestOneOfRunGroupThree : SLTest
+
+- (void)testFoo;
+
+@end

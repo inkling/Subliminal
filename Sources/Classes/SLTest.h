@@ -80,7 +80,8 @@
  
  An abstract test will not itself be run. Subclasses which do define test cases
  will be run, however, allowing a single base class to define set-up and tear-down 
- work shared among related subclasses.
+ work shared among related subclasses. Abstract classes can also be used to
+ define the [run group](+runGroup) shared by subclasses.
 
  @return `YES` if the class is without test cases, otherwise `NO`.
  */
@@ -146,9 +147,39 @@
  @return `YES` if any test cases are focused and can be run on the current platform, 
  `NO` otherwise.
 
- @see -[SLTestController runTests:withCompletionBlock:]
+ @see -[SLTestController runTests:usingSeed:withCompletionBlock:]
  */
 + (BOOL)isFocused;
+
+#pragma mark - Ordering Test Runs
+/// ------------------------------------------
+/// @name Ordering Test Runs
+/// ------------------------------------------
+
+/**
+ Returns a value identifying the group of tests to which the receiver belongs.
+ 
+ `SLTestController` will run tests in ascending order of [group](+[SLTest runGroup]),
+ and then within each group, in a randomized order. This allows test writers to
+ provide a rough order to tests, where necessary, while minimizing the test pollution
+ that can result from an absolute ordering.
+ 
+ A common use for run groups is to divide tests into two groups, those that
+ need to occur before some "startup" event (an onboarding flow, an import process, etc.)
+ (of run group `1`) and those that need to occur afterward (of run group `2`).
+ In this scenario, the "post-startup" tests subclass an [abstract test](+isAbstract)
+ that, in its implementation of `+setUpTest`, causes the startup event to happen.
+ Altogether, this ensures that _all_ of the "pre-startup" tests run before
+ _any_ of the "post-startup" tests run--and that startup happens before any of the
+ "post-startup" tests happen--while allowing the tests within each group to run
+ in any order.
+
+ @return A value identifying the group of tests to which the receiver belongs.
+         The default implementation returns `1`: all tests will be part of a single run group.
+ 
+ @see -[SLTestController runTests:usingSeed:withCompletionBlock:]
+ */
++ (NSUInteger)runGroup;
 
 #pragma mark - Running a Test
 /// ----------------------------------------
