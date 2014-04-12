@@ -324,6 +324,12 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
  they will be visible, and must depend on UIAutomation to confirm visibility.
  */
 - (BOOL)isVisible {
+    // Temporarily use UIAutomation to check visibility if the device is in a non-portrait orientation
+    // to work around https://github.com/inkling/Subliminal/issues/135
+    if ([UIDevice currentDevice].orientation != UIDeviceOrientationPortrait) {
+        return [super isVisible];
+    }
+
     __block BOOL isVisible = NO;
     __block BOOL matchedObjectOfUnknownClass = NO;
     // isVisible evaluates the current state, no waiting to resolve the element

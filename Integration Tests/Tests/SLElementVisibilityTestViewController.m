@@ -226,6 +226,11 @@
                (testCase == @selector(testIsInvalidOrInvisibleDoesNotThrowIfElementIsInvalid)) ||
                (testCase == @selector(testIsInvalidOrInvisibleReturnsYESIfElementIsInvalidOrInvisible))) {
         nibName = @"SLElementVisibilityTestHidden";
+    } else if ((testCase == @selector(testViewIsVisibleInPortrait)) ||
+               (testCase == @selector(testViewIsVisibleInPortraitUpsideDown)) ||
+               (testCase == @selector(testViewIsVisibleInLandscapeLeft)) ||
+               (testCase == @selector(testViewIsVisibleInLandscapeRight))) {
+        nibName = @"SLElementVisibilityTestHidden";
     }
     return nibName;
 }
