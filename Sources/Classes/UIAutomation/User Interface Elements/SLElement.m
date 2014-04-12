@@ -333,7 +333,7 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
     } timeout:0.0];
 
     if (isVisible && matchedObjectOfUnknownClass) {
-        isVisible = [[self waitUntilTappable:NO thenSendMessage:@"isVisible()"] boolValue];
+        isVisible = [super isVisible];
     }
 
     return isVisible;
