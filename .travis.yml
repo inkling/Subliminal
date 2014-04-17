@@ -2,9 +2,7 @@ language: objective-c
 
 ## Setup
 
-before_install:
-    # Fully initialize repo (i.e. test dependencies like `OCMock`)
-    - git submodule update --init --recursive
+# Travis initializes git submodules before `install` runs
 
 install:
     # - `xctool`, required to build the unit test and documentation targets
