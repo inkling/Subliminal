@@ -6,7 +6,9 @@ language: objective-c
 
 install:
     # - `xctool`, required to build the unit test and documentation targets
-    #   nothing to do here because it's already installed on Travis
+    #   Workaround for https://github.com/travis-ci/travis-ci/issues/2051#issuecomment-40817341
+    - brew update
+    - brew upgrade xctool
 
     # - `appledoc`, used to build documentation
     #   Force the usage of appledoc 2.1 until https://github.com/inkling/Subliminal/issues/71 is addressed;
