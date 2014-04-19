@@ -12,6 +12,12 @@ _Because of the significant period of time between the 1.0.1 and 1.1 releases, t
 
 ##### Notable Features
 
+* Subliminal no longer requires your password to run from the command-line. Instead, users should pre-authorize their computer to run Subliminal. See the [Continuous Integration FAQ](https://github.com/inkling/Subliminal/wiki/Continuous-Integration#faq) for details.  
+  [Jeffrey Wear](https://github.com/wearhere) [#181](https://github.com/inkling/Subliminal/pull/181)
+
+* Use Instrument's new `-w` flag to run on a specific device  
+  [Jeffrey Wear](https://github.com/wearhere) [#181](https://github.com/inkling/Subliminal/pull/181)
+
 * Cocoapods support  
   [Max Tagher](https://github.com/MaxGabriel) [#30](https://github.com/inkling/Subliminal/pull/30)
     
