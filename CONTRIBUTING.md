@@ -18,7 +18,17 @@ Not all this will be necessary—just do your best to let other programmers unde
 
 ### Pull Requests
 
-Subliminal welcomes pull requests! To contribute, fork the Subliminal repo, clone your fork, then make your changes. If you're adding functionality or fixing a bug, you must add new tests covering the changes. Only refactoring and documentation changes require no new tests.
+#### Setting up Subliminal for Development
+
+Subliminal welcomes pull requests! To get started, fork the Subliminal repo, clone your fork, then make your changes on a branch. GitHub has [a guide](https://help.github.com/articles/fork-a-repo) to this process if you'd like more information.
+
+Then, from the root directory of your fork, execute `rake install DEV=yes && git submodule update --init --recursive` to fully initialize Subliminal as well as install some file templates to help you write tests.
+
+> You should run the above command even if you had already installed Subliminal. Subliminal will "re-install" without problem.
+
+#### Making Changes
+
+If you're adding functionality or fixing a bug, you must add new tests covering the changes (Only refactoring and documentation changes require no new tests). What kind of tests you should write depend on your specific changes:
 
 * If you can test your changes without `UIAutomation` attached
 (most changes to `SLTestController` and `SLTest` fall into this category), 
@@ -27,9 +37,9 @@ add `SenTest` unit tests to the "Subliminal Unit Tests" group.
 * If you need `UIAutomation` to test your changes (e.g. if you added a subclass of `SLElement`), add integration tests to the "Subliminal Integration Tests -> Tests" group. 
 See [`SLIntegrationTest.h`](https://github.com/inkling/Subliminal/blob/master/Integration%20Tests/SLIntegrationTest.h) for further instructions.
 
-    > Protip: You can use the "Subliminal integration test class" file template to stub out integration tests and their associated view controllers.
+    > Protip: Use the "Subliminal integration test class" file template to stub out integration tests and their associated view controllers.
 
-#### Running Tests Locally 
+#### Running Your Tests
 
 * To run the unit tests:
 	1. Switch to the "Subliminal Unit Tests" scheme.
@@ -42,6 +52,36 @@ See [`SLIntegrationTest.h`](https://github.com/inkling/Subliminal/blob/master/In
         
 When you open a pull request, Travis CI will automatically test your changes against all supported SDKs and devices, so you don't need to run every test locally. All tests must pass on Travis for your pull request to be accepted.
 
-### Documentation
+#### Documenting New API
+
+If your changes add new public API, add [documentation comments](http://nshipster.com/documentation/) like so:
+
+```objc
+/**
+ The name of the current test case.
+
+ @return If an SLTestCaseViewController is currently presented, its test case's
+ name, otherwise nil.
+ */
+- (NSString *)currentTestCase;
+```
+
+These comments are used to generate the documentation you see when you option-click a method in Xcode and for Subliminal's [online API docs](http://inkling.github.io/Subliminal/Documentation/). Use the existing documentation comments as a template for how to structure your own.
+
+##### Building the Documentation Target
+
+Subliminal is currently using [an older version](https://github.com/inkling/Subliminal/issues/71) of Appledoc to generate its documentation, so you may just want to let Travis test that the documentation builds correctly. If you'd like to build Subliminal's documentation locally, run these steps to install Appledoc 2.1:
+
+```bash
+curl --progress-bar --output /tmp/appledoc-2.1.mountain_lion.bottle.tar.gz http://inkling.github.io/Subliminal/Documentation/appledoc-2.1.mountain_lion.bottle.tar.gz
+tar -C /tmp -zxf /tmp/appledoc-2.1.mountain_lion.bottle.tar.gz
+# This assumes that /usr/local/bin is in your PATH
+cp /tmp/appledoc/2.1/bin/appledoc /usr/local/bin
+cp -Rf /tmp/appledoc/2.1/Templates/ ~/.appledoc
+```
+
+Then choose the "Subliminal Documentation" scheme in Xcode to build the docs.
+
+### Subliminal's Wiki
 
 Anyone can edit [Subliminal's documentation](https://github.com/inkling/Subliminal/wiki), which is kept on a Github Wiki. Github Wikis don't support pull requests, so if you're unsure of your edit you can open an issue to discuss your change.
