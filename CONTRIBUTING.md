@@ -27,7 +27,7 @@ add `SenTest` unit tests to the "Subliminal Unit Tests" group.
 * If you need `UIAutomation` to test your changes (e.g. if you added a subclass of `SLElement`), add integration tests to the "Subliminal Integration Tests -> Tests" group. 
 See [`SLIntegrationTest.h`](https://github.com/inkling/Subliminal/blob/master/Integration%20Tests/SLIntegrationTest.h) for further instructions.
 
-	* Protip: install the "Subliminal integration test class" file template by running `rake install DEV=yes`
+    > Protip: You can use the "Subliminal integration test class" file template to stub out integration tests and their associated view controllers.
 
 #### Running Tests Locally 
 
