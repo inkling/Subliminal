@@ -33,7 +33,7 @@ DOCSET_DIR = "#{ENV['HOME']}/Library/Developer/Shared/Documentation/DocSets"
 DOCSET_NAME = "com.inkling.Subliminal.docset"
 DOCSET_VERSION = "1.0.1"
 
-SUPPORTED_SDKS = [ "5.1", "6.1", "7.0" ]
+SUPPORTED_SDKS = [ "6.1", "7.1" ]
 TEST_SDK = ENV["TEST_SDK"]
 if TEST_SDK
   raise "Test SDK #{TEST_SDK} is not supported." unless SUPPORTED_SDKS.include?(TEST_SDK)
@@ -84,7 +84,7 @@ rake test\tRuns Subliminal's tests
 rake test
 rake test:unit
 rake test:CI_unit
-rake test:integration                  (LIVE=yes | LOGIN_PASSWORD=<password>)
+rake test:integration
 rake test:integration[:iphone, :ipad]
 rake test:integration:device           UDID=<udid>
 
@@ -100,6 +100,9 @@ Sub-tasks:
 \`test:integration\` invokes \`test:integration:iphone\` and \`test:integration:ipad\`.
 \`test:integration:device\` must be explicitly invoked.
 
+To run the integration tests un-attended, you must have \"pre-authorized\" \`instruments\`
+as described here: https://github.com/inkling/Subliminal/wiki/Continuous-Integration#faq.
+
 To run the integration tests on a device, you will need a valid developer identity 
 and provisioning profile. If you have a wildcard profile you will be able to run 
 the tests without creating a profile specifically for the \"Subliminal Integration Tests\" app.
@@ -110,21 +113,8 @@ by Xcode.
 
 \`test\` options:
   TEST_SDK=<sdk>            Selects the iPhone Simulator SDK version against which to run the tests.
-                            Supported values are '5.1', '6.1', and '7.0'.
+                            Supported values are '6.1' and '7.1'.
                             If not specified, the tests will be run against all supported SDKs.
-
-\`test:integration\` options:
-  LIVE=yes                  Indicates that the tests are being attended by a developer who can 
-                            enter their password if instruments asks for authorization. For the tests 
-                            to run un-attended, the current user's login password must be specified
-                            by \`LOGIN_PASSWORD\`.
-
-  LOGIN_PASSWORD=<password> Your login password. When instruments is launched, 
-                            it may ask for permission to take control of your application 
-                            (http://openradar.appspot.com/radar?id=1544403). 
-                            To authorize instruments during an un-attended run, the tests 
-                            require the current user's password. When running the tests live, 
-                            \`LIVE=yes\` may be specified instead.
  
 \`test:integration:device\` options:
   UDID=<udid>               The UDID of the device to target.\n\n"""
@@ -462,22 +452,10 @@ namespace :test do
 
   namespace :integration do
     def base_test_command
-      command = "\"#{SCRIPT_DIR}/subliminal-test\"\
-                -project Subliminal.xcodeproj\
-                -scheme 'Subliminal Integration Tests'\
-                --quiet_build"
-
-      if ENV["LIVE"] == "yes"
-        command << " --live"
-      else
-        login_password = ENV["LOGIN_PASSWORD"]
-        if !login_password || login_password.length == 0
-          fail "Neither \`LIVE=yes\` nor \`LOGIN_PASSWORD\` specified. See 'rake usage[test]`.\n\n"
-        end
-        command << " -login_password \"#{login_password}\""
-      end
-
-      command
+      "\"#{SCRIPT_DIR}/subliminal-test\"\
+        -project Subliminal.xcodeproj\
+        -scheme 'Subliminal Integration Tests'\
+        --quiet_build"
     end
 
     # ! because this clears old results
@@ -498,7 +476,7 @@ namespace :test do
 
         # Use system so we see the tests' output
         results_dir = fresh_results_dir!("iphone", sdk)
-        # Use the 3.5" iPhone Retina because that can support all 3 of our target SDKs
+        # Use the 3.5" iPhone Retina because that can support both our target SDKs
         if system("#{base_test_command} -output \"#{results_dir}\" -sim_device 'iPhone Retina (3.5-inch)' -sim_version #{sdk}")
           puts "iPhone integration tests succeeded on iOS #{sdk}.\n\n"
         else

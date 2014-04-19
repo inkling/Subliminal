@@ -2,40 +2,37 @@ language: objective-c
 
 ## Setup
 
-before_install:
-    # Fully initialize repo (i.e. test dependencies like `OCMock`)
-    - git submodule update --init --recursive
+# Travis initializes git submodules before `install` runs
 
 install:
     # - `xctool`, required to build the unit test and documentation targets
-    #   nothing to do here because it's already installed on Travis
+    #   Workaround for https://github.com/travis-ci/travis-ci/issues/2051#issuecomment-40817341
+    - brew update
+    - brew upgrade xctool
 
     # - `appledoc`, used to build documentation
-    #   Force the usage of appledoc 2.1 until https://github.com/inkling/Subliminal/issues/71 is addressed
-    - brew unlink appledoc
-    - brew install https://raw.github.com/mxcl/homebrew/33aa810/Library/Formula/appledoc.rb
+    #   Force the usage of appledoc 2.1 until https://github.com/inkling/Subliminal/issues/71 is addressed;
+    #   manually install the above (rather than using `brew`) because `appledoc`
+    #   can't be compiled using Xcode 5.1 and there's no bottle available for the `appledoc21` formula
+    - curl --progress-bar --output /tmp/appledoc-2.1.mountain_lion.bottle.tar.gz http://inkling.github.io/Subliminal/Documentation/appledoc-2.1.mountain_lion.bottle.tar.gz
+    - tar -C /tmp -zxf /tmp/appledoc-2.1.mountain_lion.bottle.tar.gz
+    - cp /tmp/appledoc/2.1/bin/appledoc /usr/local/bin
+    - cp -Rf /tmp/appledoc/2.1/Templates/ ~/.appledoc
 
 ## Test matrix
 
 env:
-    global:
-        # To work around http://openradar.appspot.com/radar?id=1544403,
-        # the tests need the Travis user's password.
-        - LOGIN_PASSWORD="j4K7CK4oM49ZA27y532b"
     matrix:
-        - TEST_COMMAND=test:unit                TEST_SDK=5.1
         - TEST_COMMAND=test:unit                TEST_SDK=6.1
-        - TEST_COMMAND=test:unit                TEST_SDK=7.0
+        - TEST_COMMAND=test:unit                TEST_SDK=7.1
 
         - TEST_COMMAND=test:CI_unit
 
-        - TEST_COMMAND=test:integration:iphone  TEST_SDK=5.1
         - TEST_COMMAND=test:integration:iphone  TEST_SDK=6.1
-        - TEST_COMMAND=test:integration:iphone  TEST_SDK=7.0
+        - TEST_COMMAND=test:integration:iphone  TEST_SDK=7.1
 
-        - TEST_COMMAND=test:integration:ipad    TEST_SDK=5.1
         - TEST_COMMAND=test:integration:ipad    TEST_SDK=6.1
-        - TEST_COMMAND=test:integration:ipad    TEST_SDK=7.0
+        - TEST_COMMAND=test:integration:ipad    TEST_SDK=7.1
 
         - TEST_COMMAND=build_docs
 
