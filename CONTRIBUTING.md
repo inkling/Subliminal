@@ -14,10 +14,6 @@ If you think you've found a bug, do your best to allow others to replicate it:
 
 Not all this will be necessary—just do your best to let other programmers understand and replicate your bug.
 
-### Feature Requests
-
-???
-
 ## Contributing
 
 ### Pull Requests
