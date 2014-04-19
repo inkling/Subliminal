@@ -179,8 +179,7 @@ Comparison to Other Integration Test Frameworks
 Contributing
 ------------
 
-We are very much looking forward to working with 3rd-party developers to make Subliminal 
-even better, and will post contributing guidelines very soon.
+Subliminal welcomes pull requests! Check out the [contributing guidelines](https://github.com/inkling/Subliminal/blob/master/CONTRIBUTING.md) to learn how to setup Subliminal for development and for requirements of pull requests.
 
 Credits
 -------
