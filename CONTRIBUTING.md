@@ -20,13 +20,15 @@ Not all this will be necessary—just do your best to let other programmers unde
 
 #### Setting up Subliminal for Development
 
-Subliminal welcomes pull requests! To get started, fork the Subliminal repo, clone your fork, then make your changes on a branch. GitHub has [a guide](https://help.github.com/articles/fork-a-repo) to this process if you'd like more information.
+Subliminal welcomes pull requests! To get started, fork the Subliminal repo and clone your fork. GitHub has [a guide](https://help.github.com/articles/fork-a-repo) to this process if you'd like more information.
 
 Then, from the root directory of your fork, execute `rake install DEV=yes && git submodule update --init --recursive` to fully initialize Subliminal as well as install some file templates to help you write tests.
 
 > You should run the above command even if you had already installed Subliminal. Subliminal will "re-install" without problem.
 
 #### Making Changes
+
+Start a new branch (`git checkout -b bugFix`) and make your changes.
 
 If you're adding functionality or fixing a bug, you must add new tests covering the changes (Only refactoring and documentation changes require no new tests). What kind of tests you should write depend on your specific changes:
 
