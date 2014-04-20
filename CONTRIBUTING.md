@@ -60,8 +60,8 @@ If your changes add new public API, add [documentation comments](http://nshipste
 /**
  The name of the current test case.
 
- @return If an SLTestCaseViewController is currently presented, its test case's
- name, otherwise nil.
+ @return If an `SLTestCaseViewController` is currently presented, its test case's
+ name, otherwise `nil`.
  */
 - (NSString *)currentTestCase;
 ```
@@ -70,7 +70,9 @@ These comments are used to generate the documentation you see when you option-cl
 
 ##### Building the Documentation Target
 
-Subliminal is currently using [an older version](https://github.com/inkling/Subliminal/issues/71) of Appledoc to generate its documentation, so you may just want to let Travis test that the documentation builds correctly. If you'd like to build Subliminal's documentation locally, run these steps to install Appledoc 2.1:
+If you'd like to build Subliminal's documentation locally, run these steps to install Appledoc 2.1:
+
+> Note that this is not the latest version of Appledoc (see [here](https://github.com/inkling/Subliminal/issues/71)), and will overwrite whatever you might currently have installed. You can just let Travis test that the documentation builds correctly if you prefer.
 
 ```bash
 curl --progress-bar --output /tmp/appledoc-2.1.mountain_lion.bottle.tar.gz http://inkling.github.io/Subliminal/Documentation/appledoc-2.1.mountain_lion.bottle.tar.gz
@@ -82,6 +84,6 @@ cp -Rf /tmp/appledoc/2.1/Templates/ ~/.appledoc
 
 Then choose the "Subliminal Documentation" scheme in Xcode to build the docs.
 
-### Subliminal's Wiki
+### Subliminal's non-API documentation
 
 Anyone can edit [Subliminal's documentation](https://github.com/inkling/Subliminal/wiki), which is kept on a Github Wiki. Github Wikis don't support pull requests, so if you're unsure of your edit you can open an issue to discuss your change.
