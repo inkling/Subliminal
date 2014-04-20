@@ -68,7 +68,7 @@ If your changes add new public API, add [documentation comments](http://nshipste
 
 These comments are used to generate the documentation you see when you option-click a method in Xcode and for Subliminal's [online API docs](http://inkling.github.io/Subliminal/Documentation/). Use the existing documentation comments as a template for how to structure your own.
 
-##### Building the Documentation Target
+##### Building the Documentation
 
 If you'd like to build Subliminal's documentation locally, run these steps to install Appledoc 2.1:
 
@@ -82,8 +82,8 @@ cp /tmp/appledoc/2.1/bin/appledoc /usr/local/bin
 cp -Rf /tmp/appledoc/2.1/Templates/ ~/.appledoc
 ```
 
-Then choose the "Subliminal Documentation" scheme in Xcode to build the docs.
+Then choose the "Subliminal Documentation" scheme in Xcode to build the docs. If any documentation is incomplete, errors will be generated showing you where. The documentation must successfully build on Travis for your pull request to be accepted.
 
-### Subliminal's non-API documentation
+### Subliminal's Wiki
 
-Anyone can edit [Subliminal's documentation](https://github.com/inkling/Subliminal/wiki), which is kept on a Github Wiki. Github Wikis don't support pull requests, so if you're unsure of your edit you can open an issue to discuss your change.
+Anyone can edit [Subliminal's non-API documentation](https://github.com/inkling/Subliminal/wiki), which is kept on a Github Wiki. Github Wikis don't support pull requests, so if you're unsure of your edit you can open an issue to discuss your change.

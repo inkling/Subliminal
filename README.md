@@ -49,7 +49,7 @@ Running the Example App
 
 1. Clone the Subliminal repo: `git clone https://github.com/inkling/Subliminal.git`.
 2. `cd` into the directory: `cd Subliminal`.
-3. If you haven't already, setup Subliminal: `rake install`.
+3. If you haven't already, set up Subliminal: `rake install`.
 4. Open the Example project: `open Example/SubliminalTest.xcodeproj`.
 5. Switch to the "Integration Tests" scheme.
  You may also see a scheme called "Subliminal Integration tests"--make sure you choose "Integration Tests."
@@ -179,7 +179,7 @@ Comparison to Other Integration Test Frameworks
 Contributing
 ------------
 
-Subliminal welcomes pull requests! Check out the [contributing guidelines](https://github.com/inkling/Subliminal/blob/master/CONTRIBUTING.md) to learn how to setup Subliminal for development and for requirements of pull requests.
+Subliminal welcomes pull requests! Check out the [contributing guidelines](https://github.com/inkling/Subliminal/blob/master/CONTRIBUTING.md) to learn how to set up Subliminal for development and how to make a successful pull request.
 
 Credits
 -------
