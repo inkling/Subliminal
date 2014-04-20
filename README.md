@@ -204,7 +204,7 @@ Jeff Wear ([@wear_here](https://twitter.com/wear_here/)) on Twitter.
 Copyright and License
 ---------------------
 
-Copyright 2013 Inkling Systems, Inc.
+Copyright 2013-2014 Inkling Systems, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
