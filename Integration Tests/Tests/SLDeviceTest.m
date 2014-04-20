@@ -90,6 +90,14 @@
     }
 }
 
+// Exercises a bug in iOS 5.1 and 7.1. See https://github.com/inkling/Subliminal/pull/180#issuecomment-40891098
+- (void)testThatDeviceOrientationPersistsThroughDeactivation {
+    UIDeviceOrientation currentOrientation = [UIDevice currentDevice].orientation;
+    [[SLDevice currentDevice] deactivateAppForDuration:3.0];
+    SLAssertTrue([UIDevice currentDevice].orientation == currentOrientation,
+                 @"The device orientation should not have changed.");
+}
+
 - (void)rotateToAndCheckOrientation:(UIDeviceOrientation)orientation
 {
     [[SLDevice currentDevice] setOrientation:orientation];
