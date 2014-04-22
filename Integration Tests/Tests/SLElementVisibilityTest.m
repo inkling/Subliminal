@@ -80,7 +80,23 @@
 
     if (testSelector == @selector(testCanDetermineVisibilityOfWebAccessibilityElements)) {
         SLAssertTrueWithTimeout(SLAskAppYesNo(webViewDidFinishLoad), 5.0, @"Webview did not load test HTML.");
+    } else if ((testSelector == @selector(testViewIsVisibleInPortrait)) ||
+               (testSelector == @selector(testViewIsVisibleInPortraitUpsideDown)) ||
+               (testSelector == @selector(testViewIsVisibleInLandscapeLeft)) ||
+               (testSelector == @selector(testViewIsVisibleInLandscapeRight))) {
+        SLAskApp(showTestView);
     }
+}
+
+- (void)tearDownTestCaseWithSelector:(SEL)testCaseSelector {
+    if ((testCaseSelector == @selector(testViewIsVisibleInPortrait)) ||
+        (testCaseSelector == @selector(testViewIsVisibleInPortraitUpsideDown)) ||
+        (testCaseSelector == @selector(testViewIsVisibleInLandscapeLeft)) ||
+        (testCaseSelector == @selector(testViewIsVisibleInLandscapeRight))) {
+        [[SLDevice currentDevice] setOrientation:UIDeviceOrientationPortrait];
+    }
+
+    [super tearDownTestCaseWithSelector:testCaseSelector];
 }
 
 #pragma mark - Test isVisible for elements that are views
@@ -223,6 +239,26 @@
         SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is visible.");
     }
     SLAssertTrue([_testElement isVisible], @"Subliminal should say that the element is visible.");
+}
+
+- (void)testViewIsVisibleInPortrait {
+    [[SLDevice currentDevice] setOrientation:UIDeviceOrientationPortrait];
+    SLAssertTrue([UIAElement(_testElement) isVisible], @"Button should be visible");
+}
+
+- (void)testViewIsVisibleInPortraitUpsideDown {
+    [[SLDevice currentDevice] setOrientation:UIDeviceOrientationPortraitUpsideDown];
+    SLAssertTrue([UIAElement(_testElement) isVisible], @"Button should be visible");
+}
+
+- (void)testViewIsVisibleInLandscapeLeft {
+    [[SLDevice currentDevice] setOrientation:UIDeviceOrientationLandscapeLeft];
+    SLAssertTrue([UIAElement(_testElement) isVisible], @"Button should be visible");
+}
+
+- (void)testViewIsVisibleInLandscapeRight {
+    [[SLDevice currentDevice] setOrientation:UIDeviceOrientationLandscapeRight];
+    SLAssertTrue([UIAElement(_testElement) isVisible], @"Button should be visible");
 }
 
 #pragma mark - Test isVisible for elements that are not views
