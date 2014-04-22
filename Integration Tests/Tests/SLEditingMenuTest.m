@@ -36,12 +36,12 @@
     return @"SLEditingMenuTestViewController";
 }
 
-+ (BOOL)supportsCurrentPlatform {
-    // Don't run these tests on Travis, because the editing menu
-    // intermittently fails to appear on Travis, while it consistently
-    // appears in other environments.
-    return [super supportsCurrentPlatform] && !getenv("TRAVIS");
-}
+//+ (BOOL)supportsCurrentPlatform {
+//    // Don't run these tests on Travis, because the editing menu
+//    // intermittently fails to appear on Travis, while it consistently
+//    // appears in other environments.
+//    return [super supportsCurrentPlatform] && !getenv("TRAVIS");
+//}
 
 - (void)setUpTest {
     [super setUpTest];
