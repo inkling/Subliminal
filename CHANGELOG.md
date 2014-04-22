@@ -77,6 +77,12 @@ _Because of the significant period of time between the 1.0.1 and 1.1 releases, t
 
 ##### Notable bug fixes
 
+* Workaround `isVisible` not working in non-portrait orientations  
+  [Jeffrey Wear](https://github.com/wearhere) [#180](https://github.com/inkling/Subliminal/pull/180)
+
+* Fix interacting with collection view cell contents by including mock views in the accessibility path  
+  [Jeffrey Wear](https://github.com/wearhere) [#179](https://github.com/inkling/Subliminal/pull/179)
+
 * Detect the simulator launching in an inconsistent state (Travis CI Stability improvement)  
   [Jeffrey Wear](https://github.com/wearhere) [#148](https://github.com/inkling/Subliminal/pull/148)
     
