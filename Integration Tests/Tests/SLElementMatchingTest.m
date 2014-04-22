@@ -34,6 +34,16 @@
     return @"SLElementMatchingTestViewController";
 }
 
++ (BOOL)testCaseWithSelectorSupportsCurrentPlatform:(SEL)testCaseSelector {
+    if (![super testCaseWithSelectorSupportsCurrentPlatform:testCaseSelector]) return NO;
+
+    if (testCaseSelector == @selector(testMatchingCollectionViewCellChildElement)) {
+        return kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_5_1;
+    }
+
+    return YES;
+}
+
 - (void)setUpTestCaseWithSelector:(SEL)testCaseSelector {
     [super setUpTestCaseWithSelector:testCaseSelector];
     
@@ -261,6 +271,14 @@
 
     SLElement *rightLabel = [SLElement elementWithAccessibilityLabel:@"right"];
     SLAssertTrue([rightLabel isValid], @"Could not match UITableView header child element.");
+}
+
+#pragma mark - Collection views
+
+- (void)testMatchingCollectionViewCellChildElement {
+    SLButton *fooButton = [SLButton elementWithAccessibilityLabel:@"fooButton"];
+    SLAssertTrue([[UIAElement(fooButton) label] isEqualToString:@"fooButton"],
+                 @"Could not match `UICollectionViewCell` child element.");
 }
 
 #pragma mark - Web views

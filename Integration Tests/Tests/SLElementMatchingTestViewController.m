@@ -29,15 +29,15 @@
 @end
 
 
-#pragma mark - SLElementMatchingTestCell
+#pragma mark - SLElementMatchingTestTableViewCell
 
-@interface SLElementMatchingTestCell : UITableViewCell
+@interface SLElementMatchingTestTableViewCell : UITableViewCell
 
 - (void)configureAccessibility;
 
 @end
 
-@implementation SLElementMatchingTestCell {
+@implementation SLElementMatchingTestTableViewCell {
     SEL _testCase;
     UISwitch *_switch;
     UILabel *_weatherCity, *_weatherTemp;
@@ -107,15 +107,15 @@
 @end
 
 
-#pragma mark - SLElementMatchingTestHeader
+#pragma mark - SLElementMatchingTestTableViewHeader
 
-@interface SLElementMatchingTestHeader : UIView
+@interface SLElementMatchingTestTableViewHeader : UIView
 
 - (instancetype)initWithTestCaseWithSelector:(SEL)testCase;
 
 @end
 
-@implementation SLElementMatchingTestHeader {
+@implementation SLElementMatchingTestTableViewHeader {
     UIView *_leftView, *_rightView;
 }
 
@@ -167,9 +167,50 @@
 @end
 
 
+#pragma mark - SLElementMatchingTestCollectionViewCell
+
+@interface SLElementMatchingTestCollectionViewCell : UICollectionViewCell
+
++ (CGSize)defaultSize;
+
+@end
+
+@implementation SLElementMatchingTestCollectionViewCell {
+    UIButton *_button;
+}
+
++ (CGSize)defaultSize {
+    return CGSizeMake(100.0f, 50.0f);
+}
+
+- (id)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.backgroundColor = [UIColor greenColor];
+
+        _button = [UIButton buttonWithType:UIButtonTypeCustom];
+        _button.backgroundColor = [UIColor blueColor];
+        [_button setTitle:@"fooButton" forState:UIControlStateNormal];
+        [self.contentView addSubview:_button];
+    }
+    return self;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+
+    [_button sizeToFit];
+    _button.center = self.center;
+}
+
+@end
+
+
 #pragma mark - SLElementMatchingTestViewController
 
-@interface SLElementMatchingTestViewController () <UITableViewDataSource, UITableViewDelegate, UIWebViewDelegate>
+@interface SLElementMatchingTestViewController () < UITableViewDataSource, UITableViewDelegate,
+                                                    UICollectionViewDataSource, UICollectionViewDelegate,
+                                                    UIWebViewDelegate >
 
 // fooButton is purposely strong so that we can hold onto it
 // while it's removed from the view hierarchy in testElementsWaitToMatchValidObjects
@@ -185,9 +226,10 @@
 @implementation SLElementMatchingTestViewController {
     UIView *_parentView, *_childView;
 
-    NSString *_testTableViewCellIdentifier;
+    NSString *_testTableViewCellIdentifier, *_testCollectionViewCellIdentifier;
     Class _testTableViewCellClass;
 
+    UICollectionView *_collectionView;
     UIWebView *_webView;
     BOOL _webViewDidFinishLoad;
 
@@ -195,7 +237,7 @@
 
     UIActionSheet *_actionSheet;
 
-    SLElementMatchingTestHeader *_headerView;
+    SLElementMatchingTestTableViewHeader *_headerView;
 }
 
 + (NSString *)nibNameForTestCase:(SEL)testCase {
@@ -270,6 +312,19 @@
 
         [view addSubview:_parentView];
         self.view = view;
+    } else if (testCase == @selector(testMatchingCollectionViewCellChildElement)) {
+        // note: `SLElementMatchingTest` marks this test case as not supporting iOS 5.1
+        // so we don't need to worry about runtime-conditionalizing code here
+        UICollectionViewFlowLayout *collectionViewLayout = [[UICollectionViewFlowLayout alloc] init];
+        collectionViewLayout.itemSize = [SLElementMatchingTestCollectionViewCell defaultSize];
+
+        _collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:collectionViewLayout];
+        _collectionView.backgroundColor = [UIColor whiteColor];
+        _collectionView.dataSource = self;
+        _collectionView.delegate = self;
+        _collectionView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+
+        self.view = _collectionView;
     }
 }
 
@@ -301,11 +356,15 @@
         } else if ((self.testCase == @selector(testMatchingNonLabelTableViewCellChildElement)) ||
                    (self.testCase == @selector(testMatchingTableViewCellWithCombinedLabel)) ||
                    (self.testCase == @selector(testCannotMatchIndividualChildLabelsOfTableViewCell))) {
-            _testTableViewCellClass = [SLElementMatchingTestCell class];
+            _testTableViewCellClass = [SLElementMatchingTestTableViewCell class];
         } else {
             NSAssert(NO, @"Table view loaded for unexpected test case: %@.", NSStringFromSelector(self.testCase));
         }
         _testTableViewCellIdentifier = [NSString stringWithFormat:@"%@_%@", NSStringFromClass(_testTableViewCellClass), NSStringFromSelector(self.testCase)];
+    } else if (_collectionView) {
+        Class testCollectionViewCellClass = [SLElementMatchingTestCollectionViewCell class];
+        _testCollectionViewCellIdentifier = [NSString stringWithFormat:@"%@_%@", NSStringFromClass(testCollectionViewCellClass), NSStringFromSelector(self.testCase)];
+        [_collectionView registerClass:testCollectionViewCellClass forCellWithReuseIdentifier:_testCollectionViewCellIdentifier];
     }
 
     if (_webView) {
@@ -316,7 +375,7 @@
     }
 }
 
-#pragma mark UITableViewDataSource
+#pragma mark - UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
@@ -338,9 +397,9 @@
         (self.testCase == @selector(testSubliminalReloadsTheAccessibilityHierarchyAsNecessaryWhenMatching))) {
         cell.textLabel.text = @"fooLabel";
     } else {
-        NSAssert([cell isKindOfClass:[SLElementMatchingTestCell class]],
+        NSAssert([cell isKindOfClass:[SLElementMatchingTestTableViewCell class]],
                  @"Unexpected table view cell class for test case: %@.", NSStringFromSelector(self.testCase));
-        [(SLElementMatchingTestCell *)cell configureAccessibility];
+        [(SLElementMatchingTestTableViewCell *)cell configureAccessibility];
     }
 
     return cell;
@@ -360,12 +419,26 @@
         headerView = label;
     } else if ((self.testCase == @selector(testMatchingTableViewHeaderChildElements)) ||
                (self.testCase == @selector(testSubliminalReloadsTheAccessibilityHierarchyAsNecessaryWhenMatching))) {
-        _headerView = [[SLElementMatchingTestHeader alloc] initWithTestCaseWithSelector:self.testCase];
+        _headerView = [[SLElementMatchingTestTableViewHeader alloc] initWithTestCaseWithSelector:self.testCase];
         NSAssert([self numberOfSectionsInTableView:tableView] == 1, @"We only expect to track one header.");
         headerView = _headerView;
     }
 
     return headerView;
+}
+
+#pragma mark - UICollectionViewDataSource
+
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+    return 1;
+}
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    return 1;
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    return [collectionView dequeueReusableCellWithReuseIdentifier:_testCollectionViewCellIdentifier forIndexPath:indexPath];
 }
 
 #pragma mark - UIWebView delegate
