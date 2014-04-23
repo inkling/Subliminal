@@ -79,7 +79,7 @@ will be specially tested against a local machine running 10.8.)
 Usage
 -----
 
-Subliminal is designed to be instantly familiar to users of OCUnit/SenTest. 
+Subliminal is designed to be instantly familiar to users of OCUnit/XCTest. 
 In Subliminal, subclasses of `SLTest` define tests as methods beginning with `test`. 
 At run-time, Subliminal discovers and runs these tests. 
 
