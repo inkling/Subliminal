@@ -222,7 +222,7 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
  @param nextHandler A handler whose action should be performed after the action 
  of the receiver.
  @return A newly created alert handler that performs the action of the receiver 
- and then the action of `nextHandler`.
+ and then the action of _nextHandler_.
  */
 - (SLAlertHandler *)andThen:(SLAlertHandler *)nextHandler;
 
@@ -234,18 +234,18 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
 /**
  The maximum amount of time it should take for an alert to be fully dismissed
  by a manual or automatic alert handler (including the alert's dismissal animation,
- and the alert's delegate receiving the alertView:didDismissWithButtonIndex: callback),
+ and the alert's delegate receiving the `-alertView:didDismissWithButtonIndex:` callback),
  as measured from the time the alert appears.
 
- This timeout should suffice to dismiss alerts of all alertViewStyles
+ This timeout should suffice to dismiss alerts of all alert view styles
  (using handlers which simply dismiss the alerts, as well as those that enter text).
  
- If using a manual handler, you need not wait for this entire time
+ If using a manual handler, you need not wait for this entire time:
  
-    `SLAssertTrueWithTimeout([handler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, ...)`
+    SLAssertTrueWithTimeout([handler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, ...)
 
- If relying on automatic handling, because you have no handler to check, 
- your test should call `[self wait:SLAlertHandlerDidHandleAlertDelay]`.
+ If relying on automatic handling, your test should call
+ `[self wait:SLAlertHandlerDidHandleAlertDelay]` (because you have no handler to check).
  */
 extern const NSTimeInterval SLAlertHandlerDidHandleAlertDelay;
 
@@ -290,6 +290,7 @@ extern const NSTimeInterval SLAlertHandlerDidHandleAlertDelay;
 @interface SLAlert (Debugging)
 
 #pragma mark - Debugging Tests
+
 /// -------------------------------------------
 /// @name Debugging Tests
 /// -------------------------------------------
@@ -329,7 +330,7 @@ extern const NSTimeInterval SLAlertHandlerDidHandleAlertDelay;
  Logging is disabled by default.
  
  @param enableLogging   If `YES`, alert-handling logging is enabled; 
-                        otherwise, alert-handling logging is disabled.
+ otherwise, alert-handling logging is disabled.
  */
 + (void)setLoggingEnabled:(BOOL)enableLogging;
 

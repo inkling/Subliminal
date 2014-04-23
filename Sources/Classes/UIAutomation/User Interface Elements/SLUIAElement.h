@@ -226,7 +226,7 @@
  
  @bug This method will fail if the specified element identifies a scroll view
  in an application running on an iPad simulator or device running iOS 5.x, due 
- to a bug in UIAutomation (see -isTappable). An `SLTerminalJavaScriptException` 
+ to a bug in UIAutomation (see -isTappable). An `SLUIAElementAutomationException`
  will be raised in such a scenario.
  
  UIAutomation is able to tap on scroll view child elements 
@@ -246,7 +246,7 @@
  
  @bug This method will fail if the specified element identifies a scroll view
  in an application running on an iPad simulator or device running iOS 5.x, due
- to a bug in UIAutomation (see -isTappable). An `SLTerminalJavaScriptException`
+ to a bug in UIAutomation (see -isTappable). An `SLUIAElementAutomationException`
  will be raised in such a scenario.
 
  UIAutomation is able to double-tap scroll view child elements
@@ -307,7 +307,7 @@
  
  @warning This method should only be called on elements that are within a UIScrollView or UIWebView.
  
- @exception SLJavaScriptException if the element is not within a UIScrollView or UIWebView
+ @exception SLUIAElementAutomationException if the element is not within a UIScrollView or UIWebView
  */
 - (void)scrollToVisible;
 

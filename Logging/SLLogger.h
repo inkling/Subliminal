@@ -57,29 +57,25 @@ void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
  in the Instruments application when the tests are running locally, and in the
  console while the `instruments` command-line tool is running.
 
- If the `instruments` command-line tool is invoked with a value for the `UIARESULTSPATH`
- environment variable (as the `subliminal-test` script does when invoked with the
- `-output` option), then `instruments` will also produce a `.trace` file inside
- that directory that can be opened in the Instruments application after the tests
- have concluded.
+ When running `subliminal-test` from the command line, `instruments` will also produce
+ a `.trace` file inside the specified output directory, which file can be opened in the
+ Instruments application after the tests have concluded.
 
  When [errors](-logError:) or [warnings](-logWarning:) are logged, the `SLLogger`
  will direct the Automation instrument to take a screenshot of the application.
  Those screenshots can be viewed in Instruments alongside log messages when the
- tests are running locally, or by opening the `.trace` file produced by a run of
- the `instruments` command-line tool. The `instruments` command-line tool will also
- save such screenshots to the directory specified by the `UIARESULTSPATH` environment
- variable.
+ tests are running locally, or by opening the `.trace` file produced when running
+ the `subliminal-test` command-line tool having specified an output directory.
+ `subliminal-test` will also save such screenshots to the specified output directory.
 
  ### Providing alternate log formats
 
  `SLLogger` is not designed to be subclassed, because the Automation instrument
  is the only way for tests running on a device to report their status to the
- test runner. However, when the `instruments` command-line tool is invoked with
- a value for the `UIARESULTSPATH` environment variable, it will save the logs
- to that directory as a `.plist`, with all log events available as structured
- dictionaries. That `.plist` may be parsed into other formats after testing
- concludes.
+ test runner. However, when the `subliminal-test` command-line tool is invoked with
+ an output directory, it will save the logs to that directory as a `.plist`,
+ with all log events available as structured dictionaries. That `.plist` may be
+ parsed into other formats after testing concludes.
 
  The `subliminal_uialog_to_junit` script, for example, parses the `.plist`
  into a JUnit report.

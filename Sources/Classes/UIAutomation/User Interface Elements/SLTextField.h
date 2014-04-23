@@ -32,7 +32,7 @@
  The text displayed by the text field.
  
  @exception SLUIAElementInvalidException Raised by both `-text` and `-setText:`
- if the element is not valid by the end of the [default timeout](+defaultTimeout).
+ if the element is not valid by the end of the [default timeout](+[SLUIAElement defaultTimeout]).
 
  @exception SLUIAElementNotTappableException Raised, only by `setText:`, if the 
  element is not tappable when whatever amount of time remains of the default 
@@ -43,13 +43,13 @@
 /**
  Type the text in the text field with a specific keyboard.
  
- @param text A string to type into the text field
+ @param text A string to type into the text field.
  
- @param keyboard An SLElement that implements the SLKeyboard protocol
- that will be used to type the given string
+ @param keyboard An `SLElement` that implements the `SLKeyboard` protocol,
+ to be used to type the given string.
  
  @exception SLUIAElementInvalidException Raised if the element is not valid 
- by the end of the [default timeout](+defaultTimeout).
+ by the end of the [default timeout](+[SLUIAElement defaultTimeout]).
  
  @exception SLUIAElementNotTappableException Raised if the element is not 
  tappable when whatever amount of time remains of the default timeout after
@@ -58,9 +58,9 @@
 - (void)setText:(NSString *)text withKeyboard:(id<SLKeyboard>)keyboard;
 
 /**
- The default keyboard to be used by `setText:` and `setText:withKeyboard`.
+ The default keyboard to be used by `-setText:` and `-setText:withKeyboard:`.
 
- Defaults to SLKeyboard
+ Defaults to `SLKeyboard`.
  */
 @property (nonatomic) id<SLKeyboard> defaultKeyboard;
 
@@ -99,7 +99,7 @@
  "value" attribute).
 
  @exception SLUIAElementInvalidException Raised by both `-text` and `-setText:`
- if the element is not valid by the end of the [default timeout](+defaultTimeout).
+ if the element is not valid by the end of the [default timeout](+[SLUIAElement defaultTimeout]).
 
  @exception SLUIAElementNotTappableException Raised, only by `-setText:`, if the
  element is not tappable when whatever amount of time remains of the default

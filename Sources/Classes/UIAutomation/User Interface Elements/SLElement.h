@@ -46,8 +46,8 @@
 
  An accessibility label is the preferred way to identify an element to Subliminal, 
  because accessibility labels are visible to users of assistive applications.
- See the UIAccessibility Protocol Reference for guidance in determining appropriate 
- labels.
+ See the [UIAccessibility Protocol Reference](https://developer.apple.com/library/ios/documentation/uikit/reference/UIAccessibility_Protocol/Introduction/Introduction.html) 
+ for guidance in determining appropriate labels.
 
  @param label A label that identifies a matching object.
  @return A newly created element that matches objects in the accessibility
@@ -59,8 +59,8 @@
  Creates and returns an element that matches objects in the accessibility hierarchy
  with the specified accessibility label, value, and/or traits.
 
- See the UIAccessibility Protocol Reference for guidance in determining
- appropriate accessibility labels, values, and traits.
+ See the [UIAccessibility Protocol Reference](https://developer.apple.com/library/ios/documentation/uikit/reference/UIAccessibility_Protocol/Introduction/Introduction.html) 
+ for guidance in determining appropriate accessibility labels, values, and traits.
  
  @param label A label that identifies a matching object. 
  If this is `nil`, the element does not restrict matches by label.
@@ -142,14 +142,16 @@
  Taps the specified element at its activation point.
  
  The activation point is by default the midpoint of the accessibility element's 
- frame (`-rect`), but the activation point may be modified to direct VoiceOver 
- to tap at a different point. See `-[NSObject (UIAccessibility) accessibilityActivationPoint]`
- for more information and examples.
+ frame (`[-rect](-[SLUIAElement rect])`), but the activation point may be modified
+ to direct VoiceOver to tap at a different point. See
+ `-[NSObject (UIAccessibility) accessibilityActivationPoint]` for more information
+ and examples.
  
  This method is most useful when running against SDKs older than iOS 7,
- because on those platforms, `-hitpoint` and thus `-tap` ignore the value of the element's 
- accessibility activation point. On or above iOS 7, `-hitpoint` respects the value 
- of the accessibility activation point and so `-tap` and this method are equivalent.
+ because on those platforms, `[-hitpoint](-[SLUIAElement hitpoint])` and thus
+ `[-tap](-[SLUIAElement tap])` ignore the value of the element's accessibility
+ activation point. On or above iOS 7, `-hitpoint` respects the value of the
+ accessibility activation point and so `-tap` and this method are equivalent.
  */
 - (void)tapAtActivationPoint;
 
@@ -166,7 +168,7 @@
  provide additional information beyond that logged by the superclass' implementation.
 
  @exception SLUIAElementInvalidException Raised if the element is not valid
- by the end of the [default timeout](+defaultTimeout).
+ by the end of the [default timeout](+[SLUIAElement defaultTimeout]).
  */
 - (void)logElement;
 
@@ -180,12 +182,15 @@
 extern UIAccessibilityTraits SLUIAccessibilityTraitAny;
 
 
-#pragma mark - Debugging Subliminal
-
 /**
  The methods in the `SLElement (DebugSettings)` category may be useful in debugging Subliminal.
  */
 @interface SLElement (DebugSettings)
+
+#pragma mark - Debugging Subliminal
+/// -------------------------------------------
+/// @name Debugging Subliminal
+/// -------------------------------------------
 
 /**
  Determines whether the specified element should use UIAutomation to confirm that it [is valid](-isValid)

@@ -89,7 +89,7 @@
     NSString *result = [[SLTerminal sharedTerminal] evalFunctionWithName:@"SLAddTwoNumbers"
                                                                 withArgs:@[ @"5", @"7" ]];
  
- After evaluation, `result` would contain @"12".
+ After evaluation, `result` would contain `@"12"`.
 
  @param name The name of a function previously added to the terminal's namespace.
  @param args The arguments to the function, as strings.

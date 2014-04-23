@@ -39,7 +39,7 @@
 
  @param element The element to be matched.
  @return A path that can used by UIAutomation to access element or `nil`
- if an object matching `element` is not found within the accessibility hierarchy
+ if an object matching _element_ is not found within the accessibility hierarchy
  rooted in the receiver.
  */
 - (SLAccessibilityPath *)slAccessibilityPathToElement:(SLElement *)element;
@@ -118,7 +118,7 @@
  which is contained by the main window. That is, this method creates a JavaScript
  expression of the form:
 
- UIATarget.localTarget().frontMostApp().mainWindow().elements()[...].elements()[...]...
+    UIATarget.localTarget().frontMostApp().mainWindow().elements()[...].elements()[...]...
 
  Each reference into a `UIAElementArray` (within brackets) is by element name
  (`UIAElement.name()`). Any components that the receiver was unable to name
