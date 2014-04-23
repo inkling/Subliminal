@@ -28,6 +28,8 @@
 #import "SLElement.h"
 #import "NSObject+SLAccessibilityDescription.h"
 #import "NSObject+SLAccessibilityHierarchy.h"
+#import "SLAccessibilityContainer.h"
+#import "SLTableViewCell.h"
 #import "SLStaticElement.h"
 #import "SLAlert.h"
 #import "SLButton.h"
