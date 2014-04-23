@@ -554,14 +554,14 @@
 			name = "SLTableViewCellChildElements Tests";
 			sourceTree = "<group>";
 		};
-		97AC17DD18EF2B1B00B42B66 /* New Group */ = {
+		97AC17DD18EF2B1B00B42B66 /* SLNavigationBar Tests */ = {
 			isa = PBXGroup;
 			children = (
 				97AC17D418EF2B0F00B42B66 /* SLNavigationBarTests.m */,
 				97AC17D518EF2B0F00B42B66 /* SLNavigationBarTestsViewController.m */,
 				97AC17D618EF2B0F00B42B66 /* SLNavigationBarTestsViewController.xib */,
 			);
-			name = "New Group";
+			name = "SLNavigationBar Tests";
 			sourceTree = "<group>";
 		};
 		CAC388011641CD4800F995F9 /* Internal */ = {
@@ -965,7 +965,7 @@
 				F013798E16D0843B009BAF22 /* SLTerminal Tests */,
 				F078C0431808BF0D000767D2 /* SLWebView Tests */,
 				F089F98E17458B7400DF1F25 /* SLWindow Tests */,
-				97AC17DD18EF2B1B00B42B66 /* New Group */,
+				97AC17DD18EF2B1B00B42B66 /* SLNavigationBar Tests */,
 			);
 			path = Tests;
 			sourceTree = "<group>";

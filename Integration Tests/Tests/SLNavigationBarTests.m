@@ -8,11 +8,11 @@
 
 #import "SLIntegrationTest.h"
 
-@interface focus_SLNavigationBarTests : SLIntegrationTest
+@interface SLNavigationBarTests : SLIntegrationTest
 
 @end
 
-@implementation focus_SLNavigationBarTests
+@implementation SLNavigationBarTests
 
 + (NSString *)testCaseViewControllerClassName {
     return @"SLNavigationBarTestsViewController";

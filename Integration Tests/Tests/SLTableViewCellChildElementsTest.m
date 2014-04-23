@@ -8,11 +8,11 @@
 
 #import "SLIntegrationTest.h"
 
-@interface focus_SLTableViewCellChildElementsTest : SLIntegrationTest
+@interface SLTableViewCellChildElementsTest : SLIntegrationTest
 
 @end
 
-@implementation focus_SLTableViewCellChildElementsTest
+@implementation SLTableViewCellChildElementsTest
 
 + (NSString *)testCaseViewControllerClassName {
     return @"SLTableViewCellChildElementsTestViewController";
