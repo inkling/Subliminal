@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
   s.version      = "1.0.1"
   s.summary      = "An understated approach to iOS integration testing."
   s.description  = <<-DESC
-                     Subliminal provides an OCUnit/SenTest-like interface on top of Apple’s UIAutomation framework,
+                     Subliminal provides an OCUnit/XCTest-like interface on top of Apple’s UIAutomation framework,
                      with tests written entirely in Objective-C. 
                      Subliminal also provides a powerful mechanism for your tests to manipulate your application directly.
                      Visit Subliminal's website for [complete API documentation](http://inkling.github.io/Subliminal/Documentation/).
