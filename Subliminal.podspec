@@ -16,7 +16,12 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/inkling/Subliminal.git", :tag => "1.0.1" }
   s.platform     = :ios, '5.1'
   s.source_files = ['Sources/**/*.{h,m}','Logging/**/*.{h,m}']
-  s.private_header_files = ['Sources/**/*+Internal.h', 'Sources/Classes/Internal/SLMainThreadRef.h','Sources/Classes/Internal/SLAccessibilityPath.h']
+  s.private_header_files = [
+    'Sources/**/*+Internal.h',
+    'Sources/Classes/Internal/SLMainThreadRef.h',
+    'Sources/Classes/Internal/SLAccessibilityPath.h',
+    'Sources/Classes/UIAutomation/User Interface Elements/UIScrollView+SLProgrammaticScrolling.h'
+  ]
   s.preserve_paths = ['Rakefile','Supporting Files/CI/**','Supporting Files/Instruments/**','Supporting Files/Xcode/File Templates/**']
   s.requires_arc = true
   s.xcconfig = { 
