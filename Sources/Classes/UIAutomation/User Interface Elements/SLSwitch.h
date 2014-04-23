@@ -9,16 +9,19 @@
 #import "SLButton.h"
 
 /**
- `SLSwitch` matches against instances of `UISwitch`
+ `SLSwitch` matches against instances of `UISwitch`.
  
-  Tappipng an `SLSwitch` will toggle its value, which can be queried with the `on` property, or the switch may be set to a specific value.
+ The value of an `SLSwitch` can be queried and set using the `on` property.
+
+ Tapping an `SLSwitch` will also toggle its value.
  */
 @interface SLSwitch : SLButton
 
 /**
  The boolean value of the switch.
  
- `setOn:` will set the value of the switch regardless of the current state, as opposed to tapping which will toggle it.
+ `-setOn:` will set the value of the switch regardless of the current state,
+ as opposed to tapping which will toggle it.
  */
 @property (nonatomic, getter=isOn) BOOL on;
 

@@ -39,7 +39,8 @@
  by recording a test script and examining the output of the Automation instrument
  when that element is tapped.
  
- For more information, see ["Understanding the Element Hierarchy"](https://developer.apple.com/library/ios/#documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/UsingtheAutomationInstrument/UsingtheAutomationInstrument.html#//apple_ref/doc/uid/TP40004652-CH20-SW88 ).
+ For more information, see the "Understanding the Element Hierarchy" section of
+ [this document](https://developer.apple.com/library/ios/#documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/UsingtheAutomationInstrument/UsingtheAutomationInstrument.html).
 
  @warning `SLStaticElement` does not support the ability of `SLElement` to dynamically
  match objects within the element hierarchy and so is completely dependent 
@@ -76,15 +77,16 @@
  so that Subliminal can work around (or at the least warn of) bugs concerning
  scroll views in various iOS SDK versions:
 
-    *   When this is set to `YES` and tests are running on an iPad simulator or device
-        running iOS 5.x, Subliminal will not try to determine tappability when simulating
-        user interaction with that scroll view, because UIAutomation will always say
-        that the scroll view is not tappable.
- 
-    *   When this is set to `YES` and tests are running on a simulator or device (whether iPhone or iPad) 
-        running iOS 7.x or above, Subliminal will issue a warning if it is asked to drag 
-        the scroll view, as it will likely fail. See the documentation on `-dragWithStartOffset:endOffset:` 
-        for more information.
+ *   When this is set to `YES` and tests are running on an iPad simulator or device
+     running iOS 5.x, Subliminal will not try to determine tappability when simulating
+     user interaction with that scroll view, because UIAutomation will always say
+     that the scroll view is not tappable.
+
+ *   When this is set to `YES` and tests are running on a simulator or device (whether iPhone or iPad)
+     running iOS 7.x or above, Subliminal will issue a warning if it is asked to drag
+     the scroll view, as it will likely fail. See the documentation on
+     `[-dragWithStartOffset:endOffset:](-[SLUIAElement dragWithStartOffset:endOffset:])`
+     for more information.
 
  Defaults to `NO`.
  */

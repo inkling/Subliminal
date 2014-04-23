@@ -55,8 +55,8 @@
  
  This method will not return until the app reactivates.
 
- Note that the time spent inactive will actually be a few seconds longer than specified.
- UIAutomation lingers upon the app switcher for several seconds before actually 
+ Note that the time spent inactive will actually be a few seconds longer than specified;
+ UIAutomation lingers upon the app switcher for several seconds before actually
  tapping the app.
  
  @param duration The time, in seconds, for the app to remain inactive 
@@ -72,7 +72,7 @@
 /**
  Changes the device orientation to the specified new `deviceOrientation` value.
  
- You can access the current device orientation using `[[UIDevice currentDevice] orientation]`
+ You can access the current device orientation using `[[UIDevice currentDevice] orientation]`.
  
  @param deviceOrientation The device orientation to rotate to.
  */
@@ -106,7 +106,7 @@
  @param filename A string to use as the name for the resultant image file.
  @param rect The rect that defines the area of the screen to capture.
  
- @exception `NSInternalInconsistencyException` if `rect` is `CGRectNull`.
+ @exception NSInternalInconsistencyException if `rect` is `CGRectNull`.
  */
 - (void)captureScreenshotWithFilename:(NSString *)filename inRect:(CGRect)rect;
 

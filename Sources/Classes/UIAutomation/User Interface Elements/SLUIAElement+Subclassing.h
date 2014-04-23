@@ -50,11 +50,11 @@
  
  This method automatically waits until the element [is valid](-isValid) before
  attempting to access the `UIAElement`, for not more than the [default timeout](+defaultTimeout).
- If `waitUntilTappable` is `YES`, the method will also wait, for the remainder 
+ If _waitUntilTappable_ is `YES`, the method will also wait, for the remainder
  of the timeout, for the element to become [tappable](-isTappable).
  
  @warning All methods that involve user interaction must pass `YES` for 
- `waitUntilTappable`.
+ _waitUntilTappable_.
  
  @warning Variable arguments that are strings need to be escaped,
  using `-[NSString slStringByEscapingForJavaScriptLiteral]`,
@@ -67,7 +67,7 @@
  representing a JavaScript function to be called on the corresponding `UIAElement`.
  @param ... (Optional) A comma-separated list of arguments to substitute into 
  `action`.
- @return The value returned by the function, as an `Objective-C` object. See 
+ @return The value returned by the function, as an Objective-C object. See 
  `-[SLTerminal eval:]` for more infomation.
  
  @exception SLUIAElementInvalidException Raised if the element is not valid
@@ -93,27 +93,27 @@
  timeout for resolving the corresponding `UIAElement`.
 
  This method waits until the element [is valid](-isValid) before attempting to 
- access the `UIAElement`, for not more than `timeout. If `waitUntilTappable` 
- is `YES`, the method will also wait, for the remainder of `timeout`, for the 
+ access the `UIAElement`, for not more than _timeout_. If _waitUntilTappable_
+ is `YES`, the method will also wait, for the remainder of _timeout_, for the
  element to become [tappable](-isTappable).
 
- @warning If the expression to be evaluated by `block` involves user interaction,
- the caller must pass `YES` for `waitUntilTappable`.
+ @warning If the expression to be evaluated by _block_ involves user interaction,
+ the caller must pass `YES` for _waitUntilTappable_.
 
  @param waitUntilTappable If `YES`, and `-canDetermineTappability` returns `YES`, 
- this method will wait for the remainder of `timeout`, after the element becomes valid, 
+ this method will wait for the remainder of _timeout_, after the element becomes valid,
  for the element to become tappable.
  @param block A block which takes the UIAutomation representation of the specified 
  element as an argument and returns `void`.
  @param timeout The timeout for which this method should wait for the specified 
- element to become valid (and tappable, if `waitUntilTappable` is YES). Clients 
+ element to become valid (and tappable, if _waitUntilTappable_ is `YES`). Clients
  should generally call this method with `+[SLUIAElement defaultTimeout]`.
  
  @exception SLUIAElementInvalidException Raised if the element is not valid
- by the end of `timeout`.
+ by the end of _timeout_.
 
  @exception SLUIAElementNotTappableException Raised if the element waits for 
- tappability and is not tappable when whatever amount of time remains of `timeout`,
+ tappability and is not tappable when whatever amount of time remains of _timeout_,
  after the element becomes valid, elapses.
  */
 - (void)waitUntilTappable:(BOOL)waitUntilTappable
@@ -195,7 +195,7 @@
  `void`.
  
  @exception SLUIAElementInvalidException Raised if the element has not matched 
- an object by the end of the [default timeout](+defaultTimeout).
+ an object by the end of the [default timeout](+[SLUIAElement defaultTimeout]).
  */
 - (void)examineMatchingObject:(void (^)(NSObject *object))block;
 
