@@ -112,6 +112,15 @@ cp -Rf /tmp/appledoc/2.1/Templates/ ~/.appledoc
 
 Then choose the "Subliminal Documentation" scheme in Xcode to build the docs.
 If any documentation is incomplete, errors will be generated showing you where.
+
+> When Appledoc builds the documentation, it will also install it into Xcode for you
+  (overwriting the current docset), so you can open it up and see how your changes
+  render. A successful build doesn't guarantee that your formatting is perfect,
+  just that there's no information missing.
+
+> To get the documentation browser to refresh a page, navigate to another page
+  and then back.
+
 The documentation must successfully build on Travis for your pull request to be
 accepted.
 
