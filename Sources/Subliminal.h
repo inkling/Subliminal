@@ -29,6 +29,8 @@
 #import "NSObject+SLAccessibilityDescription.h"
 #import "NSObject+SLAccessibilityHierarchy.h"
 #import "SLStaticElement.h"
+#import "SLTableViewCell.h"
+#import "SLNavigationBar.h"
 #import "SLAlert.h"
 #import "SLButton.h"
 #import "SLKeyboard.h"
