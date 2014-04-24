@@ -373,12 +373,11 @@
 
 
 @implementation UITableViewCell (SLAccessibilityHierarchy)
-- (BOOL)classForcesPresenceOfMockingViewsInAccessibilityHierarchy {
-    return YES;
+- (BOOL)classForcesPresenceInAccessibilityHierarchy {
+    return kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_6_1;
 }
-- (BOOL)classForcesPresenceInAccessibilityHierarchy
-{
-    return YES;
+- (BOOL)classForcesPresenceOfMockingViewsInAccessibilityHierarchy {
+    return kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_6_1;
 }
 @end
 
