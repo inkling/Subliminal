@@ -120,7 +120,16 @@ by Xcode.
   UDID=<udid>               The UDID of the device to target.\n\n"""
 
     when "build_docs"
-      puts "rake build_docs\tBuilds Subliminal's documentation"
+      puts """
+rake build_docs\tBuilds Subliminal's documentation
+
+rake build_docs [RELEASE=yes]
+
+This command will also install the built documentation into Xcode
+unless \`RELEASE=yes\` is specified.
+
+Options:
+  RELEASE=yes\tPrepares HTML and archived docsets for upload to the \`gh_pages\` branch.\n\n"""
 
     else
       fail "Unrecognized task name."
@@ -543,12 +552,39 @@ end
 ### Building documentation
 
 desc "Builds the documentation"
-task :build_docs => 'test:prepare' do    
+task :build_docs => 'test:prepare' do
+  if ENV["RELEASE"] == "yes"
+    puts "Do you want to build the #{DOCSET_VERSION} documentation for release?"
+    puts "(You might want to update \`DOCSET_VERSION\` at the top of the Rakefile.)"
+    puts "Y to continue, anything else to abort."
+
+    input = STDIN.gets.chomp
+    raise "Documentation release build aborted." unless input.upcase == "Y"
+  end
+
   puts "\nBuilding documentation...\n\n"
 
   # Use system so we see the build's output
   if system('xctool -project Subliminal.xcodeproj/ -scheme "Subliminal Documentation" build')
-    puts "Documentation built successfully.\n\n"
+    # If `RELEASE` was set, the build script will have left artifacts for us to post-process below
+    if ENV["RELEASE"] == "yes"
+      puts "#{DOCSET_VERSION} documentation built successfully."
+
+      # Rename the docset to the post-unarchiving target (see `install_docs`) before archiving
+      `mv "#{PROJECT_DIR}"/Documentation/docset "#{PROJECT_DIR}"/Documentation/#{DOCSET_NAME}`
+      # Archive
+      `xcrun docsetutil package "#{PROJECT_DIR}"/Documentation/#{DOCSET_NAME}`
+      # Rename for upload
+      docset_xar_name = DOCSET_NAME.chomp(File.extname(DOCSET_NAME)) + ".xar"
+      upload_xar_name = "com.inkling.Subliminal-#{DOCSET_VERSION}.xar"
+      `mv "#{PROJECT_DIR}"/Documentation/#{docset_xar_name} "#{PROJECT_DIR}"/Documentation/#{upload_xar_name}`
+
+      puts "Upload \`#{PROJECT_DIR}/Documentation/#{upload_xar_name}\`"
+      puts "and the contents of \`#{PROJECT_DIR}/Documentation/html\`"
+      puts "to the \"Documentation\" folder on the \`gh_pages\` branch.\n\n"
+    else
+      puts "Documentation built successfully.\n\n"
+    end
   else
     fail "Documentation failed to build."
   end
