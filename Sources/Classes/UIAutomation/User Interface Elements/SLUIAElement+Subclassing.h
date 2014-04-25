@@ -199,15 +199,4 @@
  */
 - (void)examineMatchingObject:(void (^)(NSObject *object))block;
 
-/**
- Allows the caller to return a child object matching the specificed `SLElement`.
- 
- Must be implemented by the caller.
- 
- @param childElement A `SLElement` with your provided specifications.
- 
- @return `SLElement` matching specifications of the parameter and appearing as an accessibilityChild of the caller.
- */
-- (id)childElementMatching:(SLElement *)childElement;
-
 @end

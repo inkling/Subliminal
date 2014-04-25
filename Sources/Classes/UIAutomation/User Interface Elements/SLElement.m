@@ -303,6 +303,20 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
     if (examinationException) @throw examinationException;
 }
 
+- (id) childElementMatching:(SLElement *)childElement
+{
+    if ([self accessibilityElementCount] == 0) {
+        return nil;
+    }
+    return [SLElement elementMatching:^BOOL(NSObject *obj) {
+        if ([childElement matchesObject:obj]) {
+            id accessibilityParent = [obj slAccessibilityParent];
+            return [self matchesObject:accessibilityParent];
+        }
+        return NO;
+    } withDescription:@"nav bar child"];
+}
+
 - (BOOL)isValid {
     // isValid evaluates the current state, no waiting to resolve the element
     SLAccessibilityPath *accessibilityPath = [self accessibilityPathWithTimeout:0.0];

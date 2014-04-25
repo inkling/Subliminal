@@ -16,15 +16,4 @@
     return [super matchesObject:object] && [object isKindOfClass:[UINavigationBar class]];
 }
 
-- (id)childElementMatching:(SLElement *)childElement
-{
-    return [SLElement elementMatching:^BOOL(NSObject *obj) {
-        if ([childElement matchesObject:obj]) {
-            id accessibilityParent = [obj slAccessibilityParent];
-            return [self matchesObject:accessibilityParent];
-        }
-        return NO;
-    } withDescription:@"nav bar child"];
-}
-
 @end

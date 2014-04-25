@@ -8,6 +8,7 @@
 
 #import "SLTableViewCell.h"
 #import "NSObject+SLAccessibilityHierarchy.h"
+#import "SLUIAElement+Subclassing.h"
 
 @implementation SLTableViewCell
 
