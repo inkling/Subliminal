@@ -33,6 +33,7 @@
 #import "SLButton.h"
 #import "SLKeyboard.h"
 #import "SLPopover.h"
+#import "SLSlider.h"
 #import "SLStatusBar.h"
 #import "SLSwitch.h"
 #import "SLTextField.h"

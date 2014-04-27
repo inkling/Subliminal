@@ -38,6 +38,11 @@
 		50A59BD617848D67002A863A /* SLGeometryUnitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 50A59BD517848D67002A863A /* SLGeometryUnitTests.m */; };
 		50A59BD81784908D002A863A /* SLGeometryTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 50A59BD71784908D002A863A /* SLGeometryTest.m */; };
 		50A59BDB178490C2002A863A /* SLGeometryTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 50A59BDA178490C2002A863A /* SLGeometryTestViewController.m */; };
+		50E14DF0190D7054003AA47D /* SLSlider.h in Headers */ = {isa = PBXBuildFile; fileRef = 50E14DEE190D7054003AA47D /* SLSlider.h */; };
+		50E14DF1190D7054003AA47D /* SLSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 50E14DEF190D7054003AA47D /* SLSlider.m */; };
+		50E14DF9190D740B003AA47D /* SLSliderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 50E14DF6190D740B003AA47D /* SLSliderTest.m */; };
+		50E14DFA190D740B003AA47D /* SLSliderTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 50E14DF7190D740B003AA47D /* SLSliderTestViewController.m */; };
+		50E14DFB190D740B003AA47D /* SLSliderTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 50E14DF8190D740B003AA47D /* SLSliderTestViewController.xib */; };
 		50F2B7C818E9C0D700F21635 /* SLDispatchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 50F2B7C718E9C0D700F21635 /* SLDispatchTests.m */; };
 		50F3E18C1783A5CB00C6BD1B /* SLGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 50F3E18A1783A5CB00C6BD1B /* SLGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50F3E18E1783A60100C6BD1B /* SLGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 50F3E18B1783A5CB00C6BD1B /* SLGeometry.m */; };
@@ -271,6 +276,11 @@
 		50A59BD517848D67002A863A /* SLGeometryUnitTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLGeometryUnitTests.m; sourceTree = "<group>"; };
 		50A59BD71784908D002A863A /* SLGeometryTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLGeometryTest.m; sourceTree = "<group>"; };
 		50A59BDA178490C2002A863A /* SLGeometryTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLGeometryTestViewController.m; sourceTree = "<group>"; };
+		50E14DEE190D7054003AA47D /* SLSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLSlider.h; sourceTree = "<group>"; };
+		50E14DEF190D7054003AA47D /* SLSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLSlider.m; sourceTree = "<group>"; };
+		50E14DF6190D740B003AA47D /* SLSliderTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLSliderTest.m; sourceTree = "<group>"; };
+		50E14DF7190D740B003AA47D /* SLSliderTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLSliderTestViewController.m; sourceTree = "<group>"; };
+		50E14DF8190D740B003AA47D /* SLSliderTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLSliderTestViewController.xib; sourceTree = "<group>"; };
 		50F2B7C718E9C0D700F21635 /* SLDispatchTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDispatchTests.m; sourceTree = "<group>"; };
 		50F3E18A1783A5CB00C6BD1B /* SLGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLGeometry.h; sourceTree = "<group>"; };
 		50F3E18B1783A5CB00C6BD1B /* SLGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLGeometry.m; sourceTree = "<group>"; };
@@ -516,6 +526,16 @@
 				50A59BDA178490C2002A863A /* SLGeometryTestViewController.m */,
 			);
 			name = "SLGeometry Tests";
+			sourceTree = "<group>";
+		};
+		50E14DF5190D73A0003AA47D /* SLSlider Tests */ = {
+			isa = PBXGroup;
+			children = (
+				50E14DF6190D740B003AA47D /* SLSliderTest.m */,
+				50E14DF7190D740B003AA47D /* SLSliderTestViewController.m */,
+				50E14DF8190D740B003AA47D /* SLSliderTestViewController.xib */,
+			);
+			name = "SLSlider Tests";
 			sourceTree = "<group>";
 		};
 		CAC388011641CD4800F995F9 /* Internal */ = {
@@ -798,6 +818,8 @@
 				F0C07A4E1704009E00C93F93 /* SLWindow.m */,
 				DB501DC717B9669A001658CB /* SLStatusBar.h */,
 				DB501DC817B9669A001658CB /* SLStatusBar.m */,
+				50E14DEE190D7054003AA47D /* SLSlider.h */,
+				50E14DEF190D7054003AA47D /* SLSlider.m */,
 			);
 			path = "User Interface Elements";
 			sourceTree = "<group>";
@@ -896,6 +918,7 @@
 		F0AC80BE16BB542400C5D5C0 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				50E14DF5190D73A0003AA47D /* SLSlider Tests */,
 				DB2627D817B96704009DA3A6 /* SLStatusBar Tests */,
 				50A59BD317848CEE002A863A /* SLGeometry Tests */,
 				F07DA31F16E439B7004C2282 /* SLAlert Tests */,
@@ -1019,6 +1042,7 @@
 				F0C07A3F1703F9A900C93F93 /* SLUIAElement+Subclassing.h in Headers */,
 				F0C07A471703FEF600C93F93 /* SLButton.h in Headers */,
 				F0C07A4B1704002100C93F93 /* SLTextField.h in Headers */,
+				50E14DF0190D7054003AA47D /* SLSlider.h in Headers */,
 				F0C07A4F1704009E00C93F93 /* SLWindow.h in Headers */,
 				F0C07A531704011400C93F93 /* SLKeyboard.h in Headers */,
 				F0C07A57170401E500C93F93 /* SLWebView.h in Headers */,
@@ -1227,6 +1251,7 @@
 				F00F3B6717790B4C00119580 /* SLStaticElementTestScrollView.xib in Resources */,
 				0640035B178FDE7800479173 /* SLElementTouchAndHoldTestViewController.xib in Resources */,
 				F0A3F63F17A7172E007529C3 /* SLTextViewTestViewController.xib in Resources */,
+				50E14DFB190D740B003AA47D /* SLSliderTestViewController.xib in Resources */,
 				F0A3F64117A73198007529C3 /* SLWebTextView.html in Resources */,
 				DB2627E117B96974009DA3A6 /* SLStatusBarTestViewController.xib in Resources */,
 				2C903BC217F525E700555317 /* SLSwitchTestViewController.xib in Resources */,
@@ -1290,6 +1315,7 @@
 				2CE9AA4D17E3A747007EF0B5 /* SLSwitch.m in Sources */,
 				50F3E18E1783A60100C6BD1B /* SLGeometry.m in Sources */,
 				F0695DE4160138DF000B05D0 /* SLUIAElement.m in Sources */,
+				50E14DF1190D7054003AA47D /* SLSlider.m in Sources */,
 				F0695DE5160138DF000B05D0 /* SLLogger.m in Sources */,
 				F0695DE7160138DF000B05D0 /* SLTerminal.m in Sources */,
 				F0695DE8160138DF000B05D0 /* SLTest.m in Sources */,
@@ -1344,7 +1370,9 @@
 				F07DA32E16E43AD3004C2282 /* SLAlertTestViewController.m in Sources */,
 				2C903BC117F525E700555317 /* SLSwitchTestViewController.m in Sources */,
 				F01EBC9B170115B100FF6A7C /* SLTextFieldTest.m in Sources */,
+				50E14DF9190D740B003AA47D /* SLSliderTest.m in Sources */,
 				F01EBC9C170115B100FF6A7C /* SLTextFieldTestViewController.m in Sources */,
+				50E14DFA190D740B003AA47D /* SLSliderTestViewController.m in Sources */,
 				F077D70D16D9D77900908FF5 /* SLElementVisibilityTest.m in Sources */,
 				F077D70E16D9D77900908FF5 /* SLElementVisibilityTestViewController.m in Sources */,
 				F0B868EC1740A146008BDA80 /* SLTerminalTestViewController.m in Sources */,
