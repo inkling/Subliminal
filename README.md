@@ -9,6 +9,17 @@ a familiar OCUnit/XCTest-like interface to Apple's UIAutomation framework,
 with tests written entirely in Objective-C. Subliminal also provides a powerful 
 mechanism for your tests to manipulate your application directly.
 
+[
+[Features](#features) &bull; 
+[Getting Started](#how-to-get-started) &bull; 
+[Requirements](#requirements) &bull; 
+[Usage](#usage) &bull; 
+[Continuous Integration](#continuous-integration) &bull; 
+[Contributing](#contributing) &bull; 
+[Contact](#contact) &bull; 
+[License](#copyright-and-license) 
+]
+
 Features
 --------
 
