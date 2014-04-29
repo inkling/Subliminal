@@ -42,8 +42,6 @@ and [try out the included example app](#running-the-example-app)
 * Check out Subliminal's [API documentation](http://inkling.github.io/Subliminal/Documentation/)
 or the [guides to using Subliminal on the Wiki](https://github.com/inkling/Subliminal/wiki#documentation)
 * Read a [comparison of Subliminal to other integration test frameworks](#comparison-to-other-integration-test-frameworks)
-* Get support from [@subliminaltest](https://twitter.com/subliminaltest) and on 
-[Stack Overflow](http://stackoverflow.com/questions/tagged/subliminal)
 
 Running the Example App
 -----------------------
@@ -199,8 +197,14 @@ and Subliminal's [growing list of contributors](https://github.com/inkling/Subli
 Contact
 -------
 
-Follow Subliminal ([@subliminaltest](https://twitter.com/subliminaltest)) and 
-Jeff Wear ([@wear_here](https://twitter.com/wear_here/)) on Twitter.
+* If you **need help**, use [Stack Overflow](http://stackoverflow.com/questions/tagged/subliminal). (Tag 'subliminal'.)
+* If you'd like to **ask a general question**, use [Stack Overflow](http://stackoverflow.com/questions/tagged/subliminal).
+* If you've **found a bug**, [open an issue](https://github.com/inkling/Subliminal/issues/new).
+* If you **have a feature request**, [open an issue](https://github.com/inkling/Subliminal/issues/new).
+* If you'd **like to contribute** (awesome!), see [the contributing guidelines](https://github.com/inkling/Subliminal/blob/master/CONTRIBUTING.md) to get started.
+
+You can also follow Subliminal ([@subliminaltest](https://twitter.com/subliminaltest))
+on Twitter.
 
 Copyright and License
 ---------------------
