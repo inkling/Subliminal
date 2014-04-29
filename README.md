@@ -37,9 +37,10 @@ How to Get Started
 ------------------
 
 * [Download Subliminal](https://github.com/inkling/Subliminal/zipball/master) 
-and try out the included example app. Instructions for running the example app are [here](#running-the-example-app)
-* Install Subliminal and write your first test in just 10 minutes (screencast [here](https://vimeo.com/67771344))
-* Read the wiki for an [installation walkthrough](https://github.com/inkling/Subliminal/wiki#installing-subliminal) or for other [guides to using Subliminal](https://github.com/inkling/Subliminal/wiki#documentation)
+and [try out the included example app](#running-the-example-app)
+* See an [installation walkthrough and screencast](https://github.com/inkling/Subliminal/wiki#installing-subliminal)
+* Check out Subliminal's [API documentation](http://inkling.github.io/Subliminal/Documentation/)
+or the [guides to using Subliminal on the Wiki](https://github.com/inkling/Subliminal/wiki#documentation)
 * Read a [comparison of Subliminal to other integration test frameworks](#comparison-to-other-integration-test-frameworks)
 * Get support from [@subliminaltest](https://twitter.com/subliminaltest) and on 
 [Stack Overflow](http://stackoverflow.com/questions/tagged/subliminal)
