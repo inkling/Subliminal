@@ -128,7 +128,7 @@ For example scripts and guides to integrate with popular CI services like Travis
 Comparison to Other Integration Test Frameworks
 -----------------------------------------------
 
-* 	How is Subliminal different from other integration test frameworks?
+* 	**How is Subliminal different from other integration test frameworks?**
 
 	Most other integration test frameworks fall into two categories: entirely 
 	Objective-C based, or entirely UIAutomation-based.
@@ -150,7 +150,7 @@ Comparison to Other Integration Test Frameworks
 	Only Subliminal combines the convenience of writing tests in Objective-C 
 	with the power of UIAutomation.
 
-* 	How is Subliminal different than UIAutomation?
+* 	**How is Subliminal different than UIAutomation?**
 
 	Besides the limitations of UIAutomation described above, it is extremely 
 	difficult to write UIAutomation tests. This is because UIAutomation requires 
@@ -158,7 +158,7 @@ Comparison to Other Integration Test Frameworks
 	["element hierarchy"](https://developer.apple.com/library/ios/#documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/UsingtheAutomationInstrument/UsingtheAutomationInstrument.html#//apple_ref/doc/uid/TP40004652-CH20-SW88), like
 
 	```js
-	UIATarget.localTarget().frontMostApp().mainWindow().tableViews()[0].cells()[0].
+	var cell = UIATarget.localTarget().frontMostApp().mainWindow().tableViews()[0].cells()["foo"];
 	```
 
 	These references are not only difficult to read but are also difficult to write.
@@ -171,9 +171,21 @@ Comparison to Other Integration Test Frameworks
 	difficult to modify thereafter.
 
 	Subliminal allows developers to identify elements by their properties, 
-	independent of their position in the element hierarchy. Subliminal then 
-	generates the full reference for the developer. Subliminal abstracts away 
-	the complexity of UIAutomation scripts to let developers focus on writing tests.
+	independent of their position in the element hierarchy:
+
+    ```objc
+    SLElement *fooCell = [SLElement elementWithAccessibilityLabel:@"foo"];
+    ```
+
+    Subliminal abstracts away the complexity of UIAutomation scripts to let developers focus on writing tests.
+
+    Subliminal also fixes several bugs in UIAutomation and the `instruments` CLI tool,
+    such as `instruments`' lack for [true device support](https://github.com/inkling/Subliminal/pull/75).
+    And, last but not least, Subliminal rewrites `instruments`' output using human-friendly formatting
+    and ANSI colors:
+
+    ![](http://inkling.github.io/Subliminal/readme-images/PrettyCI.png)
+
 
 Contributing
 ------------
