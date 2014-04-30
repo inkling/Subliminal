@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "Subliminal"
-  s.version      = "1.0.1"
+  s.version      = "1.1.0"
   s.summary      = "An understated approach to iOS integration testing."
   s.description  = <<-DESC
                      Subliminal provides an OCUnit/XCTest-like interface on top of Apple’s UIAutomation framework,
@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.social_media_url = 'https://twitter.com/subliminaltest'
   s.license      = 'Apache 2.0'
   s.author       = { "Jeff Wear" => "jeff@inkling.com" }
-  s.source       = { :git => "https://github.com/inkling/Subliminal.git", :tag => "1.0.1" }
+  s.source       = { :git => "https://github.com/inkling/Subliminal.git", :tag => "v1.1.0" }
   s.platform     = :ios, '5.1'
   s.source_files = ['Sources/**/*.{h,m}','Logging/**/*.{h,m}']
   s.private_header_files = [

@@ -31,7 +31,7 @@ SCHEMES_DIR = "Subliminal.xcodeproj/xcuserdata/#{ENV['USER']}.xcuserdatad/xcsche
 
 DOCSET_DIR = "#{ENV['HOME']}/Library/Developer/Shared/Documentation/DocSets"
 DOCSET_NAME = "com.inkling.Subliminal.docset"
-DOCSET_VERSION = "1.0.1"
+DOCSET_VERSION = "1.1.0"
 
 SUPPORTED_SDKS = [ "6.1", "7.1" ]
 TEST_SDK = ENV["TEST_SDK"]

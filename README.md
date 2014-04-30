@@ -75,16 +75,13 @@ Requirements
 ------------
 
 Subliminal supports projects built using Xcode 5.1 and iOS 7.x SDKs,
-and deployment targets running iOS 5.1 through 7.1.
+and deployment targets running iOS 6.1 through 7.1.
 
-To test against the iOS 5.1 Simulator, you will need to run Xcode 5.1 on OS X 10.8,
-and manually add the 5.1 Simulator to Xcode 5.1, as described
-[here](http://stackoverflow.com/a/22494536/495611).
-
-**NOTE**: The forthcoming Subliminal 1.1 will be the last version of Subliminal
-to officially support iOS 5.1, because Subliminal's CI infrastructure has been
-upgraded to OS X 10.9 and so no longer supports the 5.1 Simulator. (Subliminal 1.1
-will be specially tested against a local machine running 10.8.)
+For iOS 5.1 support, use Subliminal 1.1.0 (found in the
+[Releases](https://github.com/inkling/Subliminal/releases/) section or on
+[CocoaPods](http://cocoapods.org/)). To test in the iOS 5.1 Simulator, you will
+need to run OS X 10.8 and manually add the iOS 5.1 Simulator to Xcode 5.1,
+as described [here](http://stackoverflow.com/a/22494536/495611).
 
 Usage
 -----
