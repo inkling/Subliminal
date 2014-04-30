@@ -1,18 +1,42 @@
-## Installation
+## Installation/Updating
 
-To install Subliminal see the [installation walkthrough](https://github.com/inkling/Subliminal/wiki#installing-subliminal) on the wiki.
+To install Subliminal see the [installation walkthrough](https://github.com/inkling/Subliminal/wiki#installing-subliminal)
+on the wiki.
+
+To update Subliminal:
+* If you installed Subliminal **manually**, download Subliminal [from the Releases page](https://github.com/inkling/Subliminal/releases)
+and drop in the new sources.
+* If you installed Subliminal **using Git submodules**, execute `git checkout <tag>` from
+Subliminal's root directory and commit your change in your project.
+* If you installed Subliminal **using Cocoapods**,  update your Podfile (optional) and then
+execute `pod update Subliminal` from your project directory.
+
+Then, to update your installation of Subliminal's docs (if desired), execute `rake install` from
+Subliminal's root directory (if you installed Subliminal manually or using Git submodules) or
+from `YOUR_PROJECT_DIR/Pods/Subliminal` (if you installed Subliminal using Cocoapods).
+
+_Please also see the notes below for release-specific update instructions._
 
 ## Master
 
 ## 1.1
 
-[Complete diff](https://github.com/inkling/Subliminal/compare/1.0.1...master)
+[Complete diff](https://github.com/inkling/Subliminal/compare/1.0.1...1.1)
 
 _Because of the significant period of time between the 1.0.1 and 1.1 releases, the 1.1 changelog is heavily abridged._
 
+##### Updated Requirements
+
+* Subliminal now requires Xcode 5.1. iOS 5.1 is still supported, though this is the last release
+to support iOS 5.1. To test in the iOS 5.1 Simulator, users must run OS X 10.8 and manually
+add the iOS 5.1 Simulator to Xcode as described [here](http://stackoverflow.com/a/22494536/495611).
+* Subliminal no longer requires the user's password to run from the command-line. Users
+should stop passing the `-login_password` and `--live` options to the `subliminal-test` script
+and instead [pre-authorize their computers to run Instruments](https://github.com/inkling/Subliminal/wiki/Continuous-Integration#faq).
+
 ##### Notable Features
 
-* Subliminal no longer requires your password to run from the command-line. Instead, users should pre-authorize their computer to run Subliminal. See the [Continuous Integration FAQ](https://github.com/inkling/Subliminal/wiki/Continuous-Integration#faq) for details.  
+* Subliminal no longer requires the user's password to run from the command line.  
   [Jeffrey Wear](https://github.com/wearhere) [#181](https://github.com/inkling/Subliminal/pull/181)
 
 * Use Instrument's new `-w` flag to run on a specific device  
