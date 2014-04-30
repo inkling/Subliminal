@@ -293,9 +293,10 @@ static NSTimeInterval kSampleTimeInterval = 413758794.502608;
     STAssertEqualObjects(expectedEvent, _lastEvent, @"");
 }
 
-- (void)testCanParseTestFinished {
+- (void)testCanParseTestFinishedWithNumCasesExecuted:(NSUInteger)numCasesExecuted
+                                      numCasesFailed:(NSUInteger)numCasesFailed
+                          numCasesFailedUnexpectedly:(NSUInteger)numCasesFailedUnexpectedly {
     NSString *test = @"FooTest";
-    NSInteger numCasesExecuted = 7, numCasesFailed = 3, numCasesFailedUnexpectedly = 1;
     NSDictionary *expectedEventInfo = @{
         @"test": test,
         @"numCasesExecuted": @(numCasesExecuted),
@@ -316,6 +317,13 @@ static NSTimeInterval kSampleTimeInterval = 413758794.502608;
     STAssertEqualObjects(expectedEvent, _lastEvent, @"");
 }
 
+- (void)testCanParseTestFinished {
+    // test that we properly parse "executed ... case(s)"
+    [self testCanParseTestFinishedWithNumCasesExecuted:7 numCasesFailed:3 numCasesFailedUnexpectedly:1];
+    [self testCanParseTestFinishedWithNumCasesExecuted:1 numCasesFailed:1 numCasesFailedUnexpectedly:0];
+    [self testCanParseTestFinishedWithNumCasesExecuted:1 numCasesFailed:1 numCasesFailedUnexpectedly:1];
+}
+
 - (void)testCanParseTestTerminatedAbnormally {
     NSString *test = @"FooTest";
     NSDictionary *expectedEvent = [[self class] eventWithType:SISLLogEventTypeTestStatus
@@ -329,8 +337,8 @@ static NSTimeInterval kSampleTimeInterval = 413758794.502608;
     STAssertEqualObjects(expectedEvent, _lastEvent, @"");
 }
 
-- (void)testCanParseTestingFinished {
-    NSInteger numTestsExecuted = 7, numTestsFailed = 3;
+- (void)testCanParseTestingFinishedWithNumTestsExecuted:(NSUInteger)numTestsExecuted
+                                        numTestsFailing:(NSUInteger)numTestsFailed {
     NSDictionary *expectedEventInfo = @{
                                         @"numTestsExecuted": @(numTestsExecuted),
                                         @"numTestsFailed": @(numTestsFailed)
@@ -344,6 +352,13 @@ static NSTimeInterval kSampleTimeInterval = 413758794.502608;
     
     STAssertTrue([self consumeMessage], @"");
     STAssertEqualObjects(expectedEvent, _lastEvent, @"");
+}
+
+- (void)testCanParseTestingFinished {
+    // test that we properly parse "executed ... test(s)"
+    [self testCanParseTestingFinishedWithNumTestsExecuted:7 numTestsFailing:3];
+    [self testCanParseTestingFinishedWithNumTestsExecuted:1 numTestsFailing:0];
+    [self testCanParseTestingFinishedWithNumTestsExecuted:1 numTestsFailing:1];
 }
 
 #pragma mark -Parsing Test State

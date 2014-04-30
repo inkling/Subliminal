@@ -137,7 +137,7 @@
                 static NSRegularExpression *__testingFinishedExpression = nil;
                 static dispatch_once_t onceToken;
                 dispatch_once(&onceToken, ^{
-                    NSString *testingFinishedPattern = @".+executed (\\d+) tests, with (\\d+) failure(?:s)?\\.";
+                    NSString *testingFinishedPattern = @".+executed (\\d+) test(?:s)?, with (\\d+) failure(?:s)?\\.";
                     __testingFinishedExpression = [[NSRegularExpression alloc] initWithPattern:testingFinishedPattern options:0 error:NULL];
                 });
 
