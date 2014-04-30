@@ -642,6 +642,11 @@ def fix_index_html_at_path!(html_path)
   line-height: 18px;
   font-size: 13px;
 }
+
+/* Enable scrolling of README code blocks on small displays. */
+pre {
+  overflow: auto;
+}
 EOSTYLE
 
   # As the last style node, the attributes above will override Appledoc's stylesheet.
