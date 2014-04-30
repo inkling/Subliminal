@@ -120,7 +120,16 @@ by Xcode.
   UDID=<udid>               The UDID of the device to target.\n\n"""
 
     when "build_docs"
-      puts "rake build_docs\tBuilds Subliminal's documentation"
+      puts """
+rake build_docs\tBuilds Subliminal's documentation
+
+rake build_docs [RELEASE=yes]
+
+This command will also install the built documentation into Xcode
+unless \`RELEASE=yes\` is specified.
+
+Options:
+  RELEASE=yes\tPrepares HTML and archived docsets for upload to the \`gh_pages\` branch.\n\n"""
 
     else
       fail "Unrecognized task name."
@@ -543,13 +552,127 @@ end
 ### Building documentation
 
 desc "Builds the documentation"
-task :build_docs => 'test:prepare' do    
+task :build_docs => 'test:prepare' do
+  if ENV["RELEASE"] == "yes"
+    puts "Do you want to build the #{DOCSET_VERSION} documentation for release?"
+    puts "(You might want to update \`DOCSET_VERSION\` at the top of the Rakefile.)"
+    puts "Y to continue, anything else to abort."
+
+    input = STDIN.gets.chomp
+    fail "Documentation release build aborted." unless input.upcase == "Y"
+  end
+
   puts "\nBuilding documentation...\n\n"
 
   # Use system so we see the build's output
   if system('xctool -project Subliminal.xcodeproj/ -scheme "Subliminal Documentation" build')
-    puts "Documentation built successfully.\n\n"
+    # If `RELEASE` was set, the build script will have left artifacts for us to post-process below
+    if ENV["RELEASE"] == "yes"
+      puts "#{DOCSET_VERSION} documentation built successfully."
+
+      # Inject our README, processed by GitHub into the class hierarchy, and fix it up.
+      # Injection is done by Appledoc in Debug but we can do a better (albeit more heavyweight) job here.
+      index_html_path = "#{PROJECT_DIR}/Documentation/html/index.html"
+      fail "Could not fix index html." unless fix_index_html_at_path!(index_html_path)
+      `cp "#{index_html_path}" "#{PROJECT_DIR}"/Documentation/docset/Contents/Resources/Documents/index.html`
+
+      # Rename the docset to the post-unarchiving target (see `install_docs`) before archiving
+      `mv "#{PROJECT_DIR}"/Documentation/docset "#{PROJECT_DIR}"/Documentation/#{DOCSET_NAME}`
+      # Archive
+      `xcrun docsetutil package "#{PROJECT_DIR}"/Documentation/#{DOCSET_NAME}`
+      # Rename for upload
+      docset_xar_name = DOCSET_NAME.chomp(File.extname(DOCSET_NAME)) + ".xar"
+      upload_xar_name = "com.inkling.Subliminal-#{DOCSET_VERSION}.xar"
+      `mv "#{PROJECT_DIR}"/Documentation/#{docset_xar_name} "#{PROJECT_DIR}"/Documentation/#{upload_xar_name}`
+
+      puts "Upload \`#{PROJECT_DIR}/Documentation/#{upload_xar_name}\`"
+      puts "and the contents of \`#{PROJECT_DIR}/Documentation/html\`"
+      puts "to the \"Documentation\" folder on the \`gh_pages\` branch.\n\n"
+    else
+      puts "Documentation built successfully.\n\n"
+    end
   else
     fail "Documentation failed to build."
   end
+end
+
+# ! because this overwrites `index.html`
+def fix_index_html_at_path!(html_path)
+  # By requiring Nokogiri here, only developers wishing to build the docs for release need install it.
+  require "nokogiri"
+
+  html_file = File.open(html_path, "r")
+  html_doc = Nokogiri::HTML(html_file)
+  html_file.close
+
+  # 1. Appledoc can't handle fenced code blocks and some links,
+  #    so get GitHub to format our README and then inject it into the index html.
+  
+  # "data-binary" is essential to preserve line breaks
+  gfm_README = `curl -sSX POST --data-binary @"#{PROJECT_DIR}"/README.md https://api.github.com/markdown/raw --header "Content-Type:text/x-markdown"`
+  gfm_README_fragment = Nokogiri::HTML::DocumentFragment.parse(gfm_README)
+
+  section_node = Nokogiri::XML::Node.new("div", html_doc)
+  section_node["class"] = "section section-overview index-overview"
+  section_node.add_child(gfm_README_fragment)
+
+  # The section node must be the container's first child to force the class hierarchy
+  # to occupy only one column at left
+  container_node = html_doc.at_css("div#container")
+  container_node.children.before(section_node)
+
+  # 2. Polish the README display.
+  style_node = Nokogiri::XML::Node.new("style", html_doc)
+  style_node.content = <<-EOSTYLE
+/* Float the class hierarchy to the left of the README. */
+.index-column {
+  float: left;
+  width: 20%;
+  min-width: 100px;
+}
+.section {
+  margin-top: 0px;
+  float: right;
+  width: 78%;
+}
+
+/* Make the README text easier to read. */
+.section p, .section li, .section pre {
+  max-width: 800px;
+  line-height: 18px;
+  font-size: 13px;
+}
+
+/* Enable scrolling of README code blocks on small displays. */
+pre {
+  overflow: auto;
+}
+EOSTYLE
+
+  # As the last style node, the attributes above will override Appledoc's stylesheet.
+  head_node = html_doc.at_css("head")
+  head_node.add_child(style_node)
+
+  # 3. Fix all anchor links by looking for the links that GitHub uses to mark headers,
+  #    and giving them appropriate ids (the anchor link minus the starting "#").
+  #    I don't know how the anchors work on GitHub itself without names or IDs
+  #    --perhaps they have JS or server-side routing.
+  anchor_links = html_doc.css("a[href^='#'][class='anchor']")
+  return false if !anchor_links.length # In case GitHub changes the way they format headers
+
+  anchor_links.each do |link|
+    link["id"] = link["href"][1..-1]
+  end
+  
+  # 4. Add the version number to the library title as shown on the web,
+  #    to clarify when it's updated. (We don't add this in a place that's seen
+  #    in the docset when in Xcode 'cause it's obvious when that's updated.)
+  html_doc.at_css("#libraryTitle").content += DOCSET_VERSION
+
+
+  html_file = File.open(html_path, "w")
+  html_file.write(html_doc.to_html)
+  html_file.close
+
+  return true
 end
