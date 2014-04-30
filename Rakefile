@@ -659,6 +659,11 @@ EOSTYLE
     link["id"] = link["href"][1..-1]
   end
   
+  # 4. Add the version number to the library title as shown on the web,
+  #    to clarify when it's updated. (We don't add this in a place that's seen
+  #    in the docset when in Xcode 'cause it's obvious when that's updated.)
+  html_doc.at_css("#libraryTitle").content += DOCSET_VERSION
+
 
   html_file = File.open(html_path, "w")
   html_file.write(html_doc.to_html)
