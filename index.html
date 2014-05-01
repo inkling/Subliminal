@@ -123,6 +123,9 @@
         NSString *successMessage = [NSString stringWithFormat:@"Hello, %@!", username];
         SLAssertTrue([[SLElement elementWithAccessibilityLabel:successMessage] isValid],
                      @"Log-in did not succeed.");
+
+	    // Check the internal state of the app.         
+	    SLAssertTrue(SLAskAppYesNo(isUserLoggedIn), @"User is not logged in.")
 }
 
 @end
