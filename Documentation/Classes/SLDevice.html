@@ -6,7 +6,7 @@
 		<meta id="xcode-display" name="xcode-display" content="render"/>
 		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
 		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
-		<meta name="generator" content="appledoc 2.1 (build 858)" />
+		<meta name="generator" content="appledoc 2.1 (build 840)" />
 	</head>
 	<body>
 		<header id="top_header">
@@ -48,6 +48,10 @@
 	
 	<option value="instance_methods">Instance Methods</option>
 	
+	<option value="//api/name/captureScreenshotWithFilename:">&nbsp;&nbsp;&nbsp;&nbsp;- captureScreenshotWithFilename:</option>
+	
+	<option value="//api/name/captureScreenshotWithFilename:inRect:">&nbsp;&nbsp;&nbsp;&nbsp;- captureScreenshotWithFilename:inRect:</option>
+	
 	<option value="//api/name/deactivateAppForDuration:">&nbsp;&nbsp;&nbsp;&nbsp;- deactivateAppForDuration:</option>
 	
 	<option value="//api/name/setOrientation:">&nbsp;&nbsp;&nbsp;&nbsp;- setOrientation:</option>
@@ -68,6 +72,14 @@
 
 <li role="treeitem" id="task_treeitem"><span class="nodisclosure"></span><span class="sectionName"><a href="#tasks">Tasks</a></span><ul>
 	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Getting the Shared Instance">Getting the Shared Instance</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Interacting with Hardware Buttons">Interacting with Hardware Buttons</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Device Orientation">Device Orientation</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Screenshots">Screenshots</a></span></li>
+	
 </ul></li>
 
 
@@ -85,6 +97,10 @@
 
 
 <li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/captureScreenshotWithFilename:">captureScreenshotWithFilename:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/captureScreenshotWithFilename:inRect:">captureScreenshotWithFilename:inRect:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/deactivateAppForDuration:">deactivateAppForDuration:</a></span></li>
 	
@@ -140,8 +156,8 @@ the device on which your application is running.</p>
 						<h2 class="subtitle subtitle-tasks">Tasks</h2>
 						
 						
-						
-						
+						<a title="Getting the Shared Instance" name="task_Getting the Shared Instance"></a>
+						<h3 class="subsubtitle task-title">Getting the Shared Instance</h3>
 
 						<ul class="task-list">
 							<li>
@@ -151,17 +167,55 @@ the device on which your application is running.</p>
 	</span>
 	
 	
-</li><li>
+</li>
+						</ul>
+						
+						
+						<a title="Interacting with Hardware Buttons" name="task_Interacting with Hardware Buttons"></a>
+						<h3 class="subsubtitle task-title">Interacting with Hardware Buttons</h3>
+
+						<ul class="task-list">
+							<li>
 	<span class="tooltip">
 		<code><a href="#//api/name/deactivateAppForDuration:">&ndash;&nbsp;deactivateAppForDuration:</a></code>
 		<span class="tooltip"><p>Deactivates your application for the specified duration.</p></span>
 	</span>
 	
 	
-</li><li>
+</li>
+						</ul>
+						
+						
+						<a title="Device Orientation" name="task_Device Orientation"></a>
+						<h3 class="subsubtitle task-title">Device Orientation</h3>
+
+						<ul class="task-list">
+							<li>
 	<span class="tooltip">
 		<code><a href="#//api/name/setOrientation:">&ndash;&nbsp;setOrientation:</a></code>
 		<span class="tooltip"><p>Changes the device orientation to the specified new <code>deviceOrientation</code> value.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Screenshots" name="task_Screenshots"></a>
+						<h3 class="subsubtitle task-title">Screenshots</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/captureScreenshotWithFilename:">&ndash;&nbsp;captureScreenshotWithFilename:</a></code>
+		<span class="tooltip"><p>Takes a screenshot of the entire device screen.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/captureScreenshotWithFilename:inRect:">&ndash;&nbsp;captureScreenshotWithFilename:inRect:</a></code>
+		<span class="tooltip"><p>Takes a screenshot of the specified rectangular portion of the device screen.</p></span>
 	</span>
 	
 	
@@ -230,6 +284,129 @@ the device on which your application is running.</p>
 						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
 						
 						<div class="section-method">
+	<a name="//api/name/captureScreenshotWithFilename:" title="captureScreenshotWithFilename:"></a>
+	<h3 class="subsubtitle method-title">captureScreenshotWithFilename:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Takes a screenshot of the entire device screen.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)captureScreenshotWithFilename:(NSString *)<em>filename</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>filename</em></dt>
+			<dd><p>A string to use as the name for the resultant image file.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The image is viewable from the UIAutomation debug log in Instruments.</p>
+
+<p>When running <code>subliminal-test</code> from the command line, the images are also saved
+as PNGs within the specified output directory.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLDevice.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/captureScreenshotWithFilename:inRect:" title="captureScreenshotWithFilename:inRect:"></a>
+	<h3 class="subsubtitle method-title">captureScreenshotWithFilename:inRect:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Takes a screenshot of the specified rectangular portion of the device screen.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)captureScreenshotWithFilename:(NSString *)<em>filename</em> inRect:(CGRect)<em>rect</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>filename</em></dt>
+			<dd><p>A string to use as the name for the resultant image file.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>rect</em></dt>
+			<dd><p>The rect that defines the area of the screen to capture.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The image is viewable from the UIAutomation debug log in Instruments.</p>
+
+<p>When running <code>subliminal-test</code> from the command line, the images are also saved
+as PNGs within the specified output directory.</p>
+	</div>
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>NSInternalInconsistencyException</em></dt>
+			<dd><p>if <code>rect</code> is <code>CGRectNull</code>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLDevice.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
 	<a name="//api/name/deactivateAppForDuration:" title="deactivateAppForDuration:"></a>
 	<h3 class="subsubtitle method-title">deactivateAppForDuration:</h3>
 	
@@ -269,7 +446,7 @@ and then using the app switcher to reactivate the application.</p>
 
 <p>This method will not return until the app reactivates.</p>
 
-<p>Note that the time spent inactive will actually be a few seconds longer than specified.
+<p>Note that the time spent inactive will actually be a few seconds longer than specified;
 UIAutomation lingers upon the app switcher for several seconds before actually
 tapping the app.</p>
 	</div>
@@ -322,7 +499,7 @@ tapping the app.</p>
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>You can access the current device orientation using <code>[[UIDevice currentDevice] orientation]</code></p>
+		<p>You can access the current device orientation using <code>[[UIDevice currentDevice] orientation]</code>.</p>
 	</div>
 	
 	
@@ -352,9 +529,9 @@ tapping the app.</p>
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2013 Inkling. All rights reserved. (Last updated: 2013-06-11)</span><br />
+						<p><span class="copyright">&copy; 2014 Inkling. All rights reserved. (Last updated: 2014-04-30)</span><br />
 						
-						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 858)</a>.</span></p>
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 840)</a>.</span></p>
 						
 					</div>
 				</div>

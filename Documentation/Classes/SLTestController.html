@@ -6,7 +6,7 @@
 		<meta id="xcode-display" name="xcode-display" content="render"/>
 		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
 		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
-		<meta name="generator" content="appledoc 2.1 (build 858)" />
+		<meta name="generator" content="appledoc 2.1 (build 840)" />
 	</head>
 	<body>
 		<header id="top_header">
@@ -50,8 +50,6 @@
 	
 	<option value="//api/name/sharedTestController">&nbsp;&nbsp;&nbsp;&nbsp;+ sharedTestController</option>
 	
-	<option value="//api/name/testsToRun:withFocus:">&nbsp;&nbsp;&nbsp;&nbsp;+ testsToRun:withFocus:</option>
-	
 	
 	
 	
@@ -62,6 +60,8 @@
 	<option value="//api/name/deregisterTarget:forAction:">&nbsp;&nbsp;&nbsp;&nbsp;- deregisterTarget:forAction:</option>
 	
 	<option value="//api/name/registerTarget:forAction:">&nbsp;&nbsp;&nbsp;&nbsp;- registerTarget:forAction:</option>
+	
+	<option value="//api/name/runTests:usingSeed:withCompletionBlock:">&nbsp;&nbsp;&nbsp;&nbsp;- runTests:usingSeed:withCompletionBlock:</option>
 	
 	<option value="//api/name/runTests:withCompletionBlock:">&nbsp;&nbsp;&nbsp;&nbsp;- runTests:withCompletionBlock:</option>
 	
@@ -91,9 +91,7 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Running Tests">Running Tests</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Internal Methods">Internal Methods</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Debugging tests">Debugging tests</a></span></li>
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Debugging Tests">Debugging Tests</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Registering and Deregistering App Hooks">Registering and Deregistering App Hooks</a></span></li>
 	
@@ -119,8 +117,6 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/sharedTestController">sharedTestController</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/testsToRun:withFocus:">testsToRun:withFocus:</a></span></li>
-	
 </ul></li>
 
 
@@ -132,6 +128,8 @@
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/deregisterTarget:forAction:">deregisterTarget:forAction:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/registerTarget:forAction:">registerTarget:forAction:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/runTests:usingSeed:withCompletionBlock:">runTests:usingSeed:withCompletionBlock:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/runTests:withCompletionBlock:">runTests:withCompletionBlock:</a></span></li>
 	
@@ -178,9 +176,6 @@
 						<h2 class="subtitle subtitle-overview">Overview</h2>
 						<p><code>SLTestController</code> coordinates test execution. Its singleton instance
 is the primary interface between the application and the tests.</p>
-
-<p>The methods in the <code>SLTestController (Internal)</code> category are to be used only
-within Subliminal.</p>
 
 <p>The methods in the <code>SLTestController (DebugSettings)</code> category may be useful
 in debugging tests.</p>
@@ -270,22 +265,15 @@ integration testing by using the <code>INTEGRATION_TESTING</code> preprocessor m
 							<li>
 	<span class="tooltip">
 		<code><a href="#//api/name/runTests:withCompletionBlock:">&ndash;&nbsp;runTests:withCompletionBlock:</a></code>
-		<span class="tooltip"><p>Run the specified tests.</p></span>
+		<span class="tooltip"><p>Run the specified tests by invoking <a href="#//api/name/runTests:usingSeed:withCompletionBlock:"><code>runTests:usingSeed:withCompletionBlock:</code></a>
+with <code>SLTestControllerRandomSeed</code> and the specified completion block.</p></span>
 	</span>
 	
 	
-</li>
-						</ul>
-						
-						
-						<a title="Internal Methods" name="task_Internal Methods"></a>
-						<h3 class="subsubtitle task-title">Internal Methods</h3>
-
-						<ul class="task-list">
-							<li>
+</li><li>
 	<span class="tooltip">
-		<code><a href="#//api/name/testsToRun:withFocus:">+&nbsp;testsToRun:withFocus:</a></code>
-		<span class="tooltip"><p>Given a set of tests, returns a new set filtered to those that should be run.</p></span>
+		<code><a href="#//api/name/runTests:usingSeed:withCompletionBlock:">&ndash;&nbsp;runTests:usingSeed:withCompletionBlock:</a></code>
+		<span class="tooltip"><p>Runs the specified tests.</p></span>
 	</span>
 	
 	
@@ -293,8 +281,8 @@ integration testing by using the <code>INTEGRATION_TESTING</code> preprocessor m
 						</ul>
 						
 						
-						<a title="Debugging tests" name="task_Debugging tests"></a>
-						<h3 class="subsubtitle task-title">Debugging tests</h3>
+						<a title="Debugging Tests" name="task_Debugging Tests"></a>
+						<h3 class="subsubtitle task-title">Debugging Tests</h3>
 
 						<ul class="task-list">
 							<li>
@@ -531,75 +519,6 @@ left-hand corner, then the following menu items:</p>
 	
 </div>
 						
-						<div class="section-method">
-	<a name="//api/name/testsToRun:withFocus:" title="testsToRun:withFocus:"></a>
-	<h3 class="subsubtitle method-title">testsToRun:withFocus:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Given a set of tests, returns a new set filtered to those that should be run.</p>
-	</div>		
-	
-    
-
-	<div class="method-subsection method-declaration"><code>+ (NSSet *)testsToRun:(NSSet *)<em>tests</em> withFocus:(BOOL *)<em>withFocus</em></code></div>
-
-    
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>tests</em></dt>
-			<dd><p>The set of <a href="../Classes/SLTest.html"><code>SLTest</code></a> subclasses to process.</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>withFocus</em></dt>
-			<dd><p>If this is non-<code>NULL</code>, upon return, it will be set to <code>YES</code>
-if any of the tests <a href="../Classes/SLTest.html#//api/name/isFocused">are focused</a>, <code>NO</code> otherwise.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	<div class="method-subsection return">
-		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>A filtered set of tests to run.</p>
-	</div>
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>The set of tests is filtered:</p>
-
-<ol>
-<li>to those that <a href="../Classes/SLTest.html#//api/name/isAbstract">are concrete</a>,</li>
-<li>that <a href="../Classes/SLTest.html#//api/name/supportsCurrentPlatform">support the current platform</a>,</li>
-<li>and that <a href="../Classes/SLTest.html#//api/name/isFocused">are focused</a> (if any remaining are focused).</li>
-</ol>
-
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">SLTestController+Internal.h</code><br />
-	</div>				
-	
-	
-</div>
-						
 					</div>
 					
 					
@@ -743,8 +662,8 @@ arbitrary actions.</p>
 		<dl class="argument-def parameter-def">
 			<dt><em>action</em></dt>
 			<dd><p>The message which will be sent to the target.
-               It must take either no arguments, or one <code>id</code>-type value conforming to NSCopying.
-               It must return either nothing, or an id-type value conforming to NSCopying.</p></dd>
+It must take either no arguments, or one <code>id</code>-type value conforming to NSCopying.
+It must return either nothing, or an id-type value conforming to NSCopying.</p></dd>
 		</dl>
 		
 	</div>
@@ -783,7 +702,7 @@ for targets to deregister themselves at appropriate times, though.</p>
 		<h4 class="method-subtitle">See Also</h4>
 		<ul>
 			
-			<li><code><p><a href="#//api/name/deregisterTarget:">- deregisterTarget:</a></p></code></li>
+			<li><code><p><a href="#//api/name/deregisterTarget:">&ndash; deregisterTarget:</a></p></code></li>
 			
 		</ul>
 	</div>
@@ -799,13 +718,92 @@ for targets to deregister themselves at appropriate times, though.</p>
 </div>
 						
 						<div class="section-method">
+	<a name="//api/name/runTests:usingSeed:withCompletionBlock:" title="runTests:usingSeed:withCompletionBlock:"></a>
+	<h3 class="subsubtitle method-title">runTests:usingSeed:withCompletionBlock:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Runs the specified tests.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)runTests:(NSSet *)<em>tests</em> usingSeed:(unsigned int)<em>seed</em> withCompletionBlock:(void ( ^ ) ( ))<em>completionBlock</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>tests</em></dt>
+			<dd><p>The set of tests to run.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>seed</em></dt>
+			<dd><p>The seed to use to randomize the tests.
+If <code>SLTestControllerRandomSeed</code> is passed, the test controller will choose a seed.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>completionBlock</em></dt>
+			<dd><p>An optional block to execute once testing has finished.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Tests are run on a background queue. Tests run in ascending order of <a href="../Classes/SLTest.html#//api/name/runGroup">group</a>,
+and then within each group, in an order randomized using the specified seed.
+Clients should generally pass <code>SLTestControllerRandomSeed</code> to let the test controller choose a seed.
+If any tests fail, the test controller will log the seed that was used,
+so that the run order may be reproduced by invoking this method with that seed.</p>
+
+<p>Tests must <a href="../Classes/SLTest.html#//api/name/supportsCurrentPlatform">support the current platform</a> in order to be run.
+If any tests <a href="../Classes/SLTest.html#//api/name/isFocused">are focused</a>, only those tests will be run.</p>
+
+<p>When using a given seed, tests execute in the same relative order regardless of focus.
+That is, if a set of tests <em>| A, B, C, D |</em> (all unfocused)
+are run in order <em>[ B, A, C, D ]</em> when using a certain seed,
+when tests <em>B</em> and <em>C</em> are focused, they will be run in order <em>[ B, C ]</em>.</p>
+
+<p>When all tests have finished, the completion block (if provided)
+will be executed on the main queue. The test controller will then signal
+UIAutomation to finish executing commands.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTestController.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
 	<a name="//api/name/runTests:withCompletionBlock:" title="runTests:withCompletionBlock:"></a>
 	<h3 class="subsubtitle method-title">runTests:withCompletionBlock:</h3>
 	
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Run the specified tests.</p>
+		<p>Run the specified tests by invoking <a href="#//api/name/runTests:usingSeed:withCompletionBlock:"><code>runTests:usingSeed:withCompletionBlock:</code></a>
+with <code>SLTestControllerRandomSeed</code> and the specified completion block.</p>
 	</div>		
 	
     
@@ -834,18 +832,6 @@ for targets to deregister themselves at appropriate times, though.</p>
 	
 	
 	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>Tests are run on a background queue, in indeterminate order.
-Tests must <a href="../Classes/SLTest.html#//api/name/supportsCurrentPlatform">support the current platform</a>
-in order to be run.
-If any tests <a href="../Classes/SLTest.html#//api/name/isFocused">are focused</a>, only those tests will be run.</p>
-
-<p>When all tests have finished, the completion block (if provided)
-will be executed on the main queue. The test controller will then signal
-UIAutomation to finish executing commands.</p>
-	</div>
 	
 	
 	
@@ -915,7 +901,7 @@ The returned value (if any) will be copied, and the copy passed to the caller.</
 		<dl class="argument-def exception-def">
 			<dt><em>SLAppActionTargetDoesNotExistException</em></dt>
 			<dd><p>Thrown if, after several
-seconds' wait, no target has been registered for <code>action</code>, or a registered target
+seconds' wait, no target has been registered for <em>action</em>, or a registered target
 has fallen out of scope.</p></dd>
 		</dl>
 		
@@ -994,7 +980,7 @@ The returned value (if any) will be copied, and the copy passed to the calling <
 		<dl class="argument-def exception-def">
 			<dt><em>SLAppActionTargetDoesNotExistException</em></dt>
 			<dd><p>Thrown if, after several
-seconds' wait, no target has been registered for <code>action</code>, or a registered target
+seconds' wait, no target has been registered for <em>action</em>, or a registered target
 has fallen out of scope.</p></dd>
 		</dl>
 		
@@ -1025,9 +1011,9 @@ has fallen out of scope.</p></dd>
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2013 Inkling. All rights reserved. (Last updated: 2013-06-11)</span><br />
+						<p><span class="copyright">&copy; 2014 Inkling. All rights reserved. (Last updated: 2014-04-30)</span><br />
 						
-						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 858)</a>.</span></p>
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 840)</a>.</span></p>
 						
 					</div>
 				</div>

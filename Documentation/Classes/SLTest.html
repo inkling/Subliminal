@@ -6,7 +6,7 @@
 		<meta id="xcode-display" name="xcode-display" content="render"/>
 		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
 		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
-		<meta name="generator" content="appledoc 2.1 (build 858)" />
+		<meta name="generator" content="appledoc 2.1 (build 840)" />
 	</head>
 	<body>
 		<header id="top_header">
@@ -43,19 +43,15 @@
 	
 	<option value="//api/name/allTests">&nbsp;&nbsp;&nbsp;&nbsp;+ allTests</option>
 	
-	<option value="//api/name/focusedTestCases">&nbsp;&nbsp;&nbsp;&nbsp;+ focusedTestCases</option>
-	
 	<option value="//api/name/isAbstract">&nbsp;&nbsp;&nbsp;&nbsp;+ isAbstract</option>
 	
 	<option value="//api/name/isFocused">&nbsp;&nbsp;&nbsp;&nbsp;+ isFocused</option>
 	
+	<option value="//api/name/runGroup">&nbsp;&nbsp;&nbsp;&nbsp;+ runGroup</option>
+	
 	<option value="//api/name/supportsCurrentPlatform">&nbsp;&nbsp;&nbsp;&nbsp;+ supportsCurrentPlatform</option>
 	
 	<option value="//api/name/testCaseWithSelectorSupportsCurrentPlatform:">&nbsp;&nbsp;&nbsp;&nbsp;+ testCaseWithSelectorSupportsCurrentPlatform:</option>
-	
-	<option value="//api/name/testCases">&nbsp;&nbsp;&nbsp;&nbsp;+ testCases</option>
-	
-	<option value="//api/name/testCasesToRun">&nbsp;&nbsp;&nbsp;&nbsp;+ testCasesToRun</option>
 	
 	<option value="//api/name/testNamed:">&nbsp;&nbsp;&nbsp;&nbsp;+ testNamed:</option>
 	
@@ -98,9 +94,9 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Conditionalizing Test Runs">Conditionalizing Test Runs</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Running a Test">Running a Test</a></span></li>
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Ordering Test Runs">Ordering Test Runs</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Internal Methods">Internal Methods</a></span></li>
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Running a Test">Running a Test</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Running Test Cases">Running Test Cases</a></span></li>
 	
@@ -116,19 +112,15 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/allTests">allTests</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/focusedTestCases">focusedTestCases</a></span></li>
-	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/isAbstract">isAbstract</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/isFocused">isFocused</a></span></li>
 	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/runGroup">runGroup</a></span></li>
+	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/supportsCurrentPlatform">supportsCurrentPlatform</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/testCaseWithSelectorSupportsCurrentPlatform:">testCaseWithSelectorSupportsCurrentPlatform:</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/testCases">testCases</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/testCasesToRun">testCasesToRun</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/testNamed:">testNamed:</a></span></li>
 	
@@ -193,9 +185,6 @@
 
 <p>To write a test, developers create a new subclass of <code>SLTest</code>. They then add
 test case methods and implement set-up and tear-down methods as necessary.</p>
-
-<p>The methods in the <code>SLTest (Internal)</code> category are to be used only
-within Subliminal.</p>
 
 <p>The methods in the <code>SLTest (SLTestCase)</code> category are used to set up before
 and clean up after individual test case methods. Test case methods are methods,
@@ -281,6 +270,21 @@ and which can run on the current platform.</p></span>
 						</ul>
 						
 						
+						<a title="Ordering Test Runs" name="task_Ordering Test Runs"></a>
+						<h3 class="subsubtitle task-title">Ordering Test Runs</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/runGroup">+&nbsp;runGroup</a></code>
+		<span class="tooltip"><p>Returns a value identifying the group of tests to which the receiver belongs.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
 						<a title="Running a Test" name="task_Running a Test"></a>
 						<h3 class="subsubtitle task-title">Running a Test</h3>
 
@@ -290,35 +294,6 @@ and which can run on the current platform.</p></span>
 		<code><a href="#//api/name/runAndReportNumExecuted:failed:failedUnexpectedly:">&ndash;&nbsp;runAndReportNumExecuted:failed:failedUnexpectedly:</a></code>
 		<span class="tooltip"><p>Runs all test cases defined on the receiver&rsquo;s class,
 and reports statistics about their execution.</p></span>
-	</span>
-	
-	
-</li>
-						</ul>
-						
-						
-						<a title="Internal Methods" name="task_Internal Methods"></a>
-						<h3 class="subsubtitle task-title">Internal Methods</h3>
-
-						<ul class="task-list">
-							<li>
-	<span class="tooltip">
-		<code><a href="#//api/name/testCases">+&nbsp;testCases</a></code>
-		<span class="tooltip"><p>All test cases defined on this test.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/focusedTestCases">+&nbsp;focusedTestCases</a></code>
-		<span class="tooltip"><p>All focused test cases defined on this test.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/testCasesToRun">+&nbsp;testCasesToRun</a></code>
-		<span class="tooltip"><p>The test cases that will be run when this test is <a href="#//api/name/runAndReportNumExecuted:failed:failedUnexpectedly:">run</a>.</p></span>
 	</span>
 	
 	
@@ -448,57 +423,6 @@ like <a href="#//api/name/isAbstract"><code>isAbstract</code></a>, <a href="#//a
 </div>
 						
 						<div class="section-method">
-	<a name="//api/name/focusedTestCases" title="focusedTestCases"></a>
-	<h3 class="subsubtitle method-title">focusedTestCases</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>All focused test cases defined on this test.</p>
-	</div>		
-	
-    
-
-	<div class="method-subsection method-declaration"><code>+ (NSSet *)focusedTestCases</code></div>
-
-    
-	
-	
-	
-	<div class="method-subsection return">
-		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>All focused test cases defined on this test, represented as strings.</p>
-	</div>
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>A focused test case is a <a href="#//api/name/testCases">test case</a> whose name is prefixed with
-<code>SLTestFocusPrefix</code>. If no test cases are thus &ldquo;explicitly&rdquo; focused,
-all test cases may be &ldquo;implicitly&rdquo; focused if the test itself (or any superclass)
-is focused (by its name being prefixed with <code>SLTestFocusPrefix</code>). If the test itself
-is focused <em>and</em> some test cases are explicitly focused, only the explicitly
-focused test cases will be considered focused. (The &ldquo;narrowest&rdquo; focus applies.)</p>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">SLTest+Internal.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
 	<a name="//api/name/isAbstract" title="isAbstract"></a>
 	<h3 class="subsubtitle method-title">isAbstract</h3>
 	
@@ -529,7 +453,8 @@ focused test cases will be considered focused. (The &ldquo;narrowest&rdquo; focu
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>An abstract test will not itself be run. Subclasses which do define test cases
 will be run, however, allowing a single base class to define set-up and tear-down
-work shared among related subclasses.</p>
+work shared among related subclasses. Abstract classes can also be used to
+define the <a href="#//api/name/runGroup">run group</a> shared by subclasses.</p>
 	</div>
 	
 	
@@ -587,11 +512,11 @@ This may be useful when writing or debugging tests.</p>
 
 <p>It is also possible to implicitly focus all test cases by prefixing
 their test&rsquo;s name with &ldquo;<code>Focus_</code>&rdquo;. But if some test cases are explicitly focused
-(as above), only those test cases will run&ndash;the narrowest focus applies.</p>
+(as above), only those test cases will run&mdash;the narrowest focus applies.</p>
 
 <p>If a test is focused, that focus will apply to any tests which descend from it.</p><div class="warning"><p><strong>Warning:</strong> Methods that take test case selectors as arguments (like
 <a href="#//api/name/setUpTestCaseWithSelector:"><code>setUpTestCaseWithSelector:</code></a>) are invoked with the unfocused form of the selectors
-&ndash;they need not (and should not) be modified when a test case is focused.</p></div><div class="warning"><p><strong>Warning:</strong> Focused test cases will not be run if their test is not run (e.g. if
+&mdash;they need not (and should not) be modified when a test case is focused.</p></div><div class="warning"><p><strong>Warning:</strong> Focused test cases will not be run if their test is not run (e.g. if
 it is not included in the set of tests to be run, or if it does not support
 the current platform).</p></div>
 	</div>
@@ -604,7 +529,76 @@ the current platform).</p></div>
 		<h4 class="method-subtitle">See Also</h4>
 		<ul>
 			
-			<li><code><p><a href="../Classes/SLTestController.html#//api/name/runTests:withCompletionBlock:">[SLTestController runTests:withCompletionBlock:]</a></p></code></li>
+			<li><code><p><a href="../Classes/SLTestController.html#//api/name/runTests:usingSeed:withCompletionBlock:">[SLTestController runTests:usingSeed:withCompletionBlock:]</a></p></code></li>
+			
+		</ul>
+	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLTest.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/runGroup" title="runGroup"></a>
+	<h3 class="subsubtitle method-title">runGroup</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Returns a value identifying the group of tests to which the receiver belongs.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (NSUInteger)runGroup</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>A value identifying the group of tests to which the receiver belongs.
+The default implementation returns <code>1</code>: all tests will be part of a single run group.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p><a href="../Classes/SLTestController.html"><code>SLTestController</code></a> will run tests in ascending order of group, and then within
+each group, in a randomized order. This allows test writers to provide a rough
+order to tests, where necessary, while minimizing the test pollution that can
+result from an absolute ordering.</p>
+
+<p>A common use for run groups is to divide tests into two groups, those that
+need to occur before some &ldquo;startup&rdquo; event (an onboarding flow, an import process, etc.)
+(of run group <code>1</code>) and those that need to occur afterward (of run group <code>2</code>).
+In this scenario, the &ldquo;post-startup&rdquo; tests subclass an <a href="#//api/name/isAbstract">abstract test</a>
+that, in its implementation of <a href="#//api/name/setUpTest"><code>setUpTest</code></a>, causes the startup event to happen.
+Altogether, this ensures that <em>all</em> of the &ldquo;pre-startup&rdquo; tests run before
+<em>any</em> of the &ldquo;post-startup&rdquo; tests run&mdash;and that startup happens before any of the
+&ldquo;post-startup&rdquo; tests happen&mdash;while allowing the tests within each group to run
+in any order.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="../Classes/SLTestController.html#//api/name/runTests:usingSeed:withCompletionBlock:">[SLTestController runTests:usingSeed:withCompletionBlock:]</a></p></code></li>
 			
 		</ul>
 	</div>
@@ -785,95 +779,6 @@ will not be run regardless of this method&rsquo;s return value.</p></div>
 </div>
 						
 						<div class="section-method">
-	<a name="//api/name/testCases" title="testCases"></a>
-	<h3 class="subsubtitle method-title">testCases</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>All test cases defined on this test.</p>
-	</div>		
-	
-    
-
-	<div class="method-subsection method-declaration"><code>+ (NSSet *)testCases</code></div>
-
-    
-	
-	
-	
-	<div class="method-subsection return">
-		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>All test cases defined on this test, represented as strings.</p>
-	</div>
-	
-	
-	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>A test case is a method beginning with &ldquo;test&rdquo;, taking no arguments, returning <code>void</code>.</p>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">SLTest+Internal.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/testCasesToRun" title="testCasesToRun"></a>
-	<h3 class="subsubtitle method-title">testCasesToRun</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>The test cases that will be run when this test is <a href="#//api/name/runAndReportNumExecuted:failed:failedUnexpectedly:">run</a>.</p>
-	</div>		
-	
-    
-
-	<div class="method-subsection method-declaration"><code>+ (NSSet *)testCasesToRun</code></div>
-
-    
-	
-	
-	
-	<div class="method-subsection return">
-		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>The test cases returned by <a href="#//api/name/testCases"><code>testCases</code></a>, or <a href="#//api/name/focusedTestCases"><code>focusedTestCases</code></a>
-(if this test is <a href="isFocused">focused</a>), filtered to those test cases that
-support the current platform. The test cases are represented as strings.</p>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">SLTest+Internal.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
 	<a name="//api/name/testNamed:" title="testNamed:"></a>
 	<h3 class="subsubtitle method-title">testNamed:</h3>
 	
@@ -956,7 +861,7 @@ source line.</p>
 	
     
 
-	<div class="method-subsection method-declaration"><code>- (void)recordLastKnownFile:(char *)<em>filename</em> line:(int)<em>lineNumber</em></code></div>
+	<div class="method-subsection method-declaration"><code>- (void)recordLastKnownFile:(const char *)<em>filename</em> line:(int)<em>lineNumber</em></code></div>
 
     
 	
@@ -1014,7 +919,7 @@ and reports statistics about their execution.</p>
 	
     
 
-	<div class="method-subsection method-declaration"><code>- (void)runAndReportNumExecuted:(NSUInteger *)<em>numCasesExecuted</em> failed:(NSUInteger *)<em>numCasesFailed</em> failedUnexpectedly:(NSUInteger *)<em>numCasesFailedUnexpectedly</em></code></div>
+	<div class="method-subsection method-declaration"><code>- (BOOL)runAndReportNumExecuted:(NSUInteger *)<em>numCasesExecuted</em> failed:(NSUInteger *)<em>numCasesFailed</em> failedUnexpectedly:(NSUInteger *)<em>numCasesFailedUnexpectedly</em></code></div>
 
     
 	
@@ -1024,7 +929,7 @@ and reports statistics about their execution.</p>
 		<dl class="argument-def parameter-def">
 			<dt><em>numCasesExecuted</em></dt>
 			<dd><p>If this is non-<code>NULL</code>, on return, this will be set to
-the number of test cases that were executed&ndash;which will be the number of test
+the number of test cases that were executed&mdash;which will be the number of test
 cases defined by the receiver&rsquo;s class.</p></dd>
 		</dl>
 		
@@ -1045,13 +950,21 @@ that threw exceptions for other reasons than test assertion failures).</p></dd>
 	
 	
 	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p><code>YES</code> if the test successfully finished (all test cases were executed, regardless of their individual
+success or failure), <code>NO</code> otherwise (an exception occurred in test case <a href="#//api/name/setUpTest">set-up</a> or <a href="#//api/name/tearDownTest">tear-down</a> ).</p>
+	</div>
+	
 	
 	
 	
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>See <code>SLTest (SLTestCase)</code> for a discussion of test case execution.</p>
+		<p>See <code>SLTest (SLTestCase)</code> for a discussion of test case execution.</p><div class="warning"><p><strong>Warning:</strong> If an exception occurs in test case set-up, the test&rsquo;s cases will be skipped.
+Thus, the caller should use the values returned in <code>numCasesExecuted</code>, <code>numCasesFailed</code>,
+and <code>numCasesFailedUnexpectedly</code> if and only if this method returns <code>YES</code>.</p></div>
 	</div>
 	
 	
@@ -1109,7 +1022,7 @@ frameworks, <code>-setUpTest</code> is called only once per test.</p></div>
 		<h4 class="method-subtitle">See Also</h4>
 		<ul>
 			
-			<li><code><p><a href="#//api/name/tearDownTest">- tearDownTest</a></p></code></li>
+			<li><code><p><a href="#//api/name/tearDownTest">&ndash; tearDownTest</a></p></code></li>
 			
 		</ul>
 	</div>
@@ -1174,7 +1087,7 @@ will still be executed.</p></div>
 		<h4 class="method-subtitle">See Also</h4>
 		<ul>
 			
-			<li><code><p><a href="#//api/name/tearDownTestCaseWithSelector:">- tearDownTestCaseWithSelector:</a></p></code></li>
+			<li><code><p><a href="#//api/name/tearDownTestCaseWithSelector:">&ndash; tearDownTestCaseWithSelector:</a></p></code></li>
 			
 		</ul>
 	</div>
@@ -1230,7 +1143,7 @@ frameworks, <a href="#//api/name/setUpTest"><code>setUpTest</code></a> is called
 		<h4 class="method-subtitle">See Also</h4>
 		<ul>
 			
-			<li><code><p><a href="#//api/name/setUpTest">- setUpTest</a></p></code></li>
+			<li><code><p><a href="#//api/name/setUpTest">&ndash; setUpTest</a></p></code></li>
 			
 		</ul>
 	</div>
@@ -1296,7 +1209,7 @@ will be preserved.</p></div>
 		<h4 class="method-subtitle">See Also</h4>
 		<ul>
 			
-			<li><code><p><a href="#//api/name/setUpTestCaseWithSelector:">- setUpTestCaseWithSelector:</a></p></code></li>
+			<li><code><p><a href="#//api/name/setUpTestCaseWithSelector:">&ndash; setUpTestCaseWithSelector:</a></p></code></li>
 			
 		</ul>
 	</div>
@@ -1388,9 +1301,9 @@ for examples.</p>
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2013 Inkling. All rights reserved. (Last updated: 2013-06-11)</span><br />
+						<p><span class="copyright">&copy; 2014 Inkling. All rights reserved. (Last updated: 2014-04-30)</span><br />
 						
-						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 858)</a>.</span></p>
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 840)</a>.</span></p>
 						
 					</div>
 				</div>

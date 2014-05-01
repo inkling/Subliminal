@@ -6,7 +6,7 @@
 		<meta id="xcode-display" name="xcode-display" content="render"/>
 		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
 		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
-		<meta name="generator" content="appledoc 2.1 (build 858)" />
+		<meta name="generator" content="appledoc 2.1 (build 840)" />
 	</head>
 	<body>
 		<header id="top_header">
@@ -35,6 +35,11 @@
 	
 	
 	
+	
+	
+	<option value="properties">Properties</option>
+	
+	<option value="//api/name/isScrollView">&nbsp;&nbsp;&nbsp;&nbsp;isScrollView</option>
 	
 	
 	
@@ -66,6 +71,12 @@
 
 
 
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#properties">Properties</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/isScrollView">isScrollView</a></span></li>
+	
+</ul></li>
 
 
 
@@ -129,7 +140,8 @@ identifies the first cell of the first table view of an application:</p>
 by recording a test script and examining the output of the Automation instrument
 when that element is tapped.</p>
 
-<p>For more information, see <a href="[https://developer.apple.com/library/ios/](https://developer.apple.com/library/ios/">&ldquo;Understanding the Element Hierarchy&rdquo;</a>#documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/UsingtheAutomationInstrument/UsingtheAutomationInstrument.html#//apple_ref/doc/uid/TP40004652-CH20-SW88 ).</p><div class="warning"><p><strong>Warning:</strong> <code>SLStaticElement</code> does not support the ability of <a href="../Classes/SLElement.html"><code>SLElement</code></a> to dynamically
+<p>For more information, see the &ldquo;Understanding the Element Hierarchy&rdquo; section of
+<a href="https://developer.apple.com/library/ios/#documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/UsingtheAutomationInstrument/UsingtheAutomationInstrument.html">this document</a>.</p><div class="warning"><p><strong>Warning:</strong> <code>SLStaticElement</code> does not support the ability of <a href="../Classes/SLElement.html"><code>SLElement</code></a> to dynamically
 match objects within the element hierarchy and so is completely dependent
 on UIAutomation to access and manipulate those elements.</p>
 
@@ -164,6 +176,13 @@ UIAutomation representation.</p></span>
 	</span>
 	
 	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/isScrollView">&nbsp;&nbsp;isScrollView</a></code>
+		<span class="tooltip"><p>Informs Subliminal that this element identifies an instance of <code>UIScrollView</code>.</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
 </li>
 						</ul>
 						
@@ -172,6 +191,70 @@ UIAutomation representation.</p></span>
 					
 					
 					
+					
+					<div class="section section-methods">
+						<a title="Properties" name="properties"></a>
+						<h2 class="subtitle subtitle-methods">Properties</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/isScrollView" title="isScrollView"></a>
+	<h3 class="subsubtitle method-title">isScrollView</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Informs Subliminal that this element identifies an instance of <code>UIScrollView</code>.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic) BOOL isScrollView</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Developers must set this to <code>YES</code> for an element used to represent a scroll view
+so that Subliminal can work around (or at the least warn of) bugs concerning
+scroll views in various iOS SDK versions:</p>
+
+<ul>
+<li><p>When this is set to <code>YES</code> and tests are running on an iPad simulator or device
+ running iOS 5.x, Subliminal will not try to determine tappability when simulating
+ user interaction with that scroll view, because UIAutomation will always say
+ that the scroll view is not tappable.</p></li>
+<li><p>When this is set to <code>YES</code> and tests are running on a simulator or device (whether iPhone or iPad)
+ running iOS 7.x or above, Subliminal will issue a warning if it is asked to drag
+ the scroll view, as it will likely fail. See the documentation on
+ <a href="../Classes/SLUIAElement.html#//api/name/dragWithStartOffset:endOffset:"><code>-dragWithStartOffset:endOffset:</code></a>
+ for more information.</p></li>
+</ul>
+
+
+<p>Defaults to <code>NO</code>.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLStaticElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
 					
 					
 					
@@ -253,9 +336,9 @@ See the class description for more information.</p></dd>
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2013 Inkling. All rights reserved. (Last updated: 2013-06-11)</span><br />
+						<p><span class="copyright">&copy; 2014 Inkling. All rights reserved. (Last updated: 2014-04-30)</span><br />
 						
-						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 858)</a>.</span></p>
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 840)</a>.</span></p>
 						
 					</div>
 				</div>

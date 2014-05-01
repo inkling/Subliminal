@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="html/html; charset=utf-8" />
-		<title>SLTextField Class Reference</title>
+		<title>SLSwitch Class Reference</title>
 		<meta id="xcode-display" name="xcode-display" content="render"/>
 		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
 		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
@@ -16,7 +16,7 @@
 			</div>
 			
 			<div id="title" role="banner">
-				<h1 class="hideInXcode">SLTextField Class Reference</h1>
+				<h1 class="hideInXcode">SLSwitch Class Reference</h1>
 			</div>
 			<ul id="headerButtons" role="toolbar">
 				<li id="toc_button">
@@ -39,18 +39,11 @@
 	
 	<option value="properties">Properties</option>
 	
-	<option value="//api/name/defaultKeyboard">&nbsp;&nbsp;&nbsp;&nbsp;defaultKeyboard</option>
-	
-	<option value="//api/name/text">&nbsp;&nbsp;&nbsp;&nbsp;text</option>
+	<option value="//api/name/on">&nbsp;&nbsp;&nbsp;&nbsp;on</option>
 	
 	
 	
 	
-	
-	
-	<option value="instance_methods">Instance Methods</option>
-	
-	<option value="//api/name/setText:withKeyboard:">&nbsp;&nbsp;&nbsp;&nbsp;- setText:withKeyboard:</option>
 	
 	
 	
@@ -76,28 +69,20 @@
 
 <li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#properties">Properties</a></span><ul>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/defaultKeyboard">defaultKeyboard</a></span></li>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/text">text</a></span></li>
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/on">on</a></span></li>
 	
 </ul></li>
 
 
 
 
-
-<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
-	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setText:withKeyboard:">setText:withKeyboard:</a></span></li>
-	
-</ul></li>
 
 
 			</ul>
 		</nav>
 		<article>
 			<div id="contents" class="isShowingTOC" role="main">
-				<a title="SLTextField Class Reference" name="top"></a>
+				<a title="SLSwitch Class Reference" name="top"></a>
 				<div class="main-navigation navigation-top">
 					<ul>
 	<li><a href="../index.html">Index</a></li>
@@ -106,7 +91,7 @@
 				</div>
 				<div id="header">
 					<div class="section-header">
-						<h1 class="title title-header">SLTextField Class Reference</h1>
+						<h1 class="title title-header">SLSwitch Class Reference</h1>
 					</div>		
 				</div>
 				<div id="container">	
@@ -114,10 +99,10 @@
 					<div class="section section-specification"><table cellspacing="0"><tbody>
 						<tr>
 	<td class="specification-title">Inherits from</td>
-	<td class="specification-value"><a href="../Classes/SLElement.html">SLElement</a> : <a href="../Classes/SLUIAElement.html">SLUIAElement</a> : NSObject</td>
+	<td class="specification-value"><a href="../Classes/SLButton.html">SLButton</a> : <a href="../Classes/SLElement.html">SLElement</a> : <a href="../Classes/SLUIAElement.html">SLUIAElement</a> : NSObject</td>
 </tr><tr>
 	<td class="specification-title">Declared in</td>
-	<td class="specification-value">SLTextField.h</td>
+	<td class="specification-value">SLSwitch.h</td>
 </tr>
 						</tbody></table></div>
 					
@@ -127,7 +112,11 @@
 					<div class="section section-overview">
 						<a title="Overview" name="overview"></a>
 						<h2 class="subtitle subtitle-overview">Overview</h2>
-						<p><code>SLTextField</code> matches instances of <code>UITextField</code>.</p>
+						<p><code>SLSwitch</code> matches against instances of <code>UISwitch</code>.</p>
+
+<p>The value of an <code>SLSwitch</code> can be queried and set using the <a href="#//api/name/on"><code>on</code></a> property.</p>
+
+<p>Tapping an <code>SLSwitch</code> will also toggle its value.</p>
 					</div>
 					
 					
@@ -145,22 +134,8 @@
 						<ul class="task-list">
 							<li>
 	<span class="tooltip">
-		<code><a href="#//api/name/text">&nbsp;&nbsp;text</a></code>
-		<span class="tooltip"><p>The text displayed by the text field.</p></span>
-	</span>
-	<span class="task-item-suffix">property</span>
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/setText:withKeyboard:">&ndash;&nbsp;setText:withKeyboard:</a></code>
-		<span class="tooltip"><p>Type the <a href="#//api/name/text">text</a> in the <a href="#//api/name/text">text</a> field with a specific keyboard.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/defaultKeyboard">&nbsp;&nbsp;defaultKeyboard</a></code>
-		<span class="tooltip"><p>The default keyboard to be used by <a href="#//api/name/text"><code>setText:</code></a> and <a href="#//api/name/setText:withKeyboard:"><code>setText:withKeyboard:</code></a>.</p></span>
+		<code><a href="#//api/name/on">&nbsp;&nbsp;on</a></code>
+		<span class="tooltip"><p>The boolean value of the switch.</p></span>
 	</span>
 	<span class="task-item-suffix">property</span>
 	
@@ -178,18 +153,18 @@
 						<h2 class="subtitle subtitle-methods">Properties</h2>
 						
 						<div class="section-method">
-	<a name="//api/name/defaultKeyboard" title="defaultKeyboard"></a>
-	<h3 class="subsubtitle method-title">defaultKeyboard</h3>
+	<a name="//api/name/on" title="on"></a>
+	<h3 class="subsubtitle method-title">on</h3>
 	
 	
 	
 	<div class="method-subsection brief-description">
-		<p>The default keyboard to be used by <a href="#//api/name/text"><code>setText:</code></a> and <a href="#//api/name/setText:withKeyboard:"><code>setText:withKeyboard:</code></a>.</p>
+		<p>The boolean value of the switch.</p>
 	</div>		
 	
     
 
-	<div class="method-subsection method-declaration"><code>@property (nonatomic) id&lt;SLKeyboard&gt; defaultKeyboard</code></div>
+	<div class="method-subsection method-declaration"><code>@property (nonatomic, getter=isOn) BOOL on</code></div>
 
     
 	
@@ -201,7 +176,8 @@
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Defaults to <a href="../Classes/SLKeyboard.html"><code>SLKeyboard</code></a>.</p>
+		<p><a href="#//api/name/on"><code>setOn:</code></a> will set the value of the switch regardless of the current state,
+as opposed to tapping which will toggle it.</p>
 	</div>
 	
 	
@@ -212,61 +188,7 @@
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">SLTextField.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-						<div class="section-method">
-	<a name="//api/name/text" title="text"></a>
-	<h3 class="subsubtitle method-title">text</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>The text displayed by the text field.</p>
-	</div>		
-	
-    
-
-	<div class="method-subsection method-declaration"><code>@property (nonatomic, copy) NSString *text</code></div>
-
-    
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection arguments-section exceptions">
-		<h4 class="method-subtitle exception-title">Exceptions</h4>
-		
-		<dl class="argument-def exception-def">
-			<dt><em>SLUIAElementInvalidException</em></dt>
-			<dd><p>Raised by both <code>-text</code> and <a href="#//api/name/text"><code>setText:</code></a>
-if the element is not valid by the end of the <a href="../Classes/SLUIAElement.html#//api/name/defaultTimeout">default timeout</a>.</p></dd>
-		</dl>
-		
-		<dl class="argument-def exception-def">
-			<dt><em>SLUIAElementNotTappableException</em></dt>
-			<dd><p>Raised, only by <a href="#//api/name/text"><code>setText:</code></a>, if the
-element is not tappable when whatever amount of time remains of the default
-timeout after the element becomes valid elapses.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">SLTextField.h</code><br />
+		<code class="declared-in-ref">SLSwitch.h</code><br />
 	</div>				
 	
 	
@@ -277,82 +199,6 @@ timeout after the element becomes valid elapses.</p></dd>
 					
 					
 					
-					
-					<div class="section section-methods">
-						<a title="Instance Methods" name="instance_methods"></a>
-						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
-						
-						<div class="section-method">
-	<a name="//api/name/setText:withKeyboard:" title="setText:withKeyboard:"></a>
-	<h3 class="subsubtitle method-title">setText:withKeyboard:</h3>
-	
-	
-	
-	<div class="method-subsection brief-description">
-		<p>Type the <a href="#//api/name/text">text</a> in the <a href="#//api/name/text">text</a> field with a specific keyboard.</p>
-	</div>		
-	
-    
-
-	<div class="method-subsection method-declaration"><code>- (void)setText:(NSString *)<em>text</em> withKeyboard:(id&lt;SLKeyboard&gt;)<em>keyboard</em></code></div>
-
-    
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>text</em></dt>
-			<dd><p>A string to type into the <a href="#//api/name/text">text</a> field.</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>keyboard</em></dt>
-			<dd><p>An <a href="../Classes/SLElement.html"><code>SLElement</code></a> that implements the <a href="../Classes/SLKeyboard.html"><code>SLKeyboard</code></a> protocol,
-to be used to type the given string.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<div class="method-subsection arguments-section exceptions">
-		<h4 class="method-subtitle exception-title">Exceptions</h4>
-		
-		<dl class="argument-def exception-def">
-			<dt><em>SLUIAElementInvalidException</em></dt>
-			<dd><p>Raised if the element is not valid
-by the end of the <a href="../Classes/SLUIAElement.html#//api/name/defaultTimeout">default timeout</a>.</p></dd>
-		</dl>
-		
-		<dl class="argument-def exception-def">
-			<dt><em>SLUIAElementNotTappableException</em></dt>
-			<dd><p>Raised if the element is not
-tappable when whatever amount of time remains of the default timeout after
-the element becomes valid elapses.</p></dd>
-		</dl>
-		
-	</div>
-	
-	
-	
-	
-	
-	<div class="method-subsection declared-in-section">
-		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">SLTextField.h</code><br />
-	</div>				
-	
-	
-</div>
-						
-					</div>
 					
 					
 				</div>

@@ -6,7 +6,7 @@
 		<meta id="xcode-display" name="xcode-display" content="render"/>
 		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
 		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
-		<meta name="generator" content="appledoc 2.1 (build 858)" />
+		<meta name="generator" content="appledoc 2.1 (build 840)" />
 	</head>
 	<body>
 		<header id="top_header">
@@ -37,6 +37,11 @@
 	
 	
 	
+	<option value="properties">Properties</option>
+	
+	<option value="//api/name/shouldDoubleCheckValidity">&nbsp;&nbsp;&nbsp;&nbsp;shouldDoubleCheckValidity</option>
+	
+	
 	
 	
 	<option value="class_methods">Class Methods</option>
@@ -58,7 +63,11 @@
 	
 	<option value="//api/name/examineMatchingObject:">&nbsp;&nbsp;&nbsp;&nbsp;- examineMatchingObject:</option>
 	
+	<option value="//api/name/logElement">&nbsp;&nbsp;&nbsp;&nbsp;- logElement</option>
+	
 	<option value="//api/name/matchesObject:">&nbsp;&nbsp;&nbsp;&nbsp;- matchesObject:</option>
+	
+	<option value="//api/name/tapAtActivationPoint">&nbsp;&nbsp;&nbsp;&nbsp;- tapAtActivationPoint</option>
 	
 	
 	
@@ -78,6 +87,12 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Matching Interface Elements">Matching Interface Elements</a></span></li>
 	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Gestures and Actions">Gestures and Actions</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Logging Element Information">Logging Element Information</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Debugging Subliminal">Debugging Subliminal</a></span></li>
+	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Methods for Subclasses">Methods for Subclasses</a></span></li>
 	
 </ul></li>
@@ -85,6 +100,12 @@
 
 
 
+
+<li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#properties">Properties</a></span><ul>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/shouldDoubleCheckValidity">shouldDoubleCheckValidity</a></span></li>
+	
+</ul></li>
 
 
 
@@ -108,7 +129,11 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/examineMatchingObject:">examineMatchingObject:</a></span></li>
 	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logElement">logElement</a></span></li>
+	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/matchesObject:">matchesObject:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/tapAtActivationPoint">tapAtActivationPoint</a></span></li>
 	
 </ul></li>
 
@@ -156,6 +181,8 @@ predicate. When <code>SLElement</code> needs to access its corresponding interfa
 it evaluates the element hierarchy using that predicate. If a matching object
 is found, it is made available to Subliminal and to UIAutomation
 to access and manipulate.</p>
+
+<p>The methods in the <code>SLElement (DebugSettings)</code> category may be useful in debugging Subliminal.</p>
 
 <p>The methods in the <code>SLElement (Subclassing)</code> category are to be called or
 overridden by subclasses of <code>SLElement</code>. Tests should not call these methods.</p>
@@ -217,6 +244,52 @@ using a specified block object.</p></span>
 						</ul>
 						
 						
+						<a title="Gestures and Actions" name="task_Gestures and Actions"></a>
+						<h3 class="subsubtitle task-title">Gestures and Actions</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/tapAtActivationPoint">&ndash;&nbsp;tapAtActivationPoint</a></code>
+		<span class="tooltip"><p>Taps the specified element at its activation point.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Logging Element Information" name="task_Logging Element Information"></a>
+						<h3 class="subsubtitle task-title">Logging Element Information</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/logElement">&ndash;&nbsp;logElement</a></code>
+		<span class="tooltip"><p>Logs information about the specified element.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Debugging Subliminal" name="task_Debugging Subliminal"></a>
+						<h3 class="subsubtitle task-title">Debugging Subliminal</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/shouldDoubleCheckValidity">&nbsp;&nbsp;shouldDoubleCheckValidity</a></code>
+		<span class="tooltip"><p>Determines whether the specified element should use UIAutomation to confirm that it <a href="-isValid">is valid</a>
+after Subliminal has determined (to the best of its ability) that it is valid.</p></span>
+	</span>
+	<span class="task-item-suffix">property</span>
+	
+</li>
+						</ul>
+						
+						
 						<a title="Methods for Subclasses" name="task_Methods for Subclasses"></a>
 						<h3 class="subsubtitle task-title">Methods for Subclasses</h3>
 
@@ -244,6 +317,61 @@ using a specified block object.</p></span>
 					
 					
 					
+					
+					<div class="section section-methods">
+						<a title="Properties" name="properties"></a>
+						<h2 class="subtitle subtitle-methods">Properties</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/shouldDoubleCheckValidity" title="shouldDoubleCheckValidity"></a>
+	<h3 class="subsubtitle method-title">shouldDoubleCheckValidity</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Determines whether the specified element should use UIAutomation to confirm that it <a href="-isValid">is valid</a>
+after Subliminal has determined (to the best of its ability) that it is valid.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>@property (nonatomic) BOOL shouldDoubleCheckValidity</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>If Subliminal misidentifies an element to UIAutomation, UIAutomation will not necessarily raise
+an exception but instead may silently fail (e.g. it may return <code>null</code> from APIs like <code>UIAElement.hitpoint()</code>,
+causing Subliminal to think that an element isn&rsquo;t tappable when really it&rsquo;s not valid).
+Enabling this setting may help in diagnosing such failures.</p>
+
+<p>Validity double-checking is disabled (<code>NO</code>) by default, because it is more likely that there is a bug
+in a particular test than a bug in Subliminal, and because enabling double-checking will
+negatively affect the performance of the tests.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+					</div>
 					
 					
 					
@@ -495,8 +623,8 @@ hierarchy with the specified accessibility label.</p>
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>An accessibility label is the preferred way to identify an element to Subliminal,
 because accessibility labels are visible to users of assistive applications.
-See the UIAccessibility Protocol Reference for guidance in determining appropriate
-labels.</p>
+See the <a href="https://developer.apple.com/library/ios/documentation/uikit/reference/UIAccessibility_Protocol/Introduction/Introduction.html">UIAccessibility Protocol Reference</a>
+for guidance in determining appropriate labels.</p>
 	</div>
 	
 	
@@ -562,8 +690,8 @@ restrict matches by trait.</p></dd>
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>See the UIAccessibility Protocol Reference for guidance in determining
-appropriate accessibility labels, values, and traits.</p>
+		<p>See the <a href="https://developer.apple.com/library/ios/documentation/uikit/reference/UIAccessibility_Protocol/Introduction/Introduction.html">UIAccessibility Protocol Reference</a>
+for guidance in determining appropriate accessibility labels, values, and traits.</p>
 	</div>
 	
 	
@@ -639,7 +767,7 @@ manipulated by the simulated user for the tests to be most accurate.</p>
 		<dl class="argument-def exception-def">
 			<dt><em>SLUIAElementInvalidException</em></dt>
 			<dd><p>Raised if the element has not matched
-an object by the end of the <a href="+defaultTimeout">default timeout</a>.</p></dd>
+an object by the end of the <a href="../Classes/SLUIAElement.html#//api/name/defaultTimeout">default timeout</a>.</p></dd>
 		</dl>
 		
 	</div>
@@ -651,6 +779,60 @@ an object by the end of the <a href="+defaultTimeout">default timeout</a>.</p></
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
 		<code class="declared-in-ref">SLUIAElement+Subclassing.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/logElement" title="logElement"></a>
+	<h3 class="subsubtitle method-title">logElement</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Logs information about the specified element.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)logElement</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p><code>SLElement</code> overrides this method to describe the application object
+corresponding to the specified element, which allows <code>SLElement</code> to
+provide additional information beyond that logged by the superclass' implementation.</p>
+	</div>
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementInvalidException</em></dt>
+			<dd><p>Raised if the element is not valid
+by the end of the <a href="../Classes/SLUIAElement.html#//api/name/defaultTimeout">default timeout</a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLElement.h</code><br />
 	</div>				
 	
 	
@@ -718,6 +900,57 @@ to a higher-level constructor).</p>
 	
 </div>
 						
+						<div class="section-method">
+	<a name="//api/name/tapAtActivationPoint" title="tapAtActivationPoint"></a>
+	<h3 class="subsubtitle method-title">tapAtActivationPoint</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Taps the specified element at its activation point.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)tapAtActivationPoint</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The activation point is by default the midpoint of the accessibility element&rsquo;s
+frame (<a href="../Classes/SLUIAElement.html#//api/name/rect"><code>-rect</code></a>), but the activation point may be modified
+to direct VoiceOver to tap at a different point. See
+<code>-[NSObject (UIAccessibility) accessibilityActivationPoint]</code> for more information
+and examples.</p>
+
+<p>This method is most useful when running against SDKs older than iOS 7,
+because on those platforms, <a href="../Classes/SLUIAElement.html#//api/name/hitpoint"><code>-hitpoint</code></a> and thus
+<a href="../Classes/SLUIAElement.html#//api/name/tap"><code>-tap</code></a> ignore the value of the element&rsquo;s accessibility
+activation point. On or above iOS 7, <code>-hitpoint</code> respects the value of the
+accessibility activation point and so <code>-tap</code> and this method are equivalent.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
 					</div>
 					
 					
@@ -731,9 +964,9 @@ to a higher-level constructor).</p>
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2013 Inkling. All rights reserved. (Last updated: 2013-06-11)</span><br />
+						<p><span class="copyright">&copy; 2014 Inkling. All rights reserved. (Last updated: 2014-04-30)</span><br />
 						
-						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 858)</a>.</span></p>
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 840)</a>.</span></p>
 						
 					</div>
 				</div>

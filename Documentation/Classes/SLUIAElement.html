@@ -6,7 +6,7 @@
 		<meta id="xcode-display" name="xcode-display" content="render"/>
 		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
 		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
-		<meta name="generator" content="appledoc 2.1 (build 858)" />
+		<meta name="generator" content="appledoc 2.1 (build 840)" />
 	</head>
 	<body>
 		<header id="top_header">
@@ -52,7 +52,15 @@
 	
 	<option value="instance_methods">Instance Methods</option>
 	
+	<option value="//api/name/canDetermineTappability">&nbsp;&nbsp;&nbsp;&nbsp;- canDetermineTappability</option>
+	
+	<option value="//api/name/captureScreenshotWithFilename:">&nbsp;&nbsp;&nbsp;&nbsp;- captureScreenshotWithFilename:</option>
+	
+	<option value="//api/name/doubleTap">&nbsp;&nbsp;&nbsp;&nbsp;- doubleTap</option>
+	
 	<option value="//api/name/dragWithStartOffset:endOffset:">&nbsp;&nbsp;&nbsp;&nbsp;- dragWithStartOffset:endOffset:</option>
+	
+	<option value="//api/name/hasKeyboardFocus">&nbsp;&nbsp;&nbsp;&nbsp;- hasKeyboardFocus</option>
 	
 	<option value="//api/name/hitpoint">&nbsp;&nbsp;&nbsp;&nbsp;- hitpoint</option>
 	
@@ -79,6 +87,8 @@
 	<option value="//api/name/scrollToVisible">&nbsp;&nbsp;&nbsp;&nbsp;- scrollToVisible</option>
 	
 	<option value="//api/name/tap">&nbsp;&nbsp;&nbsp;&nbsp;- tap</option>
+	
+	<option value="//api/name/touchAndHoldWithDuration:">&nbsp;&nbsp;&nbsp;&nbsp;- touchAndHoldWithDuration:</option>
 	
 	<option value="//api/name/value">&nbsp;&nbsp;&nbsp;&nbsp;- value</option>
 	
@@ -114,6 +124,8 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Logging Element Information">Logging Element Information</a></span></li>
 	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Screenshot an element">Screenshot an element</a></span></li>
+	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Methods for Subclasses">Methods for Subclasses</a></span></li>
 	
 </ul></li>
@@ -138,7 +150,15 @@
 
 <li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
 	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/canDetermineTappability">canDetermineTappability</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/captureScreenshotWithFilename:">captureScreenshotWithFilename:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/doubleTap">doubleTap</a></span></li>
+	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/dragWithStartOffset:endOffset:">dragWithStartOffset:endOffset:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/hasKeyboardFocus">hasKeyboardFocus</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/hitpoint">hitpoint</a></span></li>
 	
@@ -165,6 +185,8 @@
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/scrollToVisible">scrollToVisible</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/tap">tap</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/touchAndHoldWithDuration:">touchAndHoldWithDuration:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/value">value</a></span></li>
 	
@@ -302,6 +324,13 @@ if it is invisible.</p></span>
 	</span>
 	
 	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/hasKeyboardFocus">&ndash;&nbsp;hasKeyboardFocus</a></code>
+		<span class="tooltip"><p>Determines whether the specified element currently receives keyboard input.</p></span>
+	</span>
+	
+	
 </li>
 						</ul>
 						
@@ -314,6 +343,20 @@ if it is invisible.</p></span>
 	<span class="tooltip">
 		<code><a href="#//api/name/tap">&ndash;&nbsp;tap</a></code>
 		<span class="tooltip"><p>Taps the specified element.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/doubleTap">&ndash;&nbsp;doubleTap</a></code>
+		<span class="tooltip"><p>Double-taps the specified element.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/touchAndHoldWithDuration:">&ndash;&nbsp;touchAndHoldWithDuration:</a></code>
+		<span class="tooltip"><p>Touches and holds the specified element.</p></span>
 	</span>
 	
 	
@@ -403,6 +446,21 @@ element.</p></span>
 						</ul>
 						
 						
+						<a title="Screenshot an element" name="task_Screenshot an element"></a>
+						<h3 class="subsubtitle task-title">Screenshot an element</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/captureScreenshotWithFilename:">&ndash;&nbsp;captureScreenshotWithFilename:</a></code>
+		<span class="tooltip"><p>Takes a screenshot of the specified element.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
 						<a title="Methods for Subclasses" name="task_Methods for Subclasses"></a>
 						<h3 class="subsubtitle task-title">Methods for Subclasses</h3>
 
@@ -428,6 +486,13 @@ within a specified block.</p></span>
 		<code><a href="#//api/name/SLElementIsTappableFunctionName">+&nbsp;SLElementIsTappableFunctionName</a></code>
 		<span class="tooltip"><p>Returns the name of the JavaScript function used to evaluate whether a
 <code>UIAElement</code> is tappable, loading it into the terminal&rsquo;s namespace if necessary.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/canDetermineTappability">&ndash;&nbsp;canDetermineTappability</a></code>
+		<span class="tooltip"><p>Determines whether the specified element&rsquo;s response to <a href="#//api/name/isTappable"><code>isTappable</code></a> is valid.</p></span>
 	</span>
 	
 	
@@ -547,9 +612,9 @@ before attempting to access or interact with interface elements.</p>
 			
 			<li><code><p><a href="#//api/name/setDefaultTimeout:">+ setDefaultTimeout:</a></p></code></li>
 			
-			<li><code><p><a href="#//api/name/isValid">- isValid</a></p></code></li>
+			<li><code><p><a href="#//api/name/isValid">&ndash; isValid</a></p></code></li>
 			
-			<li><code><p><a href="#//api/name/isTappable">- isTappable</a></p></code></li>
+			<li><code><p><a href="#//api/name/isTappable">&ndash; isTappable</a></p></code></li>
 			
 		</ul>
 	</div>
@@ -636,6 +701,196 @@ test controller (<a href="../Classes/SLTestController.html#//api/name/defaultTim
 						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
 						
 						<div class="section-method">
+	<a name="//api/name/canDetermineTappability" title="canDetermineTappability"></a>
+	<h3 class="subsubtitle method-title">canDetermineTappability</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Determines whether the specified element&rsquo;s response to <a href="#//api/name/isTappable"><code>isTappable</code></a> is valid.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (BOOL)canDetermineTappability</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>This should return <code>YES</code> unless the specified element identifies an instance
+of <code>UIScrollView</code> and tests are running on an iPad simulator or device running
+iOS 5.x. On those platforms, UIAutomation reports that scroll views are always
+invisible, and thus not tappable.</p>
+
+<p>If this method returns <code>NO</code>, tappability will not be enforced as a prerequisite
+for simulating user interaction. This will let Subliminal attempt interaction
+with scroll views despite UIAutomation&rsquo;s response. Testing reveals that certain
+forms of interaction, e.g. dragging, will yet succeed (barring factors like the
+scroll view actually being hidden or having user interaction disabled, etc.).</p>
+	</div>
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementInvalidException</em></dt>
+			<dd><p>Raised if the element is not valid.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement+Subclassing.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/captureScreenshotWithFilename:" title="captureScreenshotWithFilename:"></a>
+	<h3 class="subsubtitle method-title">captureScreenshotWithFilename:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Takes a screenshot of the specified element.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)captureScreenshotWithFilename:(NSString *)<em>filename</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>filename</em></dt>
+			<dd><p>An optional string to use as the name for the resultant image file (provide nil to use a generic name.).</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The image is viewable from the UIAutomation debug log in Instruments.</p>
+
+<p>When running <code>subliminal-test</code> from the command line, the images are also saved
+as PNGs within the specified output directory.</p>
+	</div>
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementInvalidException</em></dt>
+			<dd><p>Raised if the element is not valid
+by the end of the <a href="#//api/name/defaultTimeout">default timeout</a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/doubleTap" title="doubleTap"></a>
+	<h3 class="subsubtitle method-title">doubleTap</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Double-taps the specified element.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)doubleTap</code></div>
+
+    
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<div class="bug"><p><strong>Bug:</strong> This method will fail if the specified element identifies a scroll view
+in an application running on an iPad simulator or device running iOS 5.x, due
+to a bug in UIAutomation (see <a href="#//api/name/isTappable">isTappable</a>). An <code>SLUIAElementAutomationException</code>
+will be raised in such a scenario.</p>
+
+<p>UIAutomation is able to double<a href="#//api/name/tap">tap</a> scroll view child elements
+regardless of platform.</p></div>
+	</div>
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementInvalidException</em></dt>
+			<dd><p>Raised if the element is not valid
+by the end of the <a href="#//api/name/defaultTimeout">default timeout</a>.</p></dd>
+		</dl>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementNotTappableException</em></dt>
+			<dd><p>Raised if the element is not tappable
+when whatever amount of time remains of the default timeout after the element
+becomes valid elapses.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
 	<a name="//api/name/dragWithStartOffset:endOffset:" title="dragWithStartOffset:endOffset:"></a>
 	<h3 class="subsubtitle method-title">dragWithStartOffset:endOffset:</h3>
 	
@@ -681,7 +936,9 @@ within the element&rsquo;s <a href="#//api/name/rect"><code>rect</code></a>, wit
 as the bottom right.</p>
 
 <p>This method uses a drag duration of 1.0 seconds (the documented default duration
-for touch-and-hold gestures according to Apple&rsquo;s <code>UIAElement</code> class reference).</p>
+for touch-and-hold gestures according to Apple&rsquo;s <code>UIAElement</code> class reference).</p><div class="bug"><p><strong>Bug:</strong> On simulators running iOS 7.x, UIAutomation drag gestures do not cause
+scroll views to scroll. Instances of <a href="../Classes/SLElement.html"><code>SLElement</code></a> are able to work around this;
+instances of <a href="../Classes/SLStaticElement.html"><code>SLStaticElement</code></a> are not.</p></div>
 	</div>
 	
 	
@@ -700,6 +957,64 @@ by the end of the <a href="#//api/name/defaultTimeout">default timeout</a>.</p><
 			<dd><p>Raised if the element is not tappable
 when whatever amount of time remains of the default timeout after the element
 becomes valid elapses.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/hasKeyboardFocus" title="hasKeyboardFocus"></a>
+	<h3 class="subsubtitle method-title">hasKeyboardFocus</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Determines whether the specified element currently receives keyboard input.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (BOOL)hasKeyboardFocus</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p><code>YES</code> if the user interface element represented by the specified element
+is the current receiver of keyboard input, <code>NO</code> otherwise.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>That is, whether the receiver is first responder.</p>
+	</div>
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementInvalidException</em></dt>
+			<dd><p>Raised if the element is not currently
+valid.</p></dd>
 		</dl>
 		
 	</div>
@@ -747,8 +1062,10 @@ cannot be determined.</p>
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>This is the midpoint of the element&rsquo;s <a href="#//api/name/rect"><code>rect</code></a>, unless that point cannot be tapped,
-in which case this method returns an alternate point, if possible.</p>
+		<p>Below iOS 7, this defaults to the midpoint of the element&rsquo;s <a href="#//api/name/rect"><code>rect</code></a>;
+at or above iOS 7, this defaults to the element&rsquo;s <a href="-[NSObject%20(UIAccessibility">accessibility activation point</a> accessibilityActivationPoint]).</p>
+
+<p>If the default hitpoint cannot be tapped, this method returns an alternate point, if possible.</p>
 	</div>
 	
 	
@@ -869,7 +1186,7 @@ if it is invisible.</p>
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>Unlike <a href="#//api/name/isVisible"><code>isVisible</code></a>, this method will not raise an <code>SLUIAElementInvalidException</code>
-if the element is not valid&ndash;it will just return <code>NO</code>. This allows test writers
+if the element is not valid&mdash;it will just return <code>NO</code>. This allows test writers
 to wait for an element to disappear without having to worry about whether
 the element will become invisible or simply invalid.</p>
 	</div>
@@ -926,10 +1243,21 @@ of the timeout for the element to become tappable. If the element does not
 become tappable within that interval, the method will raise an
 <code>SLUIAElementNotTappableException</code>.</p>
 
+<p>This method returns, or raises an <code>SLUIAElementInvalidException</code>, immediately.</p>
+
 <p>Use of the <code>UIAElement</code> macro can help tests diagnose tappability failures.</p><div class="warning"><p><strong>Warning:</strong> <a href="#//api/name/isVisible">Visibility</a> correlates very closely with tappability,
 but in some circumstances, an element may be tappable even if it is not visible,
-and vice versa, due to bugs in <code>UIAutomation</code>. See the implementation for details.
-Tests should assert visibility separately if desired.</p></div>
+and vice versa, due to bugs in UIAutomation. See the implementation for details.
+Tests should assert visibility separately if desired.</p></div><div class="bug"><p><strong>Bug:</strong> UIAutomation reports that scroll views are never tappable in applications
+running on iPad simulators or devices running iOS 5.x. On such platforms, Subliminal
+attempts to interact with scroll views despite UIAutomation reporting that they
+are not tappable. Testing reveals that tapping scroll views on an iPad simulator
+or device running iOS 5.x will fail, but dragging will succeed (barring factors
+like the scroll view actually being hidden or having user interaction disabled,
+etc.).</p>
+
+<p>UIAutomation correctly reports scroll view child elements as tappable
+regardless of platform.</p></div>
 	</div>
 	
 	
@@ -939,8 +1267,8 @@ Tests should assert visibility separately if desired.</p></div>
 		
 		<dl class="argument-def exception-def">
 			<dt><em>SLUIAElementInvalidException</em></dt>
-			<dd><p>Raised if the element is not valid
-by the end of the <a href="#//api/name/defaultTimeout">default timeout</a>.</p></dd>
+			<dd><p>Raised if the element is not currently
+valid.</p></dd>
 		</dl>
 		
 	</div>
@@ -951,7 +1279,7 @@ by the end of the <a href="#//api/name/defaultTimeout">default timeout</a>.</p><
 		<h4 class="method-subtitle">See Also</h4>
 		<ul>
 			
-			<li><code><p><a href="#//api/name/isValid">- isValid</a></p></code></li>
+			<li><code><p><a href="#//api/name/isValid">&ndash; isValid</a></p></code></li>
 			
 		</ul>
 	</div>
@@ -1017,7 +1345,7 @@ asked to access a corresponding interface element.</p>
 		<h4 class="method-subtitle">See Also</h4>
 		<ul>
 			
-			<li><code><p><a href="#//api/name/isTappable">- isTappable</a></p></code></li>
+			<li><code><p><a href="#//api/name/isTappable">&ndash; isTappable</a></p></code></li>
 			
 		</ul>
 	</div>
@@ -1064,7 +1392,7 @@ both <a href="#//api/name/isValid">exists</a> and is <a href="#//api/name/isVisi
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
 		<p>This method returns immediately, but unlike <a href="#//api/name/isVisible"><code>isVisible</code></a>, will not raise
-an <code>SLUIAElementInvalidException</code> if the element is not valid&ndash;it will
+an <code>SLUIAElementInvalidException</code> if the element is not valid&mdash;it will
 just return <code>NO</code>. This allows test writers to wait for an element to appear
 without having to worry about whether the element is valid at the start of the wait.</p>
 	</div>
@@ -1411,7 +1739,7 @@ scrolled until this element is visible.</p>
 		<h4 class="method-subtitle exception-title">Exceptions</h4>
 		
 		<dl class="argument-def exception-def">
-			<dt><em>SLJavaScriptException</em></dt>
+			<dt><em>SLUIAElementAutomationException</em></dt>
 			<dd><p>if the element is not within a UIScrollView or UIWebView</p></dd>
 		</dl>
 		
@@ -1453,7 +1781,13 @@ scrolled until this element is visible.</p>
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>The tap occurs at the element&rsquo;s <a href="#//api/name/hitpoint">hitpoint</a>.</p>
+		<p>The tap occurs at the element&rsquo;s <a href="#//api/name/hitpoint">hitpoint</a>.</p><div class="bug"><p><strong>Bug:</strong> This method will fail if the specified element identifies a scroll view
+in an application running on an iPad simulator or device running iOS 5.x, due
+to a bug in UIAutomation (see <a href="#//api/name/isTappable">isTappable</a>). An <code>SLUIAElementAutomationException</code>
+will be raised in such a scenario.</p>
+
+<p>UIAutomation is able to tap on scroll view child elements
+regardless of platform.</p></div>
 	</div>
 	
 	
@@ -1475,6 +1809,52 @@ becomes valid elapses.</p></dd>
 		</dl>
 		
 	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLUIAElement.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/touchAndHoldWithDuration:" title="touchAndHoldWithDuration:"></a>
+	<h3 class="subsubtitle method-title">touchAndHoldWithDuration:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Touches and holds the specified element.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)touchAndHoldWithDuration:(NSTimeInterval)<em>duration</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>duration</em></dt>
+			<dd><p>The duration for the touch.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -1563,8 +1943,9 @@ within a specified block.</p>
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>waitUntilTappable</em></dt>
-			<dd><p>If <code>YES</code>, this method will wait for the remainder
-of <code>timeout</code> after the element becomes valid for the element to become tappable.</p></dd>
+			<dd><p>If <code>YES</code>, and <a href="#//api/name/canDetermineTappability"><code>canDetermineTappability</code></a> returns <code>YES</code>,
+this method will wait for the remainder of <em>timeout</em>, after the element becomes valid,
+for the element to become tappable.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
@@ -1576,7 +1957,7 @@ element as an argument and returns <code>void</code>.</p></dd>
 		<dl class="argument-def parameter-def">
 			<dt><em>timeout</em></dt>
 			<dd><p>The timeout for which this method should wait for the specified
-element to become valid (and tappable, if <code>waitUntilTappable</code> is YES). Clients
+element to become valid (and tappable, if <em>waitUntilTappable</em> is <code>YES</code>). Clients
 should generally call this method with <a href="#//api/name/defaultTimeout"><code>[SLUIAElement defaultTimeout]</code></a>.</p></dd>
 		</dl>
 		
@@ -1599,13 +1980,31 @@ involving its corresponding <code>UIAElement</code> than simple function calls (
 timeout for resolving the corresponding <code>UIAElement</code>.</p>
 
 <p>This method waits until the element <a href="#//api/name/isValid">is valid</a> before attempting to
-access the <code>UIAElement</code>, for not more than <code>timeout. If</code>waitUntilTappable<code>
-is</code>YES<code>, the method will also wait, for the remainder of</code>timeout`, for the
-element to become <a href="#//api/name/isTappable">tappable</a>.</p><div class="warning"><p><strong>Warning:</strong> If the expression to be evaluated by <code>block</code> involves user interaction,
-the caller must pass <code>YES</code> for <code>waitUntilTappable</code>.</p></div>
+access the <code>UIAElement</code>, for not more than <em>timeout</em>. If <em>waitUntilTappable</em>
+is <code>YES</code>, the method will also wait, for the remainder of <em>timeout</em>, for the
+element to become <a href="#//api/name/isTappable">tappable</a>.</p><div class="warning"><p><strong>Warning:</strong> If the expression to be evaluated by <em>block</em> involves user interaction,
+the caller must pass <code>YES</code> for <em>waitUntilTappable</em>.</p></div>
 	</div>
 	
 	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementInvalidException</em></dt>
+			<dd><p>Raised if the element is not valid
+by the end of <em>timeout</em>.</p></dd>
+		</dl>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>SLUIAElementNotTappableException</em></dt>
+			<dd><p>Raised if the element waits for
+tappability and is not tappable when whatever amount of time remains of <em>timeout</em>,
+after the element becomes valid, elapses.</p></dd>
+		</dl>
+		
+	</div>
 	
 	
 	
@@ -1641,9 +2040,9 @@ specified element and returns the result.</p>
 		
 		<dl class="argument-def parameter-def">
 			<dt><em>waitUntilTappable</em></dt>
-			<dd><p>If <code>YES</code>, this method will wait for the remainder
-of the default timeout after the element becomes valid for the element to
-become tappable.</p></dd>
+			<dd><p>If <code>YES</code>, and <a href="#//api/name/canDetermineTappability"><code>canDetermineTappability</code></a> returns <code>YES</code>,
+this method will wait for the remainder of the default timeout, after the element
+becomes valid, for the element to become tappable.</p></dd>
 		</dl>
 		
 		<dl class="argument-def parameter-def">
@@ -1664,7 +2063,7 @@ representing a JavaScript function to be called on the corresponding <code>UIAEl
 	
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>The <a href="#//api/name/value">value</a> returned by the function, as an <code>Objective-C</code> object. See
+		<p>The <a href="#//api/name/value">value</a> returned by the function, as an Objective-C object. See
 <a href="../Classes/SLTerminal.html#//api/name/eval:"><code>[SLTerminal eval:]</code></a> for more infomation.</p>
 	</div>
 	
@@ -1682,9 +2081,9 @@ representing a JavaScript function to be called on the corresponding <code>UIAEl
 
 <p>This method automatically waits until the element <a href="#//api/name/isValid">is valid</a> before
 attempting to access the <code>UIAElement</code>, for not more than the <a href="#//api/name/defaultTimeout">default timeout</a>.
-If <code>waitUntilTappable</code> is <code>YES</code>, the method will also wait, for the remainder
+If <em>waitUntilTappable</em> is <code>YES</code>, the method will also wait, for the remainder
 of the timeout, for the element to become <a href="#//api/name/isTappable">tappable</a>.</p><div class="warning"><p><strong>Warning:</strong> All methods that involve user interaction must pass <code>YES</code> for
-<code>waitUntilTappable</code>.</p></div><div class="warning"><p><strong>Warning:</strong> Variable arguments that are strings need to be escaped,
+<em>waitUntilTappable</em>.</p></div><div class="warning"><p><strong>Warning:</strong> Variable arguments that are strings need to be escaped,
 using <code>[NSString slStringByEscapingForJavaScriptLiteral]</code>,
 if they are to be substituted into a JavaScript string literal.</p></div>
 	</div>
@@ -1702,9 +2101,9 @@ by the end of the default timeout.</p></dd>
 		
 		<dl class="argument-def exception-def">
 			<dt><em>SLUIAElementNotTappableException</em></dt>
-			<dd><p>Raised if the element is not
-tappable when whatever amount of time remains of the default timeout after
-the element becomes valid elapses.</p></dd>
+			<dd><p>Raised if the element waits for
+tappability and is not tappable when whatever amount of time remains of the
+default timeout, after the element becomes valid, elapses.</p></dd>
 		</dl>
 		
 	</div>
@@ -1734,9 +2133,9 @@ the element becomes valid elapses.</p></dd>
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2013 Inkling. All rights reserved. (Last updated: 2013-06-11)</span><br />
+						<p><span class="copyright">&copy; 2014 Inkling. All rights reserved. (Last updated: 2014-04-30)</span><br />
 						
-						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 858)</a>.</span></p>
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 840)</a>.</span></p>
 						
 					</div>
 				</div>

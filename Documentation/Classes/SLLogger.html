@@ -6,7 +6,7 @@
 		<meta id="xcode-display" name="xcode-display" content="render"/>
 		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
 		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
-		<meta name="generator" content="appledoc 2.1 (build 858)" />
+		<meta name="generator" content="appledoc 2.1 (build 840)" />
 	</head>
 	<body>
 		<header id="top_header">
@@ -48,9 +48,13 @@
 	
 	<option value="instance_methods">Instance Methods</option>
 	
+	<option value="//api/name/currentQueueIsLoggingQueue">&nbsp;&nbsp;&nbsp;&nbsp;- currentQueueIsLoggingQueue</option>
+	
 	<option value="//api/name/logDebug:">&nbsp;&nbsp;&nbsp;&nbsp;- logDebug:</option>
 	
 	<option value="//api/name/logError:">&nbsp;&nbsp;&nbsp;&nbsp;- logError:</option>
+	
+	<option value="//api/name/logException:expected:">&nbsp;&nbsp;&nbsp;&nbsp;- logException:expected:</option>
 	
 	<option value="//api/name/logMessage:">&nbsp;&nbsp;&nbsp;&nbsp;- logMessage:</option>
 	
@@ -69,6 +73,8 @@
 	<option value="//api/name/logTestingFinishWithNumTestsExecuted:numTestsFailed:">&nbsp;&nbsp;&nbsp;&nbsp;- logTestingFinishWithNumTestsExecuted:numTestsFailed:</option>
 	
 	<option value="//api/name/logTestingStart">&nbsp;&nbsp;&nbsp;&nbsp;- logTestingStart</option>
+	
+	<option value="//api/name/logUncaughtException:">&nbsp;&nbsp;&nbsp;&nbsp;- logUncaughtException:</option>
 	
 	<option value="//api/name/logWarning:">&nbsp;&nbsp;&nbsp;&nbsp;- logWarning:</option>
 	
@@ -118,9 +124,13 @@
 
 <li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
 	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/currentQueueIsLoggingQueue">currentQueueIsLoggingQueue</a></span></li>
+	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logDebug:">logDebug:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logError:">logError:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logException:expected:">logException:expected:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logMessage:">logMessage:</a></span></li>
 	
@@ -139,6 +149,8 @@
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logTestingFinishWithNumTestsExecuted:numTestsFailed:">logTestingFinishWithNumTestsExecuted:numTestsFailed:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logTestingStart">logTestingStart</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logUncaughtException:">logUncaughtException:</a></span></li>
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/logWarning:">logWarning:</a></span></li>
 	
@@ -189,29 +201,25 @@ test output.</p>
 in the Instruments application when the tests are running locally, and in the
 console while the <code>instruments</code> command-line tool is running.</p>
 
-<p>If the <code>instruments</code> command-line tool is invoked with a value for the <code>UIARESULTSPATH</code>
-environment variable (as the <code>subliminal-test</code> script does when invoked with the
-<code>-output</code> option), then <code>instruments</code> will also produce a <code>.trace</code> file inside
-that directory that can be opened in the Instruments application after the tests
-have concluded.</p>
+<p>When running <code>subliminal-test</code> from the command line, <code>instruments</code> will also produce
+a <code>.trace</code> file inside the specified output directory, which file can be opened in the
+Instruments application after the tests have concluded.</p>
 
 <p>When <a href="#//api/name/logError:">errors</a> or <a href="#//api/name/logWarning:">warnings</a> are logged, the <code>SLLogger</code>
 will direct the Automation instrument to take a screenshot of the application.
 Those screenshots can be viewed in Instruments alongside log messages when the
-tests are running locally, or by opening the <code>.trace</code> file produced by a run of
-the <code>instruments</code> command-line tool. The <code>instruments</code> command-line tool will also
-save such screenshots to the directory specified by the <code>UIARESULTSPATH</code> environment
-variable.</p>
+tests are running locally, or by opening the <code>.trace</code> file produced when running
+the <code>subliminal-test</code> command-line tool having specified an output directory.
+<code>subliminal-test</code> will also save such screenshots to the specified output directory.</p>
 
 <h3>Providing alternate log formats</h3>
 
 <p><code>SLLogger</code> is not designed to be subclassed, because the Automation instrument
 is the only way for tests running on a device to report their status to the
-test runner. However, when the <code>instruments</code> command-line tool is invoked with
-a value for the <code>UIARESULTSPATH</code> environment variable, it will save the logs
-to that directory as a <code>.plist</code>, with all log events available as structured
-dictionaries. That <code>.plist</code> may be parsed into other formats after testing
-concludes.</p>
+test runner. However, when the <code>subliminal-test</code> command-line tool is invoked with
+an output directory, it will save the logs to that directory as a <code>.plist</code>,
+with all log events available as structured dictionaries. That <code>.plist</code> may be
+parsed into other formats after testing concludes.</p>
 
 <p>The <code>subliminal_uialog_to_junit</code> script, for example, parses the <code>.plist</code>
 into a JUnit report.</p>
@@ -271,6 +279,13 @@ of when these methods are called.</p>
 	
 </li><li>
 	<span class="tooltip">
+		<code><a href="#//api/name/currentQueueIsLoggingQueue">&ndash;&nbsp;currentQueueIsLoggingQueue</a></code>
+		<span class="tooltip"><p>Whether or not the current queue is the <a href="#//api/name/loggingQueue"><code>loggingQueue</code></a>.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
 		<code><a href="#//api/name/logMessage:">&ndash;&nbsp;logMessage:</a></code>
 		<span class="tooltip"><p>Logs a message.</p></span>
 	</span>
@@ -314,6 +329,13 @@ of when these methods are called.</p>
 
 						<ul class="task-list">
 							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/logException:expected:">&ndash;&nbsp;logException:expected:</a></code>
+		<span class="tooltip"><p>Logs an exception thrown by a test.</p></span>
+	</span>
+	
+	
+</li><li>
 	<span class="tooltip">
 		<code><a href="#//api/name/logTest:caseStart:">&ndash;&nbsp;logTest:caseStart:</a></code>
 		<span class="tooltip"><p>Logs that the specified test case has started.</p></span>
@@ -374,6 +396,13 @@ of when these methods are called.</p>
 	<span class="tooltip">
 		<code><a href="#//api/name/logTestingFinishWithNumTestsExecuted:numTestsFailed:">&ndash;&nbsp;logTestingFinishWithNumTestsExecuted:numTestsFailed:</a></code>
 		<span class="tooltip"><p>Logs that testing has finished.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/logUncaughtException:">&ndash;&nbsp;logUncaughtException:</a></code>
+		<span class="tooltip"><p>Logs an exception that was not caught by the tests or application.</p></span>
 	</span>
 	
 	
@@ -440,6 +469,52 @@ of when these methods are called.</p>
 					<div class="section section-methods">
 						<a title="Instance Methods" name="instance_methods"></a>
 						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
+						
+						<div class="section-method">
+	<a name="//api/name/currentQueueIsLoggingQueue" title="currentQueueIsLoggingQueue"></a>
+	<h3 class="subsubtitle method-title">currentQueueIsLoggingQueue</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Whether or not the current queue is the <a href="#//api/name/loggingQueue"><code>loggingQueue</code></a>.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (BOOL)currentQueueIsLoggingQueue</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p>Whether or not the current queue is the <a href="#//api/name/loggingQueue"><code>loggingQueue</code></a>.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>To avoid deadlocks, use this method to check if you&rsquo;re on the <a href="#//api/name/loggingQueue"><code>loggingQueue</code></a> before <code>dispatch_sync</code>ing a block to it.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLLogger.h</code><br />
+	</div>				
+	
+	
+</div>
 						
 						<div class="section-method">
 	<a name="//api/name/logDebug:" title="logDebug:"></a>
@@ -518,6 +593,66 @@ of when these methods are called.</p>
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLLogger.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/logException:expected:" title="logException:expected:"></a>
+	<h3 class="subsubtitle method-title">logException:expected:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Logs an exception thrown by a test.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)logException:(NSException *)<em>exception</em> expected:(BOOL)<em>expected</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>exception</em></dt>
+			<dd><p>The exception to be logged.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>expected</em></dt>
+			<dd><p>YES if the exception was &ldquo;expected&rdquo;, otherwise NO.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>The exception will be logged with call-site information if the exception&rsquo;s <code>userInfo</code> dictionary
+contains both the <code>SLLoggerExceptionFilenameKey</code> and <code>SLLoggerExceptionLineNumberKey</code> keys.</p>
+
+<p>See the discussion on the <a href="../Classes/SLTest.html"><code>SLTest</code></a> (SLTestCase) category for what constitutes an &ldquo;expected&rdquo; exception
+(in the context of a test failing due to this exception being raised).</p>
+	</div>
 	
 	
 	
@@ -800,7 +935,7 @@ or <a href="../Classes/SLTest.html#//api/name/tearDownTest"><code>-tearDownTest<
 		<h4 class="method-subtitle">See Also</h4>
 		<ul>
 			
-			<li><code><p><a href="#//api/name/logTestFinish:withNumCasesExecuted:numCasesFailed:numCasesFailedUnexpectedly:">- logTestFinish:withNumCasesExecuted:numCasesFailed:numCasesFailedUnexpectedly:</a></p></code></li>
+			<li><code><p><a href="#//api/name/logTestFinish:withNumCasesExecuted:numCasesFailed:numCasesFailedUnexpectedly:">&ndash; logTestFinish:withNumCasesExecuted:numCasesFailed:numCasesFailedUnexpectedly:</a></p></code></li>
 			
 		</ul>
 	</div>
@@ -881,7 +1016,7 @@ further discussion of the information that this method will be used to log.</p>
 		<h4 class="method-subtitle">See Also</h4>
 		<ul>
 			
-			<li><code><p><a href="#//api/name/logTestAbort:">- logTestAbort:</a></p></code></li>
+			<li><code><p><a href="#//api/name/logTestAbort:">&ndash; logTestAbort:</a></p></code></li>
 			
 		</ul>
 	</div>
@@ -1041,6 +1176,57 @@ further discussion of the information that this method will be used to log.</p>
 </div>
 						
 						<div class="section-method">
+	<a name="//api/name/logUncaughtException:" title="logUncaughtException:"></a>
+	<h3 class="subsubtitle method-title">logUncaughtException:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Logs an exception that was not caught by the tests or application.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)logUncaughtException:(NSException *)<em>exception</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>exception</em></dt>
+			<dd><p>The exception to be logged.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>This method is to be called from the test controller&rsquo;s uncaught exception handler.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLLogger.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
 	<a name="//api/name/logWarning:" title="logWarning:"></a>
 	<h3 class="subsubtitle method-title">logWarning:</h3>
 	
@@ -1140,9 +1326,9 @@ further discussion of the information that this method will be used to log.</p>
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2013 Inkling. All rights reserved. (Last updated: 2013-06-11)</span><br />
+						<p><span class="copyright">&copy; 2014 Inkling. All rights reserved. (Last updated: 2014-04-30)</span><br />
 						
-						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 858)</a>.</span></p>
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 840)</a>.</span></p>
 						
 					</div>
 				</div>

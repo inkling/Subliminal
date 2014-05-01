@@ -1,26 +1,46 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>Subliminal Reference</title>
-		<link rel="stylesheet" type="text/css" href="css/styles.css" media="all" />
-		<link rel="stylesheet" type="text/css" media="print" href="css/stylesPrint.css" />
-		<meta name="generator" content="appledoc 2.1 (build 858)" />
-	</head>
-	<body>
-		<header id="top_header">
-			<div id="library" class="hideInXcode">
-				<h1><a id="libraryTitle" href="index.html">Subliminal </a></h1>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Subliminal Reference</title>
+<link rel="stylesheet" type="text/css" href="css/styles.css" media="all">
+<link rel="stylesheet" type="text/css" media="print" href="css/stylesPrint.css">
+<meta name="generator" content="appledoc 2.1 (build 840)">
+<style>/* Float the class hierarchy to the left of the README. */
+.index-column {
+  float: left;
+  width: 20%;
+  min-width: 100px;
+}
+.section {
+  margin-top: 0px;
+  float: right;
+  width: 78%;
+}
+
+/* Make the README text easier to read. */
+.section p, .section li, .section pre {
+  max-width: 800px;
+  line-height: 18px;
+  font-size: 13px;
+}
+
+/* Enable scrolling of README code blocks on small displays. */
+pre {
+  overflow: auto;
+}
+</style>
+</head>
+<body>
+		<header id="top_header"><div id="library" class="hideInXcode">
+				<h1><a id="libraryTitle" href="index.html">Subliminal 1.1.0</a></h1>
 				<a id="developerHome" href="index.html">Inkling</a>
 			</div>
 			
 			<div id="title" role="banner">
 				<h1 class="hideInXcode">Subliminal Reference</h1>
 			</div>
-			<ul id="headerButtons" role="toolbar"></ul>
-		</header>
-		<article>
-			<div id="overview_contents" role="main">
+			<ul id="headerButtons" role="toolbar"></ul></header><article><div id="overview_contents" role="main">
 				<div class="main-navigation navigation-top">
 					<a href="hierarchy.html">Next</a>
 				</div>
@@ -30,494 +50,222 @@
 					</div>		
 				</div>
 				<div id="container">
-					
-					<div class="section section-overview index-overview">
-						
-						
-						<p align="center" >
-  <img src="http://inkling.github.io/Subliminal/readme-images/subliminal-hero.png" alt="Subliminal" title="Subliminal">
-</p>
+<div class="section section-overview index-overview">
+<p align="center">
+  <a href="https://camo.githubusercontent.com/450e04aaebc9a1a52f83076ea5b337fbbcdd98fb/687474703a2f2f696e6b6c696e672e6769746875622e696f2f5375626c696d696e616c2f726561646d652d696d616765732f7375626c696d696e616c2d6865726f2e706e67" target="_blank"><img src="https://camo.githubusercontent.com/450e04aaebc9a1a52f83076ea5b337fbbcdd98fb/687474703a2f2f696e6b6c696e672e6769746875622e696f2f5375626c696d696e616c2f726561646d652d696d616765732f7375626c696d696e616c2d6865726f2e706e67" alt="Subliminal" title="Subliminal" data-canonical-src="http://inkling.github.io/Subliminal/readme-images/subliminal-hero.png" style="max-width:100%;"></a></p>
 
+<p><a href="https://travis-ci.org/inkling/Subliminal"><img src="https://camo.githubusercontent.com/67d7b4b4934616b3b9251a3fa6d8855091d4febd/68747470733a2f2f7472617669732d63692e6f72672f696e6b6c696e672f5375626c696d696e616c2e7376673f6272616e63683d6d6173746572" alt="Build Status" data-canonical-src="https://travis-ci.org/inkling/Subliminal.svg?branch=master" style="max-width:100%;"></a></p>
 
-<p><a href="https://travis-ci.org/inkling/Subliminal"><img src="https://travis-ci.org/inkling/Subliminal.png?branch=master" alt="Build Status" /></a></p>
-
-<p>Subliminal is an framework for writing iOS integration tests. Subliminal provides
-a familiar OCUnit/SenTest-like interface to Apple&rsquo;s UIAutomation framework,
-with tests written entirely in Objective-C. Subliminal also provides a powerful
+<p>Subliminal is a framework for writing iOS integration tests. Subliminal provides 
+a familiar OCUnit/XCTest-like interface to Apple's UIAutomation framework, 
+with tests written entirely in Objective-C. Subliminal also provides a powerful 
 mechanism for your tests to manipulate your application directly.</p>
 
-<h2>Features</h2>
+<p>[
+<a href="#features">Features</a> • 
+<a href="#how-to-get-started">Getting Started</a> • 
+<a href="#requirements">Requirements</a> • 
+<a href="#usage">Usage</a> • 
+<a href="#continuous-integration">Continuous Integration</a> • 
+<a href="#contributing">Contributing</a> • 
+<a href="#contact">Contact</a> • 
+<a href="#copyright-and-license">License</a> 
+]</p>
 
-<h4>Seamless Integration</h4>
+<h2>
+<a name="user-content-features" class="anchor" href="#features" id="features"><span class="octicon octicon-link"></span></a>Features</h2>
 
-<p>Write your tests in Objective-C, and run them from Xcode. See rich-text logs
-and screenshots in Instruments. Use UIAutomation to simulate user interaction.
+<h4>
+<a name="user-content-seamless-integration" class="anchor" href="#seamless-integration" id="seamless-integration"><span class="octicon octicon-link"></span></a>Seamless Integration</h4>
+
+<p>Write your tests in Objective-C, and run them from Xcode. See rich-text logs 
+and screenshots in Instruments. Use UIAutomation to simulate user interaction. 
 Subliminal lets you use familiar tools, no dependencies required.</p>
 
-<h4>Full Control</h4>
+<h4>
+<a name="user-content-full-control" class="anchor" href="#full-control" id="full-control"><span class="octicon octicon-link"></span></a>Full Control</h4>
 
-<p>By using UIAutomation, Subliminal can simulate almost any interaction&ndash;without
-resorting to private APIs. From navigating in-app purchase dialogs, to putting
-your app to sleep, Subliminal lets you simulate complex interaction like a user.
-And when you want to manipulate your app directly, Subliminal will help you do
+<p>By using UIAutomation, Subliminal can simulate almost any interaction--without 
+resorting to private APIs. From navigating in-app purchase dialogs, to putting 
+your app to sleep, Subliminal lets you simulate complex interaction like a user. 
+And when you want to manipulate your app directly, Subliminal will help you do 
 that too.</p>
 
-<h4>Scalable Tests</h4>
+<h4>
+<a name="user-content-scalable-tests" class="anchor" href="#scalable-tests" id="scalable-tests"><span class="octicon octicon-link"></span></a>Scalable Tests</h4>
 
-<p>Define Objective-C methods to help set up and tear down tests. Leverage native
-support for continuous integration. Take confidence in Subliminal&rsquo;s complete
-documentation and full test coverage. Subliminal is the perfect foundation
+<p>Define Objective-C methods to help set up and tear down tests. Leverage native 
+support for continuous integration. Take confidence in Subliminal's complete 
+documentation and full test coverage. Subliminal is the perfect foundation 
 for your tests.</p>
 
-<h2>How to Get Started</h2>
+<h2>
+<a name="user-content-how-to-get-started" class="anchor" href="#how-to-get-started" id="how-to-get-started"><span class="octicon octicon-link"></span></a>How to Get Started</h2>
 
 <ul>
-<li><a href="https://github.com/inkling/Subliminal/zipball/master">Download Subliminal</a>
-and try out the included example app (instructions for running the app are <a href="#running-the-example-app">here</a>)</li>
-<li>Install Subliminal and write your first test in just 10 minutes (guide <a href="#installing-subliminal">below</a>,
-screencast <a href="https://vimeo.com/67771344">here</a>)</li>
-<li>Check out the <a href="#faq">FAQ</a> or read the <a href="http://inkling.github.io/Subliminal/Documentation/">complete documentation</a></li>
-<li>Find support <a href="https://twitter.com/subliminaltest">@subliminaltest</a>
-and on <a href="http://stackoverflow.com/questions/tagged/subliminal">Stack Overflow</a></li>
-</ul>
-
-
-<h2><a name="running-the-example-app" href="#running-the-example-app"></a>Running the Example App</h2>
-
-<ol>
-<li>Clone the Subliminal repo: <code>git clone git@github.com:inkling/Subliminal.git</code>.</li>
-<li><code>cd</code> into the directory: <code>cd Subliminal</code>.</li>
-<li>If you haven&rsquo;t already, setup Subliminal: <code>rake install</code>.</li>
-<li>Open the Example project: <code>open Example/SubliminalTest.xcodeproj</code>.</li>
-<li>Run the tests: using the <code>Integration Tests</code> scheme, choose Product > Profile (⌘+I).</li>
-<li>Under the User Templates, choose Subliminal.</li>
-</ol>
-
-
-<h2><a name="installing-subliminal" href="#installing-subliminal"></a>Installing Subliminal</h2>
-
-<h3>Downloading Subliminal</h3>
-
-<p>First, create a directory named &ldquo;Integration Tests&rdquo; in your project for
-integration tests, and download and add Subliminal to your new directory. If
-you&rsquo;re using git for your project add Subliminal as a submodule:</p>
-
-<pre><code>mkdir Integration\ Tests
-mkdir Integration\ Tests/Subliminal
-git submodule add git@github.com:inkling/Subliminal.git Integration\ Tests/Subliminal/
-</code></pre>
-
-<p>Otherwise manually download and add Subliminal to <code>Integration Tests/Subliminal</code>.</p>
-
-<h3>Installing Supporting Files</h3>
-
-<p>Now, install Subliminal&rsquo;s supporting files, including test file templates and
-documentation:</p>
-
-<pre><code>cd Integration\ Tests/Subliminal
-rake install
-</code></pre>
-
-<p>If you&rsquo;d rather read Subliminal&rsquo;s documentation <a href="http://inkling.github.io/Subliminal/Documentation/">online</a> you can append <code>DOCS=no</code>
-to this command.</p>
-
-<h3>Adding Subliminal to Your Project</h3>
-
-<p>Open up your project, and create a group for your integration tests. Use the
-inspector pane to make your new group represent your Integration Tests
-directory.</p>
-
-<p><img src="http://inkling.github.io/Subliminal/readme-images/MakeGroupRepresentIntegrationTests.png" alt="" /></p>
-
-<p>Next, add Subliminal to your project by dragging its project file into your new
-group.</p>
-
-<p><img src="http://inkling.github.io/Subliminal/readme-images/AddSubliminalToProject.png" alt="" /></p>
-
-<h3>Creating a Target for Your Integration Tests</h3>
-
-<p>Creating a separate target for your integration tests will allow you to control
-exactly when your tests are run. To begin with, right click your application
-target and select &ldquo;Duplicate&rdquo;.</p>
-
-<p><img src="http://inkling.github.io/Subliminal/readme-images/CreateTarget.png" alt="" /></p>
-
-<p>Next, rename both your new target to &ldquo;Integration Tests&rdquo; and the info.plist
-created for it to &ldquo;Integration Tests-Info.plist&rdquo;. Move the reference to the
-newly created target&rsquo;s Info.plist file into your Integration Tests group using the
-navigator pane, and move the actual Info.plist file into your
-Integration Tests directory using the Finder. After this step you will need to
-update Xcode&rsquo;s reference to the <code>plist</code>.</p>
-
-<p><img src="http://inkling.github.io/Subliminal/readme-images/UpdatePlistReference.png" alt="" /></p>
-
-<p>Now, link Subliminal to the Integration Tests target. To do this open the
-project inspector by selecting your project in the navigator pane. Then select
-your Integration Tests target and then the Build Phases tab, and add
-<code>libSubliminal.a</code> to the list titled "Link Binary With Libraries".</p>
-
-<p><img src="http://inkling.github.io/Subliminal/readme-images/LinkSubliminalBinary.png" alt="" /></p>
-
-<p>Also add Subliminal to the list of &ldquo;Target Dependencies&rdquo;. This ensures Subliminal
-will be built before your application.</p>
-
-<p><img src="http://inkling.github.io/Subliminal/readme-images/AddSubliminalDependency.png" alt="" /></p>
-
-<p>Subliminal provides an <code>xcconfig</code> file to configure the rest of your target&rsquo;s
-settings. To apply this file to your target, expand Subliminal&rsquo;s project reference
-in your navigator pane, then drag the <code>Integration Tests.xcconfig</code> file into the
-base level of your Integration Tests group. Now, select your project within the
-project inspector, navigate to the Info tab, and base the configurations used to
-build your Integration Tests target off <code>Integration Tests.xcconfig</code>.</p>
-
-<p><img src="http://inkling.github.io/Subliminal/readme-images/SetConfigurations.png" alt="" /></p>
-
-<p>Finally, to ensure that this xcconfig file takes effect, you must delete two
-default build settings. Select your Integration Tests target in the project
-inspector and then select the Build Settings tab. Search for and delete the
-settings for "Product Name" and "Info.plist File": these values will be provided by
-the <code>Integration Tests.xcconfig</code> file. NOTE: To delete the "Info.plist" setting,
-you must have renamed and moved your Integration Tests target&rsquo;s "Info.plist file" as
-described above.</p>
-
-<p><img src="http://inkling.github.io/Subliminal/readme-images/DeleteProductNameSetting.png" alt="" /></p>
-
-<p><img src="http://inkling.github.io/Subliminal/readme-images/DeletePlistSetting.png" alt="" /></p>
-
-<h3>Creating a Scheme for Your Integration Tests Target</h3>
-
-<p>You&rsquo;re going to need to create a new scheme to run your Integration Tests
-target. Click on the name of your active scheme above the navigator pane to open
-up the scheme dropdown, and select the Manage Schemes option. Depending on your
-project&rsquo;s settings, some extra schemes may have been created during the
-preceding steps. These schemes can be removed, but be careful not to delete the
-schemes you use regularly.</p>
-
-<p><img src="http://inkling.github.io/Subliminal/readme-images/DeleteExtraSchemes.png" alt="" /></p>
-
-<p>Now, add an additional scheme to build the Integration Tests target.</p>
-
-<p><img src="http://inkling.github.io/Subliminal/readme-images/CreateIntegrationTestsScheme.png" alt="" /></p>
-
-<h3>Running Tests on the Integration Tests Target</h3>
-
-<p>Finally, you&rsquo;ll need to add some code to you app delegate to tell Subliminal to
-begin running your tests. First build your Integration Tests scheme, so that
-Xcode can provide autocompletion results as you modify your app delegate. Then,
-import the Subliminal header at the top of your app delegate implementation file:</p>
-
-<pre><code>#if INTEGRATION_TESTING
-#import &lt;Subliminal/Subliminal.h&gt;
-#endif
-</code></pre>
-
-<p>and tell the shared test controller to run all test cases:</p>
-
-<pre><code>#if INTEGRATION_TESTING
-[[SLTestController sharedTestController] runTests:[SLTest allTests] withCompletionBlock:nil];
-#endif
-</code></pre>
-
-<p>Note that you do not need to direct the test controller to run specific
-tests: Subliminal automatically discovers all tests linked against the
-Integration Tests target.</p>
-
-<p>Also note that this code is conditionalized by the <code>INTEGRATION_TESTING</code> preprocessor
-macro (set by <code>Integration Tests.xcconfig</code>), and so will not be built into your
-main application target. Unlike many other integration testing frameworks, Subliminal
-does not use private APIs, so it is safe to include calls to Subliminal APIs in
-any target that links against Subliminal. However, conditionalizing calls to Subliminal
-helps you keep straight exactly when you expect the tests to be run: when you
-run the Integration Tests target, not every time you launch your application.</p>
-
-<h2>Usage</h2>
-
-<p>Subliminal is designed to be instantly familiar to users of OCUnit/SenTest.
-In Subliminal, subclasses of <code>SLTest</code> define tests as methods beginning with &ldquo;test&rdquo;.
-At run-time, the <code>SLTestController</code> discovers and runs these tests.
-Here&rsquo;s what a sample <code>SLTest</code> implementation looks like:</p>
-
-<pre><code>@implementation STLoginTest
-
-- (void)testLogInSucceedsWithUsernameAndPassword {
-    SLTextField *usernameField = [SLTextField elementWithAccessibilityLabel:@"username field"];
-    SLTextField *passwordField = [SLTextField elementWithAccessibilityLabel:@"password field" isSecure:YES];
-    SLElement *submitButton = [SLElement elementWithAccessibilityLabel:@"Submit"];
-    SLElement *loginSpinner = [SLElement elementWithAccessibilityLabel:@"Logging in..."];
-
-    NSString *username = @"Jeff", *password = @"foo";
-    [usernameField setText:username];
-    [passwordField setText:password];
-
-    [submitButton tap];
-
-    // wait for the login spinner to disappear
-    SLAssertTrueWithTimeout([_loginSpinner isInvalidOrInvisible], 
-                            3.0, @"Log-in was not successful.");
-
-    NSString *successMessage = [NSString stringWithFormat:@"Hello, %@!", username];
-    SLAssertTrue([[SLElement elementWithAccessibilityLabel:successMessage] isValid], 
-                @"Log-in did not succeed.");
-}
-
-@end
-</code></pre>
-
-<p>In the body of those tests, you do some work and then make some assertions.
-In tests, you can simulate user interaction and even manipulate the application
-directly.</p>
-
-<h3>Simulate User Interaction</h3>
-
-<p>In Subliminal tests, you manipulate the user interface using instances of <a href="Classes/SLElement.html"><code>SLElement</code></a>.
-<code>SLElements</code> are proxies for the &ldquo;<code>UIAElements</code>&rdquo; UIAutomation uses to represent
-user interface elements: when you <code>-tap</code> an <a href="Classes/SLElement.html"><code>SLElement</code></a>, that <a href="Classes/SLElement.html"><code>SLElement</code></a> causes
-the appropriate bit of JavaScript to be executed to manipulate the corresponding
-<code>UIAElement</code>. Tests execute asynchronously, so they can block until UIAutomation
-is done evaluating the command.</p>
-
-<h3>Manipulate the Application Directly</h3>
-
-<p>Subliminal lets tests access and manipulate application state by using &ldquo;app hooks&rdquo;.
-Hooks are methods which the application registers with the test controller to
-then be invoked, by name, by the tests. Any arguments or return values of these
-methods are copied between the tests and application.</p>
-
-<p>For instance, before running the tests, the application delegate could register
-a &ldquo;login manager&rdquo; singleton as being able to programmatically log a test user in:</p>
-
-<pre><code>[[SLTestController sharedTestController] registerTarget:[LoginManager sharedManager] 
-                                               forAction:@selector(logInWithInfo:)];
-</code></pre>
-
-<p>When tests need to log in, they could then call <code>loginWithInfo:</code>:</p>
-
-<pre><code>[[SLTestController sharedTestController] sendAction:@selector(logInWithInfo:)
-                                         withObject:@{
-                                                        @"username": @"john@foo.com",
-                                                        @"password": @"Hello1234"
-                                                     }];
-</code></pre>
-
-<p>App hooks help developers write independent tests: only one test need evaluate
-the login UI, while the others can use the programmatic interface. App hooks
-also let test writers re-use their application&rsquo;s code without making their tests
-dependent on the application&rsquo;s structure, and without sharing state between the
-application and tests.</p>
-
-<h2>Requirements</h2>
-
-<p>Subliminal has been tested with the latest Xcode (4.6.2), and currently requires
-iOS 6.x. iOS 5 support is literally <a href="https://github.com/inkling/Subliminal/pull/11">in review</a>,
-and iOS 7 support will be coming soon!</p>
-
-<h2>Continuous Integration</h2>
-
-<p>You can run Subliminal tests from the command line using the <code>subliminal-test</code>
-script, which takes care of building your application and running the tests on the
-appropriate simulator or device.</p>
-
-<p>To use <code>subliminal-test</code>, first:</p>
-
-<ol>
-<li><a href="#installing-subliminal">Install Subliminal</a> on the test machine</li>
-<li>&ldquo;Share&rdquo; the &ldquo;Integration Tests&rdquo; scheme to make it available to the CI server:
-in Xcode, click &ldquo;Product&rdquo; -> &ldquo;Schemes&rdquo; -> &ldquo;Manage Schemes…&rdquo;, click the &ldquo;Shared&rdquo;
-checkbox next to the scheme, and check the resulting file into source control.</li>
-<li>Enable GUI scripting: Open System Preferences and check Enable Access for
-Assistive Devices in the Accessibility preference pane.</li>
-</ol>
-
-
-<p>A minimal test runner would then look something like this:</p>
-
-<pre><code>#!/bin/bash
-
-# Run the tests in the non-retina iPhone Simulator
-DEVICE="iPhone"
-
-# A bug in Instruments (http://openradar.appspot.com/radar?id=1544403) 
-# requires that the script be invoked with the current user's login password in order 
-# to run fully un-attended
-PASSWORD="password1234"
-
-OUTPUT_DIR=test-reports
-mkdir -p OUTPUT_DIR
-
-# Returns 0 on success, 1 on failure
-# Log output and screenshots will be placed in $OUTPUT_DIR
-"$PROJECT_DIR/Integration Tests/Subliminal/Supporting Files/CI/subliminal-test" \
-    -project "$YOUR_PROJECT"
-    -sim_device "$DEVICE"
-    -login_password "$PASSWORD"
-    -output "$OUTPUT_DIR"
-</code></pre>
-
-For CI servers like Jenkins, you can process test logs 
-into JUnit reports using the `subliminal_uialog_to_junit` script:
-
-<pre><code>"$PROJECT_DIR/Integration Tests/Subliminal/Supporting Files/CI/subliminal_uialog_to_junit" \
-    -i ${OUTPUT_DIR}/Run\ Data/Automation\ Results.plist \
-    -o ${OUTPUT_DIR}/junit.xml
-</code></pre>
-
-<p>Subliminal runs integration tests against itself using <a href="https://travis-ci.org/">Travis</a>.
-Take a look at its <a href="https://github.com/inkling/Subliminal/blob/master/.travis.yml">configuration file</a>
-for an example.</p>
-
-<h2><a name="faq" href="#faq"></a>FAQ</h2>
-
-<h3>Subliminal and Other Integration Test Frameworks</h3>
-
-<ul>
-<li><p>How is Subliminal different from other integration test frameworks?</p>
-
-<p>Most other integration test frameworks fall into two categories: entirely
-Objective-C based, or entirely UIAutomation-based.</p>
-
-<p>Frameworks that are entirely Objective-C based, like <a href="https://github.com/square/KIF/">KIF</a>,
-<a href="https://github.com/moredip/Frank">Frank</a>, etc., must hack the application&rsquo;s
-touch-handling system, using private APIs, to simulate user interaction.
-There is thus no guarantee that they accurately simulate a user&rsquo;s input.
-Moreover, these frameworks can only simulate interaction with the application,
-as opposed to interaction with the device, other processes like in-app purchase
-alerts, etc.</p>
-
-<p>Frameworks that are entirely based on Apple&rsquo;s UIAutomation framework require
-cumbersome workflows&ndash;writing tests in JavaScript, in Instruments&ndash;which do not
-make use of the developer&rsquo;s existing toolchain. Moreover, they offer the developer
-no means of manipulating the application directly&ndash;it is a complete black box
-to a UIAutomation-based test.</p>
-
-<p>Only Subliminal combines the convenience of writing tests in Objective-C
-with the power of UIAutomation.</p></li>
-<li><p>How is Subliminal different than UIAutomation?</p>
-
-<p>Besides the limitations of UIAutomation described above, it is extremely
-difficult to write UIAutomation tests. This is because UIAutomation requires
-that user interface elements be identified by their position within the
-<a href="https://developer.apple.com/library/ios/#documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/UsingtheAutomationInstrument/UsingtheAutomationInstrument.html#//apple_ref/doc/uid/TP40004652-CH20-SW88">&ldquo;element hierarchy&rdquo;</a>, like</p>
-
-<pre><code>UIATarget.localTarget().frontMostApp().mainWindow().tableViews()[0].cells()[0].
-</code></pre>
-
-<p>These references are not only difficult to read but are also difficult to write.
-To refer to any particular element, you have to describe its entire ancestry,
-while including only the views that UIAutomation deems necessary (images, yes;
-accessible elements, maybe; private <code>UIWebView</code> subviews, sure!).</p>
-
-<p>UIAutomation-based tests are not meant to be written, but to be &ldquo;recorded&rdquo;
-using Instruments. This forces dependence on Instruments, and makes the tests
-difficult to modify thereafter.</p>
-
-<p>Subliminal allows developers to identify elements by their properties,
-independent of their position in the element hierarchy. Subliminal then
-generates the full reference for the developer. Subliminal abstracts away
-the complexity of UIAutomation scripts to let developers focus on writing tests.</p></li>
-</ul>
-
-
-<h3>Writing and Running Tests</h3>
-
-<ul>
-<li><p>How do I write a test?</p>
-
-<p>Very much like you would write a unit test using OCUnit/SenTest: make a new
-subclass of <code>SLTest</code>, and define some &ldquo;test cases&rdquo; (methods whose names begin
-with &ldquo;test&rdquo;, which take no arguments, and which return void). In those test cases,
-simulate user interaction or manipulate the application directly, then make
-assertions.</p>
-
-<p>The &ldquo;Integration test class&rdquo; file template (in the Xcode &ldquo;New File&rdquo; dialog,
-under &ldquo;iOS&rdquo; -> &ldquo;Subliminal&rdquo; in the sidebar) stubs out some useful methods.</p></li>
-<li><p>How do I run my application&rsquo;s tests?</p>
-
-<ol>
-<li>Switch to your project&rsquo;s &ldquo;Integration Tests&rdquo; scheme, whichever device or
-simulator you like.</li>
-<li>Select &ldquo;Profile&rdquo; from the &ldquo;Product&rdquo; menu (<code>Cmd-I</code>).</li>
-<li>Choose the &ldquo;Subliminal&rdquo; trace template (under &ldquo;User&rdquo; -> &ldquo;All&rdquo; in the sidebar
-of the dialog that pops up) .</li>
-</ol>
-
-
-<p>To re-run the tests when they finish, press &ldquo;Stop&rdquo; and then &ldquo;Record&rdquo; in
-Instruments' upper left-hand corner. If you make changes to the tests,
-you must &ldquo;push&rdquo; the changes to Instruments by selecting &ldquo;Product&rdquo; -> &ldquo;Profile&rdquo;
-again.</p></li>
-<li><p>How do I run specific tests?</p>
-
-<p>By default, Subliminal will run all the test cases (methods whose names begin
-with &ldquo;test&rdquo;, which take no arguments, and return <code>void</code>) of all the <code>SLTest</code>
-subclasses. You can restrict testing to particular test cases by prefixing
-their names with &ldquo;focus_&rdquo;. You can &ldquo;focus&rdquo; all test cases of a particular
-<a href="Classes/SLTest.html"><code>SLTest</code></a> subclass by prefixing its name with &ldquo;focus_&rdquo;, too. Don&rsquo;t forget to
-remove the prefixes before committing your changes!</p></li>
-</ul>
-
-
-<h3>Debugging Tests</h3>
-
-<ul>
-<li><p>How can I disable UIAutomation&rsquo;s debug logs?</p>
-
-<p>UIAutomation debug logs record every action taken (<code>button.tap()</code>, etc.)
-and show up in Instruments' trace log. These can sometimes be useful but are
-mostly noise. Disable them using this command in Terminal:</p>
-
-<pre><code>defaults write com.apple.dt.Instruments UIAVerboseLogging -int 4096
-</code></pre>
-
-<p>to reset this preference:</p>
-
-<pre><code>defaults delete com.apple.dt.Instruments UIAVerboseLogging
-</code></pre></li>
-<li><p>How can Subliminal tell me where I&rsquo;m getting &ldquo;invalid element&rdquo; and/or
-&ldquo;element not tappable&rdquo; exceptions?</p>
-
-<p>Use the <code>UIAElement</code> macro to log the filename and line number of calls to
-<code>[SLUIAElement tap]</code>, etc.:</p>
-
-<pre><code>SLButton *button = [SLButton buttonWithAccessibilityLabel:@"foo"];
-[UIAElement(button) tap];   // vs. [button tap];
-</code></pre></li>
-<li><p>How can I debug tests while running?</p>
-
-<p>You can easily attach the debugger to Instruments, to stop at breakpoints set
-in Xcode, using the following process:</p>
-
-<ol>
-<li><p>Change the build configuration used to profile the &ldquo;Integration Tests&rdquo;
-scheme from &ldquo;Release&rdquo; (the default) to &ldquo;Debug&rdquo; (in Xcode, click &ldquo;Product&rdquo;
--> &ldquo;Schemes&rdquo; -> &ldquo;Manage Schemes…&rdquo;, double-click the &ldquo;Integration Tests&rdquo;
-scheme, select the &ldquo;Profile&rdquo; build phase, and then change the build
-configuration). Otherwise, debug information will be optimized away during
-build.</p>
-
-<p>You need not worry that building in &ldquo;Debug&rdquo; will cause your tests to not
-reflect the actual &ldquo;Release&rdquo; state of the app&ndash;scripts like <code>subliminal-test</code>
-can override the configuration to use &ldquo;Release&rdquo; when building the app
-from the command line.</p></li>
-<li><p>Launch the tests, then click &ldquo;Product&rdquo; -> &ldquo;Attach to Process&rdquo; -> (name
-of the test process, likely &ldquo;Integration Tests&rdquo;).</p>
-
-<p>This may be done at any time while the tests are running. If you need
-to break immediately after launch, you may find it useful to give yourself
-time to attach the debugger by setting <code>[SLTestController shouldWaitToStartTesting]</code>
-to <code>YES</code>.</p></li>
-</ol>
+<li>
+<a href="https://github.com/inkling/Subliminal/zipball/master">Download Subliminal</a> 
+and <a href="#running-the-example-app">try out the included example app</a>
+</li>
+<li>See an <a href="https://github.com/inkling/Subliminal/wiki#installing-subliminal">installation walkthrough and screencast</a>
+</li>
+<li>Check out Subliminal's <a href="http://inkling.github.io/Subliminal/Documentation/">API documentation</a>
+or the <a href="https://github.com/inkling/Subliminal/wiki#documentation">guides to using Subliminal on the Wiki</a>
+</li>
+<li>Read a <a href="#comparison-to-other-integration-test-frameworks">comparison of Subliminal to other integration test frameworks</a>
 </li>
 </ul>
+<h2>
+<a name="user-content-running-the-example-app" class="anchor" href="#running-the-example-app" id="running-the-example-app"><span class="octicon octicon-link"></span></a>Running the Example App</h2>
 
+<ol>
+<li>Clone the Subliminal repo: <code>git clone https://github.com/inkling/Subliminal.git</code>.</li>
+<li>
+<code>cd</code> into the directory: <code>cd Subliminal</code>.</li>
+<li>If you haven't already, set up Subliminal: <code>rake install</code>.</li>
+<li>Open the Example project: <code>open Example/SubliminalTest.xcodeproj</code>.</li>
+<li>Switch to the "Integration Tests" scheme.
+You may also see a scheme called "Subliminal Integration tests"--make sure you choose "Integration Tests."</li>
+<li>Choose Product &gt; Profile (⌘+I).</li>
+<li>Under the User Templates, choose Subliminal.</li>
+</ol>
+<h2>
+<a name="user-content-installing-subliminal" class="anchor" href="#installing-subliminal" id="installing-subliminal"><span class="octicon octicon-link"></span></a>Installing Subliminal</h2>
 
-<h2>Contributing</h2>
+<p>For an installation walkthrough, refer to <a href="https://github.com/inkling/Subliminal/wiki">Subliminal's wiki</a>.</p>
 
-<p>We are very much looking forward to working with 3rd-party developers to make Subliminal
-even better, and will post contributing guidelines very soon.</p>
+<h2>
+<a name="user-content-requirements" class="anchor" href="#requirements" id="requirements"><span class="octicon octicon-link"></span></a>Requirements</h2>
 
-<h2>Credits</h2>
+<p>Subliminal supports projects built using Xcode 5.1 and iOS 7.x SDKs,
+and deployment targets running iOS 6.1 through 7.1.</p>
 
-<p>Created by <a href="https://github.com/wearhere">Jeff Wear</a>, made possible by <a href="https://www.inkling.com/">Inkling</a>,
+<p>For iOS 5.1 support, use Subliminal 1.1.0 (found in the
+<a href="https://github.com/inkling/Subliminal/releases/">Releases</a> section or on
+<a href="http://cocoapods.org/">CocoaPods</a>). To test in the iOS 5.1 Simulator, you will
+need to run OS X 10.8 and manually add the iOS 5.1 Simulator to Xcode 5.1,
+as described <a href="http://stackoverflow.com/a/22494536/495611">here</a>.</p>
+
+<h2>
+<a name="user-content-usage" class="anchor" href="#usage" id="usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>Subliminal is designed to be instantly familiar to users of OCUnit/XCTest. 
+In Subliminal, subclasses of <code>SLTest</code> define tests as methods beginning with <code>test</code>. 
+At run-time, Subliminal discovers and runs these tests. </p>
+
+<p>Tests manipulate the user interface and can even <a href="https://github.com/inkling/Subliminal/wiki/Writing-Tests#manipulate-the-application-directly">manipulate the application directly</a>.
+Here's what a sample test case looks like:</p>
+
+<div class="highlight highlight-objc"><pre><span class="k">@implementation</span> <span class="nc">STLoginTest</span>
+
+<span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">testLogInSucceedsWithUsernameAndPassword</span> <span class="p">{</span>
+    <span class="n">SLTextField</span> <span class="o">*</span><span class="n">usernameField</span> <span class="o">=</span> <span class="p">[</span><span class="n">SLTextField</span> <span class="n">elementWithAccessibilityLabel</span><span class="o">:</span><span class="s">@"username field"</span><span class="p">];</span>
+    <span class="n">SLTextField</span> <span class="o">*</span><span class="n">passwordField</span> <span class="o">=</span> <span class="p">[</span><span class="n">SLTextField</span> <span class="n">elementWithAccessibilityLabel</span><span class="o">:</span><span class="s">@"password field"</span> <span class="n">isSecure</span><span class="o">:</span><span class="nb">YES</span><span class="p">];</span>
+    <span class="n">SLElement</span> <span class="o">*</span><span class="n">submitButton</span> <span class="o">=</span> <span class="p">[</span><span class="n">SLElement</span> <span class="n">elementWithAccessibilityLabel</span><span class="o">:</span><span class="s">@"Submit"</span><span class="p">];</span>
+    <span class="n">SLElement</span> <span class="o">*</span><span class="n">loginSpinner</span> <span class="o">=</span> <span class="p">[</span><span class="n">SLElement</span> <span class="n">elementWithAccessibilityLabel</span><span class="o">:</span><span class="s">@"Logging in..."</span><span class="p">];</span>
+
+    <span class="n">NSString</span> <span class="o">*</span><span class="n">username</span> <span class="o">=</span> <span class="s">@"Jeff"</span><span class="p">,</span> <span class="o">*</span><span class="n">password</span> <span class="o">=</span> <span class="s">@"foo"</span><span class="p">;</span>
+    <span class="p">[</span><span class="n">usernameField</span> <span class="n">setText</span><span class="o">:</span><span class="n">username</span><span class="p">];</span>
+    <span class="p">[</span><span class="n">passwordField</span> <span class="n">setText</span><span class="o">:</span><span class="n">password</span><span class="p">];</span>
+
+    <span class="p">[</span><span class="n">submitButton</span> <span class="n">tap</span><span class="p">];</span>
+
+    <span class="c1">// wait for the login spinner to disappear</span>
+    <span class="n">SLAssertTrueWithTimeout</span><span class="p">([</span><span class="n">loginSpinner</span> <span class="n">isInvalidOrInvisible</span><span class="p">],</span> 
+                            <span class="mf">3.0</span><span class="p">,</span> <span class="s">@"Log-in was not successful."</span><span class="p">);</span>
+
+    <span class="n">NSString</span> <span class="o">*</span><span class="n">successMessage</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSString</span> <span class="n">stringWithFormat</span><span class="o">:</span><span class="s">@"Hello, %@!"</span><span class="p">,</span> <span class="n">username</span><span class="p">];</span>
+    <span class="n">SLAssertTrue</span><span class="p">([[</span><span class="n">SLElement</span> <span class="n">elementWithAccessibilityLabel</span><span class="o">:</span><span class="n">successMessage</span><span class="p">]</span> <span class="n">isValid</span><span class="p">],</span> 
+                <span class="s">@"Log-in did not succeed."</span><span class="p">);</span>
+
+    <span class="c1">// Check the internal state of the app.         </span>
+    <span class="n">SLAssertTrue</span><span class="p">(</span><span class="n">SLAskAppYesNo</span><span class="p">(</span><span class="n">isUserLoggedIn</span><span class="p">),</span> <span class="s">@"User is not logged in."</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">@end</span>
+</pre></div>
+
+<p>For more information, see <a href="https://github.com/inkling/Subliminal/wiki/Writing-Tests">Subliminal's wiki</a>.</p>
+
+<h2>
+<a name="user-content-continuous-integration" class="anchor" href="#continuous-integration" id="continuous-integration"><span class="octicon octicon-link"></span></a>Continuous Integration</h2>
+
+<p>Subliminal includes end-to-end CI support for building your project, running its tests on the appropriate simulator or device, and outputting results in a variety of formats.</p>
+
+<p>For example scripts and guides to integrate with popular CI services like Travis and Jenkins, see <a href="https://github.com/inkling/Subliminal/wiki/Continuous-Integration">Subliminal's wiki</a>.</p>
+
+<h2>
+<a name="user-content-comparison-to-other-integration-test-frameworks" class="anchor" href="#comparison-to-other-integration-test-frameworks" id="comparison-to-other-integration-test-frameworks"><span class="octicon octicon-link"></span></a>Comparison to Other Integration Test Frameworks</h2>
+
+<ul>
+<li>
+<p><strong>How is Subliminal different from other integration test frameworks?</strong></p>
+
+<p>Most other integration test frameworks fall into two categories: entirely 
+Objective-C based, or entirely UIAutomation-based.</p>
+
+<p>Frameworks that are entirely Objective-C based, like <a href="https://github.com/square/KIF/">KIF</a>, 
+<a href="https://github.com/moredip/Frank">Frank</a>, etc., must hack the application's 
+touch-handling system, using private APIs, to simulate user interaction. 
+There is thus no guarantee that they accurately simulate a user's input. 
+Moreover, these frameworks can only simulate interaction with the application, 
+as opposed to interaction with the device, other processes like in-app purchase 
+alerts, etc.</p>
+
+<p>Frameworks that are entirely based on Apple's UIAutomation framework require 
+cumbersome workflows--writing tests in JavaScript, in Instruments--which do not 
+make use of the developer's existing toolchain. Moreover, they offer the developer 
+no means of manipulating the application directly--it is a complete black box 
+to a UIAutomation-based test.</p>
+
+<p>Only Subliminal combines the convenience of writing tests in Objective-C 
+with the power of UIAutomation.</p>
+</li>
+<li>
+<p><strong>How is Subliminal different than UIAutomation?</strong></p>
+
+<p>Besides the limitations of UIAutomation described above, it is extremely 
+difficult to write UIAutomation tests. This is because UIAutomation requires 
+that user interface elements be identified by their position within the 
+<a href="https://developer.apple.com/library/ios/#documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/UsingtheAutomationInstrument/UsingtheAutomationInstrument.html#//apple_ref/doc/uid/TP40004652-CH20-SW88">"element hierarchy"</a>, like</p>
+
+<div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">cell</span> <span class="o">=</span> <span class="nx">UIATarget</span><span class="p">.</span><span class="nx">localTarget</span><span class="p">().</span><span class="nx">frontMostApp</span><span class="p">().</span><span class="nx">mainWindow</span><span class="p">().</span><span class="nx">tableViews</span><span class="p">()[</span><span class="mi">0</span><span class="p">].</span><span class="nx">cells</span><span class="p">()[</span><span class="s2">"foo"</span><span class="p">];</span>
+</pre></div>
+
+<p>These references are not only difficult to read but are also difficult to write.
+To refer to any particular element, you have to describe its entire ancestry, 
+while including only the views that UIAutomation deems necessary (images, yes; 
+accessible elements, maybe; private <code>UIWebView</code> subviews, sure!).</p>
+
+<p>UIAutomation-based tests are not meant to be written, but to be "recorded" 
+using Instruments. This forces dependence on Instruments, and makes the tests 
+difficult to modify thereafter.</p>
+
+<p>Subliminal allows developers to identify elements by their properties, 
+independent of their position in the element hierarchy:</p>
+
+<div class="highlight highlight-objc"><pre><span class="n">SLElement</span> <span class="o">*</span><span class="n">fooCell</span> <span class="o">=</span> <span class="p">[</span><span class="n">SLElement</span> <span class="n">elementWithAccessibilityLabel</span><span class="o">:</span><span class="s">@"foo"</span><span class="p">];</span>
+</pre></div>
+
+<p>Subliminal abstracts away the complexity of UIAutomation scripts to let developers focus on writing tests.</p>
+
+<p>Subliminal also fixes several bugs in UIAutomation and the <code>instruments</code> CLI tool,
+such as <code>instruments</code>' lack for <a href="https://github.com/inkling/Subliminal/pull/75">true device support</a>.
+And, last but not least, Subliminal rewrites <code>instruments</code>' output using human-friendly formatting
+and ANSI colors:</p>
+
+<p><a href="https://camo.githubusercontent.com/b3ffe2c3df92c4b660e9547ba43934f73fc0c87e/687474703a2f2f696e6b6c696e672e6769746875622e696f2f5375626c696d696e616c2f726561646d652d696d616765732f50726574747943492e706e67" target="_blank"><img src="https://camo.githubusercontent.com/b3ffe2c3df92c4b660e9547ba43934f73fc0c87e/687474703a2f2f696e6b6c696e672e6769746875622e696f2f5375626c696d696e616c2f726561646d652d696d616765732f50726574747943492e706e67" alt="" data-canonical-src="http://inkling.github.io/Subliminal/readme-images/PrettyCI.png" style="max-width:100%;"></a></p>
+</li>
+</ul>
+<h2>
+<a name="user-content-contributing" class="anchor" href="#contributing" id="contributing"><span class="octicon octicon-link"></span></a>Contributing</h2>
+
+<p>Subliminal welcomes pull requests! Check out the <a href="https://github.com/inkling/Subliminal/blob/master/CONTRIBUTING.md">contributing guidelines</a> to learn how to set up Subliminal for development and how to make a successful pull request.</p>
+
+<h2>
+<a name="user-content-credits" class="anchor" href="#credits" id="credits"><span class="octicon octicon-link"></span></a>Credits</h2>
+
+<p>Created by <a href="https://github.com/wearhere">Jeff Wear</a>, made possible by <a href="https://www.inkling.com/">Inkling</a>, 
 with help from:</p>
 
 <ul>
@@ -527,20 +275,27 @@ with help from:</p>
 <li><a href="https://github.com/lukhnos">Lukhnos Liu</a></li>
 <li><a href="https://github.com/ahaneyinkling">Aaron Haney</a></li>
 </ul>
+<p>and Subliminal's <a href="https://github.com/inkling/Subliminal/contributors">growing list of contributors</a>.</p>
 
+<h2>
+<a name="user-content-contact" class="anchor" href="#contact" id="contact"><span class="octicon octicon-link"></span></a>Contact</h2>
 
-<p>and Subliminal&rsquo;s <a href="https://github.com/inkling/Subliminal/contributors">growing list of contributors</a>.</p>
+<ul>
+<li>If you <strong>need help</strong>, use <a href="http://stackoverflow.com/questions/tagged/subliminal">Stack Overflow</a>. (Tag 'subliminal'.)</li>
+<li>If you'd like to <strong>ask a general question</strong>, use <a href="http://stackoverflow.com/questions/tagged/subliminal">Stack Overflow</a>.</li>
+<li>If you've <strong>found a bug</strong>, <a href="https://github.com/inkling/Subliminal/issues/new">open an issue</a>.</li>
+<li>If you <strong>have a feature request</strong>, <a href="https://github.com/inkling/Subliminal/issues/new">open an issue</a>.</li>
+<li>If you'd <strong>like to contribute</strong> (awesome!), see <a href="https://github.com/inkling/Subliminal/blob/master/CONTRIBUTING.md">the contributing guidelines</a> to get started.</li>
+</ul>
+<p>You can also follow Subliminal (<a href="https://twitter.com/subliminaltest">@subliminaltest</a>)
+on Twitter.</p>
 
-<h2>Contact</h2>
+<h2>
+<a name="user-content-copyright-and-license" class="anchor" href="#copyright-and-license" id="copyright-and-license"><span class="octicon octicon-link"></span></a>Copyright and License</h2>
 
-<p>Follow Subliminal (<a href="https://twitter.com/subliminaltest">@subliminaltest</a>) and
-Jeff Wear (<a href="https://twitter.com/wear_here">@wear_here</a>) on Twitter.</p>
+<p>Copyright 2013-2014 Inkling Systems, Inc.</p>
 
-<h2>Copyright and License</h2>
-
-<p>Copyright 2013 Inkling Systems, Inc.</p>
-
-<p>Licensed under the Apache License, Version 2.0 (the &ldquo;License&rdquo;);
+<p>Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at</p>
 
@@ -548,13 +303,11 @@ You may obtain a copy of the License at</p>
 </code></pre>
 
 <p>Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an &ldquo;AS IS&rdquo; BASIS,
+distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.</p>
-						
-						
-					</div>
+</div>
 					
                         
                     
@@ -563,10 +316,7 @@ limitations under the License.</p>
 					<div class="index-column">
 						<h2 class="index-title">Class References</h2>
 						<ul>
-							
-							<li><a href="Classes/SLAccessibilityPath.html">SLAccessibilityPath</a></li>
-							
-							<li><a href="Classes/SLAlert.html">SLAlert</a></li>
+<li><a href="Classes/SLAlert.html">SLAlert</a></li>
 							
 							<li><a href="Classes/SLAlertDismissHandler.html">SLAlertDismissHandler</a></li>
 							
@@ -584,13 +334,15 @@ limitations under the License.</p>
 							
 							<li><a href="Classes/SLLogger.html">SLLogger</a></li>
 							
-							<li><a href="Classes/SLMainThreadRef.html">SLMainThreadRef</a></li>
-							
 							<li><a href="Classes/SLPopover.html">SLPopover</a></li>
 							
 							<li><a href="Classes/SLSearchField.html">SLSearchField</a></li>
 							
 							<li><a href="Classes/SLStaticElement.html">SLStaticElement</a></li>
+							
+							<li><a href="Classes/SLStatusBar.html">SLStatusBar</a></li>
+							
+							<li><a href="Classes/SLSwitch.html">SLSwitch</a></li>
 							
 							<li><a href="Classes/SLTerminal.html">SLTerminal</a></li>
 							
@@ -600,30 +352,35 @@ limitations under the License.</p>
 							
 							<li><a href="Classes/SLTextField.html">SLTextField</a></li>
 							
+							<li><a href="Classes/SLTextView.html">SLTextView</a></li>
+							
 							<li><a href="Classes/SLUIAElement.html">SLUIAElement</a></li>
 							
 							<li><a href="Classes/SLWebTextField.html">SLWebTextField</a></li>
+							
+							<li><a href="Classes/SLWebTextView.html">SLWebTextView</a></li>
 							
 							<li><a href="Classes/SLWebView.html">SLWebView</a></li>
 							
 							<li><a href="Classes/SLWindow.html">SLWindow</a></li>
 							
 						</ul>
-					</div>
+</div>
 					
 					
 						
 					<div class="index-column">
 						
-						
-						<h2 class="index-title">Category References</h2>
+						<h2 class="index-title">Protocol References</h2>
 						<ul>
+<li><a href="Protocols/SLKeyboard.html">SLKeyboard</a></li>
 							
-							<li><a href="Categories/NSObject+SLAccessibilityDescription.html">NSObject(SLAccessibilityDescription)</a></li>
+						</ul>
+<h2 class="index-title">Category References</h2>
+						<ul>
+<li><a href="Categories/NSObject+SLAccessibilityDescription.html">NSObject(SLAccessibilityDescription)</a></li>
 							
 							<li><a href="Categories/NSObject+SLAccessibilityHierarchy.html">NSObject(SLAccessibilityHierarchy)</a></li>
-							
-							<li><a href="Categories/NSObject+SLAccessibilityPath.html">NSObject(SLAccessibilityPath)</a></li>
 							
 							<li><a href="Categories/NSObject+SLVisibility.html">NSObject(SLVisibility)</a></li>
 							
@@ -632,24 +389,21 @@ limitations under the License.</p>
 							<li><a href="Categories/UIView+SLAccessibility_Internal.html">UIView(SLAccessibility_Internal)</a></li>
 							
 						</ul>
-						
-					</div>
+</div>
 					
 				</div>
 				<div class="main-navigation navigation-bottom">
 					<a href="hierarchy.html">Next</a>
 				</div>
 				<div id="footer">
-					<hr />
-					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2013 Inkling. All rights reserved. (Last updated: 2013-06-11)</span><br />
-						
-						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 858)</a>.</span></p>
+					<hr>
+<div class="footer-copyright">
+						<p><span class="copyright">© 2014 Inkling. All rights reserved. (Last updated: 2014-04-30)</span><br><span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 840)</a>.</span></p>
 						
 	
 					</div>
 				</div>
 			</div>
-		</article>		
-	</body>
+		</article>
+</body>
 </html>

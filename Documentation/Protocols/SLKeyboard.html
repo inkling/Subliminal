@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="html/html; charset=utf-8" />
-		<title>UIView(SLAccessibility_Internal) Category Reference</title>
+		<title>SLKeyboard Protocol Reference</title>
 		<meta id="xcode-display" name="xcode-display" content="render"/>
 		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
 		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
@@ -16,7 +16,7 @@
 			</div>
 			
 			<div id="title" role="banner">
-				<h1 class="hideInXcode">UIView(SLAccessibility_Internal) Category Reference</h1>
+				<h1 class="hideInXcode">SLKeyboard Protocol Reference</h1>
 			</div>
 			<ul id="headerButtons" role="toolbar">
 				<li id="toc_button">
@@ -41,16 +41,18 @@
 	
 	<option value="class_methods">Class Methods</option>
 	
-	<option value="//api/name/elementObject:isMockingViewObject:">&nbsp;&nbsp;&nbsp;&nbsp;+ elementObject:isMockingViewObject:</option>
+	<option value="//api/name/keyboard">&nbsp;&nbsp;&nbsp;&nbsp;+ keyboard</option>
 	
 	
 	
 	
 	<option value="instance_methods">Instance Methods</option>
 	
-	<option value="//api/name/classForcesPresenceOfMockingViewsInAccessibilityHierarchy">&nbsp;&nbsp;&nbsp;&nbsp;- classForcesPresenceOfMockingViewsInAccessibilityHierarchy</option>
+	<option value="//api/name/hide">&nbsp;&nbsp;&nbsp;&nbsp;- hide</option>
 	
-	<option value="//api/name/elementMockingSelfWillAppearInAccessibilityHierarchy">&nbsp;&nbsp;&nbsp;&nbsp;- elementMockingSelfWillAppearInAccessibilityHierarchy</option>
+	<option value="//api/name/typeString:">&nbsp;&nbsp;&nbsp;&nbsp;- typeString:</option>
+	
+	<option value="//api/name/typeString:withSetValueFallbackUsingElement:">&nbsp;&nbsp;&nbsp;&nbsp;- typeString:withSetValueFallbackUsingElement:</option>
 	
 	
 	
@@ -78,7 +80,7 @@
 
 <li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#class_methods">Class Methods</a></span><ul>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/elementObject:isMockingViewObject:">elementObject:isMockingViewObject:</a></span></li>
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/keyboard">keyboard</a></span></li>
 	
 </ul></li>
 
@@ -86,9 +88,11 @@
 
 <li role="treeitem" class="children"><span class="disclosure"></span><span class="sectionName"><a href="#instance_methods">Instance Methods</a></span><ul>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/classForcesPresenceOfMockingViewsInAccessibilityHierarchy">classForcesPresenceOfMockingViewsInAccessibilityHierarchy</a></span></li>
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/hide">hide</a></span></li>
 	
-	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/elementMockingSelfWillAppearInAccessibilityHierarchy">elementMockingSelfWillAppearInAccessibilityHierarchy</a></span></li>
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/typeString:">typeString:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/typeString:withSetValueFallbackUsingElement:">typeString:withSetValueFallbackUsingElement:</a></span></li>
 	
 </ul></li>
 
@@ -97,7 +101,7 @@
 		</nav>
 		<article>
 			<div id="contents" class="isShowingTOC" role="main">
-				<a title="UIView(SLAccessibility_Internal) Category Reference" name="top"></a>
+				<a title="SLKeyboard Protocol Reference" name="top"></a>
 				<div class="main-navigation navigation-top">
 					<ul>
 	<li><a href="../index.html">Index</a></li>
@@ -106,15 +110,18 @@
 				</div>
 				<div id="header">
 					<div class="section-header">
-						<h1 class="title title-header">UIView(SLAccessibility_Internal) Category Reference</h1>
+						<h1 class="title title-header">SLKeyboard Protocol Reference</h1>
 					</div>		
 				</div>
 				<div id="container">	
 					
 					<div class="section section-specification"><table cellspacing="0"><tbody>
 						<tr>
+	<td class="specification-title">Conforms to</td>
+	<td class="specification-value">NSObject</td>
+</tr><tr>
 	<td class="specification-title">Declared in</td>
-	<td class="specification-value">NSObject+SLAccessibilityHierarchy.h</td>
+	<td class="specification-value">SLKeyboard.h</td>
 </tr>
 						</tbody></table></div>
 					
@@ -124,14 +131,13 @@
 					<div class="section section-overview">
 						<a title="Overview" name="overview"></a>
 						<h2 class="subtitle subtitle-overview">Overview</h2>
-						<p>The methods in the <code>UIView (SLAccessibility_Internal)</code> category describe
-criteria that determine whether mock views will appear in the accessibility
-hierarchy.</p>
+						<p>The <code>SLKeyboard</code> protocol declares a standard way to interact with your application&rsquo;s
+input views, such as the standard <a href="#//api/name/keyboard">keyboard</a> (the <code>SLKeyboard</code> class) as well as
+(in iOS 7 and above) custom input views subclassing
+<a href="https://developer.apple.com/library/iOS/documentation/UIKit/Reference/UIInputView_class/Reference/Reference.html"><code>UIInputView</code></a>.</p>
 
-<p>Mock views are elements that UIAccessibility uses to represent certain views
-in the accessibility hierarchy rather than the views themselves.</p>
-
-<p>3rd-party developers should have no need to use these methods.</p>
+<p>Conforming classes must override <a href="#//api/name/keyboard"><code>keyboard</code></a>, to vend instances,
+and <a href="#//api/name/typeString:"><code>typeString:</code></a>, to enter strings via instances' associated custom <code>UIInputView</code>s.</p>
 					</div>
 					
 					
@@ -149,24 +155,33 @@ in the accessibility hierarchy rather than the views themselves.</p>
 						<ul class="task-list">
 							<li>
 	<span class="tooltip">
-		<code><a href="#//api/name/elementObject:isMockingViewObject:">+&nbsp;elementObject:isMockingViewObject:</a></code>
-		<span class="tooltip"><p>Returns a Boolean value that indicates whether an object is a mock view.</p></span>
+		<code><a href="#//api/name/keyboard">+&nbsp;keyboard</a></code>
+		<span class="tooltip"><p>Returns an element representing an instance of this input view.</p></span>
+	</span>
+	
+	<span class="task-item-suffix">required method</span>
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/typeString:">&ndash;&nbsp;typeString:</a></code>
+		<span class="tooltip"><p>Taps the keys of the specified input view as required
+to generate the specified string.</p></span>
+	</span>
+	
+	<span class="task-item-suffix">required method</span>
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/hide">&ndash;&nbsp;hide</a></code>
+		<span class="tooltip"><p>Tap the keyboard&rsquo;s &ldquo;Hide Keyboard&rdquo; button to hide the <a href="#//api/name/keyboard">keyboard</a> without
+executing any done/submit actions.</p></span>
 	</span>
 	
 	
 </li><li>
 	<span class="tooltip">
-		<code><a href="#//api/name/elementMockingSelfWillAppearInAccessibilityHierarchy">&ndash;&nbsp;elementMockingSelfWillAppearInAccessibilityHierarchy</a></code>
-		<span class="tooltip"><p>Returns a Boolean value that indicates whether an object mocking the receiver
-will appear in an accessibility hierarchy.</p></span>
-	</span>
-	
-	
-</li><li>
-	<span class="tooltip">
-		<code><a href="#//api/name/classForcesPresenceOfMockingViewsInAccessibilityHierarchy">&ndash;&nbsp;classForcesPresenceOfMockingViewsInAccessibilityHierarchy</a></code>
-		<span class="tooltip"><p>Returns a Boolean value that indicates whether the receiver&rsquo;s class
-forces the presence of mock views in the accessibility hierarchy.</p></span>
+		<code><a href="#//api/name/typeString:withSetValueFallbackUsingElement:">&ndash;&nbsp;typeString:withSetValueFallbackUsingElement:</a></code>
+		<span class="tooltip"><p>Uses <a href="#//api/name/typeString:"><code>typeString:</code></a> to tap the keys of the input string on the
+receiver; if that method throws an exception, this method will then
+send the <code>setValue</code> JavaScript message to the input element as a fallback.</p></span>
 	</span>
 	
 	
@@ -186,54 +201,31 @@ forces the presence of mock views in the accessibility hierarchy.</p></span>
 						<h2 class="subtitle subtitle-methods">Class Methods</h2>
 						
 						<div class="section-method">
-	<a name="//api/name/elementObject:isMockingViewObject:" title="elementObject:isMockingViewObject:"></a>
-	<h3 class="subsubtitle method-title">elementObject:isMockingViewObject:</h3>
+	<a name="//api/name/keyboard" title="keyboard"></a>
+	<h3 class="subsubtitle method-title">keyboard</h3>
 	
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Returns a Boolean value that indicates whether an object is a mock view.</p>
+		<p>Returns an element representing an instance of this input view.</p>
 	</div>		
 	
     
 
-	<div class="method-subsection method-declaration"><code>+ (BOOL)elementObject:(id)<em>elementObject</em> isMockingViewObject:(id)<em>viewObject</em></code></div>
+	<div class="method-subsection method-declaration"><code>+ (instancetype)keyboard</code></div>
 
     
-	
-	<div class="method-subsection arguments-section parameters">
-		<h4 class="method-subtitle parameter-title">Parameters</h4>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>elementObject</em></dt>
-			<dd><p>An object which may or may not be a mock view.</p></dd>
-		</dl>
-		
-		<dl class="argument-def parameter-def">
-			<dt><em>viewObject</em></dt>
-			<dd><p>An object which may or may not be a view.</p></dd>
-		</dl>
-		
-	</div>
 	
 	
 	
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>YES if viewObject is a UIView and elementObject is mocking that view, otherwise NO.</p>
+		<p>An element representing an instance of this input view.</p>
 	</div>
 	
 	
 	
 	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>Mock views are accessibility elements created by the accessibility system
-to represent certain views like UITableViewCells. Where a mock view exists,
-the accessibility system, and UIAutomation, read/manipulate it instead of the
-real view.</p>
-	</div>
 	
 	
 	
@@ -243,7 +235,7 @@ real view.</p>
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSObject+SLAccessibilityHierarchy.h</code><br />
+		<code class="declared-in-ref">SLKeyboard.h</code><br />
 	</div>				
 	
 	
@@ -258,40 +250,27 @@ real view.</p>
 						<h2 class="subtitle subtitle-methods">Instance Methods</h2>
 						
 						<div class="section-method">
-	<a name="//api/name/classForcesPresenceOfMockingViewsInAccessibilityHierarchy" title="classForcesPresenceOfMockingViewsInAccessibilityHierarchy"></a>
-	<h3 class="subsubtitle method-title">classForcesPresenceOfMockingViewsInAccessibilityHierarchy</h3>
+	<a name="//api/name/hide" title="hide"></a>
+	<h3 class="subsubtitle method-title">hide</h3>
 	
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Returns a Boolean value that indicates whether the receiver&rsquo;s class
-forces the presence of mock views in the accessibility hierarchy.</p>
+		<p>Tap the keyboard&rsquo;s &ldquo;Hide Keyboard&rdquo; button to hide the <a href="#//api/name/keyboard">keyboard</a> without
+executing any done/submit actions.</p>
 	</div>		
 	
     
 
-	<div class="method-subsection method-declaration"><code>- (BOOL)classForcesPresenceOfMockingViewsInAccessibilityHierarchy</code></div>
+	<div class="method-subsection method-declaration"><code>- (void)hide</code></div>
 
     
 	
 	
 	
-	<div class="method-subsection return">
-		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>YES if the receiver&rsquo;s class forces the presence of objects mocking
-instances of the class in an accessibility hierarchy, otherwise NO.</p>
-	</div>
 	
 	
 	
-	
-	
-	<div class="method-subsection discussion-section">
-		<h4 class="method-subtitle">Discussion</h4>
-		<p>Experimentation reveals that objects mocking certain types of views will appear
-in UIAutomation&rsquo;s accessibility hierarchy regardless of their accessibility
-identification.</p>
-	</div>
 	
 	
 	
@@ -301,36 +280,109 @@ identification.</p>
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSObject+SLAccessibilityHierarchy.h</code><br />
+		<code class="declared-in-ref">SLKeyboard.h</code><br />
 	</div>				
 	
 	
 </div>
 						
 						<div class="section-method">
-	<a name="//api/name/elementMockingSelfWillAppearInAccessibilityHierarchy" title="elementMockingSelfWillAppearInAccessibilityHierarchy"></a>
-	<h3 class="subsubtitle method-title">elementMockingSelfWillAppearInAccessibilityHierarchy</h3>
+	<a name="//api/name/typeString:" title="typeString:"></a>
+	<h3 class="subsubtitle method-title">typeString:</h3>
 	
 	
 	
 	<div class="method-subsection brief-description">
-		<p>Returns a Boolean value that indicates whether an object mocking the receiver
-will appear in an accessibility hierarchy.</p>
+		<p>Taps the keys of the specified input view as required
+to generate the specified string.</p>
 	</div>		
 	
     
 
-	<div class="method-subsection method-declaration"><code>- (BOOL)elementMockingSelfWillAppearInAccessibilityHierarchy</code></div>
+	<div class="method-subsection method-declaration"><code>- (void)typeString:(NSString *)<em>string</em></code></div>
 
     
 	
-	
-	
-	<div class="method-subsection return">
-		<h4 class="method-subtitle parameter-title">Return Value</h4>
-		<p>YES if an object mocking the receiver will appear in an accessibility
-hierarchy, otherwise NO.</p>
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>string</em></dt>
+			<dd><p>The string to be typed using the input view.</p></dd>
+		</dl>
+		
 	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection arguments-section exceptions">
+		<h4 class="method-subtitle exception-title">Exceptions</h4>
+		
+		<dl class="argument-def exception-def">
+			<dt><em>NSGenericException</em></dt>
+			<dd><p>This method should throw an exception of some type
+if <em>string</em> contains any characters that cannot be typed using this input view.
+If this method might throw an exception, the conforming class should also
+implement <a href="#//api/name/typeString:withSetValueFallbackUsingElement:"><code>typeString:withSetValueFallbackUsingElement:</code></a>.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLKeyboard.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
+	<a name="//api/name/typeString:withSetValueFallbackUsingElement:" title="typeString:withSetValueFallbackUsingElement:"></a>
+	<h3 class="subsubtitle method-title">typeString:withSetValueFallbackUsingElement:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Uses <a href="#//api/name/typeString:"><code>typeString:</code></a> to tap the keys of the input string on the
+receiver; if that method throws an exception, this method will then
+send the <code>setValue</code> JavaScript message to the input element as a fallback.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>- (void)typeString:(NSString *)<em>string</em> withSetValueFallbackUsingElement:(SLUIAElement *)<em>element</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>string</em></dt>
+			<dd><p>The string to be typed on the <a href="#//api/name/keyboard">keyboard</a> or set as the value for
+element.</p></dd>
+		</dl>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>element</em></dt>
+			<dd><p>The user interface element on which the <code>setValue</code> JavaScript
+method will be called if the internal call to <a href="#//api/name/typeString:"><code>typeString:</code></a>
+throws an exception.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
 	
 	
 	
@@ -338,10 +390,8 @@ hierarchy, otherwise NO.</p>
 	
 	<div class="method-subsection discussion-section">
 		<h4 class="method-subtitle">Discussion</h4>
-		<p>Experimentation reveals that a mock view will appear in the accessibility hierarchy
-if the real object will appear in any accessibility hierarchy (see
-<code>[NSObject willAppearInAccessibilityHierarchy]</code>) or is an instance of one of a
-<a href="#//api/name/classForcesPresenceOfMockingViewsInAccessibilityHierarchy">certain set of classes</a>.</p>
+		<p>Implementing this method allows <a href="../Classes/SLTextField.html"><code>SLTextField</code></a>, <a href="../Classes/SLTextView.html"><code>SLTextView</code></a>, and related classes
+to work around an input view&rsquo;s lack of support for certain characters.</p>
 	</div>
 	
 	
@@ -352,7 +402,7 @@ if the real object will appear in any accessibility hierarchy (see
 	
 	<div class="method-subsection declared-in-section">
 		<h4 class="method-subtitle">Declared In</h4>
-		<code class="declared-in-ref">NSObject+SLAccessibilityHierarchy.h</code><br />
+		<code class="declared-in-ref">SLKeyboard.h</code><br />
 	</div>				
 	
 	

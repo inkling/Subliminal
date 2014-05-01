@@ -6,7 +6,7 @@
 		<meta id="xcode-display" name="xcode-display" content="render"/>
 		<link rel="stylesheet" type="text/css" href="../css/styles.css" media="all" />
 		<link rel="stylesheet" type="text/css" media="print" href="../css/stylesPrint.css" />
-		<meta name="generator" content="appledoc 2.1 (build 858)" />
+		<meta name="generator" content="appledoc 2.1 (build 840)" />
 	</head>
 	<body>
 		<header id="top_header">
@@ -45,7 +45,11 @@
 	
 	<option value="//api/name/loadUIAAlertHandling">&nbsp;&nbsp;&nbsp;&nbsp;+ loadUIAAlertHandling</option>
 	
+	<option value="//api/name/loggingEnabled">&nbsp;&nbsp;&nbsp;&nbsp;+ loggingEnabled</option>
+	
 	<option value="//api/name/removeHandler:">&nbsp;&nbsp;&nbsp;&nbsp;+ removeHandler:</option>
+	
+	<option value="//api/name/setLoggingEnabled:">&nbsp;&nbsp;&nbsp;&nbsp;+ setLoggingEnabled:</option>
 	
 	
 	
@@ -78,6 +82,8 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Chaining Handlers">Chaining Handlers</a></span></li>
 	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Debugging Tests">Debugging Tests</a></span></li>
+	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#task_Internal Methods">Internal Methods</a></span></li>
 	
 </ul></li>
@@ -94,7 +100,11 @@
 	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/loadUIAAlertHandling">loadUIAAlertHandling</a></span></li>
 	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/loggingEnabled">loggingEnabled</a></span></li>
+	
 	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/removeHandler:">removeHandler:</a></span></li>
+	
+	<li><span class="nodisclosure"></span><span class="sectionName"><a href="#//api/name/setLoggingEnabled:">setLoggingEnabled:</a></span></li>
 	
 </ul></li>
 
@@ -146,6 +156,9 @@
 						<p>The &ldquo;dismiss&rdquo; methods of <a href="../Classes/SLAlert.html"><code>SLAlert</code></a> vend instances of <code>SLAlertHandler</code>
 that can dismiss corresponding alerts when they appear,
 and report the status of dismissal to the tests.</p>
+
+<p>The methods in the <code>SLAlertHandler (Debugging)</code> category may be useful
+in debugging Subliminal tests.</p>
 
 <p>The methods in the <code>SLAlertHandler (Internal)</code> category are to be used
 only within Subliminal.</p>
@@ -207,6 +220,28 @@ chance to handle (dismiss) an alert when it is shown.</p></span>
 		<code><a href="#//api/name/andThen:">&ndash;&nbsp;andThen:</a></code>
 		<span class="tooltip"><p>Creates and returns an alert handler which handles a corresponding alert
 by performing the action of the receiver and then that of the specified handler.</p></span>
+	</span>
+	
+	
+</li>
+						</ul>
+						
+						
+						<a title="Debugging Tests" name="task_Debugging Tests"></a>
+						<h3 class="subsubtitle task-title">Debugging Tests</h3>
+
+						<ul class="task-list">
+							<li>
+	<span class="tooltip">
+		<code><a href="#//api/name/setLoggingEnabled:">+&nbsp;setLoggingEnabled:</a></code>
+		<span class="tooltip"><p>Enables or disables alert-handling logging.</p></span>
+	</span>
+	
+	
+</li><li>
+	<span class="tooltip">
+		<code><a href="#//api/name/loggingEnabled">+&nbsp;loggingEnabled</a></code>
+		<span class="tooltip"><p>Returns <code>YES</code> if Subliminal should log alerts as they are handled.</p></span>
 	</span>
 	
 	
@@ -363,6 +398,61 @@ is an <a href="../Classes/SLAlertDismissHandler.html"><code>SLAlertDismissHandle
 </div>
 						
 						<div class="section-method">
+	<a name="//api/name/loggingEnabled" title="loggingEnabled"></a>
+	<h3 class="subsubtitle method-title">loggingEnabled</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Returns <code>YES</code> if Subliminal should log alerts as they are handled.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (BOOL)loggingEnabled</code></div>
+
+    
+	
+	
+	
+	<div class="method-subsection return">
+		<h4 class="method-subtitle parameter-title">Return Value</h4>
+		<p><code>YES</code> if alert-handling logging is enabled, <code>NO</code> otherwise.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>Logging is disabled by default.</p>
+	</div>
+	
+	
+	
+	
+	
+	<div class="method-subsection see-also-section">
+		<h4 class="method-subtitle">See Also</h4>
+		<ul>
+			
+			<li><code><p><a href="#//api/name/setLoggingEnabled:">+ setLoggingEnabled:</a></p></code></li>
+			
+		</ul>
+	</div>
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLAlert.h</code><br />
+	</div>				
+	
+	
+</div>
+						
+						<div class="section-method">
 	<a name="//api/name/removeHandler:" title="removeHandler:"></a>
 	<h3 class="subsubtitle method-title">removeHandler:</h3>
 	
@@ -420,6 +510,61 @@ been added.</p></dd>
 	
 </div>
 						
+						<div class="section-method">
+	<a name="//api/name/setLoggingEnabled:" title="setLoggingEnabled:"></a>
+	<h3 class="subsubtitle method-title">setLoggingEnabled:</h3>
+	
+	
+	
+	<div class="method-subsection brief-description">
+		<p>Enables or disables alert-handling logging.</p>
+	</div>		
+	
+    
+
+	<div class="method-subsection method-declaration"><code>+ (void)setLoggingEnabled:(BOOL)<em>enableLogging</em></code></div>
+
+    
+	
+	<div class="method-subsection arguments-section parameters">
+		<h4 class="method-subtitle parameter-title">Parameters</h4>
+		
+		<dl class="argument-def parameter-def">
+			<dt><em>enableLogging</em></dt>
+			<dd><p>If <code>YES</code>, alert-handling logging is enabled;
+otherwise, alert-handling logging is disabled.</p></dd>
+		</dl>
+		
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection discussion-section">
+		<h4 class="method-subtitle">Discussion</h4>
+		<p>If logging is enabled, Subliminal will log alerts as they are handled
+(by handlers registered by tests or by Subliminal&rsquo;s default handler).</p>
+
+<p>Logging is disabled by default.</p>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	<div class="method-subsection declared-in-section">
+		<h4 class="method-subtitle">Declared In</h4>
+		<code class="declared-in-ref">SLAlert.h</code><br />
+	</div>				
+	
+	
+</div>
+						
 					</div>
 					
 					
@@ -461,7 +606,7 @@ of the receiver.</p></dd>
 	<div class="method-subsection return">
 		<h4 class="method-subtitle parameter-title">Return Value</h4>
 		<p>A newly created alert handler that performs the action of the receiver
-and then the action of <code>nextHandler</code>.</p>
+and then the action of <em>nextHandler</em>.</p>
 	</div>
 	
 	
@@ -576,9 +721,9 @@ text can be entered into an alert&rsquo;s text field, and then the alert dismiss
 				<div id="footer">
 					<hr />
 					<div class="footer-copyright">
-						<p><span class="copyright">&copy; 2013 Inkling. All rights reserved. (Last updated: 2013-06-11)</span><br />
+						<p><span class="copyright">&copy; 2014 Inkling. All rights reserved. (Last updated: 2014-04-30)</span><br />
 						
-						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 858)</a>.</span></p>
+						<span class="generator">Generated by <a href="http://appledoc.gentlebytes.com">appledoc 2.1 (build 840)</a>.</span></p>
 						
 					</div>
 				</div>
