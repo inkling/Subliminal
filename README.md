@@ -3,6 +3,7 @@
 </p>
 
 [![Build Status](https://travis-ci.org/inkling/Subliminal.svg?branch=master)](https://travis-ci.org/inkling/Subliminal)
+[![Gitter chat](https://badges.gitter.im/inkling/Subliminal.png)](https://gitter.im/inkling/Subliminal)
 
 Subliminal is a framework for writing iOS integration tests. Subliminal provides 
 a familiar OCUnit/XCTest-like interface to Apple's UIAutomation framework, 
@@ -223,8 +224,10 @@ Contact
 * If you **have a feature request**, [open an issue](https://github.com/inkling/Subliminal/issues/new).
 * If you'd **like to contribute** (awesome!), see [the contributing guidelines](https://github.com/inkling/Subliminal/blob/master/CONTRIBUTING.md) to get started.
 
-You can also follow Subliminal ([@subliminaltest](https://twitter.com/subliminaltest))
-on Twitter.
+If you'd like to chat, we hold "office hours" on [Gitter](https://gitter.im/inkling/Subliminal)
+3-4pm, Tuesdays and Thursdays.
+
+Lastly, you can follow Subliminal on Twitter for news and tips ([@subliminaltest](https://twitter.com/subliminaltest)).
 
 Copyright and License
 ---------------------
