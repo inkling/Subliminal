@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/inkling/subliminal.png?label=ready&title=Ready)](https://waffle.io/inkling/subliminal)
 <p align="center" >
   <img src="http://inkling.github.io/Subliminal/readme-images/subliminal-hero.png" alt="Subliminal" title="Subliminal">
 </p>
