@@ -225,7 +225,7 @@ Contact
 * If you'd **like to contribute** (awesome!), see [the contributing guidelines](https://github.com/inkling/Subliminal/blob/master/CONTRIBUTING.md) to get started.
 
 If you'd like to chat, we hold "office hours" on [Gitter](https://gitter.im/inkling/Subliminal)
-3-4pm, Tuesdays and Thursdays.
+3-4pm Pacific Time, Tuesdays and Thursdays.
 
 Lastly, you can follow Subliminal on Twitter for news and tips ([@subliminaltest](https://twitter.com/subliminaltest)).
 
