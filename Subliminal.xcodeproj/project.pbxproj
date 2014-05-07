@@ -116,6 +116,10 @@
 		F077D70F16D9D77900908FF5 /* SLElementVisibilityTestCovered.xib in Resources */ = {isa = PBXBuildFile; fileRef = F077D70C16D9D77900908FF5 /* SLElementVisibilityTestCovered.xib */; };
 		F078C0491808BF24000767D2 /* SLWebViewTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F078C0471808BF24000767D2 /* SLWebViewTest.m */; };
 		F078C04A1808BF24000767D2 /* SLWebViewTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F078C0481808BF24000767D2 /* SLWebViewTestViewController.m */; };
+		F078C0511808C564000767D2 /* SLEditingMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = F078C04F1808C564000767D2 /* SLEditingMenu.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F078C0521808C564000767D2 /* SLEditingMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = F078C0501808C564000767D2 /* SLEditingMenu.m */; };
+		F078C05E1808CF7E000767D2 /* SLEditingMenuTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F078C05C1808CF7E000767D2 /* SLEditingMenuTest.m */; };
+		F078C05F1808CF7E000767D2 /* SLEditingMenuTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F078C05D1808CF7E000767D2 /* SLEditingMenuTestViewController.m */; };
 		F07DA32D16E43AD3004C2282 /* SLAlertTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DA32B16E43AD3004C2282 /* SLAlertTest.m */; };
 		F07DA32E16E43AD3004C2282 /* SLAlertTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F07DA32C16E43AD3004C2282 /* SLAlertTestViewController.m */; };
 		F08005591730762C00198F6F /* Inklings~iPhone.webarchive in Resources */ = {isa = PBXBuildFile; fileRef = F08005581730762C00198F6F /* Inklings~iPhone.webarchive */; };
@@ -349,6 +353,10 @@
 		F077D70C16D9D77900908FF5 /* SLElementVisibilityTestCovered.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLElementVisibilityTestCovered.xib; sourceTree = "<group>"; };
 		F078C0471808BF24000767D2 /* SLWebViewTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLWebViewTest.m; sourceTree = "<group>"; };
 		F078C0481808BF24000767D2 /* SLWebViewTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLWebViewTestViewController.m; sourceTree = "<group>"; };
+		F078C04F1808C564000767D2 /* SLEditingMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLEditingMenu.h; sourceTree = "<group>"; };
+		F078C0501808C564000767D2 /* SLEditingMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLEditingMenu.m; sourceTree = "<group>"; };
+		F078C05C1808CF7E000767D2 /* SLEditingMenuTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLEditingMenuTest.m; sourceTree = "<group>"; };
+		F078C05D1808CF7E000767D2 /* SLEditingMenuTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLEditingMenuTestViewController.m; sourceTree = "<group>"; };
 		F07DA32B16E43AD3004C2282 /* SLAlertTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAlertTest.m; sourceTree = "<group>"; };
 		F07DA32C16E43AD3004C2282 /* SLAlertTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLAlertTestViewController.m; sourceTree = "<group>"; };
 		F08005581730762C00198F6F /* Inklings~iPhone.webarchive */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "Inklings~iPhone.webarchive"; sourceTree = "<group>"; };
@@ -755,6 +763,15 @@
 			name = "SLWebView Tests";
 			sourceTree = "<group>";
 		};
+		F078C05B1808CF59000767D2 /* SLEditingMenu Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F078C05C1808CF7E000767D2 /* SLEditingMenuTest.m */,
+				F078C05D1808CF7E000767D2 /* SLEditingMenuTestViewController.m */,
+			);
+			name = "SLEditingMenu Tests";
+			sourceTree = "<group>";
+		};
 		F07DA31F16E439B7004C2282 /* SLAlert Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -798,6 +815,8 @@
 				F0C07A4E1704009E00C93F93 /* SLWindow.m */,
 				DB501DC717B9669A001658CB /* SLStatusBar.h */,
 				DB501DC817B9669A001658CB /* SLStatusBar.m */,
+				F078C04F1808C564000767D2 /* SLEditingMenu.h */,
+				F078C0501808C564000767D2 /* SLEditingMenu.m */,
 			);
 			path = "User Interface Elements";
 			sourceTree = "<group>";
@@ -905,6 +924,7 @@
 				F077D70016D9D71E00908FF5 /* SLElement Visibility Tests */,
 				F05263C316D2C2CF0090174F /* SLElement Matching Tests */,
 				0696BA5E16E013DF00DD70CF /* SLElement Gestures and Actions Tests */,
+				F078C05B1808CF59000767D2 /* SLEditingMenu Tests */,
 				F089F9DC1745FB3800DF1F25 /* SLKeyboard Tests */,
 				F00800D3174C2871001927AC /* SLPopover Tests */,
 				F089F9FD1746B1D200DF1F25 /* SLStaticElement Tests */,
@@ -1025,6 +1045,7 @@
 				F05C4F90171406EF00A381BC /* SLTerminal+ConvenienceFunctions.h in Headers */,
 				F05C51E5171C8AE000A381BC /* SLMainThreadRef.h in Headers */,
 				F0A04E1D1749F70F002C7520 /* SLElement.h in Headers */,
+				F078C0511808C564000767D2 /* SLEditingMenu.h in Headers */,
 				2CE9AA4C17E3A747007EF0B5 /* SLSwitch.h in Headers */,
 				F089F98617445D9A00DF1F25 /* SLStaticElement.h in Headers */,
 				F02DF30817EC064F00BE28BF /* UIScrollView+SLProgrammaticScrolling.h in Headers */,
@@ -1298,6 +1319,7 @@
 				F02DF30917EC064F00BE28BF /* UIScrollView+SLProgrammaticScrolling.m in Sources */,
 				CAC388061641CD7500F995F9 /* SLStringUtilities.m in Sources */,
 				CAC388401643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.m in Sources */,
+				F078C0521808C564000767D2 /* SLEditingMenu.m in Sources */,
 				CA75E78516697C0000D57E92 /* SLDevice.m in Sources */,
 				F0C07A391703F95B00C93F93 /* SLAlert.m in Sources */,
 				F0C07A481703FEF600C93F93 /* SLButton.m in Sources */,
@@ -1340,6 +1362,7 @@
 				0696BA5916E013D600DD70CF /* SLElementDraggingTestViewController.m in Sources */,
 				F0AE4C8D16F7F92D00B2BB2B /* SLElementStateTest.m in Sources */,
 				F0AE4C8E16F7F92D00B2BB2B /* SLElementStateTestViewController.m in Sources */,
+				F078C05F1808CF7E000767D2 /* SLEditingMenuTestViewController.m in Sources */,
 				F07DA32D16E43AD3004C2282 /* SLAlertTest.m in Sources */,
 				F07DA32E16E43AD3004C2282 /* SLAlertTestViewController.m in Sources */,
 				2C903BC117F525E700555317 /* SLSwitchTestViewController.m in Sources */,
@@ -1347,6 +1370,7 @@
 				F01EBC9C170115B100FF6A7C /* SLTextFieldTestViewController.m in Sources */,
 				F077D70D16D9D77900908FF5 /* SLElementVisibilityTest.m in Sources */,
 				F077D70E16D9D77900908FF5 /* SLElementVisibilityTestViewController.m in Sources */,
+				F078C05E1808CF7E000767D2 /* SLEditingMenuTest.m in Sources */,
 				F0B868EC1740A146008BDA80 /* SLTerminalTestViewController.m in Sources */,
 				F0CC759A173B097800E8F94A /* SLElementTapTest.m in Sources */,
 				F0CC759B173B097800E8F94A /* SLElementTapTestViewController.m in Sources */,
