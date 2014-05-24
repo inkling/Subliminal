@@ -36,24 +36,9 @@
 
 - (void)loadViewForTestCase:(SEL)testCase
 {
-    UIView *view = [[UIView alloc] initWithFrame:self.navigationController.view.bounds];
-    view.backgroundColor = [UIColor whiteColor];
-    
-    UIFont *nothingToShowHereFont = [UIFont systemFontOfSize:18.0f];
-    NSString *nothingToShowHereText = @"Nothing to show here.";
-    CGSize nothingToShowHereSize = [nothingToShowHereText sizeWithFont:nothingToShowHereFont
-                                                     constrainedToSize:CGSizeMake(3 * CGRectGetWidth(view.bounds) / 4.0f, CGFLOAT_MAX)];
-    UILabel *nothingToShowHereLabel = [[UILabel alloc] initWithFrame:(CGRect){CGPointZero, nothingToShowHereSize}];
-    nothingToShowHereLabel.backgroundColor = view.backgroundColor;
-    nothingToShowHereLabel.font = nothingToShowHereFont;
-    nothingToShowHereLabel.numberOfLines = 0;
-    nothingToShowHereLabel.text = nothingToShowHereText;
-    nothingToShowHereLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
-    
-    [view addSubview:nothingToShowHereLabel];
-    nothingToShowHereLabel.center = CGPointMake(CGRectGetMidX(view.bounds), CGRectGetMidY(view.bounds));
-    
-    self.view = view;
+    // Since we're just testing the geometry functions,
+    // we don't require any particular view.
+    [self loadGenericView];
 }
 
 - (void)dealloc
