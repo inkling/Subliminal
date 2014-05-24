@@ -977,8 +977,6 @@
 		F0AC80BE16BB542400C5D5C0 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				DB2627D817B96704009DA3A6 /* SLStatusBar Tests */,
-				50A59BD317848CEE002A863A /* SLGeometry Tests */,
 				F07DA31F16E439B7004C2282 /* SLAlert Tests */,
 				F00800BF174B2CB0001927AC /* SLButton Tests */,
 				622DA0AD194CCA7500EFFE05 /* SLDatePicker Tests */,
@@ -987,11 +985,13 @@
 				F077D70016D9D71E00908FF5 /* SLElement Visibility Tests */,
 				F05263C316D2C2CF0090174F /* SLElement Matching Tests */,
 				0696BA5E16E013DF00DD70CF /* SLElement Gestures and Actions Tests */,
+				50A59BD317848CEE002A863A /* SLGeometry Tests */,
 				F089F9DC1745FB3800DF1F25 /* SLKeyboard Tests */,
 				622DA09F194B796700EFFE05 /* SLPickerView Tests */,
 				F00800D3174C2871001927AC /* SLPopover Tests */,
 				F089F9FD1746B1D200DF1F25 /* SLStaticElement Tests */,
 				6256A2CD19476DA400C6507F /* SLStaticText Tests */,
+				DB2627D817B96704009DA3A6 /* SLStatusBar Tests */,
 				2C903BB917F525C900555317 /* SLSwitch Tests */,
 				F01EBC951701150E00FF6A7C /* SLTextField Tests */,
 				F0A3F63917A716FC007529C3 /* SLTextView Tests */,
