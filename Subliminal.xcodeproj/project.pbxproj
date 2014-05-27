@@ -114,6 +114,10 @@
 		F052B0A619343A92004606C0 /* SLNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = F052B0A419343A92004606C0 /* SLNavigationBar.m */; };
 		F052B0AA19343DD8004606C0 /* SLNavigationBarTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F052B0A819343DD8004606C0 /* SLNavigationBarTest.m */; };
 		F052B0AB19343DD8004606C0 /* SLNavigationBarTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F052B0A919343DD8004606C0 /* SLNavigationBarTestViewController.m */; };
+		F052B0AE193451FC004606C0 /* SLActionSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = F052B0AC193451FC004606C0 /* SLActionSheet.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F052B0AF193451FC004606C0 /* SLActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = F052B0AD193451FC004606C0 /* SLActionSheet.m */; };
+		F052B0B319345F29004606C0 /* SLActionSheetTest.m in Sources */ = {isa = PBXBuildFile; fileRef = F052B0B119345F29004606C0 /* SLActionSheetTest.m */; };
+		F052B0B419345F29004606C0 /* SLActionSheetTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F052B0B219345F29004606C0 /* SLActionSheetTestViewController.m */; };
 		F05C4F90171406EF00A381BC /* SLTerminal+ConvenienceFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = F05C4F8E171406EF00A381BC /* SLTerminal+ConvenienceFunctions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F05C4F91171406EF00A381BC /* SLTerminal+ConvenienceFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = F05C4F8F171406EF00A381BC /* SLTerminal+ConvenienceFunctions.m */; };
 		F05C51E5171C8AE000A381BC /* SLMainThreadRef.h in Headers */ = {isa = PBXBuildFile; fileRef = F05C51E3171C8AE000A381BC /* SLMainThreadRef.h */; settings = {ATTRIBUTES = (); }; };
@@ -369,6 +373,10 @@
 		F052B0A419343A92004606C0 /* SLNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLNavigationBar.m; sourceTree = "<group>"; };
 		F052B0A819343DD8004606C0 /* SLNavigationBarTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLNavigationBarTest.m; sourceTree = "<group>"; };
 		F052B0A919343DD8004606C0 /* SLNavigationBarTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLNavigationBarTestViewController.m; sourceTree = "<group>"; };
+		F052B0AC193451FC004606C0 /* SLActionSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLActionSheet.h; sourceTree = "<group>"; };
+		F052B0AD193451FC004606C0 /* SLActionSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLActionSheet.m; sourceTree = "<group>"; };
+		F052B0B119345F29004606C0 /* SLActionSheetTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLActionSheetTest.m; sourceTree = "<group>"; };
+		F052B0B219345F29004606C0 /* SLActionSheetTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLActionSheetTestViewController.m; sourceTree = "<group>"; };
 		F05C4F8E171406EF00A381BC /* SLTerminal+ConvenienceFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SLTerminal+ConvenienceFunctions.h"; sourceTree = "<group>"; };
 		F05C4F8F171406EF00A381BC /* SLTerminal+ConvenienceFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SLTerminal+ConvenienceFunctions.m"; sourceTree = "<group>"; };
 		F05C51E3171C8AE000A381BC /* SLMainThreadRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLMainThreadRef.h; sourceTree = "<group>"; };
@@ -737,6 +745,15 @@
 			name = "SLNavigationBar Tests";
 			sourceTree = "<group>";
 		};
+		F052B0B019345F14004606C0 /* SLActionSheet Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F052B0B119345F29004606C0 /* SLActionSheetTest.m */,
+				F052B0B219345F29004606C0 /* SLActionSheetTestViewController.m */,
+			);
+			name = "SLActionSheet Tests";
+			sourceTree = "<group>";
+		};
 		F0695D8016011515000B05D0 = {
 			isa = PBXGroup;
 			children = (
@@ -870,6 +887,8 @@
 				CAC3883E1643503C00F995F9 /* NSObject+SLAccessibilityHierarchy.m */,
 				F089F98417445D9A00DF1F25 /* SLStaticElement.h */,
 				F089F98517445D9A00DF1F25 /* SLStaticElement.m */,
+				F052B0AC193451FC004606C0 /* SLActionSheet.h */,
+				F052B0AD193451FC004606C0 /* SLActionSheet.m */,
 				F0C07A361703F95B00C93F93 /* SLAlert.h */,
 				F0C07A371703F95B00C93F93 /* SLAlert.m */,
 				F0C07A451703FEF600C93F93 /* SLButton.h */,
@@ -996,6 +1015,7 @@
 		F0AC80BE16BB542400C5D5C0 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				F052B0B019345F14004606C0 /* SLActionSheet Tests */,
 				F07DA31F16E439B7004C2282 /* SLAlert Tests */,
 				F00800BF174B2CB0001927AC /* SLButton Tests */,
 				622DA0AD194CCA7500EFFE05 /* SLDatePicker Tests */,
@@ -1132,6 +1152,7 @@
 				F05C4F90171406EF00A381BC /* SLTerminal+ConvenienceFunctions.h in Headers */,
 				F05C51E5171C8AE000A381BC /* SLMainThreadRef.h in Headers */,
 				F0A04E1D1749F70F002C7520 /* SLElement.h in Headers */,
+				F052B0AE193451FC004606C0 /* SLActionSheet.h in Headers */,
 				2CE9AA4C17E3A747007EF0B5 /* SLSwitch.h in Headers */,
 				F089F98617445D9A00DF1F25 /* SLStaticElement.h in Headers */,
 				F02DF30817EC064F00BE28BF /* UIScrollView+SLProgrammaticScrolling.h in Headers */,
@@ -1402,6 +1423,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				62009F8F196CB41E00419585 /* SLTestAssertions.m in Sources */,
+				F052B0AF193451FC004606C0 /* SLActionSheet.m in Sources */,
 				2CE9AA4D17E3A747007EF0B5 /* SLSwitch.m in Sources */,
 				62E7A634193EF84C00CB11AB /* SLStaticText.m in Sources */,
 				50F3E18E1783A60100C6BD1B /* SLGeometry.m in Sources */,
@@ -1461,6 +1483,7 @@
 				6256A2D419476E1F00C6507F /* SLStaticTextTest.m in Sources */,
 				0696BA5916E013D600DD70CF /* SLElementDraggingTestViewController.m in Sources */,
 				F0AE4C8D16F7F92D00B2BB2B /* SLElementStateTest.m in Sources */,
+				F052B0B319345F29004606C0 /* SLActionSheetTest.m in Sources */,
 				F0AE4C8E16F7F92D00B2BB2B /* SLElementStateTestViewController.m in Sources */,
 				F07DA32D16E43AD3004C2282 /* SLAlertTest.m in Sources */,
 				F07DA32E16E43AD3004C2282 /* SLAlertTestViewController.m in Sources */,
@@ -1490,6 +1513,7 @@
 				F00800C8174B3349001927AC /* SLButtonTestViewController.m in Sources */,
 				F00800E2174C2E0A001927AC /* SLPopoverTest.m in Sources */,
 				F00800E3174C2E0A001927AC /* SLPopoverTestViewController.m in Sources */,
+				F052B0B419345F29004606C0 /* SLActionSheetTestViewController.m in Sources */,
 				0640035A178FDE7800479173 /* SLElementTouchAndHoldTestViewController.m in Sources */,
 				DB2627DE17B96727009DA3A6 /* SLStatusBarTest.m in Sources */,
 				F078C0491808BF24000767D2 /* SLWebViewTest.m in Sources */,

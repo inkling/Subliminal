@@ -23,9 +23,7 @@
 #import "SLStaticElement.h"
 #import "SLUIAElement+Subclassing.h"
 
-@implementation SLStaticElement {
-    NSString *_UIARepresentation;
-}
+@implementation SLStaticElement
 
 - (instancetype)initWithUIARepresentation:(NSString *)UIARepresentation {
     NSParameterAssert([UIARepresentation length]);
