@@ -34,6 +34,7 @@
 #import "SLButton.h"
 #import "SLDatePicker.h"
 #import "SLKeyboard.h"
+#import "SLNavigationBar.h"
 #import "SLPickerView.h"
 #import "SLPopover.h"
 #import "SLStaticText.h"
