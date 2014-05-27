@@ -38,7 +38,8 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@>", NSStringFromClass([self class])];
+    return [NSString stringWithFormat:@"<%@ UIARepresentation = '%@'>",
+                                        NSStringFromClass([self class]), [_UIARepresentation slStringByEscapingForJavaScriptLiteral]];
 }
 
 - (BOOL)canDetermineTappability {
