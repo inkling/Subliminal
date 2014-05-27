@@ -29,6 +29,21 @@
  It is oftentimes more readable and efficient to evaluate some bit of JavaScript
  by defining a generic function and then calling it with specific arguments, 
  rather than formatting and evaluating a long block of statements each time.
+ 
+ It is recommended that the methods in this category be used both to define _and_
+ evaluate functions. However, if this is not possible--if a function needs to
+ be called from some other bit of JavaScript, for instance--a function may be
+ referenced (once defined) by formatting together the terminal's namespace
+ and the name of the function:
+ 
+     NSString *functionName = @"SLAddTwoNumbers";
+     NSString *scriptNamespace = [[SLTerminal sharedTerminal] scriptNamespace];
+     [[SLTerminal sharedTerminal] loadFunctionWithName:functionName
+                                                params:@[ @"one", @"two" ]
+                                                  body:@"return one + two;"];
+     // Contains @"36"
+     NSString *result = [[SLTerminal sharedTerminal] evalWithFormat:@"3 * %@.%@(5, 7)", scriptNamespace, functionName];
+
  */
 @interface SLTerminal (ConvenienceFunctions)
 
