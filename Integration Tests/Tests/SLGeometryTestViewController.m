@@ -7,13 +7,8 @@
 //
 
 #import "SLTestCaseViewController.h"
-#import "SLLogger.h"
-#import "SLTestController.h"
-#import "SLTestController+AppHooks.h"
 
 @interface SLGeometryTestViewController : SLTestCaseViewController
-
-@property (nonatomic, strong) UIView *rectView;
 
 @end
 
@@ -21,17 +16,7 @@
 
 - (instancetype)initWithTestCaseWithSelector:(SEL)testCase
 {
-    self = [super initWithTestCaseWithSelector:testCase];
-    if (self) {
-        SLTestController *testController = [SLTestController sharedTestController];
-        [testController registerTarget:self forAction:@selector(navigationBarFrameValue)];
-    }
-    return self;
-}
-
-- (NSValue *)navigationBarFrameValue
-{
-    return [NSValue valueWithCGRect:self.navigationController.navigationBar.frame];
+    return [super initWithTestCaseWithSelector:testCase];
 }
 
 - (void)loadViewForTestCase:(SEL)testCase
@@ -39,11 +24,6 @@
     // Since we're just testing the geometry functions,
     // we don't require any particular view.
     [self loadGenericView];
-}
-
-- (void)dealloc
-{
-    [[SLTestController sharedTestController] deregisterTarget:self];
 }
 
 @end
