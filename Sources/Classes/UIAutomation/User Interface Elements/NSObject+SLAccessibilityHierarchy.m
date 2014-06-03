@@ -373,6 +373,9 @@
 
 
 @implementation UITableViewCell (SLAccessibilityHierarchy)
+- (BOOL)classForcesPresenceInAccessibilityHierarchy {
+    return YES;
+}
 - (BOOL)classForcesPresenceOfMockingViewsInAccessibilityHierarchy {
     return YES;
 }
@@ -393,7 +396,8 @@
 
 @implementation UIScrollView (SLAccessibilityHierarchy)
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
-    return YES;
+    return kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_6_1 ||
+           ![[(UIView *)self superview] isKindOfClass:[UITableViewCell class]];
 }
 @end
 
