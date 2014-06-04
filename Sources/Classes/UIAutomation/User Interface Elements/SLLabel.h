@@ -1,5 +1,5 @@
 //
-//  Subliminal.h
+//  SLLabel.h
 //  Subliminal
 //
 //  For details and documentation:
@@ -20,25 +20,13 @@
 //  limitations under the License.
 //
 
-#import "SLTestController.h"
-#import "SLTestController+AppHooks.h"
-#import "SLTest.h"
-
-#import "SLDevice.h"
 #import "SLElement.h"
-#import "NSObject+SLAccessibilityDescription.h"
-#import "NSObject+SLAccessibilityHierarchy.h"
-#import "SLStaticElement.h"
-#import "SLAlert.h"
-#import "SLButton.h"
-#import "SLKeyboard.h"
-#import "SLLabel.h"
-#import "SLPopover.h"
-#import "SLStatusBar.h"
-#import "SLSwitch.h"
-#import "SLTextField.h"
-#import "SLTextView.h"
-#import "SLWebView.h"
-#import "SLWindow.h"
 
-#import "SLLogger.h"
+/**
+ `SLWindow` matches instances of `UILabel`.
+ 
+ They generally can't be interacted with, but you can ensure that they appear on the screen at least.
+ */
+@interface SLLabel : SLElement
+
+@end
