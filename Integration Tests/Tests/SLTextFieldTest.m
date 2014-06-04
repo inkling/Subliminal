@@ -40,8 +40,10 @@
     [super setUpTestCaseWithSelector:testSelector];
 
     if (testSelector == @selector(testSetText) ||
+        testSelector == @selector(testSetTextWithinTableViewCell) ||
         testSelector == @selector(testSetTextCanHandleTapHoldCharacters) ||
         testSelector == @selector(testSetTextClearsCurrentText) ||
+        testSelector == @selector(testSetTextClearsCurrentTextWithinTableViewCell) ||
         testSelector == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
         testSelector == @selector(testGetText) ||
         testSelector == @selector(testDoNotMatchEditorAccessibilityObjects) ||
@@ -68,6 +70,12 @@
     SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
 }
 
+- (void)testSetTextWithinTableViewCell {
+    NSString *const expectedText = @"foo";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
+}
+
 - (void)testSetTextCanHandleTapHoldCharacters {
     NSString *const expectedText = @"foo’s a difficult string to type!";
     SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
@@ -75,6 +83,16 @@
 }
 
 - (void)testSetTextClearsCurrentText {
+    NSString *const expectedText1 = @"foo";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText1], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText1], @"Text was not set to expected value.");
+
+    NSString *const expectedText2 = @"bar";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText2], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText2], @"Text was not set to expected value.");
+}
+
+- (void)testSetTextClearsCurrentTextWithinTableViewCell {
     NSString *const expectedText1 = @"foo";
     SLAssertNoThrow([UIAElement(_textField) setText:expectedText1], @"Should not have thrown.");
     SLAssertTrue([SLAskApp(text) isEqualToString:expectedText1], @"Text was not set to expected value.");
