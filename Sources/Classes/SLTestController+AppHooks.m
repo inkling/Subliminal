@@ -103,7 +103,8 @@ NSString *const SLAppActionTargetDoesNotExistException = @"SLAppActionTargetDoes
     // note that there are always at least two arguments, for self and _cmd
     NSAssert(numberOfArguments < 4, @"The action must identify a method which takes zero or one argument.");
     if (numberOfArguments == 3) {
-        NSAssert(strcmp([actionSignature getArgumentTypeAtIndex:2], @encode(id<NSCopying>)) == 0,
+        NSAssert(strcmp([actionSignature getArgumentTypeAtIndex:2], @encode(id<NSCopying>)) == 0 ||
+                 strcmp([actionSignature getArgumentTypeAtIndex:2], @encode(Class)) == 0,
                  @"If the action takes an argument, that argument must be of type id<NSCopying>.");
     }
 
