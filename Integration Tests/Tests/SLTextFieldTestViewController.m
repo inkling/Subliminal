@@ -25,22 +25,26 @@
 #import <Subliminal/SLTestController+AppHooks.h>
 #import <QuartzCore/QuartzCore.h>
 
-@interface SLTextFieldTestViewController : SLTestCaseViewController <UIWebViewDelegate>
+@interface SLTextFieldTestViewController : SLTestCaseViewController <UIWebViewDelegate,UITableViewDataSource>
 @end
 
 @implementation SLTextFieldTestViewController {
     UITextField *_textField;
     UISearchBar *_searchBar;
     UIWebView *_webView;
+    UITableView *_tableView;
     BOOL _webViewDidFinishLoad;
 }
 
 - (void)loadViewForTestCase:(SEL)testCase {
     UIView *view = [[UIView alloc] initWithFrame:CGRectZero];
     const CGRect kTextFieldFrame = (CGRect){CGPointZero, CGSizeMake(100.0f, 30.0f)};
+
     if (testCase == @selector(testSetText) ||
+        testCase == @selector(testSetTextWithinTableViewCell) ||
         testCase == @selector(testSetTextCanHandleTapHoldCharacters) ||
         testCase == @selector(testSetTextClearsCurrentText) ||
+        testCase == @selector(testSetTextClearsCurrentTextWithinTableViewCell) ||
         testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
         testCase == @selector(testGetText) ||
         testCase == @selector(testDoNotMatchEditorAccessibilityObjects) ||
@@ -49,7 +53,15 @@
         testCase == @selector(testMatchesSearchBarTextField)) {
         
         _textField = [[UITextField alloc] initWithFrame:kTextFieldFrame];
-        [view addSubview:_textField];
+
+        if (testCase == @selector(testSetTextWithinTableViewCell) ||
+            testCase == @selector(testSetTextClearsCurrentTextWithinTableViewCell)) {
+            _tableView = [[UITableView alloc] initWithFrame:(CGRect){CGPointZero, CGSizeMake(320.0f, 44.0f)}];
+            _tableView.dataSource = self;
+            [view addSubview:_tableView];
+        } else {
+            [view addSubview:_textField];
+        }
 
         if (testCase == @selector(testMatchesSearchBarTextField)) {
             _searchBar = [[UISearchBar alloc] initWithFrame:kTextFieldFrame];
@@ -67,6 +79,7 @@
         _webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [view addSubview:_webView];
     }
+
     self.view = view;
 }
 
@@ -96,7 +109,9 @@
     }
 
     if (self.testCase != @selector(testSetText) &&
+        self.testCase != @selector(testSetTextWithinTableViewCell) &&
         self.testCase != @selector(testSetTextClearsCurrentText) &&
+        self.testCase != @selector(testSetTextClearsCurrentTextWithinTableViewCell) &&
         self.testCase != @selector(testSetTextWhenFieldClearsOnBeginEditing) &&
         self.testCase != @selector(testDoNotMatchEditorAccessibilityObjects)) {
         _textField.text = @"foo";
@@ -125,6 +140,9 @@
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
 
+    if (_tableView != nil)
+        return;
+
     // move the textfield above the keyboard
     static const CGFloat kTextFieldVerticalOffset = -40.0f;
 
@@ -142,8 +160,10 @@
 - (NSString *)text {
     NSString *text;
     if (self.testCase == @selector(testSetText) ||
+        self.testCase == @selector(testSetTextWithinTableViewCell) ||
         self.testCase == @selector(testSetTextCanHandleTapHoldCharacters) ||
         self.testCase == @selector(testSetTextClearsCurrentText) ||
+        self.testCase == @selector(testSetTextClearsCurrentTextWithinTableViewCell) ||
         self.testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
         self.testCase == @selector(testGetText) ||
         self.testCase == @selector(testDoNotMatchEditorAccessibilityObjects) ||
@@ -164,6 +184,26 @@
 
 - (NSNumber *)webViewDidFinishLoad {
     return @(_webViewDidFinishLoad);
+}
+
+#pragma mark - UITableViewDataSource
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 1;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *tableViewCell = [[UITableViewCell alloc] initWithFrame:(CGRect){CGPointZero, CGSizeMake(320.0f, 44.0f)}];
+    tableViewCell.selectionStyle = UITableViewCellSelectionStyleNone;
+    tableViewCell.contentView.backgroundColor = [UIColor lightGrayColor];
+
+    _textField.frame = (CGRect){CGPointZero, CGSizeMake(100.0f, 30.0f)};
+    _textField.textColor = [UIColor blackColor];
+    [_textField becomeFirstResponder];
+
+    [tableViewCell.contentView addSubview:_textField];
+
+    return tableViewCell;
 }
 
 @end
