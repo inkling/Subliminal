@@ -1,5 +1,5 @@
 //
-//  SLLabelTest.m
+//  SLStaticTextTest.m
 //  Subliminal
 //
 //  For details and documentation:
@@ -22,44 +22,44 @@
 
 #import "SLIntegrationTest.h"
 
-@interface SLLabelTest : SLIntegrationTest
+@interface SLStaticTextTest : SLIntegrationTest
 
 @end
 
-@implementation SLLabelTest
+@implementation SLStaticTextTest
 
 + (NSString *)testCaseViewControllerClassName {
-    return @"SLLabelTestViewController";
+    return @"SLStaticTextTestViewController";
 }
 
-- (void)focus_testLabelCanBeFound {
+- (void)testLabelCanBeFound {
     NSString *textValue = @"UILabelText";
 
-    // SLLabel matches UILabel control
-    SLLabel *label = [SLLabel elementWithAccessibilityLabel:textValue];
+    // SLStaticText matches UILabel control
+    SLStaticText *label = [SLStaticText elementWithAccessibilityLabel:textValue];
 
     SLAssertTrue([[UIAElement(label) value] isEqualToString:textValue],
-                 @"SLLabel should have matched the UILabel. Actual: %@", label.value);
+                 @"SLStaticText should have matched the UILabel. Actual: %@", label.value);
     SLAssertTrue([[UIAElement(label) label] isEqualToString:textValue],
-                 @"SLLabel should have matched the UILabel. Actual: %@", label.label);
+                 @"SLStaticText should have matched the UILabel. Actual: %@", label.label);
     SLAssertTrue([UIAElement(label) isValidAndVisible],
-                 @"SLLabel should be valid and visible for the UILabel.");
+                 @"SLStaticText should be valid and visible for the UILabel.");
 }
 
-- (void)focus_testWebViewLabelCanBeFound {
+- (void)testWebViewLabelCanBeFound {
     NSString *textValue = @"WebViewLabelText";
 
-    // SLLabel matches <div> element within a UIWebView control
-    SLLabel *webViewLabel = [SLLabel elementWithAccessibilityLabel:textValue];
+    // SLStaticText matches <div> element within a UIWebView control
+    SLStaticText *webViewLabel = [SLStaticText elementWithAccessibilityLabel:textValue];
 
     SLAssertTrue([[UIAElement(webViewLabel) label] isEqualToString:textValue],
-                 @"SLLabel should have matched the div within the webview. Actual: %@", webViewLabel.label);
+                 @"SLStaticText should have matched the div within the webview. Actual: %@", webViewLabel.label);
     SLAssertTrue([UIAElement(webViewLabel) isValidAndVisible],
-                 @"SLLabel should be valid and visible for the webview label.");
+                 @"SLStaticText should be valid and visible for the webview label.");
 
     // NOTE: The value of the WebView control's text element is an empty string, asserting we have consistent behavior across platforms
     SLAssertTrue([[UIAElement(webViewLabel) value] isEqualToString:@""],
-                 @"SLLabel should have matched the div within the webview. Actual: %@", webViewLabel.label);
+                 @"SLStaticText should have matched the div within the webview. Actual: %@", webViewLabel.label);
 }
 
 @end

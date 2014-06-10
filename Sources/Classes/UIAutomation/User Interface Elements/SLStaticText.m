@@ -1,5 +1,5 @@
 //
-//  SLLabel.h
+//  SLStaticText.m
 //  Subliminal
 //
 //  For details and documentation:
@@ -20,15 +20,13 @@
 //  limitations under the License.
 //
 
-#import "SLElement.h"
+#import "SLStaticText.h"
+#import "SLUIAElement+Subclassing.h"
 
-/**
- `SLLabel` matches instances of `UILabel` or anything that emits UIAccessibilityTraitStaticText.
- 
- UILabels automatically inherit their accessibility label from their text value. Therefore, you can
- use the accessibilityIdentifier property if you want to match a label, but don't know what its text
- will be at runtime.
- */
-@interface SLLabel : SLElement
+@implementation SLStaticText
+
+- (BOOL)matchesObject:(NSObject *)object {
+    return [super matchesObject:object] && ([object accessibilityTraits] & UIAccessibilityTraitStaticText);
+}
 
 @end

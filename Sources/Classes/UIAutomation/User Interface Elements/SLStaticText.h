@@ -1,5 +1,5 @@
 //
-//  SLLabel.m
+//  SLStaticText.h
 //  Subliminal
 //
 //  For details and documentation:
@@ -20,17 +20,16 @@
 //  limitations under the License.
 //
 
-#import "SLLabel.h"
-#import "SLUIAElement+Subclassing.h"
+#import "SLElement.h"
 
-@implementation SLLabel
-
-- (BOOL)matchesObject:(NSObject *)object {
-    // All labels should implement UIAccessibilityTraitStaticText, unless it is
-    // overridden by a custom UILabel subclass
-    return [super matchesObject:object] &&
-                ([object accessibilityTraits] & UIAccessibilityTraitStaticText ||
-                 [object isKindOfClass:[UILabel class]]);
-}
+/**
+ `SLStaticText` matches any element that emits UIAccessibilityTraitStaticText, such as 
+ a UILabel or a text element within a UIWebView.
+ 
+ FYI - UILabels automatically inherit their accessibility label from their text value. 
+ Therefore, you can use the accessibilityIdentifier property if you want to match a 
+ label, but don't know what its text will be at runtime.
+ */
+@interface SLStaticText : SLElement
 
 @end

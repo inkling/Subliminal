@@ -1,5 +1,5 @@
 //
-//  SLLabelTestViewController.m
+//  SLStaticTextTestViewController.m
 //  Subliminal
 //
 //  For details and documentation:
@@ -24,19 +24,19 @@
 
 #import <Subliminal/SLTestController+AppHooks.h>
 
-@interface SLLabelTestViewController : SLTestCaseViewController
+@interface SLStaticTextTestViewController : SLTestCaseViewController
 
 @end
 
-@interface SLLabelTestViewController ()
+@interface SLStaticTextTestViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *label;
 @property (weak, nonatomic) IBOutlet UIWebView *webView;
 @end
 
-@implementation SLLabelTestViewController
+@implementation SLStaticTextTestViewController
 
 + (NSString *)nibNameForTestCase:(SEL)testCase {
-    return @"SLLabelTestViewController";
+    return @"SLStaticTextTestViewController";
 }
 
 - (void)viewDidLoad {
