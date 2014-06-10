@@ -41,6 +41,9 @@
 		50F2B7C818E9C0D700F21635 /* SLDispatchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 50F2B7C718E9C0D700F21635 /* SLDispatchTests.m */; };
 		50F3E18C1783A5CB00C6BD1B /* SLGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 50F3E18A1783A5CB00C6BD1B /* SLGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50F3E18E1783A60100C6BD1B /* SLGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 50F3E18B1783A5CB00C6BD1B /* SLGeometry.m */; };
+		6256A2D419476E1F00C6507F /* SLLabelTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6256A2D119476E1F00C6507F /* SLLabelTest.m */; };
+		6256A2D519476E1F00C6507F /* SLLabelTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6256A2D219476E1F00C6507F /* SLLabelTestViewController.m */; };
+		6256A2D619476E1F00C6507F /* SLLabelTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6256A2D319476E1F00C6507F /* SLLabelTestViewController.xib */; };
 		62E7A633193EF84C00CB11AB /* SLLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = 62E7A631193EF84C00CB11AB /* SLLabel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		62E7A634193EF84C00CB11AB /* SLLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 62E7A632193EF84C00CB11AB /* SLLabel.m */; };
 		CA75E78216697A1200D57E92 /* SLDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = CA75E78016697A1200D57E92 /* SLDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -276,6 +279,9 @@
 		50F2B7C718E9C0D700F21635 /* SLDispatchTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDispatchTests.m; sourceTree = "<group>"; };
 		50F3E18A1783A5CB00C6BD1B /* SLGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLGeometry.h; sourceTree = "<group>"; };
 		50F3E18B1783A5CB00C6BD1B /* SLGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLGeometry.m; sourceTree = "<group>"; };
+		6256A2D119476E1F00C6507F /* SLLabelTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLLabelTest.m; sourceTree = "<group>"; };
+		6256A2D219476E1F00C6507F /* SLLabelTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLLabelTestViewController.m; sourceTree = "<group>"; };
+		6256A2D319476E1F00C6507F /* SLLabelTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLLabelTestViewController.xib; sourceTree = "<group>"; };
 		62E7A631193EF84C00CB11AB /* SLLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLLabel.h; sourceTree = "<group>"; };
 		62E7A632193EF84C00CB11AB /* SLLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLLabel.m; sourceTree = "<group>"; };
 		CA75E78016697A1200D57E92 /* SLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLDevice.h; sourceTree = "<group>"; };
@@ -520,6 +526,16 @@
 				50A59BDA178490C2002A863A /* SLGeometryTestViewController.m */,
 			);
 			name = "SLGeometry Tests";
+			sourceTree = "<group>";
+		};
+		6256A2CD19476DA400C6507F /* SLLabel Tests */ = {
+			isa = PBXGroup;
+			children = (
+				6256A2D119476E1F00C6507F /* SLLabelTest.m */,
+				6256A2D219476E1F00C6507F /* SLLabelTestViewController.m */,
+				6256A2D319476E1F00C6507F /* SLLabelTestViewController.xib */,
+			);
+			name = "SLLabel Tests";
 			sourceTree = "<group>";
 		};
 		CAC388011641CD4800F995F9 /* Internal */ = {
@@ -902,6 +918,7 @@
 		F0AC80BE16BB542400C5D5C0 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				6256A2CD19476DA400C6507F /* SLLabel Tests */,
 				DB2627D817B96704009DA3A6 /* SLStatusBar Tests */,
 				50A59BD317848CEE002A863A /* SLGeometry Tests */,
 				F07DA31F16E439B7004C2282 /* SLAlert Tests */,
@@ -1213,6 +1230,7 @@
 				0696BA5A16E013D600DD70CF /* SLElementDraggingTestViewController.xib in Resources */,
 				F01EBC9E1701429400FF6A7C /* SLWebTextField.html in Resources */,
 				F077D70F16D9D77900908FF5 /* SLElementVisibilityTestCovered.xib in Resources */,
+				6256A2D619476E1F00C6507F /* SLLabelTestViewController.xib in Resources */,
 				F090AE7016D9E01D000F0B6F /* SLElementVisibilityTestHidden.xib in Resources */,
 				F090AE7116D9E01D000F0B6F /* SLElementVisibilityTestLowAlpha.xib in Resources */,
 				F090AE7216D9E01D000F0B6F /* SLElementVisibilityTestOffscreen.xib in Resources */,
@@ -1334,6 +1352,7 @@
 				F0AC80A016BB299500C5D5C0 /* main.m in Sources */,
 				F0AC80A416BB299500C5D5C0 /* SLIntegrationTestsAppDelegate.m in Sources */,
 				F0AC80BD16BB50FF00C5D5C0 /* SLTestsViewController.m in Sources */,
+				6256A2D519476E1F00C6507F /* SLLabelTestViewController.m in Sources */,
 				F0AC80C416BC355D00C5D5C0 /* SLTerminalTest.m in Sources */,
 				F0AC80C116BB559F00C5D5C0 /* SLIntegrationTest.m in Sources */,
 				F0AC80C816BC367E00C5D5C0 /* SLTestViewController.m in Sources */,
@@ -1345,6 +1364,7 @@
 				F0CEA00216D60EAD008A3B4A /* SLDeviceTest.m in Sources */,
 				F0CEA00316D60EAD008A3B4A /* SLDeviceTestViewController.m in Sources */,
 				0696BA5816E013D600DD70CF /* SLElementDraggingTest.m in Sources */,
+				6256A2D419476E1F00C6507F /* SLLabelTest.m in Sources */,
 				0696BA5916E013D600DD70CF /* SLElementDraggingTestViewController.m in Sources */,
 				F0AE4C8D16F7F92D00B2BB2B /* SLElementStateTest.m in Sources */,
 				F0AE4C8E16F7F92D00B2BB2B /* SLElementStateTestViewController.m in Sources */,

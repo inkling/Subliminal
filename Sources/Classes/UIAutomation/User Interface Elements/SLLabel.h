@@ -23,9 +23,11 @@
 #import "SLElement.h"
 
 /**
- `SLWindow` matches instances of `UILabel`.
+ `SLLabel` matches instances of `UILabel` or anything that emits UIAccessibilityTraitStaticText.
  
- They generally can't be interacted with, but you can ensure that they appear on the screen at least.
+ UILabels automatically inherit their accessibility label from their text value. Therefore, you can
+ use the accessibilityIdentifier property if you want to match a label, but don't know what its text
+ will be at runtime.
  */
 @interface SLLabel : SLElement
 

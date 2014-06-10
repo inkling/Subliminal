@@ -26,7 +26,11 @@
 @implementation SLLabel
 
 - (BOOL)matchesObject:(NSObject *)object {
-    return [super matchesObject:object] && [object isKindOfClass:[UILabel class]];
+    // All labels should implement UIAccessibilityTraitStaticText, unless it is
+    // overridden by a custom UILabel subclass
+    return [super matchesObject:object] &&
+                ([object accessibilityTraits] & UIAccessibilityTraitStaticText ||
+                 [object isKindOfClass:[UILabel class]]);
 }
 
 @end
