@@ -379,6 +379,9 @@
 - (BOOL)classForcesPresenceOfMockingViewsInAccessibilityHierarchy {
     return YES;
 }
+- (BOOL)classForcesPresenceInAccessibilityHierarchy {
+    return YES;
+}
 @end
 
 

@@ -133,6 +133,21 @@
  */
 + (instancetype)anyElement;
 
+#pragma mark - Hierarchy
+
+/**
+ Allows the caller to return a child object matching the specificed `SLElement`.
+
+ Superclass method assumes element and view are both direct descendants. This
+ will need to be overriden in `SLTableViewCell`, amongst others.
+
+ @param childElement A `SLElement` with your provided specifications.
+
+ @return `instancetype` matching specifications of the parameter and appearing as an
+ accessibilityChild of the caller. If there are no accessibilityChildren then it returns nil
+ */
+- (id)childElementMatching:(SLElement *)childElement;
+
 #pragma mark - Gestures and Actions
 /// ------------------------------------------
 /// @name Gestures and Actions
