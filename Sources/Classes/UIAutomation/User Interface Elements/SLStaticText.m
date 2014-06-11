@@ -1,5 +1,5 @@
 //
-//  Subliminal.h
+//  SLStaticText.m
 //  Subliminal
 //
 //  For details and documentation:
@@ -20,25 +20,13 @@
 //  limitations under the License.
 //
 
-#import "SLTestController.h"
-#import "SLTestController+AppHooks.h"
-#import "SLTest.h"
-
-#import "SLDevice.h"
-#import "SLElement.h"
-#import "NSObject+SLAccessibilityDescription.h"
-#import "NSObject+SLAccessibilityHierarchy.h"
-#import "SLStaticElement.h"
-#import "SLAlert.h"
-#import "SLButton.h"
-#import "SLKeyboard.h"
-#import "SLPopover.h"
 #import "SLStaticText.h"
-#import "SLStatusBar.h"
-#import "SLSwitch.h"
-#import "SLTextField.h"
-#import "SLTextView.h"
-#import "SLWebView.h"
-#import "SLWindow.h"
+#import "SLUIAElement+Subclassing.h"
 
-#import "SLLogger.h"
+@implementation SLStaticText
+
+- (BOOL)matchesObject:(NSObject *)object {
+    return [super matchesObject:object] && ([object accessibilityTraits] & UIAccessibilityTraitStaticText);
+}
+
+@end
