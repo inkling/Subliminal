@@ -199,4 +199,15 @@
  */
 - (void)examineMatchingObject:(void (^)(NSObject *object))block;
 
+/**
+ Overriding this method will allow you to search from some other root window other than
+ the keyWindow. As an example, this is used by Picker controls to select their own window
+ for searching.
+
+ This method is called within the mainDispatchThread, so don't block for long in this code.
+
+ @return The object representing the UI element to be used to start the accessibility path search.
+ */
+- (NSObject *)accessibilityPathSearchRootElement;
+
 @end

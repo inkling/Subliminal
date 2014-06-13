@@ -178,13 +178,19 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
     _shouldDoubleCheckValidity = shouldDoubleCheckValidity;
 }
 
+- (UIWindow *)accessibilityPathSearchRootElement {
+    NSAssert([NSThread isMainThread],
+             @"accessibilityPathSearchRootElement may only be accessed from the main thread.");
+    return [[UIApplication sharedApplication] keyWindow];
+}
+
 - (SLAccessibilityPath *)accessibilityPathWithTimeout:(NSTimeInterval)timeout {
     __block SLAccessibilityPath *accessibilityPath = nil;
     NSDate *startDate = [NSDate date];
     // a timeout of 0 means check once--but then return immediately, no waiting
     do {
         dispatch_sync(dispatch_get_main_queue(), ^{
-            accessibilityPath = [[[UIApplication sharedApplication] keyWindow] slAccessibilityPathToElement:self];
+            accessibilityPath = [[self accessibilityPathSearchRootElement] slAccessibilityPathToElement:self];
         });
         if (accessibilityPath || !timeout) break;
 

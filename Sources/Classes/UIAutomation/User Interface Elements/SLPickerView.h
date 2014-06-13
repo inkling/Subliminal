@@ -1,5 +1,5 @@
 //
-//  Subliminal.h
+//  SLPickerView.h
 //  Subliminal
 //
 //  For details and documentation:
@@ -20,26 +20,16 @@
 //  limitations under the License.
 //
 
-#import "SLTestController.h"
-#import "SLTestController+AppHooks.h"
-#import "SLTest.h"
-
-#import "SLDevice.h"
 #import "SLElement.h"
-#import "NSObject+SLAccessibilityDescription.h"
-#import "NSObject+SLAccessibilityHierarchy.h"
-#import "SLStaticElement.h"
-#import "SLAlert.h"
-#import "SLButton.h"
-#import "SLKeyboard.h"
-#import "SLPickerView.h"
-#import "SLPopover.h"
-#import "SLStaticText.h"
-#import "SLStatusBar.h"
-#import "SLSwitch.h"
-#import "SLTextField.h"
-#import "SLTextView.h"
-#import "SLWebView.h"
-#import "SLWindow.h"
 
-#import "SLLogger.h"
+/**
+ `SLPickerView` needs to find another window other than the mainWindow 
+ to search.
+ */
+@interface SLPickerView : SLElement
+
+- (int)numberOfComponentsInPickerView;
+- (NSArray *)valueOfPickerComponents;
+- (BOOL)selectValue:(NSString *)value forComponent:(int)wheelNumber;
+
+@end
