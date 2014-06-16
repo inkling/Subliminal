@@ -212,6 +212,9 @@
                                                     UICollectionViewDataSource, UICollectionViewDelegate,
                                                     UIWebViewDelegate >
 
+@property (weak, nonatomic) UIViewController *storyboardViewController;
+
+
 // fooButton is purposely strong so that we can hold onto it
 // while it's removed from the view hierarchy in testElementsWaitToMatchValidObjects
 @property (strong, nonatomic) IBOutlet UIButton *fooButton;
@@ -326,6 +329,14 @@
         _collectionView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
         self.view = _collectionView;
+    } else if (testCase == @selector(testMatchingElementsWithinTableHeaderView)) {
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"SLTestMatchingElementsWithinTableHeaderView" bundle:nil];
+        self.storyboardViewController = [sb instantiateInitialViewController];
+        [self addChildViewController:self.storyboardViewController];
+
+        UIView *view = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+        [view addSubview:self.storyboardViewController.view];
+        self.view = view;
     }
 }
 
