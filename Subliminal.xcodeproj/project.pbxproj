@@ -43,12 +43,19 @@
 		50F3E18E1783A60100C6BD1B /* SLGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 50F3E18B1783A5CB00C6BD1B /* SLGeometry.m */; };
 		622DA08F194AF1C900EFFE05 /* SLPickerView.h in Headers */ = {isa = PBXBuildFile; fileRef = 622DA089194AF03E00EFFE05 /* SLPickerView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		622DA090194AF1E200EFFE05 /* SLPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 622DA08A194AF03E00EFFE05 /* SLPickerView.m */; };
-		622DA0A6194B799D00EFFE05 /* SLPickerViewTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 622DA0A4194B799D00EFFE05 /* SLPickerViewTestViewController.m */; };
-		622DA0A7194B799D00EFFE05 /* SLPickerViewTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 622DA0A5194B799D00EFFE05 /* SLPickerViewTestViewController.xib */; };
-		622DA0A9194B7FC200EFFE05 /* SLPickerViewTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 622DA0A8194B7FC200EFFE05 /* SLPickerViewTest.m */; };
+		622DA0A6194B799D00EFFE05 /* SLTextFieldPickerTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 622DA0A4194B799D00EFFE05 /* SLTextFieldPickerTestViewController.m */; };
+		622DA0A7194B799D00EFFE05 /* SLTextFieldPickerTestView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 622DA0A5194B799D00EFFE05 /* SLTextFieldPickerTestView.xib */; };
+		622DA0A9194B7FC200EFFE05 /* SLTextFieldPickerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 622DA0A8194B7FC200EFFE05 /* SLTextFieldPickerTest.m */; };
+		622DA0B0194CCC4200EFFE05 /* SLDatePickerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 622DA0AE194CCC4200EFFE05 /* SLDatePickerTest.m */; };
+		622DA0B1194CCC4200EFFE05 /* SLDatePickerTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 622DA0AF194CCC4200EFFE05 /* SLDatePickerTestViewController.m */; };
+		622DA0B3194CCF2600EFFE05 /* SLTextFieldPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 622DA0B2194CCF2600EFFE05 /* SLTextFieldPicker.m */; };
+		622DA0B5194CD3C800EFFE05 /* SLDatePickerTestView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 622DA0AA194CC71600EFFE05 /* SLDatePickerTestView.xib */; };
+		622DA0BB194E2CB900EFFE05 /* SLDatePicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 622DA0B9194E2CB100EFFE05 /* SLDatePicker.m */; };
+		622DA0BC194E2CBC00EFFE05 /* SLDatePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 622DA0B8194E2CB100EFFE05 /* SLDatePicker.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6256A2D419476E1F00C6507F /* SLStaticTextTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6256A2D119476E1F00C6507F /* SLStaticTextTest.m */; };
 		6256A2D519476E1F00C6507F /* SLStaticTextTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6256A2D219476E1F00C6507F /* SLStaticTextTestViewController.m */; };
 		6256A2D619476E1F00C6507F /* SLStaticTextTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6256A2D319476E1F00C6507F /* SLStaticTextTestViewController.xib */; };
+		62E60334194ED7E800BE4667 /* SLPickerViewOverrides.h in Headers */ = {isa = PBXBuildFile; fileRef = 62E60333194ED7E800BE4667 /* SLPickerViewOverrides.h */; };
 		62E7A633193EF84C00CB11AB /* SLStaticText.h in Headers */ = {isa = PBXBuildFile; fileRef = 62E7A631193EF84C00CB11AB /* SLStaticText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		62E7A634193EF84C00CB11AB /* SLStaticText.m in Sources */ = {isa = PBXBuildFile; fileRef = 62E7A632193EF84C00CB11AB /* SLStaticText.m */; };
 		CA75E78216697A1200D57E92 /* SLDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = CA75E78016697A1200D57E92 /* SLDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -286,12 +293,20 @@
 		50F3E18B1783A5CB00C6BD1B /* SLGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLGeometry.m; sourceTree = "<group>"; };
 		622DA089194AF03E00EFFE05 /* SLPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLPickerView.h; sourceTree = "<group>"; };
 		622DA08A194AF03E00EFFE05 /* SLPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLPickerView.m; sourceTree = "<group>"; };
-		622DA0A4194B799D00EFFE05 /* SLPickerViewTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLPickerViewTestViewController.m; sourceTree = "<group>"; };
-		622DA0A5194B799D00EFFE05 /* SLPickerViewTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLPickerViewTestViewController.xib; sourceTree = "<group>"; };
-		622DA0A8194B7FC200EFFE05 /* SLPickerViewTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLPickerViewTest.m; sourceTree = "<group>"; };
+		622DA0A4194B799D00EFFE05 /* SLTextFieldPickerTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTextFieldPickerTestViewController.m; sourceTree = "<group>"; };
+		622DA0A5194B799D00EFFE05 /* SLTextFieldPickerTestView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLTextFieldPickerTestView.xib; sourceTree = "<group>"; };
+		622DA0A8194B7FC200EFFE05 /* SLTextFieldPickerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTextFieldPickerTest.m; sourceTree = "<group>"; };
+		622DA0AA194CC71600EFFE05 /* SLDatePickerTestView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLDatePickerTestView.xib; sourceTree = "<group>"; };
+		622DA0AE194CCC4200EFFE05 /* SLDatePickerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDatePickerTest.m; sourceTree = "<group>"; };
+		622DA0AF194CCC4200EFFE05 /* SLDatePickerTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDatePickerTestViewController.m; sourceTree = "<group>"; };
+		622DA0B2194CCF2600EFFE05 /* SLTextFieldPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTextFieldPicker.m; sourceTree = "<group>"; };
+		622DA0B4194CCF7800EFFE05 /* SLTextFieldPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTextFieldPicker.h; sourceTree = "<group>"; };
+		622DA0B8194E2CB100EFFE05 /* SLDatePicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLDatePicker.h; sourceTree = "<group>"; };
+		622DA0B9194E2CB100EFFE05 /* SLDatePicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDatePicker.m; sourceTree = "<group>"; };
 		6256A2D119476E1F00C6507F /* SLStaticTextTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLStaticTextTest.m; sourceTree = "<group>"; };
 		6256A2D219476E1F00C6507F /* SLStaticTextTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLStaticTextTestViewController.m; sourceTree = "<group>"; };
 		6256A2D319476E1F00C6507F /* SLStaticTextTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLStaticTextTestViewController.xib; sourceTree = "<group>"; };
+		62E60333194ED7E800BE4667 /* SLPickerViewOverrides.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLPickerViewOverrides.h; sourceTree = "<group>"; };
 		62E7A631193EF84C00CB11AB /* SLStaticText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLStaticText.h; sourceTree = "<group>"; };
 		62E7A632193EF84C00CB11AB /* SLStaticText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLStaticText.m; sourceTree = "<group>"; };
 		CA75E78016697A1200D57E92 /* SLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLDevice.h; sourceTree = "<group>"; };
@@ -541,11 +556,23 @@
 		622DA09F194B796700EFFE05 /* SLPickerView Tests */ = {
 			isa = PBXGroup;
 			children = (
-				622DA0A8194B7FC200EFFE05 /* SLPickerViewTest.m */,
-				622DA0A4194B799D00EFFE05 /* SLPickerViewTestViewController.m */,
-				622DA0A5194B799D00EFFE05 /* SLPickerViewTestViewController.xib */,
+				622DA0A8194B7FC200EFFE05 /* SLTextFieldPickerTest.m */,
+				622DA0A4194B799D00EFFE05 /* SLTextFieldPickerTestViewController.m */,
+				622DA0A5194B799D00EFFE05 /* SLTextFieldPickerTestView.xib */,
+				622DA0B4194CCF7800EFFE05 /* SLTextFieldPicker.h */,
+				622DA0B2194CCF2600EFFE05 /* SLTextFieldPicker.m */,
 			);
 			name = "SLPickerView Tests";
+			sourceTree = "<group>";
+		};
+		622DA0AD194CCA7500EFFE05 /* SLDatePicker Tests */ = {
+			isa = PBXGroup;
+			children = (
+				622DA0AE194CCC4200EFFE05 /* SLDatePickerTest.m */,
+				622DA0AF194CCC4200EFFE05 /* SLDatePickerTestViewController.m */,
+				622DA0AA194CC71600EFFE05 /* SLDatePickerTestView.xib */,
+			);
+			name = "SLDatePicker Tests";
 			sourceTree = "<group>";
 		};
 		6256A2CD19476DA400C6507F /* SLStaticText Tests */ = {
@@ -568,6 +595,7 @@
 				F04346AE175AD63E00D91F7F /* SLAccessibilityPath.m */,
 				F04346A5175AD10200D91F7F /* NSObject+SLVisibility.h */,
 				F04346A6175AD10200D91F7F /* NSObject+SLVisibility.m */,
+				62E60333194ED7E800BE4667 /* SLPickerViewOverrides.h */,
 				F05C51E3171C8AE000A381BC /* SLMainThreadRef.h */,
 				F05C51E4171C8AE000A381BC /* SLMainThreadRef.m */,
 				F02DF30617EC064F00BE28BF /* UIScrollView+SLProgrammaticScrolling.h */,
@@ -822,6 +850,8 @@
 				F0C07A371703F95B00C93F93 /* SLAlert.m */,
 				F0C07A451703FEF600C93F93 /* SLButton.h */,
 				F0C07A461703FEF600C93F93 /* SLButton.m */,
+				622DA0B8194E2CB100EFFE05 /* SLDatePicker.h */,
+				622DA0B9194E2CB100EFFE05 /* SLDatePicker.m */,
 				F0C07A511704011300C93F93 /* SLKeyboard.h */,
 				F0C07A521704011300C93F93 /* SLKeyboard.m */,
 				622DA089194AF03E00EFFE05 /* SLPickerView.h */,
@@ -940,17 +970,18 @@
 		F0AC80BE16BB542400C5D5C0 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				622DA09F194B796700EFFE05 /* SLPickerView Tests */,
 				DB2627D817B96704009DA3A6 /* SLStatusBar Tests */,
 				50A59BD317848CEE002A863A /* SLGeometry Tests */,
 				F07DA31F16E439B7004C2282 /* SLAlert Tests */,
 				F00800BF174B2CB0001927AC /* SLButton Tests */,
+				622DA0AD194CCA7500EFFE05 /* SLDatePicker Tests */,
 				F0CE9FFE16D60E61008A3B4A /* SLDevice Tests */,
 				F0AE4C8716F7F8ED00B2BB2B /* SLElement State Tests */,
 				F077D70016D9D71E00908FF5 /* SLElement Visibility Tests */,
 				F05263C316D2C2CF0090174F /* SLElement Matching Tests */,
 				0696BA5E16E013DF00DD70CF /* SLElement Gestures and Actions Tests */,
 				F089F9DC1745FB3800DF1F25 /* SLKeyboard Tests */,
+				622DA09F194B796700EFFE05 /* SLPickerView Tests */,
 				F00800D3174C2871001927AC /* SLPopover Tests */,
 				F089F9FD1746B1D200DF1F25 /* SLStaticElement Tests */,
 				6256A2CD19476DA400C6507F /* SLStaticText Tests */,
@@ -1052,7 +1083,9 @@
 				F0695E1C16014491000B05D0 /* Subliminal.h in Headers */,
 				F0695E1D16014491000B05D0 /* SLTestController.h in Headers */,
 				F0695E1E16014491000B05D0 /* SLTest.h in Headers */,
+				622DA0BC194E2CBC00EFFE05 /* SLDatePicker.h in Headers */,
 				F0695E1F16014491000B05D0 /* SLTerminal.h in Headers */,
+				62E60334194ED7E800BE4667 /* SLPickerViewOverrides.h in Headers */,
 				F0695E2016014491000B05D0 /* SLUIAElement.h in Headers */,
 				F0695E2116014491000B05D0 /* SLLogger.h in Headers */,
 				F0271AFF162E0B950098F5F2 /* SLTestController+AppHooks.h in Headers */,
@@ -1246,8 +1279,9 @@
 			files = (
 				F0AC809E16BB299500C5D5C0 /* InfoPlist.strings in Resources */,
 				F0AC80A616BB299500C5D5C0 /* Default.png in Resources */,
-				622DA0A7194B799D00EFFE05 /* SLPickerViewTestViewController.xib in Resources */,
+				622DA0A7194B799D00EFFE05 /* SLTextFieldPickerTestView.xib in Resources */,
 				F0AC80A816BB299500C5D5C0 /* Default@2x.png in Resources */,
+				622DA0B5194CD3C800EFFE05 /* SLDatePickerTestView.xib in Resources */,
 				F0AC80AA16BB299500C5D5C0 /* Default-568h@2x.png in Resources */,
 				F01B2B6F16D2C55900DBA391 /* SLElementMatchingTestViewController.xib in Resources */,
 				F0CEA00416D60EAD008A3B4A /* SLDeviceTestViewController.xib in Resources */,
@@ -1344,6 +1378,7 @@
 				F0695DE5160138DF000B05D0 /* SLLogger.m in Sources */,
 				F0695DE7160138DF000B05D0 /* SLTerminal.m in Sources */,
 				F0695DE8160138DF000B05D0 /* SLTest.m in Sources */,
+				622DA0BB194E2CB900EFFE05 /* SLDatePicker.m in Sources */,
 				F0695DE9160138DF000B05D0 /* SLTestController.m in Sources */,
 				F0271B00162E0B950098F5F2 /* SLTestController+AppHooks.m in Sources */,
 				F02DF30917EC064F00BE28BF /* UIScrollView+SLProgrammaticScrolling.m in Sources */,
@@ -1382,8 +1417,8 @@
 				F0AC80C416BC355D00C5D5C0 /* SLTerminalTest.m in Sources */,
 				F0AC80C116BB559F00C5D5C0 /* SLIntegrationTest.m in Sources */,
 				F0AC80C816BC367E00C5D5C0 /* SLTestViewController.m in Sources */,
-				F078C04A1808BF24000767D2 /* SLWebViewTestViewController.m in Sources */,
 				F0AC80E616BCF91800C5D5C0 /* SLTestCaseViewController.m in Sources */,
+				F078C04A1808BF24000767D2 /* SLWebViewTestViewController.m in Sources */,
 				06953E3F178FDA7100B3D1B7 /* SLElementTouchAndHoldTest.m in Sources */,
 				F01B2B6D16D2C55900DBA391 /* SLElementMatchingTest.m in Sources */,
 				F01B2B6E16D2C55900DBA391 /* SLElementMatchingTestViewController.m in Sources */,
@@ -1397,13 +1432,18 @@
 				F07DA32D16E43AD3004C2282 /* SLAlertTest.m in Sources */,
 				F07DA32E16E43AD3004C2282 /* SLAlertTestViewController.m in Sources */,
 				2C903BC117F525E700555317 /* SLSwitchTestViewController.m in Sources */,
-				622DA0A9194B7FC200EFFE05 /* SLPickerViewTest.m in Sources */,
+				622DA0B0194CCC4200EFFE05 /* SLDatePickerTest.m in Sources */,
+				622DA0B1194CCC4200EFFE05 /* SLDatePickerTestViewController.m in Sources */,
+				622DA0A9194B7FC200EFFE05 /* SLTextFieldPickerTest.m in Sources */,
+				622DA0A6194B799D00EFFE05 /* SLTextFieldPickerTestViewController.m in Sources */,
+				622DA0B3194CCF2600EFFE05 /* SLTextFieldPicker.m in Sources */,
 				F01EBC9B170115B100FF6A7C /* SLTextFieldTest.m in Sources */,
-				622DA0A6194B799D00EFFE05 /* SLPickerViewTestViewController.m in Sources */,
 				F01EBC9C170115B100FF6A7C /* SLTextFieldTestViewController.m in Sources */,
+				F0A3F63D17A7172E007529C3 /* SLTextViewTest.m in Sources */,
+				F0A3F63E17A7172E007529C3 /* SLTextViewTestViewController.m in Sources */,
+				F0B868EC1740A146008BDA80 /* SLTerminalTestViewController.m in Sources */,
 				F077D70D16D9D77900908FF5 /* SLElementVisibilityTest.m in Sources */,
 				F077D70E16D9D77900908FF5 /* SLElementVisibilityTestViewController.m in Sources */,
-				F0B868EC1740A146008BDA80 /* SLTerminalTestViewController.m in Sources */,
 				F0CC759A173B097800E8F94A /* SLElementTapTest.m in Sources */,
 				F0CC759B173B097800E8F94A /* SLElementTapTestViewController.m in Sources */,
 				F089F99417458BA300DF1F25 /* SLWindowTest.m in Sources */,
@@ -1417,8 +1457,6 @@
 				F00800E2174C2E0A001927AC /* SLPopoverTest.m in Sources */,
 				F00800E3174C2E0A001927AC /* SLPopoverTestViewController.m in Sources */,
 				0640035A178FDE7800479173 /* SLElementTouchAndHoldTestViewController.m in Sources */,
-				F0A3F63D17A7172E007529C3 /* SLTextViewTest.m in Sources */,
-				F0A3F63E17A7172E007529C3 /* SLTextViewTestViewController.m in Sources */,
 				DB2627DE17B96727009DA3A6 /* SLStatusBarTest.m in Sources */,
 				F078C0491808BF24000767D2 /* SLWebViewTest.m in Sources */,
 				DB2627DF17B96727009DA3A6 /* SLStatusBarTestViewController.m in Sources */,

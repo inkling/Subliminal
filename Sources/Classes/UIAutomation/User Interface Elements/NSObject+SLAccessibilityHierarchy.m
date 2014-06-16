@@ -456,3 +456,17 @@
     return YES;
 }
 @end
+
+@implementation UIDatePicker (SLAccessibilityHierarchy)
+
+/**
+ To handle the issue that UIDatePicker can have so many child accessibility
+ elements, we're intentionally not iterating into it's children to save time.
+ Using the methods exposed on SLDatePicker should be sufficient for interacting
+ with items within the UIDatePicker control.
+ */
+- (NSArray *)slChildAccessibilityElementsFavoringSubviews:(BOOL)favoringSubviews {
+    return nil;
+}
+
+@end

@@ -1,20 +1,18 @@
 //
-//  SLPickerViewTestViewController.m
+//  SLTextFieldPicker.m
 //  Subliminal
 //
 //  Created by Justin Martin on 6/13/14.
 //  Copyright (c) 2014 Inkling. All rights reserved.
 //
 
-#import "SLTestCaseViewController.h"
+#import "SLTextFieldPicker.h"
 
-#import <Subliminal/SLTestController+AppHooks.h>
-
-@interface SLTestPickerTextField : UITextField <UIPickerViewDelegate, UIPickerViewDataSource>
+@interface SLTextFieldPicker () <UIPickerViewDelegate, UIPickerViewDataSource>
 @property UIPickerView *pickerView;
 @end
 
-@implementation SLTestPickerTextField {
+@implementation SLTextFieldPicker {
     NSMutableArray *_values;
 }
 
@@ -26,7 +24,7 @@
         _pickerView = [[UIPickerView alloc] init];
         _pickerView.delegate = self;
         _pickerView.accessibilityIdentifier = @"Picker View";
-        _values = [[NSMutableArray alloc] initWithObjects:[[NSNumber alloc] initWithInt:1], [[NSNumber alloc] initWithInt:1], nil];
+        _values = [[NSMutableArray alloc] initWithObjects:@1, [[NSNumber alloc] initWithInt:1], nil];
         self.inputView = _pickerView;
         self.accessibilityIdentifier = @"Text Field";
         [self updateText];
@@ -48,7 +46,7 @@
 }
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
-    [_values setObject:[[NSNumber alloc] initWithInt:(row + 1)] atIndexedSubscript:component];
+    _values[component] = @(row + 1);
     [self updateText];
 }
 
@@ -56,20 +54,9 @@
     self.text = [_values componentsJoinedByString:@" - "];
 }
 
+// Have the cursor to not blink in the text field, but it isn't necessary to test the scenario.
 - (CGRect)caretRectForPosition:(UITextPosition *)position {
     return CGRectZero;
-}
-
-@end
-
-@interface SLPickerViewTestViewController : SLTestCaseViewController
-@property (weak, nonatomic) IBOutlet SLTestPickerTextField *textField;
-@end
-
-@implementation SLPickerViewTestViewController
-
-+ (NSString *)nibNameForTestCase:(SEL)testCase {
-    return @"SLPickerViewTestViewController";
 }
 
 @end

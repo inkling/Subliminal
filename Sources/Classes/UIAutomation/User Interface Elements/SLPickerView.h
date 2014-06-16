@@ -23,13 +23,54 @@
 #import "SLElement.h"
 
 /**
- `SLPickerView` needs to find another window other than the mainWindow 
- to search.
+ SLPickerView elements represent instances of UIPickerView.
+
+ If it is the inputView for a text field, set isPickerForTextInputView to YES and it will
+ be contained looked for in the 'UITextEffectsWindow' window rather than the keyWindow.
+
+ This object gives access to viewing and manipulating the individual components (or as UIA
+ calls them 'wheels') of the Picker.
  */
 @interface SLPickerView : SLElement
 
+/**
+ Calls the equivalent of 'wheels().length' on the picker in UIA. This will return
+ the number of components (or wheels as UIA calls them) in the picker.
+
+ @return The actual number of components visible on the screen
+ */
 - (int)numberOfComponentsInPickerView;
+
+/**
+ Runs a script that gets the value of each individual component and returns it as an
+ array of strings.
+
+ @return An array of strings containing the output of value() for each wheel component.
+ The string values are of the format "%@ (%d of %d)", where the first portion is current
+ selected wheel's value, and the two numbers represent the current selected element row
+ and the total number of rows.
+ */
 - (NSArray *)valueOfPickerComponents;
-- (BOOL)selectValue:(NSString *)value forComponent:(int)wheelNumber;
+
+/**
+ Changes the selected value of a given component to a specified value on the wheel. If
+ invalid values are passed, an exception will be thrown. This is done by the equivalent
+ UIA script 'wheels()[&lt;componentIndex&gt;].selectValue(&quot;&lt;title&gt;&quot;)'
+ on the picker.
+
+ @param title The title to make selected by spinning the picker.
+ @param componentIndex The index for which to reference the values.
+ */
+- (void)selectValue:(NSString *)title forComponent:(int)componentIndex;
+
+/**
+ If the UIPickerView is set as the inputView for a UITextField, it will appear in a
+ different window that the regular keyWindow. This boolean flag determines which
+ window should be used to find the element.
+
+ Potentially, this should be moved up to SLElement, because any view could be hosted
+ as the inputView for a UITextField element.
+ */
+@property BOOL isPickerForTextInputView;
 
 @end

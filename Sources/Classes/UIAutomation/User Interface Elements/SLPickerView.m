@@ -21,15 +21,21 @@
 //
 
 #import "SLPickerView.h"
+#import "SLPickerViewOverrides.h"
 #import "SLUIAElement+Subclassing.h"
+
+@interface SLPickerView () <SLPickerViewOverrides>
+@end
 
 @implementation SLPickerView
 
 - (BOOL)matchesObject:(NSObject *)object {
-    return ([super matchesObject:object] && [object isKindOfClass:[UIPickerView class]]);
+    return ([super matchesObject:object] && [object isKindOfClass:[self classToMatchOn]]);
 }
 
 - (UIWindow *)accessibilityPathSearchRootElement {
+    if (! self.isPickerForTextInputView) return [super accessibilityPathSearchRootElement];
+
     NSAssert([NSThread isMainThread],
              @"accessibilityPathSearchRootElement may only be accessed from the main thread.");
 
@@ -38,33 +44,65 @@
             return window;
         }
     };
-    
+
     return nil;
 }
 
+- (BOOL)isVisible {
+    return [[self waitUntilTappable:NO
+                    thenSendMessage:@"%@[0].isVisible()", [self wheelsObjectPathInUIA]] boolValue];
+}
+
 - (int)numberOfComponentsInPickerView {
-    return [(NSString *)[self waitUntilTappable:YES thenSendMessage:@"wheels().length"] intValue];
+    return [[self waitUntilTappable:NO
+                    thenSendMessage:@"%@.length", [self wheelsObjectPathInUIA]] intValue];
 }
 
 - (NSArray *)valueOfPickerComponents {
-    __block NSArray *pickerComponenValues;
+    __block NSArray *pickerComponentValues;
 
     [self waitUntilTappable:NO thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
-        NSString *responseString = [[SLTerminal sharedTerminal] evalWithFormat:@"var values = [];\n"
-                                                                                "var wheels = %@.wheels();\n"
-                                                                                "for (var i = 0; i < wheels.length; i++) {\n"
-                                                                                "    values.push(wheels[i].value());\n"
-                                                                                "}\n"
-                                                                                "JSON.stringify(values);", uiaRepresentation];
+        NSString *responseString = [[SLTerminal sharedTerminal] evalWithFormat:
+                                       @"var values = [];\n"
+                                        "var wheels = %@.%@;\n"
+                                        "for (var i = 0; i < wheels.length; i++) {\n"
+                                        "    values.push(wheels[i].value());\n"
+                                        "}\n"
+                                        "JSON.stringify(values);",
+                                        uiaRepresentation, [self wheelsObjectPathInUIA]];
         NSData *jsonDataFromString = [responseString dataUsingEncoding:NSUTF8StringEncoding];
-        pickerComponenValues =  (NSArray *)[NSJSONSerialization JSONObjectWithData:jsonDataFromString options:0 error:nil];
+        pickerComponentValues =  (NSArray *)[NSJSONSerialization JSONObjectWithData:jsonDataFromString
+                                                                            options:0
+                                                                              error:nil];
     } timeout:[[self class] defaultTimeout]];
 
-    return pickerComponenValues;
+    return pickerComponentValues;
 }
 
-- (BOOL)selectValue:(NSString *)value forComponent:(int)wheelNumber {
-    return [self waitUntilTappable:YES thenSendMessage:@"wheels()[%d].selectValue(\"%@\")", wheelNumber, value] == nil;
+// We should be waiting until the element is tappable before setting the value, but it doesn't
+// fit with the existing infrastructure to get the waitUntilTappable:thenSendMessage: method
+// to use an overloaded isTappable method.
+- (void)selectValue:(NSString *)title forComponent:(int)componentIndex {
+    [self waitUntilTappable:NO thenSendMessage:@"%@[%d].selectValue(\"%@\")",
+                                    [self wheelsObjectPathInUIA], componentIndex, title];
+}
+
+// Overload behavior of SLUIAElement, because testTextInputPickerViewCanBeFoundAfterTappingText
+// fails saying that the element isn't tappable on iOS 6.
+- (BOOL)isTappable {
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] < 7.0) {
+        return [self isVisible];
+    } else {
+        return [super isTappable];
+    }
+}
+
+- (Class)classToMatchOn {
+    return [UIPickerView class];
+}
+
+- (NSString *)wheelsObjectPathInUIA {
+    return @"wheels()";
 }
 
 @end

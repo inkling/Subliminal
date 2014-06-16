@@ -208,6 +208,6 @@
 
  @return The object representing the UI element to be used to start the accessibility path search.
  */
-- (NSObject *)accessibilityPathSearchRootElement;
+- (UIWindow *)accessibilityPathSearchRootElement;
 
 @end
