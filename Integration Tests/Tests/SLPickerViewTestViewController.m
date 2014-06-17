@@ -1,5 +1,5 @@
 //
-//  SLTextFieldPickerTestViewController.m
+//  SLPickerTestViewController.m
 //  Subliminal
 //
 //  Created by Justin Martin on 6/13/14.
@@ -10,13 +10,13 @@
 
 #import <Subliminal/SLTestController+AppHooks.h>
 
-@interface SLTextFieldPickerTestViewController : SLTestCaseViewController <UIPickerViewDataSource, UIPickerViewDelegate>
+@interface SLPickerTestViewController : SLTestCaseViewController <UIPickerViewDataSource, UIPickerViewDelegate>
 @end
 
-@implementation SLTextFieldPickerTestViewController
+@implementation SLPickerTestViewController
 
 + (NSString *)nibNameForTestCase:(SEL)testCase {
-    return @"SLTextFieldPickerTestView";
+    return @"SLPickerViewTestView";
 }
 
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {

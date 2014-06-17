@@ -33,6 +33,9 @@
  Fetches the number of components from UIA.
  
  @return The actual number of components visible on the screen
+ 
+ @exception SLUIAElementInvalidException Raised if the there is no UIPickerView on or
+ above the keyWindow.
  */
 - (NSUInteger)numberOfComponentsInPickerView;
 
@@ -44,15 +47,23 @@
  values are of the format "%@ (%d of %d)", where the first portion is current selected
  wheel's value, and the two numbers represent the current selected element row and the
  total number of rows.
+ 
+ @exception SLUIAElementInvalidException Raised if the there is no UIPickerView on or
+ above the keyWindow.
  */
 - (NSArray *)valueOfPickerComponents;
 
 /**
- Changes the selected value of a given component to a specified value on the wheel. If
- invalid values are passed, an exception will be thrown.
+ Changes the selected value of a given component to a specified value on the wheel.
  
  @param title The title to make selected by spinning the picker.
  @param componentIndex The index for which to reference the values.
+ 
+ @exception SLUIAElementInvalidException Raised if the _title_ doesn't exist within the
+ picker wheel at _componentIndex_ before [default timeout](+[SLUIAElement defaultTimeout]).
+ 
+ @exception SLUIAElementAutomationException Raised if the _title_ doesn't exist within
+ the picker wheel at _componentIndex_.
  */
 - (void)selectValue:(NSString *)title forComponent:(NSUInteger)componentIndex;
 

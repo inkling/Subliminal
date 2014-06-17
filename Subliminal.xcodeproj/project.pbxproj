@@ -43,9 +43,9 @@
 		50F3E18E1783A60100C6BD1B /* SLGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 50F3E18B1783A5CB00C6BD1B /* SLGeometry.m */; };
 		622DA08F194AF1C900EFFE05 /* SLPickerView.h in Headers */ = {isa = PBXBuildFile; fileRef = 622DA089194AF03E00EFFE05 /* SLPickerView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		622DA090194AF1E200EFFE05 /* SLPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 622DA08A194AF03E00EFFE05 /* SLPickerView.m */; };
-		622DA0A6194B799D00EFFE05 /* SLTextFieldPickerTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 622DA0A4194B799D00EFFE05 /* SLTextFieldPickerTestViewController.m */; };
-		622DA0A7194B799D00EFFE05 /* SLTextFieldPickerTestView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 622DA0A5194B799D00EFFE05 /* SLTextFieldPickerTestView.xib */; };
-		622DA0A9194B7FC200EFFE05 /* SLTextFieldPickerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 622DA0A8194B7FC200EFFE05 /* SLTextFieldPickerTest.m */; };
+		622DA0A6194B799D00EFFE05 /* SLPickerViewTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 622DA0A4194B799D00EFFE05 /* SLPickerViewTestViewController.m */; };
+		622DA0A7194B799D00EFFE05 /* SLPickerViewTestView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 622DA0A5194B799D00EFFE05 /* SLPickerViewTestView.xib */; };
+		622DA0A9194B7FC200EFFE05 /* SLPickerViewTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 622DA0A8194B7FC200EFFE05 /* SLPickerViewTest.m */; };
 		622DA0B0194CCC4200EFFE05 /* SLDatePickerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 622DA0AE194CCC4200EFFE05 /* SLDatePickerTest.m */; };
 		622DA0B1194CCC4200EFFE05 /* SLDatePickerTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 622DA0AF194CCC4200EFFE05 /* SLDatePickerTestViewController.m */; };
 		622DA0B3194CCF2600EFFE05 /* SLTextFieldPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 622DA0B2194CCF2600EFFE05 /* SLTextFieldPicker.m */; };
@@ -292,9 +292,9 @@
 		50F3E18B1783A5CB00C6BD1B /* SLGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLGeometry.m; sourceTree = "<group>"; };
 		622DA089194AF03E00EFFE05 /* SLPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLPickerView.h; sourceTree = "<group>"; };
 		622DA08A194AF03E00EFFE05 /* SLPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLPickerView.m; sourceTree = "<group>"; };
-		622DA0A4194B799D00EFFE05 /* SLTextFieldPickerTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTextFieldPickerTestViewController.m; sourceTree = "<group>"; };
-		622DA0A5194B799D00EFFE05 /* SLTextFieldPickerTestView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLTextFieldPickerTestView.xib; sourceTree = "<group>"; };
-		622DA0A8194B7FC200EFFE05 /* SLTextFieldPickerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTextFieldPickerTest.m; sourceTree = "<group>"; };
+		622DA0A4194B799D00EFFE05 /* SLPickerViewTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLPickerViewTestViewController.m; sourceTree = "<group>"; };
+		622DA0A5194B799D00EFFE05 /* SLPickerViewTestView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLPickerViewTestView.xib; sourceTree = "<group>"; };
+		622DA0A8194B7FC200EFFE05 /* SLPickerViewTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLPickerViewTest.m; sourceTree = "<group>"; };
 		622DA0AA194CC71600EFFE05 /* SLDatePickerTestView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLDatePickerTestView.xib; sourceTree = "<group>"; };
 		622DA0AE194CCC4200EFFE05 /* SLDatePickerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDatePickerTest.m; sourceTree = "<group>"; };
 		622DA0AF194CCC4200EFFE05 /* SLDatePickerTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDatePickerTestViewController.m; sourceTree = "<group>"; };
@@ -553,9 +553,9 @@
 		622DA09F194B796700EFFE05 /* SLPickerView Tests */ = {
 			isa = PBXGroup;
 			children = (
-				622DA0A8194B7FC200EFFE05 /* SLTextFieldPickerTest.m */,
-				622DA0A4194B799D00EFFE05 /* SLTextFieldPickerTestViewController.m */,
-				622DA0A5194B799D00EFFE05 /* SLTextFieldPickerTestView.xib */,
+				622DA0A8194B7FC200EFFE05 /* SLPickerViewTest.m */,
+				622DA0A4194B799D00EFFE05 /* SLPickerViewTestViewController.m */,
+				622DA0A5194B799D00EFFE05 /* SLPickerViewTestView.xib */,
 			);
 			name = "SLPickerView Tests";
 			sourceTree = "<group>";
@@ -1273,7 +1273,7 @@
 			files = (
 				F0AC809E16BB299500C5D5C0 /* InfoPlist.strings in Resources */,
 				F0AC80A616BB299500C5D5C0 /* Default.png in Resources */,
-				622DA0A7194B799D00EFFE05 /* SLTextFieldPickerTestView.xib in Resources */,
+				622DA0A7194B799D00EFFE05 /* SLPickerViewTestView.xib in Resources */,
 				F0AC80A816BB299500C5D5C0 /* Default@2x.png in Resources */,
 				622DA0B5194CD3C800EFFE05 /* SLDatePickerTestView.xib in Resources */,
 				F0AC80AA16BB299500C5D5C0 /* Default-568h@2x.png in Resources */,
@@ -1428,8 +1428,8 @@
 				2C903BC117F525E700555317 /* SLSwitchTestViewController.m in Sources */,
 				622DA0B0194CCC4200EFFE05 /* SLDatePickerTest.m in Sources */,
 				622DA0B1194CCC4200EFFE05 /* SLDatePickerTestViewController.m in Sources */,
-				622DA0A9194B7FC200EFFE05 /* SLTextFieldPickerTest.m in Sources */,
-				622DA0A6194B799D00EFFE05 /* SLTextFieldPickerTestViewController.m in Sources */,
+				622DA0A9194B7FC200EFFE05 /* SLPickerViewTest.m in Sources */,
+				622DA0A6194B799D00EFFE05 /* SLPickerViewTestViewController.m in Sources */,
 				622DA0B3194CCF2600EFFE05 /* SLTextFieldPicker.m in Sources */,
 				F01EBC9B170115B100FF6A7C /* SLTextFieldTest.m in Sources */,
 				F01EBC9C170115B100FF6A7C /* SLTextFieldTestViewController.m in Sources */,

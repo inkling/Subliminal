@@ -11,7 +11,7 @@
 @interface SLDatePickerTest : SLIntegrationTest
 @end
 
-// All of these test cases focus on containing a UIPickerView in a TextField's inputView
+// These test cases cover interacting with a UIDatePicker control
 @implementation SLDatePickerTest {
     SLDatePicker *_pickerView;
 }
