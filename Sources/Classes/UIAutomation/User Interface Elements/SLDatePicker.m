@@ -21,19 +21,48 @@
 //
 
 #import "SLDatePicker.h"
-#import "SLPickerViewOverrides.h"
 #import "SLUIAElement+Subclassing.h"
 
-@interface SLDatePicker () <SLPickerViewOverrides>
-@end
+#import "SLPickerView.h"
+#import "NSObject+SLAccessibilityHierarchy.h"
 
-@implementation SLDatePicker
-
-- (Class)classToMatchOn {
-    return [UIDatePicker class];
+/**
+ The UIDatePicker element contains a child UIAPicker subclass (_UIDatePickerView). We match on the
+ UIDatePicker control, and then find the pickerView beneath it to interact with.
+ */
+@implementation SLDatePicker {
+    SLPickerView *_pickerView;
 }
 
-- (NSString *)wheelsObjectPathInUIA {
-    return @"pickers()[0].wheels()";
+- (instancetype)initWithPredicate:(BOOL (^)(NSObject *))predicate description:(NSString *)description {
+    self = [super initWithPredicate:predicate description:description];
+    if (self) {
+        __typeof(self) __weak weakSelf = self;
+        _pickerView = [SLPickerView elementMatching:^BOOL(NSObject *obj) {
+            id parent = [obj slAccessibilityParent];
+            do {
+                if ([weakSelf matchesObject:parent]) return YES;
+            } while ((parent = [parent slAccessibilityParent]));
+            return NO;
+        } withDescription:@"UIDatePicker's internal UIPickerView subclass"];
+    }
+    return self;
 }
+
+- (BOOL)matchesObject:(NSObject *)object {
+    return [super matchesObject:object] && [object isKindOfClass:[UIDatePicker class]];
+}
+
+- (NSUInteger)numberOfComponentsInPickerView {
+    return [_pickerView numberOfComponentsInPickerView];
+}
+
+- (NSArray *)valueOfPickerComponents {
+    return [_pickerView valueOfPickerComponents];
+}
+
+- (void)selectValue:(NSString *)title forComponent:(NSUInteger)componentIndex {
+    [_pickerView selectValue:title forComponent:componentIndex];
+}
+
 @end

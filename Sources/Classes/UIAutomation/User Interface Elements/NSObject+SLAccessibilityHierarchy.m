@@ -457,13 +457,18 @@
 }
 @end
 
-@implementation UIDatePicker (SLAccessibilityHierarchy)
+
+@implementation UIPickerView (SLAccessibilityHierarchy)
+
+- (BOOL)classForcesPresenceInAccessibilityHierarchy {
+    return YES;
+}
 
 /**
- To handle the issue that UIDatePicker can have so many child accessibility
- elements, we're intentionally not iterating into it's children to save time.
- Using the methods exposed on SLDatePicker should be sufficient for interacting
- with items within the UIDatePicker control.
+ A picker view can have very many child elements e.g. if it is a date picker's
+ internal picker view. We never need to enumerate these items--`SLPickerView` and
+ `SLDatePicker` provide sufficient interfaces to pickers--so we save time by preventing
+ searches from recursing into pickers.
  */
 - (NSArray *)slChildAccessibilityElementsFavoringSubviews:(BOOL)favoringSubviews {
     return nil;

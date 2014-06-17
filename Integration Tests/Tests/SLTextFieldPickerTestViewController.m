@@ -7,18 +7,28 @@
 //
 
 #import "SLTestCaseViewController.h"
-#import "SLTextFieldPicker.h"
 
 #import <Subliminal/SLTestController+AppHooks.h>
 
-@interface SLTextFieldPickerTestViewController : SLTestCaseViewController
-@property (weak, nonatomic) IBOutlet SLTextFieldPicker *textField;
+@interface SLTextFieldPickerTestViewController : SLTestCaseViewController <UIPickerViewDataSource, UIPickerViewDelegate>
 @end
 
 @implementation SLTextFieldPickerTestViewController
 
 + (NSString *)nibNameForTestCase:(SEL)testCase {
     return @"SLTextFieldPickerTestView";
+}
+
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
+    return [[NSString alloc] initWithFormat:@"%li", (long)(row + 1)];
+}
+
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
+    return 2;
+}
+
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
+    return 3;
 }
 
 @end

@@ -21,41 +21,25 @@
 //
 
 #import "SLPickerView.h"
-#import "SLPickerViewOverrides.h"
 #import "SLUIAElement+Subclassing.h"
 
-@interface SLPickerView () <SLPickerViewOverrides>
+@interface SLPickerView ()
 @end
 
 @implementation SLPickerView
 
 - (BOOL)matchesObject:(NSObject *)object {
-    return ([super matchesObject:object] && [object isKindOfClass:[self classToMatchOn]]);
-}
-
-- (UIWindow *)accessibilityPathSearchRootElement {
-    if (! self.isPickerForTextInputView) return [super accessibilityPathSearchRootElement];
-
-    NSAssert([NSThread isMainThread],
-             @"accessibilityPathSearchRootElement may only be accessed from the main thread.");
-
-    for (UIWindow *window in [[UIApplication sharedApplication] windows]) {
-        if ([[[window class] description] isEqualToString:@"UITextEffectsWindow"]) {
-            return window;
-        }
-    };
-
-    return nil;
+    return ([object isKindOfClass:[UIPickerView class]] && [super matchesObject:object]);
 }
 
 - (BOOL)isVisible {
     return [[self waitUntilTappable:NO
-                    thenSendMessage:@"%@[0].isVisible()", [self wheelsObjectPathInUIA]] boolValue];
+                    thenSendMessage:@"wheels()[0].isVisible()"] boolValue];
 }
 
-- (int)numberOfComponentsInPickerView {
+- (NSUInteger)numberOfComponentsInPickerView {
     return [[self waitUntilTappable:NO
-                    thenSendMessage:@"%@.length", [self wheelsObjectPathInUIA]] intValue];
+                    thenSendMessage:@"wheels().length"] unsignedIntegerValue];
 }
 
 - (NSArray *)valueOfPickerComponents {
@@ -64,13 +48,14 @@
     [self waitUntilTappable:NO thenPerformActionWithUIARepresentation:^(NSString *uiaRepresentation) {
         NSString *responseString = [[SLTerminal sharedTerminal] evalWithFormat:
                                        @"var values = [];\n"
-                                        "var wheels = %@.%@;\n"
+                                        "var wheels = %@.wheels();\n"
                                         "for (var i = 0; i < wheels.length; i++) {\n"
                                         "    values.push(wheels[i].value());\n"
                                         "}\n"
                                         "JSON.stringify(values);",
-                                        uiaRepresentation, [self wheelsObjectPathInUIA]];
+                                        uiaRepresentation];
         NSData *jsonDataFromString = [responseString dataUsingEncoding:NSUTF8StringEncoding];
+        NSAssert(jsonDataFromString, @"`%s script failed or JSON response is malformed.", __PRETTY_FUNCTION__);
         pickerComponentValues =  (NSArray *)[NSJSONSerialization JSONObjectWithData:jsonDataFromString
                                                                             options:0
                                                                               error:nil];
@@ -82,9 +67,9 @@
 // We should be waiting until the element is tappable before setting the value, but it doesn't
 // fit with the existing infrastructure to get the waitUntilTappable:thenSendMessage: method
 // to use an overloaded isTappable method.
-- (void)selectValue:(NSString *)title forComponent:(int)componentIndex {
-    [self waitUntilTappable:NO thenSendMessage:@"%@[%d].selectValue(\"%@\")",
-                                    [self wheelsObjectPathInUIA], componentIndex, title];
+- (void)selectValue:(NSString *)title forComponent:(NSUInteger)componentIndex {
+    [self waitUntilTappable:NO thenSendMessage:@"wheels()[%lu].selectValue(\"%@\")",
+                                    (unsigned long)componentIndex, title];
 }
 
 // Overload behavior of SLUIAElement, because testTextInputPickerViewCanBeFoundAfterTappingText
@@ -95,14 +80,6 @@
     } else {
         return [super isTappable];
     }
-}
-
-- (Class)classToMatchOn {
-    return [UIPickerView class];
-}
-
-- (NSString *)wheelsObjectPathInUIA {
-    return @"wheels()";
 }
 
 @end

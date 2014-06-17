@@ -6,7 +6,8 @@
 //  Copyright (c) 2014 Inkling. All rights reserved.
 //
 
-#import "SLTextFieldPicker.h"
+@interface SLTextFieldPicker : UITextField
+@end
 
 @interface SLTextFieldPicker () <UIPickerViewDelegate, UIPickerViewDataSource>
 @property UIPickerView *pickerView;
@@ -34,7 +35,7 @@
 }
 
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
-    return [[NSString alloc] initWithFormat:@"%d", (row + 1)];
+    return [[NSString alloc] initWithFormat:@"%li", (long)(row + 1)];
 }
 
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {

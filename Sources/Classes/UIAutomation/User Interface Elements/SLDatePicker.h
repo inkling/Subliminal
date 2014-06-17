@@ -23,21 +23,37 @@
 #import "SLPickerView.h"
 
 /**
- SLDatePicker elements represent instances of UIDatePicker, which aren't subclassed
- from UIPickerView. This object gives access to viewing and manipulating the individual
- components (or as UIA calls them 'wheels') of the Picker. UIA represents the controls
- in almost the exact same way, so we treat it as a subclass of SLPickerView.
+ SLDatePicker elements represent instances of UIDatePicker. This object gives access
+ to viewing and manipulating the individual components (or as UIA calls them 'wheels')
+ of the Picker.
+ */
+@interface SLDatePicker : SLElement
 
- The only difference is that the UIDatePicker element shows up in the accessibility
- hierarchy as a UIAElement rather than a UIAPicker. The UIAPicker is actually a child
- element, which is backed by a UIView object with no accessibility information on it.
- Ideally, we'd match on the UIView within the UIDatePicker, but that seems harder to 
- make work given the existing infrastructure.
+/**
+ Fetches the number of components from UIA.
+ 
+ @return The actual number of components visible on the screen
+ */
+- (NSUInteger)numberOfComponentsInPickerView;
 
- If this control is the inputView for a text field, it will be contained within the
- 'UITextEffectsWindow' window rather than the keyWindow. In this case, set
- isPickerForTextInputView to YES.
-  */
-@interface SLDatePicker : SLPickerView
+/**
+ Runs a script that gets the value of each individual component and returns it as an
+ array of strings.
+ 
+ @return An array of strings containing the value for each wheel component. The string
+ values are of the format "%@ (%d of %d)", where the first portion is current selected
+ wheel's value, and the two numbers represent the current selected element row and the
+ total number of rows.
+ */
+- (NSArray *)valueOfPickerComponents;
+
+/**
+ Changes the selected value of a given component to a specified value on the wheel. If
+ invalid values are passed, an exception will be thrown.
+ 
+ @param title The title to make selected by spinning the picker.
+ @param componentIndex The index for which to reference the values.
+ */
+- (void)selectValue:(NSString *)title forComponent:(NSUInteger)componentIndex;
 
 @end

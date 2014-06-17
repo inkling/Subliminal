@@ -331,6 +331,18 @@
                  @"Could not match element in webview.");
 }
 
+#pragma mark - UITextField Input View
+
+- (void)testMatchingTextInputPickerView {
+    SLPickerView *picker = [SLPickerView elementWithAccessibilityIdentifier:@"Picker View"];
+    SLTextField *textField = [SLTextField elementWithAccessibilityIdentifier:@"Text Field"];
+
+    SLAssertFalse([UIAElement(picker) isValidAndVisible], @"The Picker View shouldn't be visible initially");
+    SLAssertNoThrow([textField tap], @"Should be able to tap on the text element");
+    SLAssertNoThrow([picker selectValue:@"2" forComponent:0], @"Should be able to set the picker wheel values");
+    SLAssertTrue([[textField value] isEqualToString:@"2 - 1"], @"Setting the value for the picker control should update the text field");
+}
+
 #pragma mark - Popovers
 
 // Popovers are only available on the iPad.

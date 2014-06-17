@@ -256,7 +256,8 @@
         (testCase == @selector(testMatchingPopoverChildElement_iPad)) ||
         (testCase == @selector(testMatchingTabBarButtons)) ||
         (testCase == @selector(testMatchingActionSheetButtons)) ||
-        (testCase == @selector(testMatchingButtonsOfActionSheetsInPopovers_iPad))) {
+        (testCase == @selector(testMatchingButtonsOfActionSheetsInPopovers_iPad)) ||
+        (testCase == @selector(testMatchingTextInputPickerView))) {
         return @"SLElementMatchingTestViewController";
     } else if ((testCase == @selector(testMatchingTableViewCellTextLabel)) ||
                (testCase == @selector(testMatchingTableViewCellWithCombinedLabel)) ||

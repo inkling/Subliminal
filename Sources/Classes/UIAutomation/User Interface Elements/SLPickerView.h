@@ -23,54 +23,40 @@
 #import "SLElement.h"
 
 /**
- SLPickerView elements represent instances of UIPickerView.
-
- If it is the inputView for a text field, set isPickerForTextInputView to YES and it will
- be contained looked for in the 'UITextEffectsWindow' window rather than the keyWindow.
-
- This object gives access to viewing and manipulating the individual components (or as UIA
- calls them 'wheels') of the Picker.
+ SLPickerView elements represent instances of UIPickerView. This object gives access
+ to viewing and manipulating the individual components (or as UIA calls them 'wheels') 
+ of the Picker.
+ 
+ To manipulate a date picker control, use UIDatePicker as it isn't a direct subclass
+ of UIPickerView.
  */
 @interface SLPickerView : SLElement
 
 /**
- Calls the equivalent of 'wheels().length' on the picker in UIA. This will return
- the number of components (or wheels as UIA calls them) in the picker.
+ Fetches the number of components from UIA.
 
  @return The actual number of components visible on the screen
  */
-- (int)numberOfComponentsInPickerView;
+- (NSUInteger)numberOfComponentsInPickerView;
 
 /**
  Runs a script that gets the value of each individual component and returns it as an
  array of strings.
 
- @return An array of strings containing the output of value() for each wheel component.
- The string values are of the format "%@ (%d of %d)", where the first portion is current
- selected wheel's value, and the two numbers represent the current selected element row
- and the total number of rows.
+ @return An array of strings containing the value for each wheel component. The string
+ values are of the format "%@ (%d of %d)", where the first portion is current selected
+ wheel's value, and the two numbers represent the current selected element row and the
+ total number of rows.
  */
 - (NSArray *)valueOfPickerComponents;
 
 /**
  Changes the selected value of a given component to a specified value on the wheel. If
- invalid values are passed, an exception will be thrown. This is done by the equivalent
- UIA script 'wheels()[&lt;componentIndex&gt;].selectValue(&quot;&lt;title&gt;&quot;)'
- on the picker.
+ invalid values are passed, an exception will be thrown.
 
  @param title The title to make selected by spinning the picker.
  @param componentIndex The index for which to reference the values.
  */
-- (void)selectValue:(NSString *)title forComponent:(int)componentIndex;
-
-/**
- If the UIPickerView is set as the inputView for a UITextField, it will appear in a
- different window that the regular keyWindow. This boolean flag determines which
- window should be used to find the element.
-
- Potentially, this should be moved up to SLElement, because any view could be hosted
- as the inputView for a UITextField element.
- */
-@property BOOL isPickerForTextInputView;
+- (void)selectValue:(NSString *)title forComponent:(NSUInteger)componentIndex;
 
 @end

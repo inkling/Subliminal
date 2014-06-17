@@ -166,6 +166,20 @@
 /// -------------------------------------------
 
 /**
+ Initializes an element with the specified predicate block object.
+ 
+ This is the designated initializer for `SLElement`.
+ 
+ @param predicate A block to apply to potential matching objects. The block takes
+ one argument: _object_, the object to be evaluated. The block returns `YES`
+ if the _object_ is a match for the element, `NO` otherwise.
+ @param description A description of the kinds of objects for which _predicate_
+ will return `YES`, for use in debugging.
+ @return An initialized element.
+ */
+- (instancetype)initWithPredicate:(BOOL (^)(NSObject *))predicate description:(NSString *)description;
+
+/**
  Determines if the specified element matches the specified object.
 
  Subclasses of `SLElement` can override this method to provide custom matching behavior.
@@ -198,16 +212,5 @@
  an object by the end of the [default timeout](+[SLUIAElement defaultTimeout]).
  */
 - (void)examineMatchingObject:(void (^)(NSObject *object))block;
-
-/**
- Overriding this method will allow you to search from some other root window other than
- the keyWindow. As an example, this is used by Picker controls to select their own window
- for searching.
-
- This method is called within the mainDispatchThread, so don't block for long in this code.
-
- @return The object representing the UI element to be used to start the accessibility path search.
- */
-- (UIWindow *)accessibilityPathSearchRootElement;
 
 @end
