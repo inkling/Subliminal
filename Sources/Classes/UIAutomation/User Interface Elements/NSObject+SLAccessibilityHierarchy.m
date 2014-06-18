@@ -179,11 +179,18 @@
 - (BOOL)accessibilityAncestorPreventsPresenceInAccessibilityHierarchy {
     // An object will not appear in the accessibility hierarchy
     // if an ancestor is an accessibility element.
-    id parent = [self slAccessibilityParent];
+    id parent = [self slAccessibilityParent], child = self;
     while (parent) {
         if ([parent isAccessibilityElement]) {
-            return YES;
+            // Although `UITableView` makes an exception (as always):
+            // objects within its header or footer views may appear in the hierarchy.
+            if (!([parent isKindOfClass:[UITableView class]] &&
+                  (child == ((UITableView *)parent).tableHeaderView ||
+                   child == ((UITableView *)parent).tableFooterView))) {
+                return YES;
+            }
         }
+        child = parent;
         parent = [parent slAccessibilityParent];
     }
 

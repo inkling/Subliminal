@@ -55,6 +55,7 @@
 		6256A2D419476E1F00C6507F /* SLStaticTextTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6256A2D119476E1F00C6507F /* SLStaticTextTest.m */; };
 		6256A2D519476E1F00C6507F /* SLStaticTextTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6256A2D219476E1F00C6507F /* SLStaticTextTestViewController.m */; };
 		6256A2D619476E1F00C6507F /* SLStaticTextTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6256A2D319476E1F00C6507F /* SLStaticTextTestViewController.xib */; };
+		627B5FD4194FACA50059B692 /* SLTestMatchingElementsWithinTableHeaderView.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 627B5FD0194FA9D70059B692 /* SLTestMatchingElementsWithinTableHeaderView.storyboard */; };
 		62E7A633193EF84C00CB11AB /* SLStaticText.h in Headers */ = {isa = PBXBuildFile; fileRef = 62E7A631193EF84C00CB11AB /* SLStaticText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		62E7A634193EF84C00CB11AB /* SLStaticText.m in Sources */ = {isa = PBXBuildFile; fileRef = 62E7A632193EF84C00CB11AB /* SLStaticText.m */; };
 		CA75E78216697A1200D57E92 /* SLDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = CA75E78016697A1200D57E92 /* SLDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -304,6 +305,7 @@
 		6256A2D119476E1F00C6507F /* SLStaticTextTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLStaticTextTest.m; sourceTree = "<group>"; };
 		6256A2D219476E1F00C6507F /* SLStaticTextTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLStaticTextTestViewController.m; sourceTree = "<group>"; };
 		6256A2D319476E1F00C6507F /* SLStaticTextTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SLStaticTextTestViewController.xib; sourceTree = "<group>"; };
+		627B5FD0194FA9D70059B692 /* SLTestMatchingElementsWithinTableHeaderView.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SLTestMatchingElementsWithinTableHeaderView.storyboard; sourceTree = "<group>"; };
 		62E7A631193EF84C00CB11AB /* SLStaticText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLStaticText.h; sourceTree = "<group>"; };
 		62E7A632193EF84C00CB11AB /* SLStaticText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLStaticText.m; sourceTree = "<group>"; };
 		CA75E78016697A1200D57E92 /* SLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLDevice.h; sourceTree = "<group>"; };
@@ -707,6 +709,7 @@
 				068D3E4C16DE9008004E7E28 /* SLTableViewChildElementMatchingTestViewController.xib */,
 				F08005581730762C00198F6F /* Inklings~iPhone.webarchive */,
 				622DA0B2194CCF2600EFFE05 /* SLTextFieldPicker.m */,
+				627B5FD0194FA9D70059B692 /* SLTestMatchingElementsWithinTableHeaderView.storyboard */,
 			);
 			name = "SLElement Matching Tests";
 			sourceTree = "<group>";
@@ -1303,6 +1306,7 @@
 				F00800C9174B3349001927AC /* SLButtonTestViewController.xib in Resources */,
 				F00F3B5E1778E05100119580 /* SLElementTapTestScrollViewCases.xib in Resources */,
 				F00F3B6717790B4C00119580 /* SLStaticElementTestScrollView.xib in Resources */,
+				627B5FD4194FACA50059B692 /* SLTestMatchingElementsWithinTableHeaderView.storyboard in Resources */,
 				0640035B178FDE7800479173 /* SLElementTouchAndHoldTestViewController.xib in Resources */,
 				F0A3F63F17A7172E007529C3 /* SLTextViewTestViewController.xib in Resources */,
 				F0A3F64117A73198007529C3 /* SLWebTextView.html in Resources */,
