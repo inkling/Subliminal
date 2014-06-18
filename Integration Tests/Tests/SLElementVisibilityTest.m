@@ -261,6 +261,32 @@
     SLAssertTrue([UIAElement(_testElement) isVisible], @"Button should be visible");
 }
 
+- (void)testViewInNonKeyWindowIsVisibleIfNotOccluded {
+    SLPickerView *picker = [SLPickerView elementWithAccessibilityIdentifier:@"Picker View"];
+    SLTextField *textField = [SLTextField elementWithAccessibilityIdentifier:@"Text Field"];
+    
+    SLAssertFalse([UIAElement(picker) isValidAndVisible], @"The picker shouldn't be visible initially");
+    [UIAElement(textField) tap];
+    // allow a small timeout for the picker's animation
+    SLAssertTrueWithTimeout([UIAElement(picker) isVisible], 0.3, @"The picker should be visible.");
+}
+
+- (void)testViewInKeyWindowIsNotVisibleIfOccludedByOtherWindow {
+    SLPickerView *picker = [SLPickerView elementWithAccessibilityIdentifier:@"Picker View"];
+    SLTextField *textField = [SLTextField elementWithAccessibilityIdentifier:@"Text Field"];
+    SLButton *button = [SLButton elementWithAccessibilityLabel:@"foo"];
+    
+    SLAssertFalse([UIAElement(picker) isValidAndVisible], @"The picker shouldn't be visible initially.");
+    SLAssertTrue([UIAElement(button) isVisible], @"The button should be visible initially.");
+    SLAssertTrue([UIAElement(textField) isVisible], @"The text field should be visible initially.");
+    [UIAElement(textField) tap];
+    // hard wait to let the picker fully animate on-screen
+    [self wait:0.3];
+    SLAssertFalse([UIAElement(button) isVisible], @"The button should have been covered by the picker.");
+    SLAssertTrue([UIAElement(textField) isVisible],
+                 @"The text field should still be visible even below the text effects window, because it's not covered by the picker.");
+}
+
 #pragma mark - Test isVisible for elements that are not views
 
 - (void)testAccessibilityElementIsNotVisibleIfContainerIsHidden {
