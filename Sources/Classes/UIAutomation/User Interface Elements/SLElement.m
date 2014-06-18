@@ -184,7 +184,21 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
     // a timeout of 0 means check once--but then return immediately, no waiting
     do {
         dispatch_sync(dispatch_get_main_queue(), ^{
-            accessibilityPath = [[[UIApplication sharedApplication] keyWindow] slAccessibilityPathToElement:self];
+            // We will search for the matching SLElement's accessibility path in any window on
+            // or above the keyWindow. The heuristic is to allow matching other windows such as
+            // the text effects window (UITextField's inputView), while not searching hidden
+            // windows below the keyWindow.
+            NSArray *windows = [[UIApplication sharedApplication] windows];
+            UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+            NSUInteger keyWindowIndex = [windows indexOfObject:keyWindow];
+            NSAssert(keyWindowIndex != NSNotFound,
+                     @"`[[UIApplication sharedApplication] windows]` should contain the key window.");
+
+            for (NSUInteger windowIndex = keyWindowIndex; windowIndex < [windows count]; windowIndex++) {
+                UIWindow *window = windows[windowIndex];
+                accessibilityPath = [window slAccessibilityPathToElement:self];
+                if (accessibilityPath) break;
+            }
         });
         if (accessibilityPath || !timeout) break;
 

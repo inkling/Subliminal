@@ -166,6 +166,20 @@
 /// -------------------------------------------
 
 /**
+ Initializes an element with the specified predicate block object.
+ 
+ This is the designated initializer for `SLElement`.
+ 
+ @param predicate A block to apply to potential matching objects. The block takes
+ one argument: _object_, the object to be evaluated. The block returns `YES`
+ if the _object_ is a match for the element, `NO` otherwise.
+ @param description A description of the kinds of objects for which _predicate_
+ will return `YES`, for use in debugging.
+ @return An initialized element.
+ */
+- (instancetype)initWithPredicate:(BOOL (^)(NSObject *))predicate description:(NSString *)description;
+
+/**
  Determines if the specified element matches the specified object.
 
  Subclasses of `SLElement` can override this method to provide custom matching behavior.

@@ -456,3 +456,22 @@
     return YES;
 }
 @end
+
+
+@implementation UIPickerView (SLAccessibilityHierarchy)
+
+- (BOOL)classForcesPresenceInAccessibilityHierarchy {
+    return YES;
+}
+
+/**
+ A picker view can have very many child elements e.g. if it is a date picker's
+ internal picker view. We never need to enumerate these items--`SLPickerView` and
+ `SLDatePicker` provide sufficient interfaces to pickers--so we save time by preventing
+ searches from recursing into pickers.
+ */
+- (NSArray *)slChildAccessibilityElementsFavoringSubviews:(BOOL)favoringSubviews {
+    return nil;
+}
+
+@end
