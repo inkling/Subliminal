@@ -191,13 +191,16 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
             NSArray *windows = [[UIApplication sharedApplication] windows];
             UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
             NSUInteger keyWindowIndex = [windows indexOfObject:keyWindow];
-            NSAssert(keyWindowIndex != NSNotFound,
-                     @"`[[UIApplication sharedApplication] windows]` should contain the key window.");
 
-            for (NSUInteger windowIndex = keyWindowIndex; windowIndex < [windows count]; windowIndex++) {
-                UIWindow *window = windows[windowIndex];
-                accessibilityPath = [window slAccessibilityPathToElement:self];
-                if (accessibilityPath) break;
+            if (keyWindowIndex == NSNotFound) {
+                // When an alert window is on the screen, it will be the keyWindow, but doesn't appear within UIApplication's windows
+                accessibilityPath = [keyWindow slAccessibilityPathToElement:self];
+            } else {
+                for (NSUInteger windowIndex = keyWindowIndex; windowIndex < [windows count]; windowIndex++) {
+                    UIWindow *window = windows[windowIndex];
+                    accessibilityPath = [window slAccessibilityPathToElement:self];
+                    if (accessibilityPath) break;
+                }
             }
         });
         if (accessibilityPath || !timeout) break;
