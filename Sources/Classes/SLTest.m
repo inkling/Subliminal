@@ -40,10 +40,10 @@ NSString *const SLTestAssertionFailedException  = @"SLTestCaseAssertionFailedExc
 const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
 
 
-@implementation SLTest {
-    NSString *_lastKnownFilename;
-    int _lastKnownLineNumber;
-}
+@implementation SLTest
+
+static NSString *_lastKnownFilename;
+static int _lastKnownLineNumber;
 
 + (NSSet *)allTests {
     NSMutableSet *tests = [[NSMutableSet alloc] init];
@@ -264,7 +264,7 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
 
                 // clear call site information, so at the least it won't be reused between test cases
                 // (though we can't guarantee it won't be reused within a test case)
-                [self clearLastKnownCallSite];
+                [SLTest clearLastKnownCallSite];
 
                 BOOL caseFailed = NO, failureWasExpected = NO;
                 @try {
@@ -340,12 +340,12 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
     [NSThread sleepForTimeInterval:interval];
 }
 
-- (void)recordLastKnownFile:(const char *)filename line:(int)lineNumber {
++ (void)recordLastKnownFile:(const char *)filename line:(int)lineNumber {
     _lastKnownFilename = [@(filename) lastPathComponent];
     _lastKnownLineNumber = lineNumber;
 }
 
-- (void)clearLastKnownCallSite {
++ (void)clearLastKnownCallSite {
     _lastKnownFilename = nil;
     _lastKnownLineNumber = 0;
 }
@@ -367,7 +367,7 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
 
     // Regardless of whether we used it or not,
     // call site info is now stale
-    [self clearLastKnownCallSite];
+    [SLTest clearLastKnownCallSite];
 
     return exception;
 }
