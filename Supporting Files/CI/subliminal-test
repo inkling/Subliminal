@@ -27,7 +27,7 @@
 
 print_usage_and_fail () {
 	echo """
-subliminal-test (-project <project_path> | -workspace <workspace_path>) 
+subliminal-test (-project <project_path> | -workspace <workspace_path> | -prebuilt_app <app_path>)
 		( -sim_device <device_type> | -hw_id <udid> )
 		[-build_tool <tool_name>] [-scheme <scheme_name>] [-sdk <sdk>] [-replacement_bundle_id <id>] [--quiet_build]
 		[-sim_version <version>] [-timeout <timeout>] [-output <output_dir>] 
@@ -59,10 +59,15 @@ the server will not be able to autocreate the scheme, as you may have done local
 
 Required arguments:
 	-project <project_path>		Build the project at the specified path.
-					Either this or \`-workspace\` must be specified.
+					Either this, \`-workspace\`, or \'-prebuilt-app\' must be specified.
 
 	-workspace <workspace_path>	Build the workspace at the specified path.
-					Either this or \`-project\` must be specified.
+					Either this, \`-project\`, or \'prebuilt-app\' must be specified.
+
+        -prebuilt_app <path_to_app>	Use the APP at the specified path, rather than building a new one.
+					If it was built for iphoneos, then -hw_id must be used.
+					If it was built for iphonesimulator, then -sim_device must be used.
+					Either this, \`-project\`, or \'-workspace\' must be specified.
 
 	-sim_device <device_type>	The type of device to simulate.
 					Acceptable values are listed by executing \`instruments -s devices\`:
@@ -181,7 +186,7 @@ case $1 in
 		shift 1;;
 
 	# Set argument, wait for value
-    -project|-workspace|-sim_device|-hw_id|-build_tool|-scheme|-configuration|-sdk|-replacement_bundle_id|-sim_version|-timeout|-output|-e)
+    -project|-workspace|-prebuilt_app|-sim_device|-hw_id|-build_tool|-scheme|-configuration|-sdk|-replacement_bundle_id|-sim_version|-timeout|-output|-e)
 		if [[ -n "$CURRENT_ARG" ]]; then
 			echo "Missing value for argument: $CURRENT_ARG"
 			print_usage_and_fail
@@ -233,7 +238,7 @@ if [[ -n "$CURRENT_ARG" ]]; then
 fi
 
 # Enforce required args
-if [[ ( -z "$PROJECT" && -z "$WORKSPACE" ) || 
+if [[ ( -z "$PROJECT" && -z "$WORKSPACE" && -z "$PREBUILT_APP" ) ||
 	  ( -z "$SIM_DEVICE" && -z "$HW_ID" ) ]]; then
 	echo "Missing required arguments"
 	print_usage_and_fail
@@ -344,16 +349,10 @@ cleanup_and_exit () {
 }
 trap "cleanup_and_exit 1" SIGINT SIGTERM
 
-
 ### Build app
 
 QUIETLY=`([[ -n "$QUIET_BUILD" ]] && $QUIET_BUILD) && echo " (quietly)" || echo ""`
 echo "\n\nBuilding app$QUIETLY..."
-
-# Select the build source, taking care to escape spaces in the source using `printf`
-BUILD_SOURCE_ARG=`[[ -n "$PROJECT" ]] &&\
-	echo "-project "$(printf '%q' "$PROJECT") ||\
-	echo "-workspace "$(printf '%q' "$WORKSPACE")`
 
 if [[ -z "$SDK" ]]; then
 	SDK=`[[ -n "$SIM_DEVICE" ]] && echo "iphonesimulator" || echo "iphoneos"`
@@ -361,6 +360,18 @@ fi
 
 # This is a function so that it may be called again if instruments hiccups; see below.
 build_app () {
+	if  [[ -n "$PREBUILT_APP" ]] ; then
+		if [[ ! -d "$PREBUILT_APP" ]] ; then
+			echo "\nERROR: The path supplied for -prebuilt_app doesn't exist!"
+			return 1
+		fi
+
+		APP=`cd "$PREBUILT_APP"; echo $PWD`
+		echo "Using prebuilt app at path: $APP"
+
+		return 0
+	fi
+
 	# Clear build products from a prior run if any.
 	[[ -n "$BUILD_DIR" ]] && rm -rf "$BUILD_DIR"
 	[[ -n "$BUILD_LOG" ]] && rm -rf "$BUILD_LOG"
@@ -381,6 +392,11 @@ build_app () {
 	if [[ -n $QUIET_BUILD ]] && $QUIET_BUILD; then
 		BUILD_LOG=`mktemp /tmp/subliminal-test.build-log.XXXXXX`
 	fi
+
+	# Select the build source, taking care to escape spaces in the source using `printf`
+	BUILD_SOURCE_ARG=`[[ -n "$PROJECT" ]] &&\
+		echo "-project "$(printf '%q' "$PROJECT") ||\
+		echo "-workspace "$(printf '%q' "$WORKSPACE")`
 
 	# Don't validate the product (its entitlements etc.)
 	# --this should not be necessary in the simulator
