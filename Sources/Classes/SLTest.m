@@ -29,6 +29,7 @@
 #import <objc/runtime.h>
 #import <objc/message.h>
 
+#import "SLTestCaseExceptionInfo.h"
 
 // All exceptions thrown by SLTest must have names beginning with this prefix
 // so that `-[SLTest exceptionByAddingFileInfo:]` can determine whether to attach
@@ -39,6 +40,11 @@ NSString *const SLTestAssertionFailedException  = @"SLTestCaseAssertionFailedExc
 
 const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
 
+@interface SLTest ()
+
+@property (nonatomic, strong) SLTestCaseExceptionInfo *testCaseExceptionInfo;
+
+@end
 
 @implementation SLTest {
     NSString *_lastKnownFilename;
@@ -232,20 +238,30 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
     if ([testCaseName hasSuffix:@"_iPad"]) return (userInterfaceIdiom == UIUserInterfaceIdiomPad);
     if ([testCaseName hasSuffix:@"_iPhone"]) return (userInterfaceIdiom == UIUserInterfaceIdiomPhone);
     return YES;
- }
+}
+
+- (void)testRunDidCatchException:(NSException *)exception testCaseSelector:(SEL)testCaseSelector {
+    self.testCaseExceptionInfo = [SLTestCaseExceptionInfo exceptionInfoWithException:exception testCaseSelector:testCaseSelector];
+
+    NSException *exceptionToLog = [self exceptionByAddingFileInfo:self.testCaseExceptionInfo.exception];
+    [[SLLogger sharedLogger] logException:exceptionToLog
+                                 expected:[self.testCaseExceptionInfo isExpected]];
+
+    [self testRunDidCatchExceptionWithExceptionInfo:self.testCaseExceptionInfo];
+}
 
 - (BOOL)runAndReportNumExecuted:(NSUInteger *)numCasesExecuted
                          failed:(NSUInteger *)numCasesFailed
              failedUnexpectedly:(NSUInteger *)numCasesFailedUnexpectedly {
     NSUInteger numberOfCasesExecuted = 0, numberOfCasesFailed = 0, numberOfCasesFailedUnexpectedly = 0;
 
+
     BOOL testDidFailInSetUpOrTearDown = NO;
     @try {
         [self setUpTest];
     }
     @catch (NSException *exception) {
-        [[SLLogger sharedLogger] logException:[self exceptionByAddingFileInfo:exception]
-                                     expected:[[self class] exceptionWasExpected:exception]];
+        [self testRunDidCatchException:exception testCaseSelector:NULL];
         testDidFailInSetUpOrTearDown = YES;
     }
 
@@ -265,32 +281,29 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
                 // clear call site information, so at the least it won't be reused between test cases
                 // (though we can't guarantee it won't be reused within a test case)
                 [self clearLastKnownCallSite];
+                [self clearTestCaseExceptionState];
 
-                BOOL caseFailed = NO, failureWasExpected = NO;
                 @try {
                     [self setUpTestCaseWithSelector:unfocusedTestCaseSelector];
                 }
                 @catch (NSException *exception) {
-                    caseFailed = YES;
-                    failureWasExpected = [[self class] exceptionWasExpected:exception];
-                    [[SLLogger sharedLogger] logException:[self exceptionByAddingFileInfo:exception]
-                                                 expected:failureWasExpected];
+                    [self testRunDidCatchException:exception testCaseSelector:unfocusedTestCaseSelector];
                 }
 
                 // Only execute the test case if set-up succeeded.
-                if (!caseFailed) {
+                if (!self.testCaseExceptionInfo) {
                     @try {
                         // We use objc_msgSend so that Clang won't complain about performSelector leaks
                         // Make sure to send the actual test case selector
                         ((void(*)(id, SEL))objc_msgSend)(self, NSSelectorFromString(testCaseName));
                     }
                     @catch (NSException *exception) {
-                        caseFailed = YES;
-                        failureWasExpected = [[self class] exceptionWasExpected:exception];
-                        [[SLLogger sharedLogger] logException:[self exceptionByAddingFileInfo:exception]
-                                                     expected:failureWasExpected];
+                        [self testRunDidCatchException:exception testCaseSelector:unfocusedTestCaseSelector];
                     }
                 }
+
+                // If we didn't already fail, testCaseExceptionInfo will be nil
+                BOOL failureWasExpected = self.testCaseExceptionInfo.expected;
 
                 // Still perform tear-down even if set-up failed.
                 // If the app is in an inconsistent state, then tear-down should fail.
@@ -298,16 +311,16 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
                     [self tearDownTestCaseWithSelector:unfocusedTestCaseSelector];
                 }
                 @catch (NSException *exception) {
-                    BOOL caseHadFailed = caseFailed;
-                    caseFailed = YES;
-                    // don't override `failureWasExpected` if we had already failed
-                    BOOL exceptionWasExpected = [[self class] exceptionWasExpected:exception];
-                    if (!caseHadFailed) failureWasExpected = exceptionWasExpected;
-                    [[SLLogger sharedLogger] logException:[self exceptionByAddingFileInfo:exception]
-                                                 expected:exceptionWasExpected];
+                    BOOL succeededUntilTeardown = self.testCaseExceptionInfo == nil;
+
+                    [self testRunDidCatchException:exception testCaseSelector:unfocusedTestCaseSelector];
+
+                    if (succeededUntilTeardown) {
+                        failureWasExpected = self.testCaseExceptionInfo.expected;
+                    }
                 }
 
-                if (caseFailed) {
+                if (self.testCaseExceptionInfo) {
                     [[SLLogger sharedLogger] logTest:test caseFail:testCaseName expected:failureWasExpected];
                     numberOfCasesFailed++;
                     if (!failureWasExpected) numberOfCasesFailedUnexpectedly++;
@@ -324,8 +337,7 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
         [self tearDownTest];
     }
     @catch (NSException *exception) {
-        [[SLLogger sharedLogger] logException:[self exceptionByAddingFileInfo:exception]
-                                     expected:[[self class] exceptionWasExpected:exception]];
+        [self testRunDidCatchException:exception testCaseSelector:NULL];
         testDidFailInSetUpOrTearDown = YES;
     }
 
@@ -338,6 +350,10 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
 
 - (void)wait:(NSTimeInterval)interval {
     [NSThread sleepForTimeInterval:interval];
+}
+
+- (void)clearTestCaseExceptionState {
+    self.testCaseExceptionInfo = nil;
 }
 
 - (void)recordLastKnownFile:(const char *)filename line:(int)lineNumber {
@@ -372,9 +388,8 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
     return exception;
 }
 
-+ (BOOL)exceptionWasExpected:(NSException *)exception {
-    return [[exception name] isEqualToString:SLTestAssertionFailedException];
-}
+// Abstract
+- (void)testRunDidCatchExceptionWithExceptionInfo:(SLTestCaseExceptionInfo *)exceptionInfo {}
 
 @end
 

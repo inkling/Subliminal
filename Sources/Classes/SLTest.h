@@ -25,6 +25,8 @@
 #import "SLTestController+AppHooks.h"
 #import "SLStringUtilities.h"
 
+@class SLTestCaseExceptionInfo;
+
 /**
  `SLTest` is the abstract superclass of Subliminal integration tests.
  
@@ -211,6 +213,8 @@
 - (BOOL)runAndReportNumExecuted:(NSUInteger *)numCasesExecuted
                          failed:(NSUInteger *)numCasesFailed
              failedUnexpectedly:(NSUInteger *)numCasesFailedUnexpectedly;
+
+- (void)testRunDidCatchExceptionWithExceptionInfo:(SLTestCaseExceptionInfo *)exceptionInfo;
 
 @end
 

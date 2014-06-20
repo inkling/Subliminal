@@ -58,6 +58,8 @@
 		627B5FD4194FACA50059B692 /* SLTestMatchingElementsWithinTableHeaderView.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 627B5FD0194FA9D70059B692 /* SLTestMatchingElementsWithinTableHeaderView.storyboard */; };
 		62E7A633193EF84C00CB11AB /* SLStaticText.h in Headers */ = {isa = PBXBuildFile; fileRef = 62E7A631193EF84C00CB11AB /* SLStaticText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		62E7A634193EF84C00CB11AB /* SLStaticText.m in Sources */ = {isa = PBXBuildFile; fileRef = 62E7A632193EF84C00CB11AB /* SLStaticText.m */; };
+		C7FD55131954CAD700E99FB7 /* SLTestCaseExceptionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = C7FD55111954CAD700E99FB7 /* SLTestCaseExceptionInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C7FD55141954CAD700E99FB7 /* SLTestCaseExceptionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = C7FD55121954CAD700E99FB7 /* SLTestCaseExceptionInfo.m */; };
 		CA75E78216697A1200D57E92 /* SLDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = CA75E78016697A1200D57E92 /* SLDevice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CA75E78516697C0000D57E92 /* SLDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = CA75E78116697A1200D57E92 /* SLDevice.m */; };
 		CAC388051641CD7500F995F9 /* SLStringUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CAC388031641CD7500F995F9 /* SLStringUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -308,6 +310,8 @@
 		627B5FD0194FA9D70059B692 /* SLTestMatchingElementsWithinTableHeaderView.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SLTestMatchingElementsWithinTableHeaderView.storyboard; sourceTree = "<group>"; };
 		62E7A631193EF84C00CB11AB /* SLStaticText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLStaticText.h; sourceTree = "<group>"; };
 		62E7A632193EF84C00CB11AB /* SLStaticText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLStaticText.m; sourceTree = "<group>"; };
+		C7FD55111954CAD700E99FB7 /* SLTestCaseExceptionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTestCaseExceptionInfo.h; sourceTree = "<group>"; };
+		C7FD55121954CAD700E99FB7 /* SLTestCaseExceptionInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestCaseExceptionInfo.m; sourceTree = "<group>"; };
 		CA75E78016697A1200D57E92 /* SLDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLDevice.h; sourceTree = "<group>"; };
 		CA75E78116697A1200D57E92 /* SLDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDevice.m; sourceTree = "<group>"; };
 		CAC388031641CD7500F995F9 /* SLStringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLStringUtilities.h; sourceTree = "<group>"; };
@@ -769,6 +773,8 @@
 				F0695DE3160138DF000B05D0 /* SLTestController.m */,
 				F0271AFD162E0B950098F5F2 /* SLTestController+AppHooks.h */,
 				F0271AFE162E0B950098F5F2 /* SLTestController+AppHooks.m */,
+				C7FD55111954CAD700E99FB7 /* SLTestCaseExceptionInfo.h */,
+				C7FD55121954CAD700E99FB7 /* SLTestCaseExceptionInfo.m */,
 				F0695DE0160138DF000B05D0 /* SLTest.h */,
 				F0695DE1160138DF000B05D0 /* SLTest.m */,
 				F0695DD6160138DF000B05D0 /* UIAutomation */,
@@ -1107,6 +1113,7 @@
 				F02DF30817EC064F00BE28BF /* UIScrollView+SLProgrammaticScrolling.h in Headers */,
 				F00800CE174C1C64001927AC /* SLPopover.h in Headers */,
 				50F3E18C1783A5CB00C6BD1B /* SLGeometry.h in Headers */,
+				C7FD55131954CAD700E99FB7 /* SLTestCaseExceptionInfo.h in Headers */,
 				F043469F175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.h in Headers */,
 				F04346AF175AD63E00D91F7F /* SLAccessibilityPath.h in Headers */,
 				F04346A7175AD10200D91F7F /* NSObject+SLVisibility.h in Headers */,
@@ -1379,6 +1386,7 @@
 				622DA0BB194E2CB900EFFE05 /* SLDatePicker.m in Sources */,
 				F0695DE9160138DF000B05D0 /* SLTestController.m in Sources */,
 				F0271B00162E0B950098F5F2 /* SLTestController+AppHooks.m in Sources */,
+				C7FD55141954CAD700E99FB7 /* SLTestCaseExceptionInfo.m in Sources */,
 				F02DF30917EC064F00BE28BF /* UIScrollView+SLProgrammaticScrolling.m in Sources */,
 				CAC388061641CD7500F995F9 /* SLStringUtilities.m in Sources */,
 				622DA090194AF1E200EFFE05 /* SLPickerView.m in Sources */,
