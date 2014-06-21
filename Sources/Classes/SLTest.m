@@ -40,10 +40,10 @@ NSString *const SLTestAssertionFailedException  = @"SLTestCaseAssertionFailedExc
 const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
 
 
-@implementation SLTest {
-    NSString *_lastKnownFilename;
-    int _lastKnownLineNumber;
-}
+@implementation SLTest
+
+static NSString *__lastKnownFilename;
+static int __lastKnownLineNumber;
 
 + (NSSet *)allTests {
     NSMutableSet *tests = [[NSMutableSet alloc] init];
@@ -264,7 +264,7 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
 
                 // clear call site information, so at the least it won't be reused between test cases
                 // (though we can't guarantee it won't be reused within a test case)
-                [self clearLastKnownCallSite];
+                [SLTest clearLastKnownCallSite];
 
                 BOOL caseFailed = NO, failureWasExpected = NO;
                 @try {
@@ -340,14 +340,14 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
     [NSThread sleepForTimeInterval:interval];
 }
 
-- (void)recordLastKnownFile:(const char *)filename line:(int)lineNumber {
-    _lastKnownFilename = [@(filename) lastPathComponent];
-    _lastKnownLineNumber = lineNumber;
++ (void)recordLastKnownFile:(const char *)filename line:(int)lineNumber {
+    __lastKnownFilename = [@(filename) lastPathComponent];
+    __lastKnownLineNumber = lineNumber;
 }
 
-- (void)clearLastKnownCallSite {
-    _lastKnownFilename = nil;
-    _lastKnownLineNumber = 0;
++ (void)clearLastKnownCallSite {
+    __lastKnownFilename = nil;
+    __lastKnownLineNumber = 0;
 }
 
 - (NSException *)exceptionByAddingFileInfo:(NSException *)exception {
@@ -355,19 +355,19 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
     // and if the exception was thrown by `SLTest` or `SLUIAElement`,
     // where the information was likely to have been recorded by an assertion or UIAElement macro.
     // Otherwise it is likely stale.
-    if (_lastKnownFilename &&
+    if (__lastKnownFilename &&
         ([[exception name] hasPrefix:SLTestExceptionNamePrefix] ||
          [[exception name] hasPrefix:SLUIAElementExceptionNamePrefix])) {
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:[exception userInfo]];
-        userInfo[SLLoggerExceptionFilenameKey] = _lastKnownFilename;
-        userInfo[SLLoggerExceptionLineNumberKey] = @(_lastKnownLineNumber);
+        userInfo[SLLoggerExceptionFilenameKey] = __lastKnownFilename;
+        userInfo[SLLoggerExceptionLineNumberKey] = @(__lastKnownLineNumber);
 
         exception = [NSException exceptionWithName:[exception name] reason:[exception reason] userInfo:userInfo];
     }
 
     // Regardless of whether we used it or not,
     // call site info is now stale
-    [self clearLastKnownCallSite];
+    [SLTest clearLastKnownCallSite];
 
     return exception;
 }
