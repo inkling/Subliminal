@@ -42,8 +42,8 @@ const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
 
 @implementation SLTest
 
-static NSString *_lastKnownFilename;
-static int _lastKnownLineNumber;
+static NSString *__lastKnownFilename;
+static int __lastKnownLineNumber;
 
 + (NSSet *)allTests {
     NSMutableSet *tests = [[NSMutableSet alloc] init];
@@ -341,13 +341,13 @@ static int _lastKnownLineNumber;
 }
 
 + (void)recordLastKnownFile:(const char *)filename line:(int)lineNumber {
-    _lastKnownFilename = [@(filename) lastPathComponent];
-    _lastKnownLineNumber = lineNumber;
+    __lastKnownFilename = [@(filename) lastPathComponent];
+    __lastKnownLineNumber = lineNumber;
 }
 
 + (void)clearLastKnownCallSite {
-    _lastKnownFilename = nil;
-    _lastKnownLineNumber = 0;
+    __lastKnownFilename = nil;
+    __lastKnownLineNumber = 0;
 }
 
 - (NSException *)exceptionByAddingFileInfo:(NSException *)exception {
@@ -355,12 +355,12 @@ static int _lastKnownLineNumber;
     // and if the exception was thrown by `SLTest` or `SLUIAElement`,
     // where the information was likely to have been recorded by an assertion or UIAElement macro.
     // Otherwise it is likely stale.
-    if (_lastKnownFilename &&
+    if (__lastKnownFilename &&
         ([[exception name] hasPrefix:SLTestExceptionNamePrefix] ||
          [[exception name] hasPrefix:SLUIAElementExceptionNamePrefix])) {
         NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:[exception userInfo]];
-        userInfo[SLLoggerExceptionFilenameKey] = _lastKnownFilename;
-        userInfo[SLLoggerExceptionLineNumberKey] = @(_lastKnownLineNumber);
+        userInfo[SLLoggerExceptionFilenameKey] = __lastKnownFilename;
+        userInfo[SLLoggerExceptionLineNumberKey] = @(__lastKnownLineNumber);
 
         exception = [NSException exceptionWithName:[exception name] reason:[exception reason] userInfo:userInfo];
     }

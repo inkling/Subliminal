@@ -409,10 +409,19 @@
 })
 
 #pragma mark - Test Assertions
+/**
+ The SLAssert* class of methods should only be used from test setup, teardown,
+ or execution methods as well as those methods called from within.
+
+ @warning If you use an assertion inside a dispatch block--if your test case
+ dispatches to the main queue, for instance--you must wrap the assertion in a
+ try-catch block and re-throw the exception it generates (if any) outside the
+ dispatch block. Otherwise, the tests will abort with an unhandled exception.
+ */
 
 /**
  Fails the test case if the specified expression is false.
- 
+
  @param expression The expression to test.
  @param failureDescription A format string specifying the error message 
  to be logged if the test fails. Can be `nil`.
