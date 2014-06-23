@@ -214,6 +214,14 @@
                          failed:(NSUInteger *)numCasesFailed
              failedUnexpectedly:(NSUInteger *)numCasesFailedUnexpectedly;
 
+/**
+ If overridden, provides a hook for when an exception is caught within a test run.
+
+ @param exceptionInfo An object which describes the exception that was thrown. Note: If this exception wasn't thrown within a test case, the `exceptionInfo`'s `testCaseSelector` will be NULL.
+
+ @warning This method will be invoked for each exception that is handled by the test framework.
+ @see -[SLTestCaseExceptionInfo exceptionInfoWithException:testCaseSelector:]
+ */
 - (void)testRunDidCatchExceptionWithExceptionInfo:(SLTestCaseExceptionInfo *)exceptionInfo;
 
 @end
