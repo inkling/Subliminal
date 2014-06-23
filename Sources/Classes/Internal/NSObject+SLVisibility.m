@@ -48,17 +48,14 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
 - (void)renderViewRecursively:(UIView *)view inContext:(CGContextRef)context withTargetView:(UIView *)target baseView:(UIView *)baseView;
 
 /**
- Returns the number of points from a set of test points for which the receiver is visible in a given window.
+ Returns the number of points from a set of test points for which the receiver is visible onscreen.
 
  @param testPointsInWindow a C array of points to test for visibility
  @param numPoints the number of elements in testPointsInWindow
- @param window the UIWindow in which to test visibility.  This should usually be
- the receiver's window, but could be a different window, for example if the
- point is to test whether the view is in one window or a different window.
 
  @return the number of points from testPointsInWindow at which the receiver is visible.
  */
-- (NSUInteger)numberOfPointsFromSet:(const CGPoint *)testPointsInWindow count:(const NSUInteger)numPoints thatAreVisibleInWindow:(UIWindow *)window;
+- (NSUInteger)numberOfVisiblePointsFromSet:(const CGPoint *)testPointsInWindow count:(const NSUInteger)numPoints;
 
 /**
  Determines if the section of the object located within the specified rect is visible
@@ -211,7 +208,7 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
     CGContextRestoreGState(context);
 }
 
-- (NSUInteger)numberOfPointsFromSet:(const CGPoint *)testPointsInWindow count:(const NSUInteger)numPoints thatAreVisibleInWindow:(UIWindow *)window {
+- (NSUInteger)numberOfVisiblePointsFromSet:(const CGPoint *)testPointsInWindow count:(const NSUInteger)numPoints {
     static CGColorSpaceRef rgbColorSpace;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -220,7 +217,6 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
 
     NSParameterAssert(numPoints > 0);
     NSParameterAssert(testPointsInWindow != NULL);
-    NSParameterAssert(window != nil);
 
     // Allocate a buffer sufficiently large to store a rendering that could possibly cover all the test points.
     int x = rintf(testPointsInWindow[0].x);
@@ -244,8 +240,21 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
     unsigned char *pixels = (unsigned char *)calloc(columns * rows * 4, 1);
     CGContextRef context = CGBitmapContextCreate(pixels, columns, rows, 8, 4 * columns, rgbColorSpace, kCGBitmapAlphaInfoMask & kCGImageAlphaPremultipliedLast);
     CGContextTranslateCTM(context, -minX, -minY);
-    [self renderViewRecursively:window inContext:context withTargetView:self baseView:window];
 
+    UIWindow *targetWindow = self.window;
+    NSAssert(targetWindow, @"%@ has not been added to a window.", self);
+    
+    // Render the target window and the windows above it:
+    // the target view's rendered opacity will be reduced
+    // if the contents of a window above the target window occlude the target view.
+    NSArray *windows = [[UIApplication sharedApplication] windows];
+    NSUInteger targetWindowIndex = [windows indexOfObject:targetWindow];
+    NSAssert(targetWindowIndex != NSNotFound, @"`The window of %@ has never been made key and visible.", self);
+    for (NSUInteger windowIndex = targetWindowIndex; windowIndex < [windows count]; windowIndex++) {
+        UIWindow *window = windows[windowIndex];
+        [self renderViewRecursively:window inContext:context withTargetView:self baseView:window];
+    }
+    
     NSUInteger count = 0;
     for (NSUInteger j = 0; j < numPoints; j++) {
         int x = rintf(testPointsInWindow[j].x);
@@ -276,7 +285,7 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
     // View is not visible within a rect if its center point is not inside its window.
     const CGPoint centerInScreenCoordinates = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
 
-    UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+    UIWindow *window = self.window;
     const CGPoint centerInWindow = [window convertPoint:centerInScreenCoordinates fromWindow:nil];
 
     const CGRect windowBounds = [window bounds];
@@ -297,7 +306,7 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
     // 1.  If the center is visible then the view is visible.
     // 2.  If the center is not visible *and* at least one corner is not visible then the view is not visible.
     // 3.  If the center is not visible but *all four* corners are visible (strange as that would be) the view is visible.
-    if ([self numberOfPointsFromSet:&centerInWindow count:1 thatAreVisibleInWindow:window] == 0) {
+    if ([self numberOfVisiblePointsFromSet:&centerInWindow count:1] == 0) {
         // Center is covered, so check the status of the corners.
         const CGPoint topLeftInScreenCoordinates = CGPointMake(CGRectGetMinX(rect), CGRectGetMinY(rect));
         const CGPoint topRightInScreenCoordinates = CGPointMake(CGRectGetMaxX(rect) - 1.0, CGRectGetMinY(rect));
@@ -307,7 +316,7 @@ const unsigned char kMinVisibleAlphaInt = 3; // 255 * 0.01 = 2.55, but our bitma
         const CGPoint topRightInWindow = [window convertPoint:topRightInScreenCoordinates fromWindow:nil];
         const CGPoint bottomLeftInWindow = [window convertPoint:bottomLeftInScreenCoordinates fromWindow:nil];
         const CGPoint bottomRightInWindow = [window convertPoint:bottomRightInScreenCoordinates fromWindow:nil];
-        NSUInteger numberOfVisiblePoints = [self numberOfPointsFromSet:(CGPoint[4]){topLeftInWindow, topRightInWindow, bottomLeftInWindow, bottomRightInWindow} count:4 thatAreVisibleInWindow:window];
+        NSUInteger numberOfVisiblePoints = [self numberOfVisiblePointsFromSet:(CGPoint[4]){topLeftInWindow, topRightInWindow, bottomLeftInWindow, bottomRightInWindow} count:4];
         // View with a covered center is visible only if all four corners are visible.
         return (numberOfVisiblePoints == 4);
     } else {

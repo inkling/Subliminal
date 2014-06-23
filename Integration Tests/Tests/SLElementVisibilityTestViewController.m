@@ -231,6 +231,9 @@
                (testCase == @selector(testViewIsVisibleInLandscapeLeft)) ||
                (testCase == @selector(testViewIsVisibleInLandscapeRight))) {
         nibName = @"SLElementVisibilityTestHidden";
+    } else if ((testCase == @selector(testViewInNonKeyWindowIsVisibleIfNotOccluded)) ||
+               (testCase == @selector(testViewInKeyWindowIsNotVisibleIfOccludedByOtherWindow))) {
+        nibName = @"SLElementVisibilityTestMultipleWindows";
     }
     return nibName;
 }

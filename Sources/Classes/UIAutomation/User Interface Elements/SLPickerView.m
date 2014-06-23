@@ -32,11 +32,6 @@
     return ([object isKindOfClass:[UIPickerView class]] && [super matchesObject:object]);
 }
 
-- (BOOL)isVisible {
-    return [[self waitUntilTappable:NO
-                    thenSendMessage:@"wheels()[0].isVisible()"] boolValue];
-}
-
 - (NSUInteger)numberOfComponentsInPickerView {
     return [[self waitUntilTappable:NO
                     thenSendMessage:@"wheels().length"] unsignedIntegerValue];

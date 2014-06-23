@@ -398,7 +398,7 @@
  @param filename A filename, i.e. the last component of the `__FILE__` macro's expansion.
  @param lineNumber A line number, i.e. the `__LINE__` macro's expansion.
  */
-- (void)recordLastKnownFile:(const char *)filename line:(int)lineNumber;
++ (void)recordLastKnownFile:(const char *)filename line:(int)lineNumber;
 
 /**
  Records the current filename and line number and returns its argument.
@@ -416,15 +416,24 @@
  UIAutomation element corresponding to the wrapped `SLUIAElement`."
  */
 #define UIAElement(slElement) ({ \
-    [self recordLastKnownFile:__FILE__ line:__LINE__]; \
+    [SLTest recordLastKnownFile:__FILE__ line:__LINE__]; \
     slElement; \
 })
 
 #pragma mark - Test Assertions
+/**
+ The SLAssert* class of methods should only be used from test setup, teardown,
+ or execution methods as well as those methods called from within.
+
+ @warning If you use an assertion inside a dispatch block--if your test case
+ dispatches to the main queue, for instance--you must wrap the assertion in a
+ try-catch block and re-throw the exception it generates (if any) outside the
+ dispatch block. Otherwise, the tests will abort with an unhandled exception.
+ */
 
 /**
  Fails the test case if the specified expression is false.
- 
+
  @param expression The expression to test.
  @param failureDescription A format string specifying the error message 
  to be logged if the test fails. Can be `nil`.
@@ -432,7 +441,7 @@
  `failureDescription`.
  */
 #define SLAssertTrue(expression, failureDescription, ...) do { \
-    [self recordLastKnownFile:__FILE__ line:__LINE__]; \
+    [SLTest recordLastKnownFile:__FILE__ line:__LINE__]; \
     BOOL __result = !!(expression); \
     if (!__result) { \
         NSString *__reason = [NSString stringWithFormat:@"\"%@\" should be true.%@", \
@@ -483,7 +492,7 @@
  to be logged if the test fails. Can be `nil`.
  */
 #define SLAssertTrueWithTimeout(expression, timeout, failureDescription, ...) do {\
-    [self recordLastKnownFile:__FILE__ line:__LINE__]; \
+    [SLTest recordLastKnownFile:__FILE__ line:__LINE__]; \
     \
     if (!SLWaitUntilTrue(expression, timeout)) { \
         NSString *reason = [NSString stringWithFormat:@"\"%@\" did not become true within %g seconds.%@", \
@@ -538,7 +547,7 @@
  `failureDescription`.
  */
 #define SLAssertFalse(expression, failureDescription, ...) do { \
-    [self recordLastKnownFile:__FILE__ line:__LINE__]; \
+    [SLTest recordLastKnownFile:__FILE__ line:__LINE__]; \
     BOOL __result = !!(expression); \
     if (__result) { \
         NSString *__reason = [NSString stringWithFormat:@"\"%@\" should be false.%@", \
@@ -557,7 +566,7 @@
  `failureDescription`.
  */
 #define SLAssertThrows(expression, failureDescription, ...) do { \
-    [self recordLastKnownFile:__FILE__ line:__LINE__]; \
+    [SLTest recordLastKnownFile:__FILE__ line:__LINE__]; \
     BOOL __caughtException = NO; \
     @try { \
         (expression); \
@@ -584,7 +593,7 @@
  `failureDescription`.
  */
 #define SLAssertThrowsNamed(expression, exceptionName, failureDescription, ...) do { \
-    [self recordLastKnownFile:__FILE__ line:__LINE__]; \
+    [SLTest recordLastKnownFile:__FILE__ line:__LINE__]; \
     BOOL __caughtException = NO; \
     @try { \
         (expression); \
@@ -620,7 +629,7 @@
  `failureDescription`.
  */
 #define SLAssertNoThrow(expression, failureDescription, ...) do { \
-    [self recordLastKnownFile:__FILE__ line:__LINE__]; \
+    [SLTest recordLastKnownFile:__FILE__ line:__LINE__]; \
     @try { \
         (expression); \
     } \
