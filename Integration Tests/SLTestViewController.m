@@ -43,6 +43,7 @@ NSString *const SLTestCaseViewControllerClassNameKey = @"SLTestCaseViewControlle
     if (self) {
         _test = test;
         _testCases = [testCases allObjects];
+        _animateTestCaseTransitions = YES;
     }
     return self;
 }
@@ -106,10 +107,10 @@ NSString *const SLTestCaseViewControllerClassNameKey = @"SLTestCaseViewControlle
                           scrollPosition:UITableViewScrollPositionNone];
     [self.tableView scrollToRowAtIndexPath:indexPath
                           atScrollPosition:UITableViewScrollPositionNone
-                                  animated:YES];
+                                  animated:self.animateTestCaseTransitions];
 
     // wait until any scrolling animation might have concluded--they're of uniform duration
-    double scrollingDelayInSeconds = 0.3;
+    double scrollingDelayInSeconds = self.animateTestCaseTransitions ? 0.3 : 0.0;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(scrollingDelayInSeconds * NSEC_PER_SEC));
     dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
         // now that the row for the pending test case has been scrolled to visible,
@@ -121,7 +122,7 @@ NSString *const SLTestCaseViewControllerClassNameKey = @"SLTestCaseViewControlle
 
         // ensure that we'll receive the callback
         self.navigationController.delegate = self;
-        [self.navigationController pushViewController:testCaseViewController animated:YES];
+        [self.navigationController pushViewController:testCaseViewController animated:self.animateTestCaseTransitions];
     });
 }
 
@@ -149,7 +150,7 @@ NSString *const SLTestCaseViewControllerClassNameKey = @"SLTestCaseViewControlle
 - (void)dismissCurrentTestCase {
     // ensure that we'll receive the callback
     self.navigationController.delegate = self;
-    [self.navigationController popToViewController:self animated:YES];
+    [self.navigationController popToViewController:self animated:self.animateTestCaseTransitions];
 }
 
 @end
