@@ -158,6 +158,7 @@ SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
 BUILD_TOOL="xcrun xcodebuild"
 SCHEME="Integration Tests"
 CONFIGURATION="Release"
+ENV_STR=" "
 
 LOGIN_PASSWORD_DEPRECATION_MESSAGE="""\n
 WARNING: The \`--live\` and \`-login_password\` options have been deprecated\n
@@ -219,6 +220,7 @@ case $1 in
 			elif [[ "$CURRENT_ARG" == "-e" ]]; then
 				# Replace the env var placeholder
 				CURRENT_ARG="export $1"
+				ENV_STR+=" -e $1 $2"
 			else
 				eval $CURRENT_ARG=\"$1\"
 				unset CURRENT_ARG;
@@ -533,7 +535,8 @@ launch_instruments () {
 		$timeout_arg\
 		-w "$device"\
 		"$APP"\
-		-e UIARESULTSPATH "$RESULTS_DIR" &
+		-e UIARESULTSPATH "$RESULTS_DIR" \
+		$ENV_STR &
 	INSTRUMENTS_PID=$!
 
 	RESULT_LOG="$RESULTS_DIR/Run 1/Automation Results.plist"
