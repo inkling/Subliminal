@@ -74,7 +74,8 @@
  functions defined by Subliminal. Subliminal reserves the "SL" prefix.
 
  @param name The name of the function.
- @param params The string names of the parameters of the function.
+ @param params The string names of the parameters of the function,
+ or `nil` if the function does not take any arguments.
  @param body The body of the function: one or more statements, with no function 
  closure.
  
@@ -107,7 +108,8 @@
  After evaluation, `result` would contain `@"12"`.
 
  @param name The name of a function previously added to the terminal's namespace.
- @param args The arguments to the function, as strings.
+ @param args The arguments to the function, as strings;
+ or `nil` if the function does not take any arguments.
  @return The result of evaluating the specified function, or `nil` if the function 
  does not return a value.
 
@@ -143,9 +145,11 @@
                                                                 withArgs:@[ @"5", @"7" ]];
 
  @param name The name of the function to add to the terminal's namespace, if necessary.
- @param params The string names of the parameters of the function.
+ @param params The string names of the parameters of the function,
+ or `nil` if the function does not take any arguments.
  @param body The body of the function: one or more statements, with no function closure.
- @param args The arguments to the function, as strings.
+ @param args The arguments to the function, as strings;
+ or `nil` if the function does not take any arguments.
  @return The result of evaluating the specified function, or `nil` if the function
  does not return a value.
 

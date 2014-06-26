@@ -143,6 +143,18 @@
     SLAssertTrue([result isEqual:@12], @"Function did not evaluate to expected result.");
 }
 
+- (void)testCanLoadAndEvaluateFunctionTakingNoArguments {
+    SLAssertNoThrow([[SLTerminal sharedTerminal] loadFunctionWithName:_functionName
+                                                               params:nil
+                                                                 body:@"return 'Hello World';"],
+                    @"Should not have thrown.");
+    id result;
+    SLAssertNoThrow((result = [[SLTerminal sharedTerminal] evalFunctionWithName:_functionName
+                                                                       withArgs:nil]),
+                    @"Should not have thrown.");
+    SLAssertTrue([result isEqual:@"Hello World"], @"Function did not evaluate to expected result.");
+}
+
 - (void)testCanLoadAndEvaluateFunctionUsingConvenienceWrapper {
     id result;
     SLAssertNoThrow((result = [[SLTerminal sharedTerminal] evalFunctionWithName:_functionName
