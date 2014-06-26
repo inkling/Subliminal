@@ -83,7 +83,7 @@
         return;
     }
     
-    NSString *paramList = [params componentsJoinedByString:@", "];
+    NSString *paramList = params ? [params componentsJoinedByString:@", "] : @"";
     NSString *function = [NSString stringWithFormat:@"%@.%@ = function(%@){ %@ }", self.scriptNamespace, name, paramList, body];
     NSString *loadedFunction = [self loadedFunctions][name];
     if (!loadedFunction) {
@@ -113,7 +113,7 @@
     }
     
     NSAssert([self functionWithNameIsLoaded:name], @"No function with name %@ has been loaded.", name);
-    NSString *argList = [args componentsJoinedByString:@", "];
+    NSString *argList = args ? [args componentsJoinedByString:@", "] : @"";
     return [self evalWithFormat:@"%@.%@(%@)", self.scriptNamespace, name, argList];
 }
 
