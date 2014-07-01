@@ -50,7 +50,7 @@
 - (void)presentComposeViewControllerWithInfo:(NSDictionary *)info {
     MFMailComposeViewController *composeViewController = [[MFMailComposeViewController alloc] init];
     composeViewController.mailComposeDelegate = self;
-    composeViewController.modalPresentationStyle = UIModalPresentationFullScreen;
+    composeViewController.modalPresentationStyle = (kCFCoreFoundationVersionNumber > kCFCoreFoundationVersionNumber_iOS_6_1) ? UIModalPresentationFormSheet : UIModalPresentationFullScreen;
 
     if (info[@"toRecipients"])  [composeViewController setToRecipients:info[@"toRecipients"]];
     if (info[@"ccRecipients"])  [composeViewController setCcRecipients:info[@"ccRecipients"]];
@@ -91,6 +91,7 @@
         // make sure that the modal view controller's fully torn down before popping this controller
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.5]];
         _composeViewController = nil;
+        _composeViewControllerFinishResultValue = nil;
     }];
 }
 

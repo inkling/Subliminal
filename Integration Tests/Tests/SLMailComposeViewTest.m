@@ -209,14 +209,39 @@
 }
 
 - (void)testCanSetBody {
-    NSString *expectedBody = @"A message sent by Subliminal.";
-
-    SLAssertFalse([_composeView.body isEqualToString:expectedBody],
-                  @"The body must not be pre-populated to the expected value.");
-    SLAssertNoThrow(_composeView.body = expectedBody,
-                    @"The body should have been able to be set.");
-    SLAssertTrue([_composeView.body isEqualToString:expectedBody],
-                 @"The body was not set as expected.");
+    // this test inexplicably fails sometimes on Travis
+    // if it does, retry
+    NSUInteger tryCount = 0;
+    const NSUInteger kMaxTryCount = 2;
+    NSException *failureException;
+    do {
+        tryCount++;
+        failureException = nil;
+        if (tryCount > 1) {
+            SLAskApp(dismissComposeViewController);
+            SLWaitUntilTrue(!SLAskAppYesNo(composeViewControllerIsPresented), 2.0);
+            
+            SLAskApp1(presentComposeViewControllerWithInfo:, _messageInfo);
+            SLWaitUntilTrue(SLAskAppYesNo(composeViewControllerIsPresented), 2.0);
+        }
+        
+        @try {
+            NSString *expectedBody = @"A message sent by Subliminal.";
+            
+            SLAssertFalse([_composeView.body isEqualToString:expectedBody],
+                          @"The body must not be pre-populated to the expected value.");
+            SLAssertNoThrow(_composeView.body = expectedBody,
+                            @"The body should have been able to be set.");
+            SLAssertTrue([_composeView.body isEqualToString:expectedBody],
+                         @"The body was not set as expected.");
+        }
+        @catch (NSException *exception) {
+            failureException = exception;
+        }
+        
+    } while (failureException && (tryCount < kMaxTryCount));
+    
+    if (failureException) @throw failureException;
 }
 
 #pragma mark - Sending Mail Test Cases
