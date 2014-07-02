@@ -314,6 +314,10 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
     return [[SLAlertMultiHandler alloc] initWithSLAlert:_alert handlers:@[ self, nextHandler ]];
 }
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"%@: Alert: %@", [super description], _alert];
+}
+
 @end
 
 @implementation SLAlertMultiHandler
