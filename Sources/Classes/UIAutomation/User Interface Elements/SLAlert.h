@@ -48,7 +48,7 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
  dismisses the alert. The test then asks the handler to see if the alert was 
  dismissed as expected.
  
-    SLAlert *alert = [SLAlert alertWithTitle:@"foo];
+    SLAlert *alert = [SLAlert alertWithTitle:@"foo"];
 
     // dismiss an alert with title "foo", when it appears
     SLAlertHandler *handler = [alert dismiss];
