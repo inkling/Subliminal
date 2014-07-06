@@ -301,7 +301,10 @@
     if ([self.subviews count]) {
         isPopover = [self.subviews[0] isKindOfClass:[UIPopoverBackgroundView class]];
     }
-    return isPopover;
+
+    BOOL isAlertContainer = [NSStringFromClass([self class]) isEqualToString:@"_UIModalItemAlertContentView"];
+
+    return isPopover || isAlertContainer;
 }
 
 // An object is a mock view if its `accessibilityIdentifier` tracks
