@@ -103,6 +103,17 @@
 - (BOOL)isValid;
 
 /**
+ Waits until an elements isValid check returns YES, or the timeout expires and throws
+ an exception
+ 
+ @param timeout The time to wait for an element to become validg
+
+ @exception SLUIAElementInvalidException Raised if the element is not valid by the
+ end of the timeout.
+ */
+- (void)waitUntilValidWithTimeout:(NSTimeInterval)timeout;
+
+/**
  Determines whether the specified element is visible on the screen.
 
  This method returns, or raises an `SLUIAElementInvalidException`, immediately.
