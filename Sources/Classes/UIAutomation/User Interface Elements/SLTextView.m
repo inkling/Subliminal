@@ -22,6 +22,9 @@
 
 - (void)setText:(NSString *)text withKeyboard:(id<SLKeyboard>)keyboard
 {
+    // Need to make sure the element is visible first, because hasKeyboardFocus is a one-shot check
+    [self waitUntilValidWithTimeout:[SLElement defaultTimeout]];
+
     // Tap to show the keyboard (if the field doesn't already have keyboard focus,
     // because in that case a real user would probably not tap again before typing)
     if (![self hasKeyboardFocus]) {
@@ -62,6 +65,10 @@
     // Tap to show the keyboard (if the field doesn't already have keyboard focus,
     // because in that case a real user would probably not tap again before typing)
     BOOL didNewlyBecomeFirstResponder = NO;
+
+    // Need to make sure the element is visible first, because hasKeyboardFocus is a one-shot check
+    [self waitUntilValidWithTimeout:[SLElement defaultTimeout]];
+
     if (![self hasKeyboardFocus]) {
         didNewlyBecomeFirstResponder = YES;
         [self tap];
