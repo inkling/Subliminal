@@ -157,8 +157,10 @@
 
                     // message format: "SLKeyboardTest.m:62: ..."
                     NSArray *messageComponents = [message componentsSeparatedByString:@":"];
-                    infoValue[@"fileName"] = messageComponents[0];
-                    infoValue[@"lineNumber"] = @([messageComponents[1] integerValue]);
+                    if (messageComponents.count > 2) {
+                        infoValue[@"fileName"] = messageComponents[0];
+                        infoValue[@"lineNumber"] = @([messageComponents[1] integerValue]);
+                    }
                 }
             } else {
                 typeValue = SISLLogEventTypeDefault;
