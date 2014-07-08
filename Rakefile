@@ -33,7 +33,14 @@ DOCSET_DIR = "#{ENV['HOME']}/Library/Developer/Shared/Documentation/DocSets"
 DOCSET_NAME = "com.inkling.Subliminal.docset"
 DOCSET_VERSION = "1.1.0"
 
-SUPPORTED_SDKS = [ "6.1", "7.1" ]
+USING_XCODE_6 = `xcrun xcodebuild -version | head -n 1`.start_with?("Xcode 6")
+
+if USING_XCODE_6
+  SUPPORTED_SDKS = [ "7.1", "8.0" ]
+else
+  SUPPORTED_SDKS = [ "6.1", "7.1" ]
+end
+
 TEST_SDK = ENV["TEST_SDK"]
 if TEST_SDK
   raise "Test SDK #{TEST_SDK} is not supported." unless SUPPORTED_SDKS.include?(TEST_SDK)
@@ -485,8 +492,9 @@ namespace :test do
 
         # Use system so we see the tests' output
         results_dir = fresh_results_dir!("iphone", sdk)
-        # Use the 3.5" iPhone Retina because that can support both our target SDKs
-        if system("#{base_test_command} -output \"#{results_dir}\" -sim_device 'iPhone Retina (3.5-inch)' -sim_version #{sdk}")
+        # Use the iPhone 4s because that can support all our target SDKs
+        device_type = USING_XCODE_6 ? "iPhone 4s" : "iPhone Retina (3.5-inch)"
+        if system("#{base_test_command} -output \"#{results_dir}\" -sim_device '#{device_type}' -sim_version #{sdk}")
           puts "iPhone integration tests succeeded on iOS #{sdk}.\n\n"
         else
           puts "iPhone integration tests failed on iOS #{sdk}.\n\n"
@@ -512,7 +520,8 @@ namespace :test do
 
         # Use system so we see the tests' output
         results_dir = fresh_results_dir!("ipad", sdk)
-        if system("#{base_test_command} -output \"#{results_dir}\" -sim_device 'iPad' -sim_version #{sdk}")
+        # Use the iPad Retina because that can support all our target SDKs
+        if system("#{base_test_command} -output \"#{results_dir}\" -sim_device 'iPad Retina' -sim_version #{sdk}")
           puts "iPad integration tests succeeded on iOS #{sdk}.\n\n"
         else
           puts "iPad integration tests failed on iOS #{sdk}.\n\n"
