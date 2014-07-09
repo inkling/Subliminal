@@ -147,9 +147,9 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
                             return true;\
                         }\
                     } catch (e) {\
-                        UIALogger.logError('Alert handler threw an exception!');\
+                        UIALogger.logError('Handler for alert \"' + alert.name() + '\" threw an exception!');\
                         UIATarget.localTarget().logElementTree();\
-                        throw e;\
+                        SLAlertHandler.alertHandlers.splice(handlerIndex, 1);\
                     }\
                 }"
                 
