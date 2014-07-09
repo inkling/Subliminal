@@ -41,6 +41,8 @@
 		50F2B7C818E9C0D700F21635 /* SLDispatchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 50F2B7C718E9C0D700F21635 /* SLDispatchTests.m */; };
 		50F3E18C1783A5CB00C6BD1B /* SLGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 50F3E18A1783A5CB00C6BD1B /* SLGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50F3E18E1783A60100C6BD1B /* SLGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 50F3E18B1783A5CB00C6BD1B /* SLGeometry.m */; };
+		62009F8A196CB30E00419585 /* SLTestAssertions.h in Headers */ = {isa = PBXBuildFile; fileRef = 62009F89196CB30E00419585 /* SLTestAssertions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		62009F8F196CB41E00419585 /* SLTestAssertions.m in Sources */ = {isa = PBXBuildFile; fileRef = 62009F8E196CB41E00419585 /* SLTestAssertions.m */; };
 		622DA08F194AF1C900EFFE05 /* SLPickerView.h in Headers */ = {isa = PBXBuildFile; fileRef = 622DA089194AF03E00EFFE05 /* SLPickerView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		622DA090194AF1E200EFFE05 /* SLPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 622DA08A194AF03E00EFFE05 /* SLPickerView.m */; };
 		622DA0A6194B799D00EFFE05 /* SLPickerViewTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 622DA0A4194B799D00EFFE05 /* SLPickerViewTestViewController.m */; };
@@ -292,6 +294,8 @@
 		50F2B7C718E9C0D700F21635 /* SLDispatchTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLDispatchTests.m; sourceTree = "<group>"; };
 		50F3E18A1783A5CB00C6BD1B /* SLGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLGeometry.h; sourceTree = "<group>"; };
 		50F3E18B1783A5CB00C6BD1B /* SLGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLGeometry.m; sourceTree = "<group>"; };
+		62009F89196CB30E00419585 /* SLTestAssertions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLTestAssertions.h; sourceTree = "<group>"; };
+		62009F8E196CB41E00419585 /* SLTestAssertions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLTestAssertions.m; sourceTree = "<group>"; };
 		622DA089194AF03E00EFFE05 /* SLPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLPickerView.h; sourceTree = "<group>"; };
 		622DA08A194AF03E00EFFE05 /* SLPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLPickerView.m; sourceTree = "<group>"; };
 		622DA0A4194B799D00EFFE05 /* SLPickerViewTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLPickerViewTestViewController.m; sourceTree = "<group>"; };
@@ -773,6 +777,8 @@
 				F0271AFE162E0B950098F5F2 /* SLTestController+AppHooks.m */,
 				F0695DE0160138DF000B05D0 /* SLTest.h */,
 				F0695DE1160138DF000B05D0 /* SLTest.m */,
+				62009F89196CB30E00419585 /* SLTestAssertions.h */,
+				62009F8E196CB41E00419585 /* SLTestAssertions.m */,
 				F0695DD6160138DF000B05D0 /* UIAutomation */,
 				CAC388011641CD4800F995F9 /* Internal */,
 			);
@@ -1111,6 +1117,7 @@
 				F00800CE174C1C64001927AC /* SLPopover.h in Headers */,
 				50F3E18C1783A5CB00C6BD1B /* SLGeometry.h in Headers */,
 				F043469F175ACE3A00D91F7F /* NSObject+SLAccessibilityDescription.h in Headers */,
+				62009F8A196CB30E00419585 /* SLTestAssertions.h in Headers */,
 				F04346AF175AD63E00D91F7F /* SLAccessibilityPath.h in Headers */,
 				F04346A7175AD10200D91F7F /* NSObject+SLVisibility.h in Headers */,
 				62E7A633193EF84C00CB11AB /* SLStaticText.h in Headers */,
@@ -1373,6 +1380,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				62009F8F196CB41E00419585 /* SLTestAssertions.m in Sources */,
 				2CE9AA4D17E3A747007EF0B5 /* SLSwitch.m in Sources */,
 				62E7A634193EF84C00CB11AB /* SLStaticText.m in Sources */,
 				50F3E18E1783A60100C6BD1B /* SLGeometry.m in Sources */,

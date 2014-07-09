@@ -87,21 +87,6 @@ static const void *const kDefaultTimeoutKey = &kDefaultTimeoutKey;
     return NO;
 }
 
-- (void)waitUntilValidWithTimeout:(NSTimeInterval)timeout {
-    NSDate *startDate = [NSDate date];
-    BOOL isValid;
-
-    do {
-        isValid = [self isValid];
-        if (isValid || !timeout) break;
-        [NSThread sleepForTimeInterval:SLUIAElementWaitRetryDelay];
-    } while ([[NSDate date] timeIntervalSinceDate:startDate] < timeout);
-
-    if (!isValid) {
-        [NSException raise:@"SLUIAElementInvalidException" format:@"Element '%@' does not exist", self];
-    }
-}
-
 - (BOOL)isVisible {
     __block BOOL isVisible;
     // isVisible evaluates the current state, no waiting to resolve the element
