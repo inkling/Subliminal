@@ -329,6 +329,8 @@ u_int32_t random_uniform(u_int32_t upperBound) {
 
     if (_runningWithPredeterminedSeed) {
         SLLog(@"Running tests in order as predetermined by seed %u.", _runSeed);
+    } else {
+        SLLog(@"Running tests in order using random seed %u.", _runSeed);
     }
     if (_runningWithFocus) {
         SLLog(@"Focusing on test cases in specific tests: %@.", [_testsToRun componentsJoinedByString:@","]);
