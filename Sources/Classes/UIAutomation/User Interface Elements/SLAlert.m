@@ -368,6 +368,10 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
     return [[SLAlertDismissHandler alloc] initWithSLAlert:self andUIAAlertHandler:[SLAlertHandler defaultUIAAlertHandler]];
 }
 
+- (SLAlertDismissHandler *)dismissByTest {
+    return [[SLAlertDismissHandler alloc] initWithSLAlert:self andUIAAlertHandler:@"return true;"];
+}
+
 - (SLAlertDismissHandler *)dismissWithButtonTitled:(NSString *)buttonTitle {
     static NSString *buttonElementWithTitleFunction;
     static dispatch_once_t onceToken;
@@ -448,6 +452,9 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
 
 @end
 
+
+#if DEBUG
+
 @implementation SLAlert (Debugging)
 
 - (SLAlertDismissHandler *)dismissByUser {
@@ -459,3 +466,5 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
 }
 
 @end
+
+#endif

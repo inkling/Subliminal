@@ -106,6 +106,15 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
 - (SLAlertDismissHandler *)dismiss;
 
 /**
+ Creates and returns a handler that leaves the matching alert on the screen, and it
+ is up to the test case to find and handle the alert in the view hierarchy to proceed.
+
+ @return A newly created handler that dismisses the corresponding alert using
+ UIAutomation's default procedure.
+ */
+- (SLAlertDismissHandler *)dismissByTest;
+
+/**
  Creates and returns a handler that dismisses a matching alert
  by tapping the button with the specified title.
 
@@ -281,6 +290,8 @@ extern const NSTimeInterval SLAlertHandlerDidHandleAlertDelay;
 @end
 
 
+#if DEBUG
+
 /**
  The methods in the `SLAlert (Debugging)` category are to be used only to 
  debug Subliminal tests.
@@ -305,6 +316,8 @@ extern const NSTimeInterval SLAlertHandlerDidHandleAlertDelay;
 - (SLAlertDismissHandler *)dismissByUser;
 
 @end
+
+#endif
 
 /**
  The methods in the `SLAlertHandler (Debugging)` category may be useful 
