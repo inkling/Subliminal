@@ -47,25 +47,32 @@ void SIRegisterHandlerForLinesReadFromHandle(NSFileHandle *handle, void(^lineHan
 
     // create a buffer to store data until a full line is read
     // the readability handler will retain the buffer
-    NSMutableString *buffer = [[NSMutableString alloc] init];
+    NSMutableData *charBuffer = [[NSMutableData alloc] init];
+    __block NSUInteger charOffset = 0;
 
     [handle setReadabilityHandler:^(NSFileHandle *handle) {
         @autoreleasepool {
-            NSString *currentText = [[NSString alloc] initWithData:[handle availableData] encoding:NSUTF8StringEncoding];
-            [buffer appendString:currentText];
-
-            NSScanner *newlineScanner = [[NSScanner alloc] initWithString:buffer];
-            newlineScanner.charactersToBeSkipped = nil; // the scanner would normally skip newlines
-            NSUInteger scanOffset = 0;
-            NSString *line = nil;
-            while ([newlineScanner scanUpToString:@"\n" intoString:&line] &&
-                   ![newlineScanner isAtEnd]) { // we found a newline rather than scanning to EOL
-                lineHandler(line);
-                [newlineScanner scanString:@"\n" intoString:NULL];
-                scanOffset = [newlineScanner scanLocation];
+            [charBuffer appendData:[handle availableData]];
+            
+            // We manually search for newline characters rather than, say, encoding the string
+            // and using an `NSScanner`, because we may not be able to encode the current buffer
+            // if we've read less than a full UTF-8 multibyte character
+            char *chars = (char *)[charBuffer bytes];
+            NSUInteger lineStart = 0;
+            for (; charOffset < [charBuffer length] / sizeof(char); charOffset++) {
+                if (chars[charOffset] == '\n') {
+                    NSData *lineData = [charBuffer subdataWithRange:NSMakeRange(lineStart, (charOffset - 1 - lineStart) * sizeof(char))];
+                    NSString *line = [[NSString alloc] initWithData:lineData encoding:NSUTF8StringEncoding];
+                    NSCAssert(line, @"lineData wasn't able to be converted into a UTF8 string: %@", lineData);
+                    lineHandler(line);
+                    charOffset++;    // advance past the newline character
+                    lineStart = charOffset;
+                }
             }
-
-            [buffer replaceCharactersInRange:NSMakeRange(0, scanOffset) withString:@""];
+            
+            NSUInteger charsConsumed = lineStart;
+            [charBuffer replaceBytesInRange:NSMakeRange(0, charsConsumed * sizeof(char)) withBytes:NULL length:0];
+            charOffset -= charsConsumed;
         }
     }];
 }
