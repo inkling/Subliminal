@@ -106,6 +106,14 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
 - (SLAlertDismissHandler *)dismiss;
 
 /**
+ Creates and returns a handler that leaves the matching alert on the screen, and it
+ is up to the test case to find and handle the alert in the view hierarchy to proceed.
+
+ @return A newly created handler that leaves the alert untouched.
+ */
+- (SLAlertDismissHandler *)dismissByTest;
+
+/**
  Creates and returns a handler that dismisses a matching alert
  by tapping the button with the specified title.
 

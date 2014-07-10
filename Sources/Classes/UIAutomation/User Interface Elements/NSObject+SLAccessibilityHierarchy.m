@@ -301,7 +301,12 @@
     if ([self.subviews count]) {
         isPopover = [self.subviews[0] isKindOfClass:[UIPopoverBackgroundView class]];
     }
-    return isPopover;
+
+    // Assuming that if the window is not owned by the application, it is probably an alert. Rather than
+    // string checking against a private class, keeping all view's in the path for this case.
+    BOOL isInAlertWindow = ![[[UIApplication sharedApplication] windows] containsObject:[self window]];
+
+    return isPopover || isInAlertWindow;
 }
 
 // An object is a mock view if its `accessibilityIdentifier` tracks

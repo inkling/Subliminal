@@ -98,6 +98,26 @@
                  @"The handler should have dismissed the alert using the default button.");
 }
 
+- (void)testManuallyHandlingParticularAlertsInTestCode {
+    NSString *cancelButtonTitle = @"Cancel";
+    NSString *defaultButtonTitle = @"Ok";
+
+    // We can mark particular alerts to be left onscreen to be interacted with manually
+    NSString *alertTitle = @"Test Alert";
+    SLAlert *alert = [SLAlert alertWithTitle:alertTitle];
+    SLAlertHandler *handler = [alert dismissByTest];
+    [SLAlertHandler addHandler:handler];
+
+    SLAskApp1(showAlertWithInfo:, (@{   @"title":   alertTitle,
+                                        @"cancel":  cancelButtonTitle,
+                                        @"other":   defaultButtonTitle }));
+    SLAssertTrueWithTimeout([handler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, @"Handler should have handled an alert.");
+    SLAssertNoThrow([[SLButton elementWithAccessibilityLabel:defaultButtonTitle] tap], @"The default button couldn't be found to tap!");
+    SLAssertTrueWithTimeout(SLAskApp(titleOfLastButtonClicked) != nil, SLAlertHandlerDidHandleAlertDelay, @"The alert handler wasn't invoked.");
+    SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:defaultButtonTitle],
+                 @"The handler should have dismissed the alert using the default button.");
+}
+
 - (void)testHandlerMustBeAddedBeforeAlertShows {
     NSString *cancelButtonTitle = @"Cancel";
     NSString *defaultButtonTitle = @"Ok";
