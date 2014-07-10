@@ -135,7 +135,9 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
                 // enumerate registered handlers, from first to last
                 @"for (var handlerIndex = 0; handlerIndex < SLAlertHandler.alertHandlers.length; handlerIndex++) {\
                     var handler = SLAlertHandler.alertHandlers[handlerIndex];"
-                    @"try {"
+                    // Give the UIA default 5s for UI interactions done purely in JS with no ObjC fallback
+                    @"UIATarget.localTarget().pushTimeout(5);\
+                    try {"
                         // if a handler matches the alert...
                         @"if (handler.handleAlert(alert) === true) {\
                             if (SLAlertHandler.loggingEnabled) UIALogger.logMessage('Alert was handled by a test.');"
@@ -150,6 +152,8 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
                         UIALogger.logError('Handler for alert \"' + alert.name() + '\" threw an exception!');\
                         UIATarget.localTarget().logElementTree();\
                         SLAlertHandler.alertHandlers.splice(handlerIndex, 1);\
+                    } finally {\
+                        UIATarget.localTarget().popTimeout();\
                     }\
                 }"
                 
@@ -399,12 +403,7 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
     NSString *UIAAlertHandler = [NSString stringWithFormat:@"\
                                      var buttonElement = (%@)('%@');\
                                      if (buttonElement && buttonElement.isValid()) {\
-                                        UIATarget.localTarget().pushTimeout(2);\
-                                        try {\
-                                            buttonElement.tap();\
-                                        } finally {\
-                                            UIATarget.localTarget().popTimeout();\
-                                        }\
+                                        buttonElement.tap();\
                                         return true;\
                                      } else {\
                                         return false;\
