@@ -196,9 +196,17 @@ u_int32_t random_uniform(u_int32_t upperBound) {
     // ...that support the current platform...
     [testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"supportsCurrentPlatform == YES"]];
 
-    // ...and that are focused (if any remaining are focused)
+    // ...and that are focused (if any remaining are focused)...
     NSMutableArray *focusedTests = [testsToRun mutableCopy];
-    [focusedTests filterUsingPredicate:[NSPredicate predicateWithFormat:@"isFocused == YES"]];
+
+    // ...if tests to focus are listed in the FOCUS environment variable, use those. Otherwise, filter by "focus_" prefix
+    NSString *envTests = [[[NSProcessInfo processInfo] environment] objectForKey:@"FOCUS"];
+    if ([envTests length] > 0) {
+        [focusedTests filterUsingPredicate:[NSPredicate predicateWithFormat:@"isFocusedWithEnvVar == YES"]];
+    } else {
+        [focusedTests filterUsingPredicate:[NSPredicate predicateWithFormat:@"isFocused == YES"]];
+    }
+
     BOOL runningWithFocus = ([focusedTests count] > 0);
     if (runningWithFocus) {
         testsToRun = focusedTests;

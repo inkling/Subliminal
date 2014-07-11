@@ -92,6 +92,16 @@ static int __lastKnownLineNumber;
     return NO;
 }
 
++ (BOOL)isFocusedWithEnvVar {
+    for (NSString *testCaseName in [self envVarFocusedTestCases]) {
+        SEL testCaseSelector = NSSelectorFromString(testCaseName);
+        if ([self testCaseWithSelectorSupportsCurrentPlatform:testCaseSelector]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
 + (BOOL)supportsCurrentPlatform {
     // examine whether this test or any of its superclasses are annotated
     // the "nearest" annotation determines support ("nearest" like with method overrides)
@@ -205,8 +215,51 @@ static int __lastKnownLineNumber;
     return focusedTestCases;
 }
 
++ (NSSet *)envVarFocusedTestCases {
+    static const void *const kEnvVarFocusedTestCasesKey = &kEnvVarFocusedTestCasesKey;
+    NSSet *envVarFocusedTestCases = objc_getAssociatedObject(self, kEnvVarFocusedTestCasesKey);
+    if (!envVarFocusedTestCases) {
+        NSSet *testCases = [self testCases];
+
+        // if any test cases are specified in the FOCUS envvar
+        NSString *envTests = [[[NSProcessInfo processInfo] environment] objectForKey:@"FOCUS"];
+        NSArray *envTestsArray = [envTests componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@", \t"]];
+        envVarFocusedTestCases = [testCases filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(NSString *testCase, NSDictionary *bindings) {
+            return [envTestsArray containsObject:testCase];
+        }]];
+
+        // otherwise, if our class' name (or the name of any superclass) is specified,
+        // all test cases are focused
+        if (![envVarFocusedTestCases count]) {
+            BOOL classIsFocused = NO;
+            Class testClass = self;
+            while (testClass != [SLTest class]) {
+                if ([envTestsArray containsObject:NSStringFromClass(testClass)]) {
+                    classIsFocused = YES;
+                    break;
+                }
+                testClass = [testClass superclass];
+            }
+            if (classIsFocused) {
+                envVarFocusedTestCases = [testCases copy];
+            }
+        }
+
+        objc_setAssociatedObject(self, kEnvVarFocusedTestCasesKey, envVarFocusedTestCases, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    return envVarFocusedTestCases;
+}
+
 + (NSSet *)testCasesToRun {
-    NSSet *baseTestCases = (([self isFocused]) ? [self focusedTestCases] : [self testCases]);
+    NSSet *baseTestCases;
+    if ([self isFocusedWithEnvVar]) {
+        baseTestCases = [self envVarFocusedTestCases];
+    } else if ([self isFocused]) {
+        baseTestCases = [self focusedTestCases];
+    } else {
+        baseTestCases = [self testCases];
+    }
+    
     return [baseTestCases filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
         // pass the unfocused selector, as focus is temporary and shouldn't require modifying the test infrastructure
         SEL unfocusedTestCaseSelector = NSSelectorFromString([self unfocusedTestCaseName:evaluatedObject]);

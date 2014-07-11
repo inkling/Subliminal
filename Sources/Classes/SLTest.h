@@ -151,6 +151,43 @@
  */
 + (BOOL)isFocused;
 
+/**
+ Returns YES if the test has at least one test case which is focused
+ using an environment variable named `FOCUS` on the tested application's Integration
+ Tests scheme and which can run on the current platform.
+
+ When a test is run, if any of its test cases are focused, only those test cases will run.
+ This may be useful when writing or debugging tests.
+
+ In Xcode, test cases are focused by listing the desired tests, separated
+ by commas, as the Integration Tests scheme's `FOCUS` environment variable's value.
+
+ Using the subliminal-test script to run Subliminal from the command line for continuous
+ integration, test cases are focused like so:
+
+ subliminal-test [...] -e FOCUS testFoo,testBar
+
+ It is also possible to implicitly focus all test cases by listing their test's name
+ in the `FOCUS` environment variable. But if some test cases are explicitly focused
+ (as above), only those test cases will run--the narrowest focus applies.
+
+ If a test is focused, that focus will apply to any tests which descend from it.
+
+ @warning Methods that take test case selectors as arguments (like
+ `-setUpTestCaseWithSelector:`) are invoked with the unfocused form of the selectors
+ --they need not (and should not) be modified when a test case is focused.
+
+ @warning Focused test cases will not be run if their test is not run (e.g. if
+ it is not included in the set of tests to be run, or if it does not support
+ the current platform).
+
+ @return `YES` if any test cases are focused and can be run on the current platform,
+ `NO` otherwise.
+
+ @see -[SLTestController runTests:usingSeed:withCompletionBlock:]
+ */
++ (BOOL)isFocusedWithEnvVar;
+
 #pragma mark - Ordering Test Runs
 /// ------------------------------------------
 /// @name Ordering Test Runs
