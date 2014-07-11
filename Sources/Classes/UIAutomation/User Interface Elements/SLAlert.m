@@ -135,15 +135,25 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
                 // enumerate registered handlers, from first to last
                 @"for (var handlerIndex = 0; handlerIndex < SLAlertHandler.alertHandlers.length; handlerIndex++) {\
                     var handler = SLAlertHandler.alertHandlers[handlerIndex];"
-                    // if a handler matches the alert...
-                    @"if (handler.handleAlert(alert) === true) {\
-                        if (SLAlertHandler.loggingEnabled) UIALogger.logMessage('Alert was handled by a test.');"
-                        // ...ensure that the alert's delegate will receive its callbacks
-                        // before the next JS command (i.e. -didHandleAlert) evaluates...
-                        @"UIATarget.localTarget().delay(%g);"
-                        // ...then remove the handler and return true
-                        @"SLAlertHandler.alertHandlers.splice(handlerIndex, 1);\
-                        return true;\
+                    // Give the UIA default 5s for UI interactions done purely in JS with no ObjC fallback
+                    @"UIATarget.localTarget().pushTimeout(5);\
+                    try {"
+                        // if a handler matches the alert...
+                        @"if (handler.handleAlert(alert) === true) {\
+                            if (SLAlertHandler.loggingEnabled) UIALogger.logMessage('Alert was handled by a test.');"
+                            // ...ensure that the alert's delegate will receive its callbacks
+                            // before the next JS command (i.e. -didHandleAlert) evaluates...
+                            @"UIATarget.localTarget().delay(%g);"
+                            // ...then remove the handler and return true
+                            @"SLAlertHandler.alertHandlers.splice(handlerIndex, 1);\
+                            return true;\
+                        }\
+                    } catch (e) {\
+                        UIALogger.logError('Handler for alert \"' + alert.name() + '\" threw an exception!');\
+                        UIATarget.localTarget().logElementTree();\
+                        SLAlertHandler.alertHandlers.splice(handlerIndex, 1);\
+                    } finally {\
+                        UIATarget.localTarget().popTimeout();\
                     }\
                 }"
                 
