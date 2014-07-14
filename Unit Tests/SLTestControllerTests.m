@@ -25,6 +25,7 @@
 #import <Subliminal/SLTerminal.h>
 #import <OCMock/OCMock.h>
 
+#import "SLTest+Internal.h"
 #import "TestUtilities.h"
 #import "SharedSLTests.h"
 
