@@ -24,6 +24,7 @@
 #import <Subliminal/Subliminal.h>
 #import <Subliminal/SLTerminal.h>
 #import <OCMock/OCMock.h>
+#import <objc/runtime.h>
 
 #import "TestUtilities.h"
 #import "SharedSLTests.h"
@@ -125,7 +126,26 @@
 #pragma mark - Platform support
 
 - (void)testTestsSupportCurrentPlatformByDefault {
-    STAssertTrue([SLTest supportsCurrentPlatform], @"Tests should support the current platform by default.");
+    // `SLTest` itself does not support the current platform because it does not
+    // define test cases, but a test which _does_ define test cases...
+    Class testClass = [TestWithSomeTestCases class];
+    
+    // ...and does not override `+supportsCurrentPlatform`...
+    SEL supportsCurrentPlatformSelector = @selector(supportsCurrentPlatform);
+    Method defaultSupportsCurrentPlatform = class_getClassMethod([SLTest class], supportsCurrentPlatformSelector);
+    Method testSupportsCurrentPlatform = class_getClassMethod(testClass, supportsCurrentPlatformSelector);
+    STAssertTrue(testSupportsCurrentPlatform == defaultSupportsCurrentPlatform,
+                 @"For the purposes of this test, the test class must not override `+supportsCurrentPlatform`.");
+    
+    // ...should support the current platform.
+    STAssertTrue([testClass supportsCurrentPlatform], @"Tests should support the current platform by default.");
+}
+
+- (void)testTestsWithoutTestCasesSupportingTheCurrentPlatformDontSupportCurrentPlatform {
+    // It's trivially true that none of `SLTest`'s test cases support the current platform,
+    // because it doesn't have any.
+    STAssertFalse([SLTest supportsCurrentPlatform],
+                  @"A test without test cases supporting the current platform should not support the current platform.");
 }
 
 - (void)testTestsWithiPhoneSuffixOnlySupportiPhone {
@@ -172,14 +192,23 @@
         [invocation setReturnValue:&currentUserInterfaceIdiom];
     }] userInterfaceIdiom];
 
-    STAssertFalse([AbstractTestWhichSupportsOnly_iPad supportsCurrentPlatform],
-                  @"The base class should not support the iPhone.");
-    STAssertFalse([ConcreteTestWhichSupportsOnlyiPad supportsCurrentPlatform],
+    Class baseClass = [AbstractTestWhichSupportsOnly_iPad class];
+    
+    // `AbstractTestWhichSupportsOnly_iPad` itself does not support any platform
+    // because it does not define test cases, but a test which _does_ define test cases...
+    Class subclass = [ConcreteTestWhichSupportsOnlyiPad class];
+    
+    // ...and does not override `+supportsCurrentPlatform`...
+    SEL supportsCurrentPlatformSelector = @selector(supportsCurrentPlatform);
+    Method defaultSupportsCurrentPlatform = class_getClassMethod(baseClass, supportsCurrentPlatformSelector);
+    Method testSupportsCurrentPlatform = class_getClassMethod(subclass, supportsCurrentPlatformSelector);
+    STAssertTrue(testSupportsCurrentPlatform == defaultSupportsCurrentPlatform,
+                 @"For the purposes of this test, the subclass must not override `+supportsCurrentPlatform`.");
+    
+    // ...should behave as expected, given the base class' annotation.
+    STAssertFalse([subclass supportsCurrentPlatform],
                   @"The subclass should not support the iPhone.");
-
     currentUserInterfaceIdiom = UIUserInterfaceIdiomPad;
-    STAssertTrue([AbstractTestWhichSupportsOnly_iPad supportsCurrentPlatform],
-                 @"The base class should support the iPad.");
     STAssertTrue([ConcreteTestWhichSupportsOnlyiPad supportsCurrentPlatform],
                  @"The subclass should support the iPad.");
 }

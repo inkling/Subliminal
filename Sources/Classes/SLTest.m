@@ -110,7 +110,17 @@ static int __lastKnownLineNumber;
         testClass = [testClass superclass];
     }
 
-    return testSupportsCurrentDevice;
+    BOOL aTestCaseSupportsCurrentPlatform = NO;
+    for (NSString *testCaseName in [self testCases]) {
+        // pass the unfocused selector, as focus is temporary and shouldn't require modifying the test infrastructure
+        SEL unfocusedTestCaseSelector = NSSelectorFromString([self unfocusedTestCaseName:testCaseName]);
+        if ([self testCaseWithSelectorSupportsCurrentPlatform:unfocusedTestCaseSelector]) {
+            aTestCaseSupportsCurrentPlatform = YES;
+            break;
+        }
+    }
+    
+    return testSupportsCurrentDevice && aTestCaseSupportsCurrentPlatform;
 }
 
 + (BOOL)testCaseWithSelectorSupportsCurrentPlatform:(SEL)testCaseSelector {
