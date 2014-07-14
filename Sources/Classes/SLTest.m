@@ -87,7 +87,10 @@ static int __lastKnownLineNumber;
     for (NSString *testCaseName in [self focusedTestCases]) {
         // pass the unfocused selector, as focus is temporary and shouldn't require modifying the test infrastructure
         SEL unfocusedTestCaseSelector = NSSelectorFromString([self unfocusedTestCaseName:testCaseName]);
-        if ([self testCaseWithSelectorSupportsCurrentPlatform:unfocusedTestCaseSelector]) return YES;
+        if ([self testCaseWithSelectorSupportsCurrentPlatform:unfocusedTestCaseSelector] &&
+            [self testCaseWithSelectorSupportsCurrentEnvironment:unfocusedTestCaseSelector]) {
+            return YES;
+        }
     }
     return NO;
 }
@@ -129,6 +132,19 @@ static int __lastKnownLineNumber;
     UIUserInterfaceIdiom userInterfaceIdiom = [[UIDevice currentDevice] userInterfaceIdiom];
     if ([testCaseName hasSuffix:@"_iPad"]) return (userInterfaceIdiom == UIUserInterfaceIdiomPad);
     if ([testCaseName hasSuffix:@"_iPhone"]) return (userInterfaceIdiom == UIUserInterfaceIdiomPhone);
+    return YES;
+}
+
++ (BOOL)supportsCurrentEnvironment {
+    for (NSString *testCaseName in [self testCases]) {
+        // pass the unfocused selector, as focus is temporary and shouldn't require modifying the test infrastructure
+        SEL unfocusedTestCaseSelector = NSSelectorFromString([self unfocusedTestCaseName:testCaseName]);
+        if ([self testCaseWithSelectorSupportsCurrentEnvironment:unfocusedTestCaseSelector]) return YES;
+    }
+    return NO;
+}
+
++ (BOOL)testCaseWithSelectorSupportsCurrentEnvironment:(SEL)testCaseSelector {
     return YES;
 }
 
@@ -229,7 +245,8 @@ static int __lastKnownLineNumber;
     return [baseTestCases filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
         // pass the unfocused selector, as focus is temporary and shouldn't require modifying the test infrastructure
         SEL unfocusedTestCaseSelector = NSSelectorFromString([self unfocusedTestCaseName:evaluatedObject]);
-        return [self testCaseWithSelectorSupportsCurrentPlatform:unfocusedTestCaseSelector];
+        return ([self testCaseWithSelectorSupportsCurrentPlatform:unfocusedTestCaseSelector] &&
+                [self testCaseWithSelectorSupportsCurrentEnvironment:unfocusedTestCaseSelector]);
     }]];
 }
 

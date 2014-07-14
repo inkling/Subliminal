@@ -47,7 +47,7 @@
  
  Without modifying the argument to `-[SLTestController runTests:withCompletionBlock:]`, 
  tests may be conditionalized to run only in certain circumstances using APIs
- like `+isAbstract`, `+supportsCurrentPlatform`, and `+isFocused`.
+ like `+isAbstract`, `+supportsCurrentPlatform`, `+supportsCurrentEnvironment`, and `+isFocused`.
 
  @return All tests (`SLTest` subclasses) linked against the current target.
  */
@@ -88,13 +88,13 @@
 + (BOOL)isAbstract;
 
 /**
- Returns YES if this test has at least one test case which can be run
+ Returns YES if this test has at least one test case which should be run
  given the current device, screen, etc.
  
  Subclasses of `SLTest` should override this method if some run-time condition
- should determine whether or not all test cases should run. 
- Typical checks might include checking the user interface idiom (phone or pad) 
- of the current device, or checking the scale of the main screen.
+ concerning the current platform should determine whether or not all test cases
+ should be run. Typical checks might include checking the user interface idiom
+ (phone or pad) of the current device, or checking the scale of the main screen.
 
  As a convenience, test writers may specify the device type(s) on which a
  test can run by suffixing tests' names in the following fashion:
@@ -111,21 +111,22 @@
  appropriately and that there is at least one test case for which
  `+testCaseWithSelectorSupportsCurrentPlatform:` returns `YES`.
 
- If this method returns `NO`, none of this test's cases will run.
+ If this method returns `NO`, none of this test's cases will be run.
 
- @return `YES` if this class has test cases that can currently run, `NO` otherwise.
+ @return `YES` if this class has test cases that should be run on the current platform,
+ `NO` otherwise.
  
  @see +testCaseWithSelectorSupportsCurrentPlatform:
  */
 + (BOOL)supportsCurrentPlatform;
 
 /**
- Returns YES if this test case can be run given the current device, screen, etc.
+ Returns YES if this test case should be run given the current device, screen, etc.
  
- Subclasses of SLTest should override this method if they need to do any run-time
- checks to determine whether or not specific test cases can run. Typical checks
- might include checking the user interface idiom (phone or pad) of the current
- device, or checking the scale of the main screen.
+ Subclasses of `SLTest` should override this method if they need to do any run-time
+ checks to determine whether or not specific test cases should be run based on the current
+ platform. Typical checks might include checking the user interface idiom (phone or pad)
+ of the current device, or checking the scale of the main screen.
  
  As a convenience, test writers may specify the device type(s) on which a
  test case can run by suffixing test cases' names in the following fashion:
@@ -141,19 +142,77 @@
  The default implementation of this method checks that the selector is suffixed
  appropriately.
  
- @warning If the test does not support the current platform, that test's cases
+ @warning If the test does not support the current platform, its cases
  will not be run regardless of this method's return value.
  
  @param testCaseSelector A selector identifying a test case.
- @return `YES` if the test case can be run, `NO` otherwise.
+ 
+ @return `YES` if the test case should be run on the current platform, `NO` otherwise.
  
  @see +supportsCurrentPlatform
  */
 + (BOOL)testCaseWithSelectorSupportsCurrentPlatform:(SEL)testCaseSelector;
 
 /**
+ Returns YES if this test has at least one test case which can be run
+ given the environment from which the process was launched.
+ 
+ Subclasses of `SLTest` should override this method if some run-time condition
+ concerning the current environment should determine whether or not all test cases
+ should be run. A typical check would be to look for an environment variable specifying
+ which test cases should be run.
+ 
+ When running tests from Xcode, you can set environment variables by
+ [modifying your integration tests scheme](http://nshipster.com/launch-arguments-and-environment-variables/) .
+ When running `subliminal-test` from the command line, you can set environment variables
+ using the "-e" option. Environment variables and their values can then be retrieved
+ from the dictionary returned by `[[NSProcessInfo processInfo] environment]`.
+ 
+ The default implementation of this method checks that there is at least one test
+ case for which `+testCaseWithSelectorSupportsCurrentEnvironment:` returns `YES`.
+ 
+ If this method returns `NO`, none of this test's cases will be run.
+ 
+ @return `YES` if this class has test cases that should be run in the current
+ environment, `NO` otherwise.
+ 
+ @see +testCaseWithSelectorSupportsCurrentPlatform:
+ */
++ (BOOL)supportsCurrentEnvironment;
+
+/**
+ Returns YES if this test case can be run given the environment from which
+ the process was launched.
+ 
+ Subclasses of `SLTest` should override this method if they need to do any run-time
+ checks to determine whether or not specific test cases should be run based on the
+ current environment. A typical check would be to look for an environment variable
+ specifying which test cases should be run.
+ 
+ When running tests from Xcode, you can set environment variables by
+ [modifying your integration tests scheme](http://nshipster.com/launch-arguments-and-environment-variables/) .
+ When running `subliminal-test` from the command line, you can set environment variables
+ using the "-e" option. Environment variables and their values can then be retrieved
+ from the dictionary returned by `[[NSProcessInfo processInfo] environment]`.
+ 
+ The default implementation of this method returns `YES`--test cases will be run
+ regardless of environment.
+ 
+ @warning If the test does not support the current environment, its cases
+ will not be run regardless of this method's return value.
+ 
+ @param testCaseSelector A selector identifying a test case.
+ 
+ @return `YES` if the test case should be run in the current environment, `NO` otherwise.
+ 
+ @see +supportsCurrentEnvironment
+ */
++ (BOOL)testCaseWithSelectorSupportsCurrentEnvironment:(SEL)testCaseSelector;
+
+/**
  Returns YES if the test has at least one test case which is focused
- and which [supports the current platform](+testCaseWithSelectorSupportsCurrentPlatform:).
+ and which supports the current [platform](+testCaseWithSelectorSupportsCurrentPlatform:)
+ and [environment](+testCaseWithSelectorSupportsCurrentEnvironment:).
 
  When a test is run, if any of its test cases are focused, only those test cases will run.
  This may be useful when writing or debugging tests.
@@ -174,7 +233,7 @@
 
  @warning Focused test cases will not be run if their test is not run (e.g. if
  it is not included in the set of tests to be run, or if it does not support
- the current platform).
+ the current [platform](+supportsCurrentPlatform) or [environment](+supportsCurrentEnvironment)).
 
  @return `YES` if any test cases are focused and supports the current platform, 
  `NO` otherwise.

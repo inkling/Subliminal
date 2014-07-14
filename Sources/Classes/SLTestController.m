@@ -190,11 +190,15 @@ u_int32_t random_uniform(u_int32_t upperBound) {
         [testsToRun addObjectsFromArray:group];
     }
 
-    // now filter the tests to run: only run tests that are concrete...
-    [testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"isAbstract == NO"]];
-
-    // ...that support the current platform...
-    [testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"supportsCurrentPlatform == YES"]];
+    // now filter the tests to run:
+    [testsToRun filterUsingPredicate:[NSCompoundPredicate andPredicateWithSubpredicates:@[
+        // only run tests that are concrete...
+        [NSPredicate predicateWithFormat:@"isAbstract == NO"],
+        // ...that support the current platform...
+        [NSPredicate predicateWithFormat:@"supportsCurrentPlatform == YES"],
+        // ...that support the current environment...
+        [NSPredicate predicateWithFormat:@"supportsCurrentEnvironment == YES"]
+    ]]];
 
     // ...and that are focused (if any remaining are focused)
     NSMutableArray *focusedTests = [testsToRun mutableCopy];

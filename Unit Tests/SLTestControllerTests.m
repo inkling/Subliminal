@@ -303,6 +303,30 @@ static const NSUInteger kNumSeedTrials = 100;
     STAssertNoThrow([testNotSupportingCurrentPlatformMock verify], @"Test not supporting current platform was unexpectedly run.");
 }
 
+#pragma mark -Environment support
+
+- (void)testOnlyTestsSupportingCurrentEnvironmentAreRun {
+    Class testSupportingCurrentEnvironmentClass = [TestWithSomeTestCases class];
+    STAssertTrue([testSupportingCurrentEnvironmentClass supportsCurrentEnvironment],
+                 @"For the purposes of this test, this SLTest must support the current environment.");
+    id testSupportingCurrentEnvironmentMock = [OCMockObject partialMockForClass:testSupportingCurrentEnvironmentClass];
+    [[testSupportingCurrentEnvironmentMock expect] runAndReportNumExecuted:[OCMArg anyPointer]
+                                                                    failed:[OCMArg anyPointer]
+                                                        failedUnexpectedly:[OCMArg anyPointer]];
+    
+    Class testNotSupportingCurrentEnvironmentClass = [TestNotSupportingCurrentEnvironment class];
+    STAssertFalse([testNotSupportingCurrentEnvironmentClass supportsCurrentEnvironment],
+                  @"For the purposes of this test, this SLTest must not support the current environment.");
+    id testNotSupportingCurrentEnvironmentMock = [OCMockObject partialMockForClass:testNotSupportingCurrentEnvironmentClass];
+    [[testNotSupportingCurrentEnvironmentMock reject] runAndReportNumExecuted:[OCMArg anyPointer]
+                                                                       failed:[OCMArg anyPointer]
+                                                           failedUnexpectedly:[OCMArg anyPointer]];
+    
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObjects:testSupportingCurrentEnvironmentClass, testNotSupportingCurrentEnvironmentClass, nil], nil);
+    STAssertNoThrow([testSupportingCurrentEnvironmentMock verify], @"Test supporting current environment was not run as expected.");
+    STAssertNoThrow([testNotSupportingCurrentEnvironmentMock verify], @"Test not supporting current environment was unexpectedly run.");
+}
+
 #pragma mark -Focusing
 
 - (void)testWhenSomeTestsAreFocusedOnlyThoseTestsAreRun {
@@ -343,10 +367,13 @@ static const NSUInteger kNumSeedTrials = 100;
     ];
     NSUInteger numberOfFocusedTests = 0;
     for (Class testClass in tests) {
-        // All SLTests used here must support the current platform lest this test
-        // overlap with -testTestsMustSupportCurrentPlatformInOrderToRunDespiteFocus.
+        // All SLTests used here must support the current platform and environment lest this test
+        // overlap with `-testAFocusedTestMustSupportTheCurrentPlatformInOrderToBeRun`
+        // and/or `-testAFocusedTestMustSupportTheCurrentEnvironmentInOrderToBeRun`
         STAssertTrue([testClass supportsCurrentPlatform],
                      @"All SLTests used by this test must support the current platform.");
+        STAssertTrue([testClass supportsCurrentEnvironment],
+                     @"All SLTests used by this test must support the current environment.");
 
         if ([testClass isFocused]) numberOfFocusedTests++;
     }
@@ -382,7 +409,7 @@ static const NSUInteger kNumSeedTrials = 100;
     STAssertTrue([testThatIsFocusedButDoesntSupportCurrentPlatformClass isFocused],
                  @"For the purposes of this test, this SLTest must be focused.");
     STAssertFalse([testThatIsFocusedButDoesntSupportCurrentPlatformClass supportsCurrentPlatform],
-                  @"For the purposes of this test, this SLTest must not support current platform.");
+                  @"For the purposes of this test, this SLTest must not support the current platform.");
 
     NSSet *tests = [NSSet setWithObjects:
         testThatIsNotFocusedClass,
@@ -405,6 +432,40 @@ static const NSUInteger kNumSeedTrials = 100;
 
     SLRunTestsAndWaitUntilFinished(tests, nil);
     STAssertNoThrow([testThatIsFocusedButDoesntSupportCurrentPlatformClassMock verify], @"Test doesn't support the current platform but was still run.");
+    STAssertNoThrow([testThatIsNotFocusedClassMock verify], @"Other test was not run as expected.");
+}
+
+- (void)testAFocusedTestMustSupportTheCurrentEnvironmentInOrderToBeRun {
+    Class testThatIsNotFocusedClass = [TestThatIsNotFocused class];
+    STAssertFalse([testThatIsNotFocusedClass isFocused],
+                  @"For the purposes of this test, this SLTest must not be focused.");
+    Class testThatIsFocusedButDoesntSupportCurrentEnvironmentClass = [Focus_TestThatIsFocusedButDoesntSupportCurrentEnvironment class];
+    STAssertTrue([testThatIsFocusedButDoesntSupportCurrentEnvironmentClass isFocused],
+                 @"For the purposes of this test, this SLTest must be focused.");
+    STAssertFalse([testThatIsFocusedButDoesntSupportCurrentEnvironmentClass supportsCurrentEnvironment],
+                  @"For the purposes of this test, this SLTest must not support current environment.");
+    
+    NSSet *tests = [NSSet setWithObjects:
+        testThatIsNotFocusedClass,
+        testThatIsFocusedButDoesntSupportCurrentEnvironmentClass,
+        nil
+    ];
+    
+    // While `TestThatIsFocusedButDoesntSupportCurrentEnvironment` is focused,
+    // it doesn't support the current environment, thus isn't going to run.
+    // If it's not going to run, its focus is irrelevant, and so the other test should run after all.
+    id testThatIsFocusedButDoesntSupportCurrentEnvironmentClassMock = [OCMockObject partialMockForClass:testThatIsFocusedButDoesntSupportCurrentEnvironmentClass];
+    [[testThatIsFocusedButDoesntSupportCurrentEnvironmentClassMock reject] runAndReportNumExecuted:[OCMArg anyPointer]
+                                                                                            failed:[OCMArg anyPointer]
+                                                                                failedUnexpectedly:[OCMArg anyPointer]];
+    
+    id testThatIsNotFocusedClassMock = [OCMockObject partialMockForClass:testThatIsNotFocusedClass];
+    [[testThatIsNotFocusedClassMock expect] runAndReportNumExecuted:[OCMArg anyPointer]
+                                                             failed:[OCMArg anyPointer]
+                                                 failedUnexpectedly:[OCMArg anyPointer]];
+    
+    SLRunTestsAndWaitUntilFinished(tests, nil);
+    STAssertNoThrow([testThatIsFocusedButDoesntSupportCurrentEnvironmentClassMock verify], @"Test doesn't support the current environment but was still run.");
     STAssertNoThrow([testThatIsNotFocusedClassMock verify], @"Other test was not run as expected.");
 }
 

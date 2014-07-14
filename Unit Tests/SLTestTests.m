@@ -65,15 +65,19 @@
         [TestWhichSupportsOnlyiPad_iPad class],
         [TestWhichSupportsOnlyiPhone_iPhone class],
         [TestWithPlatformSpecificTestCases class],
+        [TestNotSupportingCurrentEnvironment class],
+        [TestWithEnvironmentSpecificTestCases class],
         [AbstractTestWhichSupportsOnly_iPad class],
         [ConcreteTestWhichSupportsOnlyiPad class],
         [TestThatIsNotFocused class],
         [TestWithAFocusedTestCase class],
         [TestWithSomeFocusedTestCases class],
         [TestWithAFocusedPlatformSpecificTestCase class],
+        [TestWithAFocusedEnvironmentSpecificTestCase class],
         [Focus_TestThatIsFocused class],
         [Focus_TestWhereNarrowestFocusApplies class],
         [Focus_TestThatIsFocusedButDoesntSupportCurrentPlatform class],
+        [Focus_TestThatIsFocusedButDoesntSupportCurrentEnvironment class],
         [Focus_AbstractTestThatIsFocused class],
         [ConcreteTestThatIsFocused class],
         [AbstractRunGroupOneTest class],
@@ -294,6 +298,76 @@
                   @"Test case with '_iPhone' suffix should not support the iPhone.");
 }
 
+#pragma mark - Environment support
+
+- (void)testTestsSupportCurrentEnvironmentByDefault {
+    // `SLTest` itself does not support the current environment because it does not
+    // define test cases, but a test which _does_ define test cases...
+    Class testClass = [TestWithSomeTestCases class];
+    
+    // ...and does not override `+supportsCurrentEnvironment`...
+    SEL supportsCurrentEnvironmentSelector = @selector(supportsCurrentEnvironment);
+    Method defaultSupportsCurrentEnvironment = class_getClassMethod([SLTest class], supportsCurrentEnvironmentSelector);
+    Method testSupportsCurrentEnvironment = class_getClassMethod(testClass, supportsCurrentEnvironmentSelector);
+    STAssertTrue(testSupportsCurrentEnvironment == defaultSupportsCurrentEnvironment,
+                 @"For the purposes of this test, the test class must not override `+supportsCurrentEnvironment`.");
+    
+    // ...should support the current environment.
+    STAssertTrue([testClass supportsCurrentEnvironment], @"Tests should support the current environment by default.");
+}
+
+- (void)testTestsWithoutTestCasesSupportingTheCurrentEnvironmentDontSupportCurrentEnvironment {
+    // It's trivially true that none of `SLTest`'s test cases support the current environment,
+    // because it doesn't have any.
+    STAssertFalse([SLTest supportsCurrentEnvironment],
+                  @"A test without test cases supporting the current environment should not support the current environment.");
+}
+
+- (void)testOnlyTestCasesSupportingCurrentEnvironmentAreRun {
+    Class testWithEnvironmentSpecificTestCasesTest = [TestWithEnvironmentSpecificTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testWithEnvironmentSpecificTestCasesTest];
+    
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+    SEL supportedTestCaseSelector = @selector(testFoo);
+    STAssertTrue([testWithEnvironmentSpecificTestCasesTest testCaseWithSelectorSupportsCurrentEnvironment:supportedTestCaseSelector],
+                 @"For the purposes of this test, this test case must support the current environment.");
+    // note: this causes the mock to expect the invocation of the test case selector, not performSelector: itself
+    [[testMock expect] performSelector:supportedTestCaseSelector];
+    
+    SEL unsupportedTestCaseSelector = @selector(testCaseNotSupportingCurrentEnvironment);
+    STAssertFalse([testWithEnvironmentSpecificTestCasesTest testCaseWithSelectorSupportsCurrentEnvironment:unsupportedTestCaseSelector],
+                  @"For the purposes of this test, this test case must not support the current environment.");
+    // note: this causes the mock to expect the invocation of the test case selector, not performSelector: itself
+    [[testMock reject] performSelector:unsupportedTestCaseSelector];
+#pragma clang diagnostic pop
+    
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithEnvironmentSpecificTestCasesTest], nil);
+    STAssertNoThrow([testMock verify], @"Test cases did not run as expected.");
+}
+
+- (void)testIfTestDoesNotSupportCurrentEnvironmentTestCasesWillNotRunRegardlessOfSupport {
+    Class testNotSupportingCurrentEnvironmentClass = [TestNotSupportingCurrentEnvironment class];
+    STAssertFalse([testNotSupportingCurrentEnvironmentClass supportsCurrentEnvironment],
+                  @"For the purposes of this test, this SLTest must not support the current environment.");
+    
+    SEL supportedTestCaseSelector = @selector(testFoo);
+    STAssertTrue([testNotSupportingCurrentEnvironmentClass instancesRespondToSelector:supportedTestCaseSelector] &&
+                 [testNotSupportingCurrentEnvironmentClass testCaseWithSelectorSupportsCurrentEnvironment:supportedTestCaseSelector],
+                 @"For the purposes of this test, this SLTest must have a test case which supports the current environment.");
+    
+    id testNotSupportingCurrentEnvironmentClassMock = [OCMockObject partialMockForClass:testNotSupportingCurrentEnvironmentClass];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+    // note: this causes the mock to reject the invocation of the test case selector, not performSelector: itself
+    [[testNotSupportingCurrentEnvironmentClassMock reject] performSelector:supportedTestCaseSelector];
+#pragma clang diagnostic pop
+    
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testNotSupportingCurrentEnvironmentClass], nil);
+    STAssertNoThrow([testNotSupportingCurrentEnvironmentClassMock verify],
+                    @"Test case supporting current environment was run despite its test not supporting the current environment.");
+}
+
 #pragma mark - Focusing
 
 - (void)testTestsAreNotFocusedByDefault {
@@ -397,8 +471,10 @@
 
     // but expect the test infrastructure to use the unfocused selector
     // this allows test writers to avoid modifying the rest of their test when they focus a test case
-    // make sure we invoke the real implementation of -testCaseWithSelectorSupportsCurrentPlatform or else the case won't run!
+    // make sure we invoke the real implementations of `-testCaseWithSelectorSupportsCurrentPlatform:`
+    // and `-testCaseWithSelectorSupportsCurrentEnvironment:` or else the case won't run!
     [[[testWithAFocusedTestCaseClassObjectMock expect] andForwardToRealObject] testCaseWithSelectorSupportsCurrentPlatform:@selector(testTwo)];
+    [[[testWithAFocusedTestCaseClassObjectMock expect] andForwardToRealObject] testCaseWithSelectorSupportsCurrentEnvironment:@selector(testTwo)];
     [[testWithAFocusedTestCaseClassMock expect] setUpTestCaseWithSelector:@selector(testTwo)];
     [[testWithAFocusedTestCaseClassMock expect] tearDownTestCaseWithSelector:@selector(testTwo)];
 
@@ -415,7 +491,7 @@
     UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
     [[[deviceMock stub] andReturnValue:OCMOCK_VALUE(currentUserInterfaceIdiom)] userInterfaceIdiom];
 
-    // While testBar_iPad is focused, it doesn't support the current platform, thus isn't going to run.
+    // While `testBar_iPad` is focused, it doesn't support the current platform, thus isn't going to run.
     // If it's not going to run, its focus is irrelevant, and so the other test case should run after all.
     id testWithAFocusedPlatformSpecificTestCaseClassMock = [OCMockObject partialMockForClass:testWithAFocusedPlatformSpecificTestCaseClass];
     [[testWithAFocusedPlatformSpecificTestCaseClassMock reject] focus_testBar_iPad];
@@ -423,6 +499,24 @@
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithAFocusedPlatformSpecificTestCaseClass], nil);
     STAssertNoThrow([testWithAFocusedPlatformSpecificTestCaseClassMock verify], @"Test cases did not execute as expected.");
+}
+
+- (void)testFocusedTestCasesMustSupportTheCurrentEnvironmentInOrderToRun {
+    Class testWithAFocusedEnvironmentSpecificTestCaseClass = [TestWithAFocusedEnvironmentSpecificTestCase class];
+    
+    // we mock the current device to dynamically configure the current user interface idiom
+    id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
+    UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
+    [[[deviceMock stub] andReturnValue:OCMOCK_VALUE(currentUserInterfaceIdiom)] userInterfaceIdiom];
+    
+    // While `testBar` is focused, it doesn't support the current environment, thus isn't going to run.
+    // If it's not going to run, its focus is irrelevant, and so the other test case should run after all.
+    id testWithAFocusedEnvironmentSpecificTestCaseClassMock = [OCMockObject partialMockForClass:testWithAFocusedEnvironmentSpecificTestCaseClass];
+    [[testWithAFocusedEnvironmentSpecificTestCaseClassMock reject] focus_testBar];
+    [[testWithAFocusedEnvironmentSpecificTestCaseClassMock expect] testFoo];
+    
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithAFocusedEnvironmentSpecificTestCaseClass], nil);
+    STAssertNoThrow([testWithAFocusedEnvironmentSpecificTestCaseClassMock verify], @"Test cases did not execute as expected.");
 }
 
 #pragma mark - Test case execution
