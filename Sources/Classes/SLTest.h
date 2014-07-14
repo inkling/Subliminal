@@ -120,8 +120,40 @@
 + (BOOL)supportsCurrentPlatform;
 
 /**
+ Returns YES if this test case can be run given the current device, screen, etc.
+ 
+ Subclasses of SLTest should override this method if they need to do any run-time
+ checks to determine whether or not specific test cases can run. Typical checks
+ might include checking the user interface idiom (phone or pad) of the current
+ device, or checking the scale of the main screen.
+ 
+ As a convenience, test writers may specify the device type(s) on which a
+ test case can run by suffixing test cases' names in the following fashion:
+ 
+ *  A test case whose name has the suffix "`_iPhone`," like "`testFoo_iPhone`",
+ will be executed only when `([[UIDevice currentDevice] userInterfaceIdiom] ==
+ UIUserInterfaceIdiomPhone)` is true.
+ *  A test case whose name has the suffix "`_iPad`" will be executed only
+ when the current device user interface idiom is `UIUserInterfaceIdiomPad`.
+ *  A test case whose name has neither the "`_iPhone`" nor the "`_iPad`"
+ suffix will be executed on all devices regardless of the user interface idiom.
+ 
+ The default implementation of this method checks that the selector is suffixed
+ appropriately.
+ 
+ @warning If the test does not support the current platform, that test's cases
+ will not be run regardless of this method's return value.
+ 
+ @param testCaseSelector A selector identifying a test case.
+ @return `YES` if the test case can be run, `NO` otherwise.
+ 
+ @see +supportsCurrentPlatform
+ */
++ (BOOL)testCaseWithSelectorSupportsCurrentPlatform:(SEL)testCaseSelector;
+
+/**
  Returns YES if the test has at least one test case which is focused
- and which can run on the current platform.
+ and which [supports the current platform](+testCaseWithSelectorSupportsCurrentPlatform:).
 
  When a test is run, if any of its test cases are focused, only those test cases will run.
  This may be useful when writing or debugging tests.
@@ -144,7 +176,7 @@
  it is not included in the set of tests to be run, or if it does not support
  the current platform).
 
- @return `YES` if any test cases are focused and can be run on the current platform, 
+ @return `YES` if any test cases are focused and supports the current platform, 
  `NO` otherwise.
 
  @see -[SLTestController runTests:usingSeed:withCompletionBlock:]
@@ -240,38 +272,6 @@
 /// ----------------------------------------
 /// @name Running Test Cases
 /// ----------------------------------------
-
-/**
- Returns YES if this test case can be run given the current device, screen, etc.
-
- Subclasses of SLTest should override this method if they need to do any run-time 
- checks to determine whether or not specific test cases can run. Typical checks 
- might include checking the user interface idiom (phone or pad) of the current 
- device, or checking the scale of the main screen.
-
- As a convenience, test writers may specify the device type(s) on which a 
- test case can run by suffixing test cases' names in the following fashion:
-
- *  A test case whose name has the suffix "`_iPhone`," like "`testFoo_iPhone`",
-    will be executed only when `([[UIDevice currentDevice] userInterfaceIdiom] ==
-    UIUserInterfaceIdiomPhone)` is true.
- *  A test case whose name has the suffix "`_iPad`" will be executed only
-    when the current device user interface idiom is `UIUserInterfaceIdiomPad`.
- *  A test case whose name has neither the "`_iPhone`" nor the "`_iPad`"
-    suffix will be executed on all devices regardless of the user interface idiom.
-
- The default implementation of this method checks that the selector is suffixed 
- appropriately.
- 
- @warning If the test does not support the current platform, that test's cases
- will not be run regardless of this method's return value.
-
- @param testCaseSelector A selector identifying a test case.
- @return `YES` if the test case can be run, `NO` otherwise.
- 
- @see +supportsCurrentPlatform
- */
-+ (BOOL)testCaseWithSelectorSupportsCurrentPlatform:(SEL)testCaseSelector;
 
 /**
  Called before any test cases are run.

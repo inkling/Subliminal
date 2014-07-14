@@ -113,6 +113,15 @@ static int __lastKnownLineNumber;
     return testSupportsCurrentDevice;
 }
 
++ (BOOL)testCaseWithSelectorSupportsCurrentPlatform:(SEL)testCaseSelector {
+    NSString *testCaseName = NSStringFromSelector(testCaseSelector);
+    
+    UIUserInterfaceIdiom userInterfaceIdiom = [[UIDevice currentDevice] userInterfaceIdiom];
+    if ([testCaseName hasSuffix:@"_iPad"]) return (userInterfaceIdiom == UIUserInterfaceIdiomPad);
+    if ([testCaseName hasSuffix:@"_iPhone"]) return (userInterfaceIdiom == UIUserInterfaceIdiomPhone);
+    return YES;
+}
+
 + (NSUInteger)runGroup {
     return 1;
 }
@@ -221,15 +230,6 @@ static int __lastKnownLineNumber;
     }
     return testCase;
 }
-
-+ (BOOL)testCaseWithSelectorSupportsCurrentPlatform:(SEL)testCaseSelector {
-    NSString *testCaseName = NSStringFromSelector(testCaseSelector);
-    
-    UIUserInterfaceIdiom userInterfaceIdiom = [[UIDevice currentDevice] userInterfaceIdiom];
-    if ([testCaseName hasSuffix:@"_iPad"]) return (userInterfaceIdiom == UIUserInterfaceIdiomPad);
-    if ([testCaseName hasSuffix:@"_iPhone"]) return (userInterfaceIdiom == UIUserInterfaceIdiomPhone);
-    return YES;
- }
 
 - (BOOL)runAndReportNumExecuted:(NSUInteger *)numCasesExecuted
                          failed:(NSUInteger *)numCasesFailed
