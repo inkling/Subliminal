@@ -10,10 +10,10 @@
 
 /*
  All SLTests linked against the Unit Tests target should be defined here,
- for discoverability, as -[SLTestTests testAllTestsReturnsExpected] depends 
+ for discoverability, as `-[SLTestTests testAllTestsReturnsExpected]` depends
  on knowing what tests there are.
  
- If you add a new SLTest, please remember to update -[SLTestTests testAllTestsReturnsExpected].
+ If you add a new SLTest, please remember to update `-[SLTestTests testAllTestsReturnsExpected]`.
  */
 
 @interface TestWithSomeTestCases : SLTest
@@ -214,4 +214,12 @@
 
 - (void)testFoo;
 
+@end
+
+
+@interface TestWithTagAAAandCCC : SLTest
+@end
+
+
+@interface TestWithTagBBBandCCC : SLTest
 @end

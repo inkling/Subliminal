@@ -88,9 +88,65 @@
         [TestTwoOfRunGroupTwo class],
         [TestThreeOfRunGroupTwo class],
         [TestOneOfRunGroupThree class],
+        [TestWithTagAAAandCCC class],
+        [TestWithTagBBBandCCC class],
         nil
     ];
     STAssertEqualObjects(allTests, expectedTests, @"Unexpected tests returned.");
+}
+
+- (void)testTestsWithTagsIncludesTestsWithAtLeastOneSpecifiedTag {
+    NSSet *tags = [NSSet setWithObject:@"CCC"];
+    NSSet *expectedTests = [NSSet setWithObjects:[TestWithTagAAAandCCC class], [TestWithTagBBBandCCC class], nil];
+    NSSet *actualTests = [SLTest testsWithTags:tags];
+    STAssertEqualObjects(expectedTests, actualTests,
+                         @"`+testsWithTags:` should return all tests that have at least one of the specified tags.");
+    
+    tags = [NSSet setWithObjects:@"AAA", @"BBB", nil];
+    actualTests = [SLTest testsWithTags:tags];
+    STAssertEqualObjects(expectedTests, actualTests,
+                         @"`+testsWithTags:` should not require tests to have _all_ the specified tags.");
+}
+
+- (void)testTestsWithTagsExcludesTestsWithAnyMinusPrefixedTagsSpecified {
+    NSSet *tags = [NSSet setWithObjects:@"CCC", nil];
+    NSSet *expectedTests = [NSSet setWithObjects:[TestWithTagAAAandCCC class], [TestWithTagBBBandCCC class], nil];
+    NSSet *actualTests = [SLTest testsWithTags:tags];
+    STAssertEqualObjects(expectedTests, actualTests,
+                         @"`+testsWithTags:` should return all tests that have at least one of the specified tags.");
+    
+    tags = [NSSet setWithObjects:@"CCC", @"-BBB", nil];
+    expectedTests = [NSSet setWithObject:[TestWithTagAAAandCCC class]];
+    actualTests = [SLTest testsWithTags:tags];
+    STAssertEqualObjects(expectedTests, actualTests,
+                         @"`+testsWithTags:` should have excluded those tests tagged with the '-'-prefixed tags.");
+
+    tags = [NSSet setWithObjects:@"CCC", @"-CCC", nil];
+    actualTests = [SLTest testsWithTags:tags];
+    STAssertFalse([actualTests count], @"`+testsWithTags:` should have returned no tests.");
+    
+    tags = [NSSet setWithObjects:@"CCC", @"-AAA", @"-BBB", nil];
+    actualTests = [SLTest testsWithTags:tags];
+    STAssertFalse([actualTests count], @"`+testsWithTags:` should have returned no tests.");
+}
+
+- (void)testTestsWithTagsIncludesAllTestsExceptThoseTaggedIfOnlyMinusPrefixedTagsAreSpecified {
+    NSSet *tags = [NSSet setWithObjects:@"CCC", @"-BBB", nil];
+    NSSet *expectedTests = [NSSet setWithObject:[TestWithTagAAAandCCC class]];
+    NSSet *actualTests = [SLTest testsWithTags:tags];
+    STAssertEqualObjects(expectedTests, actualTests,
+                         @"`+testsWithTags:` should have included only those tests that did have the regular tags, which tests did not also have the '-'-prefixed tags.");
+    
+    tags = [NSSet setWithObjects:@"-BBB", nil];
+    expectedTests = [[SLTest allTests] filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"NONE SELF.tags CONTAINS 'BBB'"]];
+    actualTests = [SLTest testsWithTags:tags];
+    STAssertEqualObjects(expectedTests, actualTests,
+                         @"`+testsWithTags:` should have included all tests except for those that had the '-'-prefixed tags.");
+}
+
+- (void)testTagsDefaultToUnfocusedTestNameAndRunGroup {
+    STAssertEqualObjects([TestWithSomeTestCases tags], [NSSet setWithArray:(@[ @"TestWithSomeTestCases", @"1" ])], @"");
+    STAssertEqualObjects([Focus_TestThatIsFocused tags], [NSSet setWithArray:(@[ @"TestThatIsFocused", @"1" ])], @"");
 }
 
 - (void)testTestNamedReturnsExpected {

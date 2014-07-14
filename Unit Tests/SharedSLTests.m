@@ -253,3 +253,21 @@
 - (void)testFoo {}
 
 @end
+
+
+@implementation TestWithTagAAAandCCC
+
++ (NSSet *)tags {
+    return [[super tags] setByAddingObjectsFromArray:@[ @"AAA", @"CCC" ]];
+}
+
+@end
+
+
+@implementation TestWithTagBBBandCCC
+
++ (NSSet *)tags {
+    return [[super tags] setByAddingObjectsFromArray:@[ @"BBB", @"CCC" ]];
+}
+
+@end

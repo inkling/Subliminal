@@ -33,9 +33,9 @@
  */
 @interface SLTest : NSObject
 
-#pragma mark - Retrieving Tests to Run
+#pragma mark - Identifying Tests to Run
 /// ----------------------------------------
-/// @name Retrieving Tests to Run
+/// @name Identifying Tests to Run
 /// ----------------------------------------
 
 /**
@@ -52,6 +52,67 @@
  @return All tests (`SLTest` subclasses) linked against the current target.
  */
 + (NSSet *)allTests;
+
+/**
+ Returns tests linked against the current target [tagged](+tags)
+ with one or more of the tags specified in _tags_,
+ which tests are not tagged with any '-'-prefixed tags specified in _tags_.
+ 
+ Calling this method with a set containing `[ "foo", "bar", "-baz" ]`, for instance,
+ would return a set containing all tests that were tagged with "foo" and/or "bar"
+ and were _not_ tagged with "baz".
+ 
+ Calling this method with a set containing _only_ tags prefixed with '-' returns
+ a set comprising _all_ tests except for those tagged with the '-'-prefixed tags.
+ 
+ @param tags A set of tags, which may optionally be prefixed with '-'
+ as described in the discussion.
+
+ @return All tests (`SLTest` subclasses) linked against the current target
+ which are [tagged](+tags) with one or more of the tags specified in _tags_
+ and are _not_ tagged with any of the '-'-prefixed tags specified in _tags_.
+ */
++ (NSSet *)testsWithTags:(NSSet *)tags;
+
+/**
+ One or more strings that you can use to identify this test.
+
+ By default, a test is tagged with the (unfocused)[+isFocused] name of its class
+ as well as its [run group](+runGroup) (as a string).
+ 
+ You might add tags to describe the functionality tested by this class
+ or to divide tests into separate test suites. Your implementation of this method
+ should call `super` and add to, rather than replace, the tag set.
+
+ Tags are case-insensitive. Tags must not begin with '-' --see `+testsWithTags:`.
+
+ @return A set of tags describing this test.
+
+ @see +testsWithTags:
+ @see +tagsForTestCaseWithSelector:
+ */
++ (NSSet *)tags;
+
+/**
+ One or more strings that you can use to identify this test case.
+
+ By default, a test case inherits its test's [tags](+tags), and is also tagged
+ with the (unfocused)[+isFocused) form of its selector.
+
+ You might add tags to describe the functionality tested by this test case
+ or to divide tests into separate test suites. Your implementation of this method
+ should call `super` and add to, rather than replace, the tag set.
+ 
+ Tags are case-insensitive. Tags must not begin with '-' --see `+testsWithTags:`.
+
+ @param testCaseSelector A selector identifying a test case.
+ 
+ @return A set of tags describing this test case.
+ 
+ @see +testsWithTags:
+ @see +tags
+ */
++ (NSSet *)tagsForTestCaseWithSelector:(SEL)testCaseSelector;
 
 /**
  Returns the `SLTest` subclass with the specified name.
@@ -176,7 +237,7 @@
  @return `YES` if this class has test cases that should be run in the current
  environment, `NO` otherwise.
  
- @see +testCaseWithSelectorSupportsCurrentPlatform:
+ @see +testCaseWithSelectorSupportsCurrentEnvironment:
  */
 + (BOOL)supportsCurrentEnvironment;
 

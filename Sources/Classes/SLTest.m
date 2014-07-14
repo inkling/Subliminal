@@ -63,7 +63,32 @@ static int __lastKnownLineNumber;
         free(classes);
     }
     
-    return tests;
+    return [tests copy];
+}
+
++ (NSSet *)testsWithTags:(NSSet *)tags {
+    NSMutableSet *inclusionTags = [tags mutableCopy];
+    NSMutableSet *exclusionTags = [[NSMutableSet alloc] initWithCapacity:[tags count]];
+    for (NSString *tag in tags) {
+        if ([tag hasPrefix:@"-"]) {
+            [inclusionTags removeObject:tag];
+            [exclusionTags addObject:[tag substringFromIndex:1]];
+        }
+    }
+    
+    NSMutableSet *tests = [[self allTests] mutableCopy];
+    if ([inclusionTags count]) [tests filterUsingPredicate:[NSPredicate predicateWithFormat:@"ANY SELF.tags in %@", inclusionTags]];
+    if ([exclusionTags count]) [tests filterUsingPredicate:[NSPredicate predicateWithFormat:@"NONE SELF.tags in %@", exclusionTags]];
+    return [tests copy];
+}
+
++ (NSSet *)tags {
+    NSString *name = NSStringFromClass([self class]);
+    if ([[name lowercaseString] hasPrefix:SLTestFocusPrefix]) {
+        name = [name substringFromIndex:[SLTestFocusPrefix length]];
+    }
+    NSString *runGroup = [NSString stringWithFormat:@"%lu", (unsigned long)[self runGroup]];
+    return [NSSet setWithObjects:name, runGroup, nil];
 }
 
 + (Class)testNamed:(NSString *)name {
