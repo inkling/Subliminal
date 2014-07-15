@@ -65,6 +65,11 @@
  Calling this method with a set containing _only_ tags prefixed with '-' returns
  a set comprising _all_ tests except for those tagged with the '-'-prefixed tags.
  
+ Tags may also be specified using the `SL_TAGS` environment variable.
+ Using this variable, you can select not only a set of tests but also a set of
+ test _cases_. See `+testCaseWithSelectorSupportsCurrentEnvironment:` for more
+ information.
+ 
  @param tags A set of tags, which may optionally be prefixed with '-'
  as described in the discussion.
 
@@ -256,8 +261,34 @@
  using the "-e" option. Environment variables and their values can then be retrieved
  from the dictionary returned by `[[NSProcessInfo processInfo] environment]`.
  
- The default implementation of this method returns `YES`--test cases will be run
- regardless of environment.
+ ### Conditionalizing tests and test cases based on tags
+ 
+ The default implementation of this method examines the `SL_TAGS` environment
+ variable, which may be set to a comma-separated list of tags like "foo,bar,-baz"
+ (_without_ spaces). If the variable is not set, this method will return `YES`.
+ If the variable is set, this method will return `YES` if and only if:
+ 
+ * the list contains one or more tags not prefixed with '-'; those tags
+ [apply to this test case](+tagsForTestCaseWithSelector:); and the list does not
+ contain any applicable tags prefixed with '-'; or if
+ * the list contains _only_ tags prefixed with '-', and none of those tags
+ apply to this test case.
+ 
+ For instance, if `[FooTest testCaseWithSelectorSupportsCurrentEnvironment:@selector(foo)]`
+ were called, given the [default tags](+tagsForTestCaseWithSelector:) for `foo`
+ ("FooTest", "1", and "foo") and the following values of `SL_TAGS`,
+ this method would return:
+ 
+ * (not set) -> `YES`
+ * "FooTest" -> `YES` (because `-foo` is tagged with "FooTest")
+ * "foo" -> `YES` (because `-foo` is tagged with "foo")
+ * "-bar" -> `YES` (because `-foo` is not tagged with "bar")
+ * "-foo" -> `NO` (because `-foo` is tagged with "foo")
+ * "bar" -> `NO` (because `-foo` is not tagged with "bar")
+ * "-bar,baz" -> `NO` (because `-foo` is not tagged with "baz")
+ 
+ It bears repeating that, by default, test cases inherit their test's [tags](+tags).
+ Thus, all test cases of `FooTest` may be "selected" by setting `SL_TAGS` to "FooTest".
  
  @warning If the test does not support the current environment, its cases
  will not be run regardless of this method's return value.

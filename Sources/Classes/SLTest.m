@@ -42,6 +42,17 @@ static NSString *const SLTestExceptionNamePrefix       = @"SLTest";
 static NSString *__lastKnownFilename;
 static int __lastKnownLineNumber;
 
+// To use a preprocessor macro throughout this file, we'd have to specially build Subliminal
+// when unit testing, e.g. using a "Unit Testing" build configuration
++ (BOOL)isBeingUnitTested {
+    static BOOL isBeingUnitTested = NO;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        isBeingUnitTested = (getenv("SL_UNIT_TESTING") != NULL);
+    });
+    return isBeingUnitTested;
+}
+
 + (NSSet *)allTests {
     NSMutableSet *tests = [[NSMutableSet alloc] init];
     
@@ -89,6 +100,11 @@ static int __lastKnownLineNumber;
     }
     NSString *runGroup = [NSString stringWithFormat:@"%lu", (unsigned long)[self runGroup]];
     return [NSSet setWithObjects:name, runGroup, nil];
+}
+
++ (NSSet *)tagsForTestCaseWithSelector:(SEL)testCaseSelector {
+    NSString *unfocusedTestCaseName = [self unfocusedTestCaseName:NSStringFromSelector(testCaseSelector)];
+    return [[self tags] setByAddingObject:unfocusedTestCaseName];
 }
 
 + (Class)testNamed:(NSString *)name {
@@ -170,6 +186,27 @@ static int __lastKnownLineNumber;
 }
 
 + (BOOL)testCaseWithSelectorSupportsCurrentEnvironment:(SEL)testCaseSelector {
+    // Cache the tags for performance, except when unit testing.
+    static NSSet *inclusionTags = nil, *exclusionTags = nil;
+    if ([self isBeingUnitTested] || !inclusionTags || !exclusionTags) {
+        NSSet *tags = [NSSet setWithArray:[[[NSProcessInfo processInfo] environment][@"SL_TAGS"] componentsSeparatedByString:@","]];
+        
+        NSMutableSet *iTags = [tags mutableCopy];
+        NSMutableSet *eTags = [[NSMutableSet alloc] initWithCapacity:[tags count]];
+        for (NSString *tag in tags) {
+            if ([tag hasPrefix:@"-"]) {
+                [iTags removeObject:tag];
+                [eTags addObject:[tag substringFromIndex:1]];
+            }
+        }
+
+        inclusionTags = [iTags copy], exclusionTags = [eTags copy];
+    }
+    
+    NSSet *testCaseTags = [self tagsForTestCaseWithSelector:testCaseSelector];
+    if ([inclusionTags count] && ![testCaseTags intersectsSet:inclusionTags]) return NO;
+    if ([exclusionTags count] && [testCaseTags intersectsSet:exclusionTags]) return NO;
+    
     return YES;
 }
 

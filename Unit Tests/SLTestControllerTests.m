@@ -67,6 +67,12 @@
     }
 }
 
+- (void)tearDownTestWithSelector:(SEL)testMethod {
+    if (testMethod == @selector(testTheUserIsNotifiedWhenRunningTaggedTests)) {
+        unsetenv("SL_TAGS");
+    }
+}
+
 - (void)tearDown {
     [_terminalMock stopMocking];
     [_loggerMock stopMocking];
@@ -325,6 +331,22 @@ static const NSUInteger kNumSeedTrials = 100;
     SLRunTestsAndWaitUntilFinished([NSSet setWithObjects:testSupportingCurrentEnvironmentClass, testNotSupportingCurrentEnvironmentClass, nil], nil);
     STAssertNoThrow([testSupportingCurrentEnvironmentMock verify], @"Test supporting current environment was not run as expected.");
     STAssertNoThrow([testNotSupportingCurrentEnvironmentMock verify], @"Test not supporting current environment was unexpectedly run.");
+}
+
+- (void)testTheUserIsNotifiedWhenRunningTaggedTests {
+    // use two classes so we can verify how multiple tags are concatenated
+    NSSet *testClasses = [NSSet setWithObjects:[TestWithSomeTestCases class], [TestWithTagAAAandCCC class], nil];
+
+    NSString *tagString = [[[testClasses allObjects] valueForKey:@"description"] componentsJoinedByString:@","];
+    setenv("SL_TAGS", [tagString UTF8String], 1);
+    
+    // message
+    NSString *tagDescriptionString = [[tagString componentsSeparatedByString:@","] componentsJoinedByString:@", "];
+    [[_loggerMock expect] logMessage:[NSString stringWithFormat:@"Running test cases described by tags: %@.", tagDescriptionString]];
+    [[_loggerMock expect] logTestingStart];
+    
+    SLRunTestsAndWaitUntilFinished([SLTest allTests], nil);
+    STAssertNoThrow([_loggerMock verify], @"Test was not run/messages were not logged as expected.");
 }
 
 #pragma mark -Focusing

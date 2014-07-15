@@ -36,6 +36,7 @@
 
 @implementation SLTestTests {
     id _loggerMock, _terminalMock;
+    NSSet *_tags;
 }
 
 - (void)setUp {
@@ -45,6 +46,15 @@
     _terminalMock = [OCMockObject partialMockForObject:[SLTerminal sharedTerminal]];
     [[_terminalMock stub] eval:OCMOCK_ANY];
     [[_terminalMock stub] shutDown];
+}
+
+- (void)setUpTestWithSelector:(SEL)testMethod {
+    _tags = nil;
+}
+
+- (void)tearDownTestWithSelector:(SEL)testMethod {
+    // only unset `SL_TAGS` if we did set it, for performance
+    if (_tags) unsetenv("SL_TAGS");
 }
 
 - (void)tearDown {
@@ -90,6 +100,7 @@
         [TestOneOfRunGroupThree class],
         [TestWithTagAAAandCCC class],
         [TestWithTagBBBandCCC class],
+        [TestWithSomeTaggedTestCases class],
         nil
     ];
     STAssertEqualObjects(allTests, expectedTests, @"Unexpected tests returned.");
@@ -147,6 +158,16 @@
 - (void)testTagsDefaultToUnfocusedTestNameAndRunGroup {
     STAssertEqualObjects([TestWithSomeTestCases tags], [NSSet setWithArray:(@[ @"TestWithSomeTestCases", @"1" ])], @"");
     STAssertEqualObjects([Focus_TestThatIsFocused tags], [NSSet setWithArray:(@[ @"TestThatIsFocused", @"1" ])], @"");
+}
+
+- (void)testTagsForTestCaseWithSelectorDefaultsToTestTagsAndUnfocusedTestCaseName {
+    Class testClass = [TestWithAFocusedTestCase class];
+    NSSet *testTags = [testClass tags];
+    
+    STAssertEqualObjects([testClass tagsForTestCaseWithSelector:@selector(testOne)], [testTags setByAddingObject:@"testOne"], @"");
+    STAssertEqualObjects([testClass tagsForTestCaseWithSelector:@selector(focus_testTwo)], [testTags setByAddingObject:@"testTwo"], @"");
+    // we should be able to retrieve the tags using the unfocused selector too
+    STAssertEqualObjects([testClass tagsForTestCaseWithSelector:@selector(testTwo)], [testTags setByAddingObject:@"testTwo"], @"");
 }
 
 - (void)testTestNamedReturnsExpected {
@@ -400,6 +421,97 @@
     
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithEnvironmentSpecificTestCasesTest], nil);
     STAssertNoThrow([testMock verify], @"Test cases did not run as expected.");
+}
+
+- (NSSet *)testCasesSupportingTheCurrentEnvironmentOfTest:(Class)testClass {
+    return [[testClass testCases] filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(NSString *testCaseName, NSDictionary *bindings) {
+        return [testClass testCaseWithSelectorSupportsCurrentEnvironment:NSSelectorFromString(testCaseName)];
+    }]];
+}
+
+- (void)setSLTAGS:(NSSet *)tags {
+    _tags = tags;
+    setenv("SL_TAGS", [[[tags allObjects] componentsJoinedByString:@","] UTF8String], 1);
+}
+
+- (void)testAllTestCasesSupportTheCurrentEnvironmentIfNoTagsAreSpecified {
+    STAssertFalse(getenv("SL_TAGS"), @"For the purposes of this test case, `SL_TAGS` must not be set.");
+    
+    Class testClass = [TestWithSomeTaggedTestCases class];
+
+    for (NSString *testCaseName in [testClass testCases]) {
+        STAssertTrue([testClass testCaseWithSelectorSupportsCurrentEnvironment:NSSelectorFromString(testCaseName)],
+                     @"Test case did not support the current environment as expected.");
+    }
+}
+
+// this is an emergent property of test cases inheriting their tests' tags,
+// but is sufficiently-important a use case to test separately
+- (void)testAllTestCasesSupportTheCurrentEnvironmentIfTheirTestsNameIsSpecifiedAsATag {
+    Class testClass = [TestWithSomeTaggedTestCases class];
+    [self setSLTAGS:[NSSet setWithObject:NSStringFromClass(testClass)]];
+    
+    for (NSString *testCaseName in [testClass testCases]) {
+        STAssertTrue([testClass testCaseWithSelectorSupportsCurrentEnvironment:NSSelectorFromString(testCaseName)],
+                     @"Test case did not support the current environment as expected.");
+    }
+}
+
+- (void)testTestCasesSupportTheCurrentEnvironmentIfTheyAreTaggedWithAtLeastOneSpecifiedTag {
+    Class testClass = [TestWithSomeTaggedTestCases class];
+    
+    [self setSLTAGS:[NSSet setWithObject:@"CCC"]];
+    NSSet *expectedTestCases = [NSSet setWithObjects:@"testCaseWithTagAAAandCCC", @"testCaseWithTagBBBandCCC", nil];
+    NSSet *actualTestCases = [self testCasesSupportingTheCurrentEnvironmentOfTest:testClass];
+    STAssertEqualObjects(expectedTestCases, actualTestCases,
+                         @"All test cases that have at least one of the specified tags should support the current environment.");
+    
+    [self setSLTAGS:[NSSet setWithObjects:@"AAA", @"BBB", nil]];
+    actualTestCases = [self testCasesSupportingTheCurrentEnvironmentOfTest:testClass];
+    STAssertEqualObjects(expectedTestCases, actualTestCases,
+                         @"Test cases should not be required to have _all_ the specified tags in order to support the current environment.");
+}
+
+- (void)testTestCasesDoNotSupportTheCurrentEnvironmentIfTheyAreTaggedWithAMinusPrefixedTag {
+    Class testClass = [TestWithSomeTaggedTestCases class];
+
+    [self setSLTAGS:[NSSet setWithObject:@"CCC"]];
+    NSSet *expectedTestCases = [NSSet setWithObjects:@"testCaseWithTagAAAandCCC", @"testCaseWithTagBBBandCCC", nil];
+    NSSet *actualTestCases = [self testCasesSupportingTheCurrentEnvironmentOfTest:testClass];
+    STAssertEqualObjects(expectedTestCases, actualTestCases,
+                         @"All test cases that have at least one of the specified tags should support the current environment");
+    
+    [self setSLTAGS:[NSSet setWithObjects:@"CCC", @"-BBB", nil]];
+    expectedTestCases = [NSSet setWithObjects:@"testCaseWithTagAAAandCCC", nil];
+    actualTestCases = [self testCasesSupportingTheCurrentEnvironmentOfTest:testClass];
+    STAssertEqualObjects(expectedTestCases, actualTestCases,
+                         @"Test cases tagged with the '-'-prefixed tags should not support the current environment.");
+    
+    [self setSLTAGS:[NSSet setWithObjects:@"CCC", @"-CCC", nil]];
+    actualTestCases = [self testCasesSupportingTheCurrentEnvironmentOfTest:testClass];
+    STAssertFalse([actualTestCases count], @"No test cases should support the current environment.");
+    
+    [self setSLTAGS:[NSSet setWithObjects:@"CCC", @"-AAA", @"-BBB", nil]];
+    actualTestCases = [self testCasesSupportingTheCurrentEnvironmentOfTest:testClass];
+    STAssertFalse([actualTestCases count], @"No test cases should support the current environment.");
+}
+
+- (void)testAllTestCasesExceptThoseTaggedSupportTheCurrentEnvironmentIfOnlyMinusPrefixedTagsAreSpecified {
+    Class testClass = [TestWithSomeTaggedTestCases class];
+
+    [self setSLTAGS:[NSSet setWithObjects:@"CCC", @"-BBB", nil]];
+    NSSet *expectedTestCases = [NSSet setWithObjects:@"testCaseWithTagAAAandCCC", nil];
+    NSSet *actualTestCases = [self testCasesSupportingTheCurrentEnvironmentOfTest:testClass];
+    STAssertEqualObjects(expectedTestCases, actualTestCases,
+                         @"`The only test cases to support the current environment should be those test cases that do not have the regular tags, which test cases do not also have the '-'-prefixed tags.");
+    
+    [self setSLTAGS:[NSSet setWithObjects:@"-BBB", nil]];
+    expectedTestCases = [[testClass testCases] filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(NSString *testCaseName, NSDictionary *bindings) {
+        return ![[testClass tagsForTestCaseWithSelector:NSSelectorFromString(testCaseName)] containsObject:@"BBB"];
+    }]];
+    actualTestCases = [self testCasesSupportingTheCurrentEnvironmentOfTest:testClass];
+    STAssertEqualObjects(expectedTestCases, actualTestCases,
+                         @"All test cases should support the current environment except for those that have the '-'-prefixed tags.");
 }
 
 - (void)testIfTestDoesNotSupportCurrentEnvironmentTestCasesWillNotRunRegardlessOfSupport {

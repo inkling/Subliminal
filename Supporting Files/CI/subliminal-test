@@ -207,9 +207,17 @@ case $1 in
 		CURRENT_ARG=LOGIN_PASSWORD
 		shift 1;;
 
-    -*)	
-		echo "Unrecognized argument: $1"
-    	print_usage_and_fail;;
+	-*)
+		# Permit environment variable values to begin with "-"
+		if [[ "$CURRENT_ARG" == "-e "* ]]; then
+			# Append "-e <variable_name> <variable_value>" to the environment string
+			ENV_STR+=" $CURRENT_ARG $1"
+			unset CURRENT_ARG
+		else
+			echo "Unrecognized argument: $1"
+	  	print_usage_and_fail
+	  fi
+	  shift;;
 
 	# Set value for argument (unless end of command)
 	*)
@@ -221,7 +229,8 @@ case $1 in
 				# Add variable name to the placeholder
 				CURRENT_ARG="-e $1"
 			elif [[ "$CURRENT_ARG" == "-e "* ]]; then
-				# Append "-e <variable_name> <variable_value>" to the environment string
+				# Append "-e <variable_name> <variable_value>" to the environment string.
+				# Keep this logic in sync with the `-*)` case above
 				ENV_STR+=" $CURRENT_ARG $1"
 				unset CURRENT_ARG
 			else

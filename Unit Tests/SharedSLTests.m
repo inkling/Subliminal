@@ -271,3 +271,24 @@
 }
 
 @end
+
+
+@implementation TestWithSomeTaggedTestCases
+
++ (NSSet *)tagsForTestCaseWithSelector:(SEL)testCaseSelector {
+    NSMutableSet *tags = [[super tagsForTestCaseWithSelector:testCaseSelector] mutableCopy];
+    
+    if (testCaseSelector == @selector(testCaseWithTagAAAandCCC)) {
+        [tags addObjectsFromArray:@[ @"AAA", @"CCC" ]];
+    } else if (testCaseSelector == @selector(testCaseWithTagBBBandCCC)) {
+        [tags addObjectsFromArray:@[ @"BBB", @"CCC" ]];
+    }
+    
+    return [tags copy];
+}
+
+- (void)testCaseWithTagAAAandCCC {}
+- (void)testCaseWithTagBBBandCCC {}
+- (void)testOtherCase {}
+
+@end

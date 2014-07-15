@@ -223,3 +223,12 @@
 
 @interface TestWithTagBBBandCCC : SLTest
 @end
+
+
+@interface TestWithSomeTaggedTestCases : SLTest
+
+- (void)testCaseWithTagAAAandCCC;
+- (void)testCaseWithTagBBBandCCC;
+- (void)testOtherCase;
+
+@end
