@@ -187,7 +187,7 @@ case $1 in
 		shift 1;;
 
 	# Set argument, wait for value
-    -project|-workspace|-prebuilt_app|-sim_device|-hw_id|-build_tool|-scheme|-configuration|-sdk|-replacement_bundle_id|-sim_version|-timeout|-output|-e)
+	-project|-workspace|-prebuilt_app|-sim_device|-hw_id|-build_tool|-scheme|-configuration|-sdk|-replacement_bundle_id|-sim_version|-timeout|-output|-e)
 		if [[ -n "$CURRENT_ARG" ]]; then
 			echo "Missing value for argument: $CURRENT_ARG"
 			print_usage_and_fail
@@ -198,7 +198,7 @@ case $1 in
 			# Variables (apart from env vars) are capitalized in this script
 			*)	CURRENT_ARG=`echo ${1#-} | tr [[:lower:]] [[:upper:]]`;;
 		esac
-	    shift 1;;
+		shift 1;;
 
 	-login_password)
 		echo $LOGIN_PASSWORD_DEPRECATION_MESSAGE
@@ -215,7 +215,7 @@ case $1 in
 	*)
 		if [[ -n "$1" ]]; then
 			if [[ -z "$CURRENT_ARG" ]]; then
-				echo "Value \"$1\" is missing argument"
+				echo "Value \"$1\" does not correspond to an option"
 				print_usage_and_fail
 			elif [[ "$CURRENT_ARG" == "-e" ]]; then
 				# Add variable name to the placeholder
@@ -226,7 +226,7 @@ case $1 in
 				unset CURRENT_ARG
 			else
 				eval $CURRENT_ARG=\"$1\"
-				unset CURRENT_ARG;
+				unset CURRENT_ARG
 			fi
 		else
 			# end of command
