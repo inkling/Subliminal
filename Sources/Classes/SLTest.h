@@ -268,8 +268,8 @@
  (_without_ spaces). If the variable is not set, this method will return `YES`.
  If the variable is set, this method will return `YES` if and only if:
  
- * the list contains one or more tags not prefixed with '-'; those tags
- [apply to this test case](+tagsForTestCaseWithSelector:); and the list does not
+ * the list contains one or more tags not prefixed with '-', those tags
+ [apply to this test case](+tagsForTestCaseWithSelector:), and the list does not
  contain any applicable tags prefixed with '-'; or if
  * the list contains _only_ tags prefixed with '-', and none of those tags
  apply to this test case.
@@ -282,10 +282,11 @@
  * (not set) -> `YES`
  * "FooTest" -> `YES` (because `-foo` is tagged with "FooTest")
  * "foo" -> `YES` (because `-foo` is tagged with "foo")
- * "-bar" -> `YES` (because `-foo` is not tagged with "bar")
- * "-foo" -> `NO` (because `-foo` is tagged with "foo")
  * "bar" -> `NO` (because `-foo` is not tagged with "bar")
+ * "-bar" -> `YES` (because `-foo` is not tagged with "bar")
  * "-bar,baz" -> `NO` (because `-foo` is not tagged with "baz")
+ * "-foo" -> `NO` (because `-foo` is tagged with "foo")
+ * "FooTest,-foo" -> `NO` (because `-foo` is tagged with "foo", even though it's tagged with "FooTest")
  
  It bears repeating that, by default, test cases inherit their test's [tags](+tags).
  Thus, all test cases of `FooTest` may be "selected" by setting `SL_TAGS` to "FooTest".
