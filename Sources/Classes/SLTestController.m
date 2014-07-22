@@ -190,11 +190,15 @@ u_int32_t random_uniform(u_int32_t upperBound) {
         [testsToRun addObjectsFromArray:group];
     }
 
-    // now filter the tests to run: only run tests that are concrete...
-    [testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"isAbstract == NO"]];
-
-    // ...that support the current platform...
-    [testsToRun filterUsingPredicate:[NSPredicate predicateWithFormat:@"supportsCurrentPlatform == YES"]];
+    // now filter the tests to run:
+    [testsToRun filterUsingPredicate:[NSCompoundPredicate andPredicateWithSubpredicates:@[
+        // only run tests that are concrete...
+        [NSPredicate predicateWithFormat:@"isAbstract == NO"],
+        // ...that support the current platform...
+        [NSPredicate predicateWithFormat:@"supportsCurrentPlatform == YES"],
+        // ...that support the current environment...
+        [NSPredicate predicateWithFormat:@"supportsCurrentEnvironment == YES"]
+    ]]];
 
     // ...and that are focused (if any remaining are focused)
     NSMutableArray *focusedTests = [testsToRun mutableCopy];
@@ -330,6 +334,10 @@ u_int32_t random_uniform(u_int32_t upperBound) {
     if (_runningWithFocus) {
         SLLog(@"Focusing on test cases in specific tests: %@.", [_testsToRun componentsJoinedByString:@","]);
     }
+    NSString *tags = [[[[NSProcessInfo processInfo] environment][@"SL_TAGS"] componentsSeparatedByString:@","] componentsJoinedByString:@", "];
+    if (tags) {
+        SLLog(@"Running test cases described by tags: %@.", tags);
+    }
 
     [self warnIfAccessibilityInspectorIsEnabled];
 
@@ -398,6 +406,8 @@ u_int32_t random_uniform(u_int32_t upperBound) {
     if (_runningWithFocus) {
         [[SLLogger sharedLogger] logWarning:@"This was a focused run. Fewer test cases may have run than normal."];
     }
+    // don't show a warning about `SL_TAGS` being set
+    // because tagging is intentional and allowed, even in CI environments
 
     if (_completionBlock) dispatch_sync(dispatch_get_main_queue(), _completionBlock);
 

@@ -33,9 +33,9 @@
  */
 @interface SLTest : NSObject
 
-#pragma mark - Retrieving Tests to Run
+#pragma mark - Identifying Tests to Run
 /// ----------------------------------------
-/// @name Retrieving Tests to Run
+/// @name Identifying Tests to Run
 /// ----------------------------------------
 
 /**
@@ -47,11 +47,77 @@
  
  Without modifying the argument to `-[SLTestController runTests:withCompletionBlock:]`, 
  tests may be conditionalized to run only in certain circumstances using APIs
- like `+isAbstract`, `+supportsCurrentPlatform`, and `+isFocused`.
+ like `+isAbstract`, `+supportsCurrentPlatform`, `+supportsCurrentEnvironment`, and `+isFocused`.
 
  @return All tests (`SLTest` subclasses) linked against the current target.
  */
 + (NSSet *)allTests;
+
+/**
+ Returns tests linked against the current target [tagged](+tags)
+ with one or more of the tags specified in _tags_,
+ which tests are not tagged with any '-'-prefixed tags specified in _tags_.
+ 
+ Calling this method with a set containing `[ "foo", "bar", "-baz" ]`, for instance,
+ would return a set containing all tests that were tagged with "foo" and/or "bar"
+ and were _not_ tagged with "baz".
+ 
+ Calling this method with a set containing _only_ tags prefixed with '-' returns
+ a set comprising _all_ tests except for those tagged with the '-'-prefixed tags.
+ 
+ Tags may also be specified using the `SL_TAGS` environment variable.
+ Using this variable, you can select not only a set of tests but also a set of
+ test _cases_. See `+testCaseWithSelectorSupportsCurrentEnvironment:` for more
+ information.
+ 
+ @param tags A set of tags, which may optionally be prefixed with '-'
+ as described in the discussion.
+
+ @return All tests (`SLTest` subclasses) linked against the current target
+ which are [tagged](+tags) with one or more of the tags specified in _tags_
+ and are _not_ tagged with any of the '-'-prefixed tags specified in _tags_.
+ */
++ (NSSet *)testsWithTags:(NSSet *)tags;
+
+/**
+ One or more strings that you can use to identify this test.
+
+ By default, a test is tagged with the (unfocused)[+isFocused] name of its class
+ as well as its [run group](+runGroup) (as a string).
+ 
+ You might add tags to describe the functionality tested by this class
+ or to divide tests into separate test suites. Your implementation of this method
+ should call `super` and add to, rather than replace, the tag set.
+
+ Tags are case-insensitive. Tags must not begin with '-' --see `+testsWithTags:`.
+
+ @return A set of tags describing this test.
+
+ @see +testsWithTags:
+ @see +tagsForTestCaseWithSelector:
+ */
++ (NSSet *)tags;
+
+/**
+ One or more strings that you can use to identify this test case.
+
+ By default, a test case inherits its test's [tags](+tags), and is also tagged
+ with the (unfocused)[+isFocused) form of its selector.
+
+ You might add tags to describe the functionality tested by this test case
+ or to divide tests into separate test suites. Your implementation of this method
+ should call `super` and add to, rather than replace, the tag set.
+ 
+ Tags are case-insensitive. Tags must not begin with '-' --see `+testsWithTags:`.
+
+ @param testCaseSelector A selector identifying a test case.
+ 
+ @return A set of tags describing this test case.
+ 
+ @see +testsWithTags:
+ @see +tags
+ */
++ (NSSet *)tagsForTestCaseWithSelector:(SEL)testCaseSelector;
 
 /**
  Returns the `SLTest` subclass with the specified name.
@@ -88,13 +154,13 @@
 + (BOOL)isAbstract;
 
 /**
- Returns YES if this test has at least one test case which can be run
+ Returns YES if this test has at least one test case which should be run
  given the current device, screen, etc.
  
  Subclasses of `SLTest` should override this method if some run-time condition
- should determine whether or not all test cases should run. 
- Typical checks might include checking the user interface idiom (phone or pad) 
- of the current device, or checking the scale of the main screen.
+ concerning the current platform should determine whether or not all test cases
+ should be run. Typical checks might include checking the user interface idiom
+ (phone or pad) of the current device, or checking the scale of the main screen.
 
  As a convenience, test writers may specify the device type(s) on which a
  test can run by suffixing tests' names in the following fashion:
@@ -111,17 +177,135 @@
  appropriately and that there is at least one test case for which
  `+testCaseWithSelectorSupportsCurrentPlatform:` returns `YES`.
 
- If this method returns `NO`, none of this test's cases will run.
+ If this method returns `NO`, none of this test's cases will be run.
 
- @return `YES` if this class has test cases that can currently run, `NO` otherwise.
+ @return `YES` if this class has test cases that should be run on the current platform,
+ `NO` otherwise.
  
  @see +testCaseWithSelectorSupportsCurrentPlatform:
  */
 + (BOOL)supportsCurrentPlatform;
 
 /**
+ Returns YES if this test case should be run given the current device, screen, etc.
+ 
+ Subclasses of `SLTest` should override this method if they need to do any run-time
+ checks to determine whether or not specific test cases should be run based on the current
+ platform. Typical checks might include checking the user interface idiom (phone or pad)
+ of the current device, or checking the scale of the main screen.
+ 
+ As a convenience, test writers may specify the device type(s) on which a
+ test case can run by suffixing test cases' names in the following fashion:
+ 
+ *  A test case whose name has the suffix "`_iPhone`," like "`testFoo_iPhone`",
+ will be executed only when `([[UIDevice currentDevice] userInterfaceIdiom] ==
+ UIUserInterfaceIdiomPhone)` is true.
+ *  A test case whose name has the suffix "`_iPad`" will be executed only
+ when the current device user interface idiom is `UIUserInterfaceIdiomPad`.
+ *  A test case whose name has neither the "`_iPhone`" nor the "`_iPad`"
+ suffix will be executed on all devices regardless of the user interface idiom.
+ 
+ The default implementation of this method checks that the selector is suffixed
+ appropriately.
+ 
+ @warning If the test does not support the current platform, its cases
+ will not be run regardless of this method's return value.
+ 
+ @param testCaseSelector A selector identifying a test case.
+ 
+ @return `YES` if the test case should be run on the current platform, `NO` otherwise.
+ 
+ @see +supportsCurrentPlatform
+ */
++ (BOOL)testCaseWithSelectorSupportsCurrentPlatform:(SEL)testCaseSelector;
+
+/**
+ Returns YES if this test has at least one test case which can be run
+ given the environment from which the process was launched.
+ 
+ Subclasses of `SLTest` should override this method if some run-time condition
+ concerning the current environment should determine whether or not all test cases
+ should be run. A typical check would be to look for an environment variable specifying
+ which test cases should be run.
+ 
+ When running tests from Xcode, you can set environment variables by
+ [modifying your integration tests scheme](http://nshipster.com/launch-arguments-and-environment-variables/) .
+ When running `subliminal-test` from the command line, you can set environment variables
+ using the "-e" option. Environment variables and their values can then be retrieved
+ from the dictionary returned by `[[NSProcessInfo processInfo] environment]`.
+ 
+ The default implementation of this method checks that there is at least one test
+ case for which `+testCaseWithSelectorSupportsCurrentEnvironment:` returns `YES`.
+ 
+ If this method returns `NO`, none of this test's cases will be run.
+ 
+ @return `YES` if this class has test cases that should be run in the current
+ environment, `NO` otherwise.
+ 
+ @see +testCaseWithSelectorSupportsCurrentEnvironment:
+ */
++ (BOOL)supportsCurrentEnvironment;
+
+/**
+ Returns YES if this test case can be run given the environment from which
+ the process was launched.
+ 
+ Subclasses of `SLTest` should override this method if they need to do any run-time
+ checks to determine whether or not specific test cases should be run based on the
+ current environment. A typical check would be to look for an environment variable
+ specifying which test cases should be run.
+ 
+ When running tests from Xcode, you can set environment variables by
+ [modifying your integration tests scheme](http://nshipster.com/launch-arguments-and-environment-variables/) .
+ When running `subliminal-test` from the command line, you can set environment variables
+ using the "-e" option. Environment variables and their values can then be retrieved
+ from the dictionary returned by `[[NSProcessInfo processInfo] environment]`.
+ 
+ ### Conditionalizing tests and test cases based on tags
+ 
+ The default implementation of this method examines the `SL_TAGS` environment
+ variable, which may be set to a comma-separated list of tags like "foo,bar,-baz"
+ (_without_ spaces). If the variable is not set, this method will return `YES`.
+ If the variable is set, this method will return `YES` if and only if:
+ 
+ * the list contains one or more tags not prefixed with '-', those tags
+ [apply to this test case](+tagsForTestCaseWithSelector:), and the list does not
+ contain any applicable tags prefixed with '-'; or if
+ * the list contains _only_ tags prefixed with '-', and none of those tags
+ apply to this test case.
+ 
+ For instance, if `[FooTest testCaseWithSelectorSupportsCurrentEnvironment:@selector(foo)]`
+ were called, given the [default tags](+tagsForTestCaseWithSelector:) for `foo`
+ ("FooTest", "1", and "foo") and the following values of `SL_TAGS`,
+ this method would return:
+ 
+ * (not set) -> `YES`
+ * "FooTest" -> `YES` (because `-foo` is tagged with "FooTest")
+ * "foo" -> `YES` (because `-foo` is tagged with "foo")
+ * "bar" -> `NO` (because `-foo` is not tagged with "bar")
+ * "-bar" -> `YES` (because `-foo` is not tagged with "bar")
+ * "-bar,baz" -> `NO` (because `-foo` is not tagged with "baz")
+ * "-foo" -> `NO` (because `-foo` is tagged with "foo")
+ * "FooTest,-foo" -> `NO` (because `-foo` is tagged with "foo", even though it's tagged with "FooTest")
+ 
+ It bears repeating that, by default, test cases inherit their test's [tags](+tags).
+ Thus, all test cases of `FooTest` may be "selected" by setting `SL_TAGS` to "FooTest".
+ 
+ @warning If the test does not support the current environment, its cases
+ will not be run regardless of this method's return value.
+ 
+ @param testCaseSelector A selector identifying a test case.
+ 
+ @return `YES` if the test case should be run in the current environment, `NO` otherwise.
+ 
+ @see +supportsCurrentEnvironment
+ */
++ (BOOL)testCaseWithSelectorSupportsCurrentEnvironment:(SEL)testCaseSelector;
+
+/**
  Returns YES if the test has at least one test case which is focused
- and which can run on the current platform.
+ and which supports the current [platform](+testCaseWithSelectorSupportsCurrentPlatform:)
+ and [environment](+testCaseWithSelectorSupportsCurrentEnvironment:).
 
  When a test is run, if any of its test cases are focused, only those test cases will run.
  This may be useful when writing or debugging tests.
@@ -142,9 +326,9 @@
 
  @warning Focused test cases will not be run if their test is not run (e.g. if
  it is not included in the set of tests to be run, or if it does not support
- the current platform).
+ the current [platform](+supportsCurrentPlatform) or [environment](+supportsCurrentEnvironment)).
 
- @return `YES` if any test cases are focused and can be run on the current platform, 
+ @return `YES` if any test cases are focused and supports the current platform, 
  `NO` otherwise.
 
  @see -[SLTestController runTests:usingSeed:withCompletionBlock:]
@@ -181,37 +365,6 @@
  */
 + (NSUInteger)runGroup;
 
-#pragma mark - Running a Test
-/// ----------------------------------------
-/// @name Running a Test
-/// ----------------------------------------
-
-/**
- Runs all test cases defined on the receiver's class, 
- and reports statistics about their execution.
- 
- See `SLTest (SLTestCase)` for a discussion of test case execution.
- 
- @param numCasesExecuted If this is non-`NULL`, on return, this will be set to
- the number of test cases that were executed--which will be the number of test
- cases defined by the receiver's class.
- @param numCasesFailed If this is non-`NULL`, on return, this will be set to the
- number of test cases that failed (the number of test cases that threw exceptions).
- @param numCasesFailedUnexpectedly If this is non-`NULL`, on return, this will
- be set to the number of test cases that failed unexpectedly (those test cases
- that threw exceptions for other reasons than test assertion failures).
- 
- @return `YES` if the test successfully finished (all test cases were executed, regardless of their individual 
- success or failure), `NO` otherwise (an exception occurred in test case [set-up](-setUpTest) or [tear-down](-tearDownTest) ).
- 
- @warning If an exception occurs in test case set-up, the test's cases will be skipped.
- Thus, the caller should use the values returned in `numCasesExecuted`, `numCasesFailed`, 
- and `numCasesFailedUnexpectedly` if and only if this method returns `YES`.
- */
-- (BOOL)runAndReportNumExecuted:(NSUInteger *)numCasesExecuted
-                         failed:(NSUInteger *)numCasesFailed
-             failedUnexpectedly:(NSUInteger *)numCasesFailedUnexpectedly;
-
 @end
 
 
@@ -240,38 +393,6 @@
 /// ----------------------------------------
 /// @name Running Test Cases
 /// ----------------------------------------
-
-/**
- Returns YES if this test case can be run given the current device, screen, etc.
-
- Subclasses of SLTest should override this method if they need to do any run-time 
- checks to determine whether or not specific test cases can run. Typical checks 
- might include checking the user interface idiom (phone or pad) of the current 
- device, or checking the scale of the main screen.
-
- As a convenience, test writers may specify the device type(s) on which a 
- test case can run by suffixing test cases' names in the following fashion:
-
- *  A test case whose name has the suffix "`_iPhone`," like "`testFoo_iPhone`",
-    will be executed only when `([[UIDevice currentDevice] userInterfaceIdiom] ==
-    UIUserInterfaceIdiomPhone)` is true.
- *  A test case whose name has the suffix "`_iPad`" will be executed only
-    when the current device user interface idiom is `UIUserInterfaceIdiomPad`.
- *  A test case whose name has neither the "`_iPhone`" nor the "`_iPad`"
-    suffix will be executed on all devices regardless of the user interface idiom.
-
- The default implementation of this method checks that the selector is suffixed 
- appropriately.
- 
- @warning If the test does not support the current platform, that test's cases
- will not be run regardless of this method's return value.
-
- @param testCaseSelector A selector identifying a test case.
- @return `YES` if the test case can be run, `NO` otherwise.
- 
- @see +supportsCurrentPlatform
- */
-+ (BOOL)testCaseWithSelectorSupportsCurrentPlatform:(SEL)testCaseSelector;
 
 /**
  Called before any test cases are run.

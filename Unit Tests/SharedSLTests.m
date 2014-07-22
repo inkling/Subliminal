@@ -69,6 +69,30 @@
 @end
 
 
+@implementation TestNotSupportingCurrentEnvironment
+
++ (BOOL)supportsCurrentEnvironment {
+    return NO;
+}
+
+- (void)testFoo {}
+
+@end
+
+
+@implementation TestWithEnvironmentSpecificTestCases
+
++ (BOOL)testCaseWithSelectorSupportsCurrentEnvironment:(SEL)testCaseSelector {
+    return ([super testCaseWithSelectorSupportsCurrentEnvironment:testCaseSelector] &&
+            (testCaseSelector != @selector(testCaseNotSupportingCurrentEnvironment)));
+}
+
+- (void)testFoo {}
+- (void)testCaseNotSupportingCurrentEnvironment {}
+
+@end
+
+
 @implementation AbstractTestWhichSupportsOnly_iPad
 @end
 
@@ -111,6 +135,20 @@
 @end
 
 
+@implementation TestWithAFocusedEnvironmentSpecificTestCase
+
++ (BOOL)testCaseWithSelectorSupportsCurrentEnvironment:(SEL)testCaseSelector {
+    return ([super testCaseWithSelectorSupportsCurrentEnvironment:testCaseSelector] &&
+            // this method is invoked with the unfocused selector
+            (testCaseSelector != @selector(testBar)));
+}
+
+- (void)testFoo {}
+- (void)focus_testBar {}
+
+@end
+
+
 @implementation Focus_TestThatIsFocused
 
 - (void)testFoo {}
@@ -129,6 +167,17 @@
 @implementation Focus_TestThatIsFocusedButDoesntSupportCurrentPlatform
 
 + (BOOL)supportsCurrentPlatform {
+    return NO;
+}
+
+- (void)testOne {}
+
+@end
+
+
+@implementation Focus_TestThatIsFocusedButDoesntSupportCurrentEnvironment
+
++ (BOOL)supportsCurrentEnvironment {
     return NO;
 }
 
@@ -202,5 +251,44 @@
 }
 
 - (void)testFoo {}
+
+@end
+
+
+@implementation TestWithTagAAAandCCC
+
++ (NSSet *)tags {
+    return [[super tags] setByAddingObjectsFromArray:@[ @"AAA", @"CCC" ]];
+}
+
+@end
+
+
+@implementation TestWithTagBBBandCCC
+
++ (NSSet *)tags {
+    return [[super tags] setByAddingObjectsFromArray:@[ @"BBB", @"CCC" ]];
+}
+
+@end
+
+
+@implementation TestWithSomeTaggedTestCases
+
++ (NSSet *)tagsForTestCaseWithSelector:(SEL)testCaseSelector {
+    NSMutableSet *tags = [[super tagsForTestCaseWithSelector:testCaseSelector] mutableCopy];
+    
+    if (testCaseSelector == @selector(testCaseWithTagAAAandCCC)) {
+        [tags addObjectsFromArray:@[ @"AAA", @"CCC" ]];
+    } else if (testCaseSelector == @selector(testCaseWithTagBBBandCCC)) {
+        [tags addObjectsFromArray:@[ @"BBB", @"CCC" ]];
+    }
+    
+    return [tags copy];
+}
+
+- (void)testCaseWithTagAAAandCCC {}
+- (void)testCaseWithTagBBBandCCC {}
+- (void)testOtherCase {}
 
 @end
