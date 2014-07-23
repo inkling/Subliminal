@@ -27,11 +27,11 @@ print_usage_and_fail () {
     echo """
 usage: simulator-set [--device <device>] [--version <sdk_version>] [--reset]
 
-    -device <device>        A device type like \"iPhone\".
+    --device <device>       A device type like \"iPhone\".
                             Acceptable types are listed in the iOS Simulator's 
                             \"Hardware\" -> \"Device\" menu.
 
-    -version <sdk_version>  A string like \"5.1\" specifying the simulator SDK 
+    --version <sdk_version> A string like \"5.1\" specifying the simulator SDK 
                             version to use.
 
                             Note that the iOS Simulator does not accept certain 
