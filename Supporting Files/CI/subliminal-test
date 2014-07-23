@@ -71,14 +71,19 @@ Required arguments:
 
 	-sim_device <device_type>	The type of device to simulate.
 					Acceptable values are listed by executing \`instruments -s devices\`:
-					given a listing like \"iPad - Simulator - iOS 7.1\", the device
-					type is the first dash-separated component, trimmed of spaces,
-					e.g. \"iPad\".
 
-					Note that (despite the response of \`instruments -s devices\`)
-					the iOS Simulator does not accept certain combinations 
-					of device type and SDK (as specified using the \`-sim_version\`
-					argument), e.g. \"iPhone\" and \"7.1\".
+						* 	if you are using the Xcode 5 toolchain, you will see listings like
+							\"iPad - Simulator - iOS 7.1\". The device type is the first
+							dash-separated component, trimmed of spaces, e.g. \"iPad\".
+						* 	if you are using the Xcode 6 toolchain, you will see listings like
+							\"iPad 2 (7.1 Simulator)\". The device type is the text
+							preceding the parenthetical expression, trimmed of spaces,
+							e.g. \"iPad 2\".
+
+					Note that (despite the response of \`instruments -s devices\`
+					when using the Xcode 5 toolchain) the iOS Simulator does not accept
+					certain combinations  of device type and SDK (as specified using the
+					\`-sim_version\` argument), e.g. \"iPhone\" and \"7.1\".
 
 					Either this or \`-hw_id\` must be specified.
 
@@ -530,7 +535,7 @@ if [[ -n "$LOGIN_PASSWORD" ]]; then
 	AUTHORIZE_INSTRUMENTS_PID=$!
 fi
 
-launch_instruments () {
+launch_instruments () {	
 	# Second attempt to authorize `instruments` ourselves
 	# (in case the dialog does not show, as in certain CI environments 
 	# like Travis): enter the login password on the command line, 
@@ -540,12 +545,25 @@ launch_instruments () {
 	# Note that the Subliminal trace template includes the UIASCRIPT
 	# and the environment variables passed to this script
 	# are passed to instruments and the app by being exported at the top of this script
+
 	local timeout_arg=`[[ -n "$TIMEOUT" ]] && echo "-l $TIMEOUT" || echo ""`
-	local device=`[[ -n "$HW_ID" ]] && echo "$HW_ID" || echo "$SIM_DEVICE - Simulator - iOS $SIM_VERSION"`
+
+	device_string() {
+		if [[ -n "$HW_ID" ]]; then
+			echo "$HW_ID"
+		else
+			if [[ "$(xcrun xcodebuild -version | head -n 1)" == "Xcode 6"* ]]; then
+				echo "$SIM_DEVICE ($SIM_VERSION Simulator)"
+			else
+				echo "$SIM_DEVICE - Simulator - iOS $SIM_VERSION"
+			fi
+		fi
+	}
+	
 	printf "$LOGIN_PASSWORD\n" | "$SCRIPT_DIR/subliminal-instrument.sh"\
 		-D "$TRACE_FILE"\
 		$timeout_arg\
-		-w "$device"\
+		-w "$(device_string)"\
 		"$APP"\
 		-e UIARESULTSPATH "$RESULTS_DIR" \
 		$ENV_STR &
