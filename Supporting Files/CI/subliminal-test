@@ -30,7 +30,7 @@ print_usage_and_fail () {
 subliminal-test (-project <project_path> | -workspace <workspace_path> | -prebuilt_app <app_path>)
 		( -sim_device <device_type> | -hw_id <udid> )
 		[-build_tool <tool_name>] [-scheme <scheme_name>] [-sdk <sdk>] [-replacement_bundle_id <id>] [--quiet_build]
-		[-sim_version <version>] [-timeout <timeout>] [-output <output_dir>] 
+		[-sim_version <version>] [-timeout <timeout>] [-output <output_dir>] [-upload_crash_logs <upload_time>]
 		[-e <variable> <value>]
 
 \`subliminal-test\` builds a scheme contained in an Xcode project or Xcode workspace,
@@ -134,6 +134,9 @@ Optional testing arguments:
 
 					Has no default value.
 
+	-upload_crash_logs <upload_time>	If the app aborts during a test run, restart the app and idle for <upload_time>
+					to give the app an opportunity to upload crash logs.
+
 	--verbose_logging		Enables UIAutomation's debug logs, which record every user interaction simulated 
 					by the Automation instrument. 
 
@@ -187,7 +190,7 @@ case $1 in
 		shift 1;;
 
 	# Set argument, wait for value
-	-project|-workspace|-prebuilt_app|-sim_device|-hw_id|-build_tool|-scheme|-configuration|-sdk|-replacement_bundle_id|-sim_version|-timeout|-output|-e)
+	-project|-workspace|-prebuilt_app|-sim_device|-hw_id|-build_tool|-scheme|-configuration|-sdk|-replacement_bundle_id|-sim_version|-timeout|-output|-upload_crash_logs|-e)
 		if [[ -n "$CURRENT_ARG" ]]; then
 			echo "Missing value for argument: $CURRENT_ARG"
 			print_usage_and_fail
@@ -671,6 +674,19 @@ if [[ -d "${OUTPUT}" ]]; then
 	echo "\nArchiving output to $OUTPUT..."
 	mv "$TRACE_FILE" "$OUTPUT"
 	mv "$RESULTS_DIR/Run 1" "$OUTPUT/Run Data"
+fi
+
+# If the app crashed, start it back up so that crash logs can be uploaded
+if [ $TEST_STATUS -eq 1 ] && [[ -n "$UPLOAD_CRASH_LOGS" ]]; then
+	echo "\nStarting up app again to allow crash logs to upload..."
+
+	IDLE_SCRIPT=`mktemp /tmp/subliminal-test.idle_script.XXXXXX`
+	echo "UIATarget.localTarget().delay($UPLOAD_CRASH_LOGS);" > "$IDLE_SCRIPT"
+
+	DEVICE=`[[ -n "$HW_ID" ]] && echo "$HW_ID" || echo "$SIM_DEVICE - Simulator - iOS $SIM_VERSION"`
+	instruments -w "$DEVICE" -t Automation "$APP" -e UIASCRIPT "$IDLE_SCRIPT"
+
+	rm -rf "$IDLE_SCRIPT"
 fi
 
 echo "\n\nRun complete."
