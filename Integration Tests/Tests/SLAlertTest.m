@@ -113,9 +113,10 @@
                                         @"other":   defaultButtonTitle }));
     SLAssertTrueWithTimeout([handler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, @"Handler should have handled an alert.");
     SLAssertNoThrow([[SLButton elementWithAccessibilityLabel:defaultButtonTitle] tap], @"The default button couldn't be found to tap!");
-    SLAssertTrueWithTimeout(SLAskApp(titleOfLastButtonClicked) != nil, SLAlertHandlerDidHandleAlertDelay, @"The alert handler wasn't invoked.");
+    // Wait for the alert dismiss callback to be received.
+    SLAssertTrueWithTimeout(SLAskApp(titleOfLastButtonClicked) != nil, SLAlertHandlerDidHandleAlertDelay, @"The default button was not tapped.");
     SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:defaultButtonTitle],
-                 @"The handler should have dismissed the alert using the default button.");
+                 @"The test should have dismissed the alert using the default button.");
 }
 
 - (void)testHandlerMustBeAddedBeforeAlertShows {
