@@ -119,6 +119,56 @@
                  @"The test should have dismissed the alert using the default button.");
 }
 
+// the other test cases in this file verify that we can handle alerts with particular _titles_
+- (void)testManuallyHandlingAlertsWithParticularMessages {
+    NSString *cancelButtonTitle = @"Cancel";
+    NSString *defaultButtonTitle = @"Ok";
+    
+    // we can manually handle particular alerts
+    NSString *alertTitle = @"Alert";
+    NSString *alertMessage = @"Test Message";
+    SLAlert *alert = [SLAlert alertWithMessage:alertMessage];
+    SLAlertHandler *handler = [alert dismissWithButtonTitled:defaultButtonTitle];
+    [SLAlertHandler addHandler:handler];
+    
+    // --some random alert will be automatically dismissed with the cancel butotn
+    SLAskApp1(showAlertWithInfo:, (@{   @"title":   alertTitle,
+                                        @"message": @"Random Message",
+                                        @"cancel":  cancelButtonTitle,
+                                        @"other":   defaultButtonTitle }));
+    [self wait:SLAlertHandlerDidHandleAlertDelay];
+    SLAssertFalse([handler didHandleAlert], @"Handler should not yet have handled an alert.");
+    SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:cancelButtonTitle],
+                 @"The alert should have been automatically dismissed, using the cancel button.");
+    
+    // --but the handled alert will be dismissed with the default button
+    SLAskApp1(showAlertWithInfo:, (@{   @"title":   alertTitle,
+                                        @"message": alertMessage,
+                                        @"cancel":  cancelButtonTitle,
+                                        @"other":   defaultButtonTitle }));
+    SLAssertTrueWithTimeout([handler didHandleAlert], SLAlertHandlerDidHandleAlertDelay, @"Handler should have handled an alert.");
+    SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:defaultButtonTitle],
+                 @"The handler should have dismissed the alert using the default button.");
+}
+
+- (void)testManuallyHandlingAlertsWithJustMessages {  // i.e. without titles
+    NSString *cancelButtonTitle = @"Cancel";
+    NSString *defaultButtonTitle = @"Ok";
+    
+    NSString *alertMessage = @"Test Message";
+    SLAlert *alert = [SLAlert alertWithMessage:alertMessage];
+    SLAlertHandler *handler = [alert dismissWithButtonTitled:defaultButtonTitle];
+    [SLAlertHandler addHandler:handler];
+    
+    SLAskApp1(showAlertWithInfo:, (@{   @"message": alertMessage,
+                                        @"cancel":  cancelButtonTitle,
+                                        @"other":   defaultButtonTitle }));
+    SLAssertTrueWithTimeout([handler didHandleAlert], SLAlertHandlerDidHandleAlertDelay,
+                            @"Handler should have handled an alert.");
+    SLAssertTrue([SLAskApp(titleOfLastButtonClicked) isEqualToString:defaultButtonTitle],
+                 @"The handler should have dismissed the alert using the default button.");
+}
+
 - (void)testHandlerMustBeAddedBeforeAlertShows {
     NSString *cancelButtonTitle = @"Cancel";
     NSString *defaultButtonTitle = @"Ok";

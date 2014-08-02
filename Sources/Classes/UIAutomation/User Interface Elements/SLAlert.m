@@ -359,7 +359,7 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
 #pragma mark - SLAlert
 
 @implementation SLAlert {
-    NSString *_title;
+    NSString *_title, *_message;
 }
 
 + (instancetype)alertWithTitle:(NSString *)title {
@@ -370,8 +370,17 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
     return alert;
 }
 
++ (instancetype)alertWithMessage:(NSString *)message {
+    NSParameterAssert([message length]);
+    
+    SLAlert *alert = [[SLAlert alloc] init];
+    alert->_message = message;
+    return alert;
+}
+
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@ title:\"%@\">", NSStringFromClass([self class]), _title];
+    return [NSString stringWithFormat:@"<%@ title:\"%@\" message:\"%@\">",
+            NSStringFromClass([self class]), _title, _message];
 }
 
 - (SLAlertDismissHandler *)dismiss {
@@ -452,11 +461,39 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
 }
 
 - (NSString *)isEqualToUIAAlertPredicate {
-    static NSString *const kIsEqualToUIAAlertPredicateFormatString = @"\
-        return alert.name() === \"%@\";\
-    ";
-    NSString *isEqualToUIAAlertPredicate = [NSString stringWithFormat:kIsEqualToUIAAlertPredicateFormatString,
-                                            [_title slStringByEscapingForJavaScriptLiteral]];
+    NSString *isEqualToUIAAlertPredicate = @""; // guard against a `nil` value being substituted into JS
+    if (_title) {
+        NSString *const kTitleIsEqualUIAAlertPredicateFormatString = @"\
+            return alert.name() === \"%@\";\
+        ";
+        isEqualToUIAAlertPredicate = [NSString stringWithFormat:kTitleIsEqualUIAAlertPredicateFormatString,
+                                      [_title slStringByEscapingForJavaScriptLiteral]];
+    } else if (_message) {
+        // Below iOS 7, the text elements are direct descendants of the alert view;
+        // At or above iOS 7, the text elements are within a scroll view.
+        NSString *kAlertTextElements;
+        if (kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_6_1) {
+            kAlertTextElements = @"alert.staticTexts()";
+        } else {
+            kAlertTextElements = @"alert.scrollViews()[0].staticTexts()";
+        }
+        
+        // if an alert view has a title and a message, it will have two text elements;
+        // if it only has a message, it will only have one text element;
+        // but the element conveying the message will always be last
+        NSString *const kMessageIsEqualUIAAlertPredicateFormatString = @"\
+            var textElements = %@.toArray();\
+            if (textElements.length > 0) {\
+                return textElements[textElements.length - 1].value() === \"%@\";\
+            } else {\
+                return NO;\
+            }\
+        ";
+        isEqualToUIAAlertPredicate = [NSString stringWithFormat:kMessageIsEqualUIAAlertPredicateFormatString,
+                                      kAlertTextElements, [_message slStringByEscapingForJavaScriptLiteral]];
+    } else {
+        NSAssert(NO, @"Alert %@ should have been initialized with a title or message.", self);
+    }
     return isEqualToUIAAlertPredicate;
 }
 
