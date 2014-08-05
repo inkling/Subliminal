@@ -47,6 +47,7 @@
         testCase == @selector(testSetTextCanHandleTapHoldCharacters) ||
         testCase == @selector(testSetTextClearsCurrentText) ||
         testCase == @selector(testSetTextClearsCurrentTextWithinTableViewCell) ||
+        testCase == @selector(testSetTextClearsCurrentTextWithinCollectionViewCell) ||
         testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
         testCase == @selector(testGetText) ||
         testCase == @selector(testDoNotMatchEditorAccessibilityObjects) ||
@@ -61,7 +62,8 @@
             _tableView = [[UITableView alloc] initWithFrame:(CGRect){CGPointZero, CGSizeMake(320.0f, 44.0f)}];
             _tableView.dataSource = self;
             [view addSubview:_tableView];
-        } else if (testCase == @selector(testSetTextWithinCollectionViewCell)) {
+        } else if (testCase == @selector(testSetTextWithinCollectionViewCell) ||
+                   testCase == @selector(testSetTextClearsCurrentTextWithinCollectionViewCell)) {
             _collectionView = [[UICollectionView alloc] initWithFrame:(CGRect){CGPointZero, CGSizeMake(320.0f, 44.0f)} collectionViewLayout:[[UICollectionViewFlowLayout alloc] init]];
             [_collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"TestCell"];
             _collectionView.dataSource = self;
@@ -120,6 +122,7 @@
         self.testCase != @selector(testSetTextWithinCollectionViewCell) &&
         self.testCase != @selector(testSetTextClearsCurrentText) &&
         self.testCase != @selector(testSetTextClearsCurrentTextWithinTableViewCell) &&
+        self.testCase != @selector(testSetTextClearsCurrentTextWithinCollectionViewCell) &&
         self.testCase != @selector(testSetTextWhenFieldClearsOnBeginEditing) &&
         self.testCase != @selector(testDoNotMatchEditorAccessibilityObjects)) {
         _textField.text = @"foo";
@@ -173,6 +176,7 @@
         self.testCase == @selector(testSetTextCanHandleTapHoldCharacters) ||
         self.testCase == @selector(testSetTextClearsCurrentText) ||
         self.testCase == @selector(testSetTextClearsCurrentTextWithinTableViewCell) ||
+        self.testCase == @selector(testSetTextClearsCurrentTextWithinCollectionViewCell) ||
         self.testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
         self.testCase == @selector(testGetText) ||
         self.testCase == @selector(testDoNotMatchEditorAccessibilityObjects) ||
