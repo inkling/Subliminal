@@ -41,6 +41,7 @@
 
     if (testSelector == @selector(testSetText) ||
         testSelector == @selector(testSetTextWithinTableViewCell) ||
+        testSelector == @selector(testSetTextWithinCollectionViewCell) ||
         testSelector == @selector(testSetTextCanHandleTapHoldCharacters) ||
         testSelector == @selector(testSetTextClearsCurrentText) ||
         testSelector == @selector(testSetTextClearsCurrentTextWithinTableViewCell) ||
@@ -72,6 +73,13 @@
 
 - (void)testSetTextWithinTableViewCell {
     NSString *const expectedText = @"foo";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
+}
+
+- (void)testSetTextWithinCollectionViewCell {
+    NSString *const expectedText = @"foo";
+    [self wait:5];
     SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
     SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
 }
