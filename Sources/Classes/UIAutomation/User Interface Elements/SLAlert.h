@@ -83,6 +83,15 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
  */
 + (instancetype)alertWithTitle:(NSString *)title;
 
+/**
+ Creates and returns an alert object that matches an alert view
+ with the specified message.
+ 
+ @param message The message of the alert.
+ @return A newly created alert object.
+ */
++ (instancetype)alertWithMessage:(NSString *)message;
+
 #pragma mark - Handling Alerts
 /// -----------------------------------
 /// @name Handling Alerts
