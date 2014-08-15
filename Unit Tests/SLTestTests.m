@@ -155,9 +155,15 @@
                          @"`+testsWithTags:` should have included all tests except for those that had the '-'-prefixed tags.");
 }
 
-- (void)testTagsDefaultToUnfocusedTestNameAndRunGroup {
+- (void)testTagsDefaultToUnfocusedTestNamePlusSuperclassNamesAndRunGroup {
     STAssertEqualObjects([TestWithSomeTestCases tags], [NSSet setWithArray:(@[ @"TestWithSomeTestCases", @"1" ])], @"");
     STAssertEqualObjects([Focus_TestThatIsFocused tags], [NSSet setWithArray:(@[ @"TestThatIsFocused", @"1" ])], @"");
+    
+    // test superclasses that are and are not focused
+    STAssertEqualObjects([ConcreteTestWhichSupportsOnlyiPad tags],
+                         [NSSet setWithArray:(@[ @"AbstractTestWhichSupportsOnly_iPad", @"ConcreteTestWhichSupportsOnlyiPad", @"1" ])], @"");
+    STAssertEqualObjects([ConcreteTestThatIsFocused tags],
+                         [NSSet setWithArray:(@[ @"AbstractTestThatIsFocused", @"ConcreteTestThatIsFocused", @"1" ])], @"");
 }
 
 - (void)testTagsForTestCaseWithSelectorDefaultsToTestTagsAndUnfocusedTestCaseName {

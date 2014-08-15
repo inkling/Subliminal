@@ -82,8 +82,9 @@
 /**
  One or more strings that you can use to identify this test.
 
- By default, a test is tagged with the (unfocused)[+isFocused] name of its class
- as well as its [run group](+runGroup) (as a string).
+ By default, a test is tagged with the (unfocused)[+isFocused] names of its class
+ and superclasses (up to but not including `SLTest`), as well as its [run group](+runGroup)
+ (as a string).
  
  You might add tags to describe the functionality tested by this class
  or to divide tests into separate test suites. Your implementation of this method

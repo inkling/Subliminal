@@ -94,12 +94,22 @@ static int __lastKnownLineNumber;
 }
 
 + (NSSet *)tags {
-    NSString *name = NSStringFromClass([self class]);
-    if ([[name lowercaseString] hasPrefix:SLTestFocusPrefix]) {
-        name = [name substringFromIndex:[SLTestFocusPrefix length]];
+    NSMutableSet *tags = [[NSMutableSet alloc] init];
+    
+    Class testClass = self;
+    while (testClass != [SLTest class]) {
+        NSString *name = NSStringFromClass(testClass);
+        if ([[name lowercaseString] hasPrefix:SLTestFocusPrefix]) {
+            name = [name substringFromIndex:[SLTestFocusPrefix length]];
+        }
+        [tags addObject:name];
+        testClass = [testClass superclass];
     }
+    
     NSString *runGroup = [NSString stringWithFormat:@"%lu", (unsigned long)[self runGroup]];
-    return [NSSet setWithObjects:name, runGroup, nil];
+    [tags addObject:runGroup];
+    
+    return [tags copy];
 }
 
 + (NSSet *)tagsForTestCaseWithSelector:(SEL)testCaseSelector {
