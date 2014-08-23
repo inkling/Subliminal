@@ -25,7 +25,7 @@
 #import "SLTestController+AppHooks.h"
 #import "SLStringUtilities.h"
 
-@class SLTestCaseExceptionInfo;
+@class SLTestFailure;
 
 /**
  `SLTest` is the abstract superclass of Subliminal integration tests.
@@ -215,14 +215,13 @@
              failedUnexpectedly:(NSUInteger *)numCasesFailedUnexpectedly;
 
 /**
- If overridden, provides a hook for when an exception is caught within a test run.
+ If overridden, provides a hook into test and test case failures.
 
- @param exceptionInfo An object which describes the exception that was thrown. Note: If this exception wasn't thrown within a test case, the `exceptionInfo`'s `testCaseSelector` will be NULL.
-
+ @param failure An object which describes the failure.
  @warning This method will be invoked for each exception that is handled by the test framework.
- @see -[SLTestCaseExceptionInfo exceptionInfoWithException:testCaseSelector:]
+ @see -[SLTestFailure failureWithException:phase:testCaseSelector:]
  */
-- (void)testRunDidCatchExceptionWithExceptionInfo:(SLTestCaseExceptionInfo *)exceptionInfo;
+- (void)testDidEncounterFailure:(SLTestFailure *)failure;
 
 @end
 
