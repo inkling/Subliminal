@@ -83,7 +83,7 @@
 
 - (void)showAlertWithInfo:(NSDictionary *)info {
     _activeAlertView = [[UIAlertView alloc] initWithTitle:info[@"title"]
-                                                  message:nil
+                                                  message:info[@"message"]
                                                  delegate:self
                                         cancelButtonTitle:info[@"cancel"]
                                         otherButtonTitles:info[@"other"], nil];

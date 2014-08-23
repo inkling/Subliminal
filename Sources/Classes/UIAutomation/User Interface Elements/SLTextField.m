@@ -22,6 +22,7 @@
 
 #import "SLTextField.h"
 #import "SLUIAElement+Subclassing.h"
+#import <Subliminal/SLTestAssertions.h>
 
 @implementation SLTextField
 
@@ -35,6 +36,8 @@
 
 - (void)setText:(NSString *)text withKeyboard:(id<SLKeyboard>)keyboard
 {
+    SLAssertTrueWithTimeout([self isValid], [SLElement defaultTimeout], @"Element '%@' does not exist", self);
+
     // Tap to show the keyboard (if the field doesn't already have keyboard focus,
     // because in that case a real user would probably not tap again before typing)
     if (![self hasKeyboardFocus]) {
@@ -99,6 +102,9 @@
     // Tap to show the keyboard (if the field doesn't already have keyboard focus,
     // because in that case a real user would probably not tap again before typing)
     BOOL didNewlyBecomeFirstResponder = NO;
+
+    SLAssertTrueWithTimeout([self isValid], [SLElement defaultTimeout], @"Element '%@' does not exist", self);
+
     if (![self hasKeyboardFocus]) {
         didNewlyBecomeFirstResponder = YES;
         [self tap];

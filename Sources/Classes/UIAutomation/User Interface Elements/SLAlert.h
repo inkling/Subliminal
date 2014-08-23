@@ -48,7 +48,7 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
  dismisses the alert. The test then asks the handler to see if the alert was 
  dismissed as expected.
  
-    SLAlert *alert = [SLAlert alertWithTitle:@"foo];
+    SLAlert *alert = [SLAlert alertWithTitle:@"foo"];
 
     // dismiss an alert with title "foo", when it appears
     SLAlertHandler *handler = [alert dismiss];
@@ -83,6 +83,15 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
  */
 + (instancetype)alertWithTitle:(NSString *)title;
 
+/**
+ Creates and returns an alert object that matches an alert view
+ with the specified message.
+ 
+ @param message The message of the alert.
+ @return A newly created alert object.
+ */
++ (instancetype)alertWithMessage:(NSString *)message;
+
 #pragma mark - Handling Alerts
 /// -----------------------------------
 /// @name Handling Alerts
@@ -104,6 +113,14 @@ typedef NS_ENUM(NSInteger, SLAlertTextFieldType) {
  UIAutomation's default procedure.
  */
 - (SLAlertDismissHandler *)dismiss;
+
+/**
+ Creates and returns a handler that leaves the matching alert on the screen, and it
+ is up to the test case to find and handle the alert in the view hierarchy to proceed.
+
+ @return A newly created handler that leaves the alert untouched.
+ */
+- (SLAlertDismissHandler *)dismissByTest;
 
 /**
  Creates and returns a handler that dismisses a matching alert

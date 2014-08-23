@@ -24,6 +24,7 @@
 #import <Subliminal/Subliminal.h>
 #import <Subliminal/SLTerminal.h>
 #import <OCMock/OCMock.h>
+#import <objc/runtime.h>
 
 #import "TestUtilities.h"
 #import "SharedSLTests.h"
@@ -35,6 +36,7 @@
 
 @implementation SLTestTests {
     id _loggerMock, _terminalMock;
+    NSSet *_tags;
 }
 
 - (void)setUp {
@@ -44,6 +46,15 @@
     _terminalMock = [OCMockObject partialMockForObject:[SLTerminal sharedTerminal]];
     [[_terminalMock stub] eval:OCMOCK_ANY];
     [[_terminalMock stub] shutDown];
+}
+
+- (void)setUpTestWithSelector:(SEL)testMethod {
+    _tags = nil;
+}
+
+- (void)tearDownTestWithSelector:(SEL)testMethod {
+    // only unset `SL_TAGS` if we did set it, for performance
+    if (_tags) unsetenv("SL_TAGS");
 }
 
 - (void)tearDown {
@@ -64,15 +75,19 @@
         [TestWhichSupportsOnlyiPad_iPad class],
         [TestWhichSupportsOnlyiPhone_iPhone class],
         [TestWithPlatformSpecificTestCases class],
+        [TestNotSupportingCurrentEnvironment class],
+        [TestWithEnvironmentSpecificTestCases class],
         [AbstractTestWhichSupportsOnly_iPad class],
         [ConcreteTestWhichSupportsOnlyiPad class],
         [TestThatIsNotFocused class],
         [TestWithAFocusedTestCase class],
         [TestWithSomeFocusedTestCases class],
         [TestWithAFocusedPlatformSpecificTestCase class],
+        [TestWithAFocusedEnvironmentSpecificTestCase class],
         [Focus_TestThatIsFocused class],
         [Focus_TestWhereNarrowestFocusApplies class],
         [Focus_TestThatIsFocusedButDoesntSupportCurrentPlatform class],
+        [Focus_TestThatIsFocusedButDoesntSupportCurrentEnvironment class],
         [Focus_AbstractTestThatIsFocused class],
         [ConcreteTestThatIsFocused class],
         [AbstractRunGroupOneTest class],
@@ -83,9 +98,82 @@
         [TestTwoOfRunGroupTwo class],
         [TestThreeOfRunGroupTwo class],
         [TestOneOfRunGroupThree class],
+        [TestWithTagAAAandCCC class],
+        [TestWithTagBBBandCCC class],
+        [TestWithSomeTaggedTestCases class],
         nil
     ];
     STAssertEqualObjects(allTests, expectedTests, @"Unexpected tests returned.");
+}
+
+- (void)testTestsWithTagsIncludesTestsWithAtLeastOneSpecifiedTag {
+    NSSet *tags = [NSSet setWithObject:@"CCC"];
+    NSSet *expectedTests = [NSSet setWithObjects:[TestWithTagAAAandCCC class], [TestWithTagBBBandCCC class], nil];
+    NSSet *actualTests = [SLTest testsWithTags:tags];
+    STAssertEqualObjects(expectedTests, actualTests,
+                         @"`+testsWithTags:` should return all tests that have at least one of the specified tags.");
+    
+    tags = [NSSet setWithObjects:@"AAA", @"BBB", nil];
+    actualTests = [SLTest testsWithTags:tags];
+    STAssertEqualObjects(expectedTests, actualTests,
+                         @"`+testsWithTags:` should not require tests to have _all_ the specified tags.");
+}
+
+- (void)testTestsWithTagsExcludesTestsWithAnyMinusPrefixedTagsSpecified {
+    NSSet *tags = [NSSet setWithObjects:@"CCC", nil];
+    NSSet *expectedTests = [NSSet setWithObjects:[TestWithTagAAAandCCC class], [TestWithTagBBBandCCC class], nil];
+    NSSet *actualTests = [SLTest testsWithTags:tags];
+    STAssertEqualObjects(expectedTests, actualTests,
+                         @"`+testsWithTags:` should return all tests that have at least one of the specified tags.");
+    
+    tags = [NSSet setWithObjects:@"CCC", @"-BBB", nil];
+    expectedTests = [NSSet setWithObject:[TestWithTagAAAandCCC class]];
+    actualTests = [SLTest testsWithTags:tags];
+    STAssertEqualObjects(expectedTests, actualTests,
+                         @"`+testsWithTags:` should have excluded those tests tagged with the '-'-prefixed tags.");
+
+    tags = [NSSet setWithObjects:@"CCC", @"-CCC", nil];
+    actualTests = [SLTest testsWithTags:tags];
+    STAssertFalse([actualTests count], @"`+testsWithTags:` should have returned no tests.");
+    
+    tags = [NSSet setWithObjects:@"CCC", @"-AAA", @"-BBB", nil];
+    actualTests = [SLTest testsWithTags:tags];
+    STAssertFalse([actualTests count], @"`+testsWithTags:` should have returned no tests.");
+}
+
+- (void)testTestsWithTagsIncludesAllTestsExceptThoseTaggedIfOnlyMinusPrefixedTagsAreSpecified {
+    NSSet *tags = [NSSet setWithObjects:@"CCC", @"-BBB", nil];
+    NSSet *expectedTests = [NSSet setWithObject:[TestWithTagAAAandCCC class]];
+    NSSet *actualTests = [SLTest testsWithTags:tags];
+    STAssertEqualObjects(expectedTests, actualTests,
+                         @"`+testsWithTags:` should have included only those tests that did have the regular tags, which tests did not also have the '-'-prefixed tags.");
+    
+    tags = [NSSet setWithObjects:@"-BBB", nil];
+    expectedTests = [[SLTest allTests] filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"NONE SELF.tags CONTAINS 'BBB'"]];
+    actualTests = [SLTest testsWithTags:tags];
+    STAssertEqualObjects(expectedTests, actualTests,
+                         @"`+testsWithTags:` should have included all tests except for those that had the '-'-prefixed tags.");
+}
+
+- (void)testTagsDefaultToUnfocusedTestNamePlusSuperclassNamesAndRunGroup {
+    STAssertEqualObjects([TestWithSomeTestCases tags], [NSSet setWithArray:(@[ @"TestWithSomeTestCases", @"1" ])], @"");
+    STAssertEqualObjects([Focus_TestThatIsFocused tags], [NSSet setWithArray:(@[ @"TestThatIsFocused", @"1" ])], @"");
+    
+    // test superclasses that are and are not focused
+    STAssertEqualObjects([ConcreteTestWhichSupportsOnlyiPad tags],
+                         [NSSet setWithArray:(@[ @"AbstractTestWhichSupportsOnly_iPad", @"ConcreteTestWhichSupportsOnlyiPad", @"1" ])], @"");
+    STAssertEqualObjects([ConcreteTestThatIsFocused tags],
+                         [NSSet setWithArray:(@[ @"AbstractTestThatIsFocused", @"ConcreteTestThatIsFocused", @"1" ])], @"");
+}
+
+- (void)testTagsForTestCaseWithSelectorDefaultsToTestTagsAndUnfocusedTestCaseName {
+    Class testClass = [TestWithAFocusedTestCase class];
+    NSSet *testTags = [testClass tags];
+    
+    STAssertEqualObjects([testClass tagsForTestCaseWithSelector:@selector(testOne)], [testTags setByAddingObject:@"testOne"], @"");
+    STAssertEqualObjects([testClass tagsForTestCaseWithSelector:@selector(focus_testTwo)], [testTags setByAddingObject:@"testTwo"], @"");
+    // we should be able to retrieve the tags using the unfocused selector too
+    STAssertEqualObjects([testClass tagsForTestCaseWithSelector:@selector(testTwo)], [testTags setByAddingObject:@"testTwo"], @"");
 }
 
 - (void)testTestNamedReturnsExpected {
@@ -125,7 +213,26 @@
 #pragma mark - Platform support
 
 - (void)testTestsSupportCurrentPlatformByDefault {
-    STAssertTrue([SLTest supportsCurrentPlatform], @"Tests should support the current platform by default.");
+    // `SLTest` itself does not support the current platform because it does not
+    // define test cases, but a test which _does_ define test cases...
+    Class testClass = [TestWithSomeTestCases class];
+    
+    // ...and does not override `+supportsCurrentPlatform`...
+    SEL supportsCurrentPlatformSelector = @selector(supportsCurrentPlatform);
+    Method defaultSupportsCurrentPlatform = class_getClassMethod([SLTest class], supportsCurrentPlatformSelector);
+    Method testSupportsCurrentPlatform = class_getClassMethod(testClass, supportsCurrentPlatformSelector);
+    STAssertTrue(testSupportsCurrentPlatform == defaultSupportsCurrentPlatform,
+                 @"For the purposes of this test, the test class must not override `+supportsCurrentPlatform`.");
+    
+    // ...should support the current platform.
+    STAssertTrue([testClass supportsCurrentPlatform], @"Tests should support the current platform by default.");
+}
+
+- (void)testTestsWithoutTestCasesSupportingTheCurrentPlatformDontSupportCurrentPlatform {
+    // It's trivially true that none of `SLTest`'s test cases support the current platform,
+    // because it doesn't have any.
+    STAssertFalse([SLTest supportsCurrentPlatform],
+                  @"A test without test cases supporting the current platform should not support the current platform.");
 }
 
 - (void)testTestsWithiPhoneSuffixOnlySupportiPhone {
@@ -172,14 +279,23 @@
         [invocation setReturnValue:&currentUserInterfaceIdiom];
     }] userInterfaceIdiom];
 
-    STAssertFalse([AbstractTestWhichSupportsOnly_iPad supportsCurrentPlatform],
-                  @"The base class should not support the iPhone.");
-    STAssertFalse([ConcreteTestWhichSupportsOnlyiPad supportsCurrentPlatform],
+    Class baseClass = [AbstractTestWhichSupportsOnly_iPad class];
+    
+    // `AbstractTestWhichSupportsOnly_iPad` itself does not support any platform
+    // because it does not define test cases, but a test which _does_ define test cases...
+    Class subclass = [ConcreteTestWhichSupportsOnlyiPad class];
+    
+    // ...and does not override `+supportsCurrentPlatform`...
+    SEL supportsCurrentPlatformSelector = @selector(supportsCurrentPlatform);
+    Method defaultSupportsCurrentPlatform = class_getClassMethod(baseClass, supportsCurrentPlatformSelector);
+    Method testSupportsCurrentPlatform = class_getClassMethod(subclass, supportsCurrentPlatformSelector);
+    STAssertTrue(testSupportsCurrentPlatform == defaultSupportsCurrentPlatform,
+                 @"For the purposes of this test, the subclass must not override `+supportsCurrentPlatform`.");
+    
+    // ...should behave as expected, given the base class' annotation.
+    STAssertFalse([subclass supportsCurrentPlatform],
                   @"The subclass should not support the iPhone.");
-
     currentUserInterfaceIdiom = UIUserInterfaceIdiomPad;
-    STAssertTrue([AbstractTestWhichSupportsOnly_iPad supportsCurrentPlatform],
-                 @"The base class should support the iPad.");
     STAssertTrue([ConcreteTestWhichSupportsOnlyiPad supportsCurrentPlatform],
                  @"The subclass should support the iPad.");
 }
@@ -263,6 +379,167 @@
     currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
     STAssertFalse([testWithPlatformSpecificTestCasesTest testCaseWithSelectorSupportsCurrentPlatform:@selector(testBar_iPad)],
                   @"Test case with '_iPhone' suffix should not support the iPhone.");
+}
+
+#pragma mark - Environment support
+
+- (void)testTestsSupportCurrentEnvironmentByDefault {
+    // `SLTest` itself does not support the current environment because it does not
+    // define test cases, but a test which _does_ define test cases...
+    Class testClass = [TestWithSomeTestCases class];
+    
+    // ...and does not override `+supportsCurrentEnvironment`...
+    SEL supportsCurrentEnvironmentSelector = @selector(supportsCurrentEnvironment);
+    Method defaultSupportsCurrentEnvironment = class_getClassMethod([SLTest class], supportsCurrentEnvironmentSelector);
+    Method testSupportsCurrentEnvironment = class_getClassMethod(testClass, supportsCurrentEnvironmentSelector);
+    STAssertTrue(testSupportsCurrentEnvironment == defaultSupportsCurrentEnvironment,
+                 @"For the purposes of this test, the test class must not override `+supportsCurrentEnvironment`.");
+    
+    // ...should support the current environment.
+    STAssertTrue([testClass supportsCurrentEnvironment], @"Tests should support the current environment by default.");
+}
+
+- (void)testTestsWithoutTestCasesSupportingTheCurrentEnvironmentDontSupportCurrentEnvironment {
+    // It's trivially true that none of `SLTest`'s test cases support the current environment,
+    // because it doesn't have any.
+    STAssertFalse([SLTest supportsCurrentEnvironment],
+                  @"A test without test cases supporting the current environment should not support the current environment.");
+}
+
+- (void)testOnlyTestCasesSupportingCurrentEnvironmentAreRun {
+    Class testWithEnvironmentSpecificTestCasesTest = [TestWithEnvironmentSpecificTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testWithEnvironmentSpecificTestCasesTest];
+    
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+    SEL supportedTestCaseSelector = @selector(testFoo);
+    STAssertTrue([testWithEnvironmentSpecificTestCasesTest testCaseWithSelectorSupportsCurrentEnvironment:supportedTestCaseSelector],
+                 @"For the purposes of this test, this test case must support the current environment.");
+    // note: this causes the mock to expect the invocation of the test case selector, not performSelector: itself
+    [[testMock expect] performSelector:supportedTestCaseSelector];
+    
+    SEL unsupportedTestCaseSelector = @selector(testCaseNotSupportingCurrentEnvironment);
+    STAssertFalse([testWithEnvironmentSpecificTestCasesTest testCaseWithSelectorSupportsCurrentEnvironment:unsupportedTestCaseSelector],
+                  @"For the purposes of this test, this test case must not support the current environment.");
+    // note: this causes the mock to expect the invocation of the test case selector, not performSelector: itself
+    [[testMock reject] performSelector:unsupportedTestCaseSelector];
+#pragma clang diagnostic pop
+    
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithEnvironmentSpecificTestCasesTest], nil);
+    STAssertNoThrow([testMock verify], @"Test cases did not run as expected.");
+}
+
+- (NSSet *)testCasesSupportingTheCurrentEnvironmentOfTest:(Class)testClass {
+    return [[testClass testCases] filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(NSString *testCaseName, NSDictionary *bindings) {
+        return [testClass testCaseWithSelectorSupportsCurrentEnvironment:NSSelectorFromString(testCaseName)];
+    }]];
+}
+
+- (void)setSLTAGS:(NSSet *)tags {
+    _tags = tags;
+    setenv("SL_TAGS", [[[tags allObjects] componentsJoinedByString:@","] UTF8String], 1);
+}
+
+- (void)testAllTestCasesSupportTheCurrentEnvironmentIfNoTagsAreSpecified {
+    STAssertFalse(getenv("SL_TAGS"), @"For the purposes of this test case, `SL_TAGS` must not be set.");
+    
+    Class testClass = [TestWithSomeTaggedTestCases class];
+
+    for (NSString *testCaseName in [testClass testCases]) {
+        STAssertTrue([testClass testCaseWithSelectorSupportsCurrentEnvironment:NSSelectorFromString(testCaseName)],
+                     @"Test case did not support the current environment as expected.");
+    }
+}
+
+// this is an emergent property of test cases inheriting their tests' tags,
+// but is sufficiently-important a use case to test separately
+- (void)testAllTestCasesSupportTheCurrentEnvironmentIfTheirTestsNameIsSpecifiedAsATag {
+    Class testClass = [TestWithSomeTaggedTestCases class];
+    [self setSLTAGS:[NSSet setWithObject:NSStringFromClass(testClass)]];
+    
+    for (NSString *testCaseName in [testClass testCases]) {
+        STAssertTrue([testClass testCaseWithSelectorSupportsCurrentEnvironment:NSSelectorFromString(testCaseName)],
+                     @"Test case did not support the current environment as expected.");
+    }
+}
+
+- (void)testTestCasesSupportTheCurrentEnvironmentIfTheyAreTaggedWithAtLeastOneSpecifiedTag {
+    Class testClass = [TestWithSomeTaggedTestCases class];
+    
+    [self setSLTAGS:[NSSet setWithObject:@"CCC"]];
+    NSSet *expectedTestCases = [NSSet setWithObjects:@"testCaseWithTagAAAandCCC", @"testCaseWithTagBBBandCCC", nil];
+    NSSet *actualTestCases = [self testCasesSupportingTheCurrentEnvironmentOfTest:testClass];
+    STAssertEqualObjects(expectedTestCases, actualTestCases,
+                         @"All test cases that have at least one of the specified tags should support the current environment.");
+    
+    [self setSLTAGS:[NSSet setWithObjects:@"AAA", @"BBB", nil]];
+    actualTestCases = [self testCasesSupportingTheCurrentEnvironmentOfTest:testClass];
+    STAssertEqualObjects(expectedTestCases, actualTestCases,
+                         @"Test cases should not be required to have _all_ the specified tags in order to support the current environment.");
+}
+
+- (void)testTestCasesDoNotSupportTheCurrentEnvironmentIfTheyAreTaggedWithAMinusPrefixedTag {
+    Class testClass = [TestWithSomeTaggedTestCases class];
+
+    [self setSLTAGS:[NSSet setWithObject:@"CCC"]];
+    NSSet *expectedTestCases = [NSSet setWithObjects:@"testCaseWithTagAAAandCCC", @"testCaseWithTagBBBandCCC", nil];
+    NSSet *actualTestCases = [self testCasesSupportingTheCurrentEnvironmentOfTest:testClass];
+    STAssertEqualObjects(expectedTestCases, actualTestCases,
+                         @"All test cases that have at least one of the specified tags should support the current environment");
+    
+    [self setSLTAGS:[NSSet setWithObjects:@"CCC", @"-BBB", nil]];
+    expectedTestCases = [NSSet setWithObjects:@"testCaseWithTagAAAandCCC", nil];
+    actualTestCases = [self testCasesSupportingTheCurrentEnvironmentOfTest:testClass];
+    STAssertEqualObjects(expectedTestCases, actualTestCases,
+                         @"Test cases tagged with the '-'-prefixed tags should not support the current environment.");
+    
+    [self setSLTAGS:[NSSet setWithObjects:@"CCC", @"-CCC", nil]];
+    actualTestCases = [self testCasesSupportingTheCurrentEnvironmentOfTest:testClass];
+    STAssertFalse([actualTestCases count], @"No test cases should support the current environment.");
+    
+    [self setSLTAGS:[NSSet setWithObjects:@"CCC", @"-AAA", @"-BBB", nil]];
+    actualTestCases = [self testCasesSupportingTheCurrentEnvironmentOfTest:testClass];
+    STAssertFalse([actualTestCases count], @"No test cases should support the current environment.");
+}
+
+- (void)testAllTestCasesExceptThoseTaggedSupportTheCurrentEnvironmentIfOnlyMinusPrefixedTagsAreSpecified {
+    Class testClass = [TestWithSomeTaggedTestCases class];
+
+    [self setSLTAGS:[NSSet setWithObjects:@"CCC", @"-BBB", nil]];
+    NSSet *expectedTestCases = [NSSet setWithObjects:@"testCaseWithTagAAAandCCC", nil];
+    NSSet *actualTestCases = [self testCasesSupportingTheCurrentEnvironmentOfTest:testClass];
+    STAssertEqualObjects(expectedTestCases, actualTestCases,
+                         @"`The only test cases to support the current environment should be those test cases that do not have the regular tags, which test cases do not also have the '-'-prefixed tags.");
+    
+    [self setSLTAGS:[NSSet setWithObjects:@"-BBB", nil]];
+    expectedTestCases = [[testClass testCases] filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(NSString *testCaseName, NSDictionary *bindings) {
+        return ![[testClass tagsForTestCaseWithSelector:NSSelectorFromString(testCaseName)] containsObject:@"BBB"];
+    }]];
+    actualTestCases = [self testCasesSupportingTheCurrentEnvironmentOfTest:testClass];
+    STAssertEqualObjects(expectedTestCases, actualTestCases,
+                         @"All test cases should support the current environment except for those that have the '-'-prefixed tags.");
+}
+
+- (void)testIfTestDoesNotSupportCurrentEnvironmentTestCasesWillNotRunRegardlessOfSupport {
+    Class testNotSupportingCurrentEnvironmentClass = [TestNotSupportingCurrentEnvironment class];
+    STAssertFalse([testNotSupportingCurrentEnvironmentClass supportsCurrentEnvironment],
+                  @"For the purposes of this test, this SLTest must not support the current environment.");
+    
+    SEL supportedTestCaseSelector = @selector(testFoo);
+    STAssertTrue([testNotSupportingCurrentEnvironmentClass instancesRespondToSelector:supportedTestCaseSelector] &&
+                 [testNotSupportingCurrentEnvironmentClass testCaseWithSelectorSupportsCurrentEnvironment:supportedTestCaseSelector],
+                 @"For the purposes of this test, this SLTest must have a test case which supports the current environment.");
+    
+    id testNotSupportingCurrentEnvironmentClassMock = [OCMockObject partialMockForClass:testNotSupportingCurrentEnvironmentClass];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+    // note: this causes the mock to reject the invocation of the test case selector, not performSelector: itself
+    [[testNotSupportingCurrentEnvironmentClassMock reject] performSelector:supportedTestCaseSelector];
+#pragma clang diagnostic pop
+    
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testNotSupportingCurrentEnvironmentClass], nil);
+    STAssertNoThrow([testNotSupportingCurrentEnvironmentClassMock verify],
+                    @"Test case supporting current environment was run despite its test not supporting the current environment.");
 }
 
 #pragma mark - Focusing
@@ -368,8 +645,10 @@
 
     // but expect the test infrastructure to use the unfocused selector
     // this allows test writers to avoid modifying the rest of their test when they focus a test case
-    // make sure we invoke the real implementation of -testCaseWithSelectorSupportsCurrentPlatform or else the case won't run!
+    // make sure we invoke the real implementations of `-testCaseWithSelectorSupportsCurrentPlatform:`
+    // and `-testCaseWithSelectorSupportsCurrentEnvironment:` or else the case won't run!
     [[[testWithAFocusedTestCaseClassObjectMock expect] andForwardToRealObject] testCaseWithSelectorSupportsCurrentPlatform:@selector(testTwo)];
+    [[[testWithAFocusedTestCaseClassObjectMock expect] andForwardToRealObject] testCaseWithSelectorSupportsCurrentEnvironment:@selector(testTwo)];
     [[testWithAFocusedTestCaseClassMock expect] setUpTestCaseWithSelector:@selector(testTwo)];
     [[testWithAFocusedTestCaseClassMock expect] tearDownTestCaseWithSelector:@selector(testTwo)];
 
@@ -386,7 +665,7 @@
     UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
     [[[deviceMock stub] andReturnValue:OCMOCK_VALUE(currentUserInterfaceIdiom)] userInterfaceIdiom];
 
-    // While testBar_iPad is focused, it doesn't support the current platform, thus isn't going to run.
+    // While `testBar_iPad` is focused, it doesn't support the current platform, thus isn't going to run.
     // If it's not going to run, its focus is irrelevant, and so the other test case should run after all.
     id testWithAFocusedPlatformSpecificTestCaseClassMock = [OCMockObject partialMockForClass:testWithAFocusedPlatformSpecificTestCaseClass];
     [[testWithAFocusedPlatformSpecificTestCaseClassMock reject] focus_testBar_iPad];
@@ -394,6 +673,24 @@
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithAFocusedPlatformSpecificTestCaseClass], nil);
     STAssertNoThrow([testWithAFocusedPlatformSpecificTestCaseClassMock verify], @"Test cases did not execute as expected.");
+}
+
+- (void)testFocusedTestCasesMustSupportTheCurrentEnvironmentInOrderToRun {
+    Class testWithAFocusedEnvironmentSpecificTestCaseClass = [TestWithAFocusedEnvironmentSpecificTestCase class];
+    
+    // we mock the current device to dynamically configure the current user interface idiom
+    id deviceMock = [OCMockObject partialMockForObject:[UIDevice currentDevice]];
+    UIUserInterfaceIdiom currentUserInterfaceIdiom = UIUserInterfaceIdiomPhone;
+    [[[deviceMock stub] andReturnValue:OCMOCK_VALUE(currentUserInterfaceIdiom)] userInterfaceIdiom];
+    
+    // While `testBar` is focused, it doesn't support the current environment, thus isn't going to run.
+    // If it's not going to run, its focus is irrelevant, and so the other test case should run after all.
+    id testWithAFocusedEnvironmentSpecificTestCaseClassMock = [OCMockObject partialMockForClass:testWithAFocusedEnvironmentSpecificTestCaseClass];
+    [[testWithAFocusedEnvironmentSpecificTestCaseClassMock reject] focus_testBar];
+    [[testWithAFocusedEnvironmentSpecificTestCaseClassMock expect] testFoo];
+    
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithAFocusedEnvironmentSpecificTestCaseClass], nil);
+    STAssertNoThrow([testWithAFocusedEnvironmentSpecificTestCaseClassMock verify], @"Test cases did not execute as expected.");
 }
 
 #pragma mark - Test case execution

@@ -155,10 +155,15 @@
                 } else {
                     subtypeValue = SISLLogEventSubtypeTestFailure;
 
-                    // message format: "SLKeyboardTest.m:62: ..."
                     NSArray *messageComponents = [message componentsSeparatedByString:@":"];
-                    infoValue[@"fileName"] = messageComponents[0];
-                    infoValue[@"lineNumber"] = @([messageComponents[1] integerValue]);
+
+                    // In some rare circumstances, Subliminal may log an error with no call site,
+                    // for example when an error is raised within the JS code.
+                    if (messageComponents.count > 2) {
+                        // Subliminal standard message format: "SLKeyboardTest.m:62: ..."
+                        infoValue[@"fileName"] = messageComponents[0];
+                        infoValue[@"lineNumber"] = @([messageComponents[1] integerValue]);
+                    }
                 }
             } else {
                 typeValue = SISLLogEventTypeDefault;

@@ -158,6 +158,7 @@ SCRIPT_DIR=$(cd "$(dirname "$0")"; pwd)
 BUILD_TOOL="xcrun xcodebuild"
 SCHEME="Integration Tests"
 CONFIGURATION="Release"
+ENV_STR=""
 
 LOGIN_PASSWORD_DEPRECATION_MESSAGE="""\n
 WARNING: The \`--live\` and \`-login_password\` options have been deprecated\n
@@ -186,18 +187,18 @@ case $1 in
 		shift 1;;
 
 	# Set argument, wait for value
-    -project|-workspace|-prebuilt_app|-sim_device|-hw_id|-build_tool|-scheme|-configuration|-sdk|-replacement_bundle_id|-sim_version|-timeout|-output|-e)
+	-project|-workspace|-prebuilt_app|-sim_device|-hw_id|-build_tool|-scheme|-configuration|-sdk|-replacement_bundle_id|-sim_version|-timeout|-output|-e)
 		if [[ -n "$CURRENT_ARG" ]]; then
 			echo "Missing value for argument: $CURRENT_ARG"
 			print_usage_and_fail
 		fi
 		case $1 in
 			# Set a placeholder for the real arg (the env var)
-			-e) CURRENT_ARG="$1";;
+			-e) CURRENT_ARG="-e";;
 			# Variables (apart from env vars) are capitalized in this script
 			*)	CURRENT_ARG=`echo ${1#-} | tr [[:lower:]] [[:upper:]]`;;
 		esac
-	    shift 1;;
+		shift 1;;
 
 	-login_password)
 		echo $LOGIN_PASSWORD_DEPRECATION_MESSAGE
@@ -206,22 +207,35 @@ case $1 in
 		CURRENT_ARG=LOGIN_PASSWORD
 		shift 1;;
 
-    -*)	
-		echo "Unrecognized argument: $1"
-    	print_usage_and_fail;;
+	-*)
+		# Permit environment variable values to begin with "-"
+		if [[ "$CURRENT_ARG" == "-e "* ]]; then
+			# Append "-e <variable_name> <variable_value>" to the environment string
+			ENV_STR+=" $CURRENT_ARG $1"
+			unset CURRENT_ARG
+		else
+			echo "Unrecognized argument: $1"
+	  	print_usage_and_fail
+	  fi
+	  shift;;
 
 	# Set value for argument (unless end of command)
 	*)
 		if [[ -n "$1" ]]; then
 			if [[ -z "$CURRENT_ARG" ]]; then
-				echo "Value \"$1\" is missing argument"
+				echo "Value \"$1\" does not correspond to an option"
 				print_usage_and_fail
 			elif [[ "$CURRENT_ARG" == "-e" ]]; then
-				# Replace the env var placeholder
-				CURRENT_ARG="export $1"
+				# Add variable name to the placeholder
+				CURRENT_ARG="-e $1"
+			elif [[ "$CURRENT_ARG" == "-e "* ]]; then
+				# Append "-e <variable_name> <variable_value>" to the environment string.
+				# Keep this logic in sync with the `-*)` case above
+				ENV_STR+=" $CURRENT_ARG $1"
+				unset CURRENT_ARG
 			else
 				eval $CURRENT_ARG=\"$1\"
-				unset CURRENT_ARG;
+				unset CURRENT_ARG
 			fi
 		else
 			# end of command
@@ -533,7 +547,8 @@ launch_instruments () {
 		$timeout_arg\
 		-w "$device"\
 		"$APP"\
-		-e UIARESULTSPATH "$RESULTS_DIR" &
+		-e UIARESULTSPATH "$RESULTS_DIR" \
+		$ENV_STR &
 	INSTRUMENTS_PID=$!
 
 	RESULT_LOG="$RESULTS_DIR/Run 1/Automation Results.plist"

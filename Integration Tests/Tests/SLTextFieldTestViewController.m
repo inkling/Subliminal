@@ -144,7 +144,7 @@
         return;
 
     // move the textfield above the keyboard
-    static const CGFloat kTextFieldVerticalOffset = -40.0f;
+    static const CGFloat kTextFieldVerticalOffset = -80.0f;
 
     CGPoint textFieldCenter = CGPointMake(self.view.center.x, self.view.center.y + kTextFieldVerticalOffset);
     _textField.center = textFieldCenter;

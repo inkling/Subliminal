@@ -41,6 +41,7 @@ NSString *const SLTestCasesKey = @"SLTestCasesKey";
     self = [super initWithStyle:UITableViewStylePlain];
     if (self) {
         _tests = [tests copy];
+        _animateTestTransitions = YES;
     }
     return self;
 }
@@ -104,19 +105,20 @@ NSString *const SLTestCasesKey = @"SLTestCasesKey";
                           scrollPosition:UITableViewScrollPositionNone];
     [self.tableView scrollToRowAtIndexPath:indexPath
                           atScrollPosition:UITableViewScrollPositionNone
-                                  animated:YES];
+                                  animated:self.animateTestTransitions];
 
     // wait until any scrolling animation might have concluded--they're of uniform duration
-    double scrollingDelayInSeconds = 0.3;
+    double scrollingDelayInSeconds = self.animateTestTransitions ? 0.3 : 0.0;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(scrollingDelayInSeconds * NSEC_PER_SEC));
     dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
         // now that the row for the pending test has been scrolled to visible,
         // present its test cases
         SLTestViewController *testViewController = [[SLTestViewController alloc] initWithTest:test testCases:_pendingTestInfo[SLTestCasesKey]];
+        testViewController.animateTestCaseTransitions = self.animateTestTransitions;
 
         // ensure that we'll receive the callback
         self.navigationController.delegate = self;
-        [self.navigationController pushViewController:testViewController animated:YES];
+        [self.navigationController pushViewController:testViewController animated:self.animateTestTransitions];
     });
 }
 
@@ -144,7 +146,7 @@ NSString *const SLTestCasesKey = @"SLTestCasesKey";
 - (void)dismissCurrentTest {
     // ensure that we'll receive the callback
     self.navigationController.delegate = self;
-    [self.navigationController popToViewController:self animated:YES];
+    [self.navigationController popToViewController:self animated:self.animateTestTransitions];
 }
 
 @end

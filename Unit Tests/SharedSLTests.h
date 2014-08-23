@@ -10,10 +10,10 @@
 
 /*
  All SLTests linked against the Unit Tests target should be defined here,
- for discoverability, as -[SLTestTests testAllTestsReturnsExpected] depends 
+ for discoverability, as `-[SLTestTests testAllTestsReturnsExpected]` depends
  on knowing what tests there are.
  
- If you add a new SLTest, please remember to update -[SLTestTests testAllTestsReturnsExpected].
+ If you add a new SLTest, please remember to update `-[SLTestTests testAllTestsReturnsExpected]`.
  */
 
 @interface TestWithSomeTestCases : SLTest
@@ -66,6 +66,21 @@
 @end
 
 
+@interface TestNotSupportingCurrentEnvironment : SLTest
+
+- (void)testFoo;
+
+@end
+
+
+@interface TestWithEnvironmentSpecificTestCases : SLTest
+
+- (void)testFoo;
+- (void)testCaseNotSupportingCurrentEnvironment;
+
+@end
+
+
 @interface AbstractTestWhichSupportsOnly_iPad : SLTest
 @end
 
@@ -108,6 +123,14 @@
 @end
 
 
+@interface TestWithAFocusedEnvironmentSpecificTestCase : SLTest
+
+- (void)testFoo;
+- (void)focus_testBar;
+
+@end
+
+
 @interface Focus_TestThatIsFocused : SLTest
 
 - (void)testFoo;
@@ -124,6 +147,13 @@
 
 
 @interface Focus_TestThatIsFocusedButDoesntSupportCurrentPlatform : SLTest
+
+- (void)testOne;
+
+@end
+
+
+@interface Focus_TestThatIsFocusedButDoesntSupportCurrentEnvironment : SLTest
 
 - (void)testOne;
 
@@ -183,5 +213,22 @@
 @interface TestOneOfRunGroupThree : SLTest
 
 - (void)testFoo;
+
+@end
+
+
+@interface TestWithTagAAAandCCC : SLTest
+@end
+
+
+@interface TestWithTagBBBandCCC : SLTest
+@end
+
+
+@interface TestWithSomeTaggedTestCases : SLTest
+
+- (void)testCaseWithTagAAAandCCC;
+- (void)testCaseWithTagBBBandCCC;
+- (void)testOtherCase;
 
 @end

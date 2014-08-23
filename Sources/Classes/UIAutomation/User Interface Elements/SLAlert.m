@@ -135,15 +135,25 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
                 // enumerate registered handlers, from first to last
                 @"for (var handlerIndex = 0; handlerIndex < SLAlertHandler.alertHandlers.length; handlerIndex++) {\
                     var handler = SLAlertHandler.alertHandlers[handlerIndex];"
-                    // if a handler matches the alert...
-                    @"if (handler.handleAlert(alert) === true) {\
-                        if (SLAlertHandler.loggingEnabled) UIALogger.logMessage('Alert was handled by a test.');"
-                        // ...ensure that the alert's delegate will receive its callbacks
-                        // before the next JS command (i.e. -didHandleAlert) evaluates...
-                        @"UIATarget.localTarget().delay(%g);"
-                        // ...then remove the handler and return true
-                        @"SLAlertHandler.alertHandlers.splice(handlerIndex, 1);\
-                        return true;\
+                    // Give the UIA default 5s for UI interactions done purely in JS with no ObjC fallback
+                    @"UIATarget.localTarget().pushTimeout(5);\
+                    try {"
+                        // if a handler matches the alert...
+                        @"if (handler.handleAlert(alert) === true) {\
+                            if (SLAlertHandler.loggingEnabled) UIALogger.logMessage('Alert was handled by a test.');"
+                            // ...ensure that the alert's delegate will receive its callbacks
+                            // before the next JS command (i.e. -didHandleAlert) evaluates...
+                            @"UIATarget.localTarget().delay(%g);"
+                            // ...then remove the handler and return true
+                            @"SLAlertHandler.alertHandlers.splice(handlerIndex, 1);\
+                            return true;\
+                        }\
+                    } catch (e) {\
+                        UIALogger.logError('Handler for alert \"' + alert.name() + '\" threw an exception!');\
+                        UIATarget.localTarget().logElementTree();\
+                        SLAlertHandler.alertHandlers.splice(handlerIndex, 1);\
+                    } finally {\
+                        UIATarget.localTarget().popTimeout();\
                     }\
                 }"
                 
@@ -314,6 +324,10 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
     return [[SLAlertMultiHandler alloc] initWithSLAlert:_alert handlers:@[ self, nextHandler ]];
 }
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"%@: Alert: %@", [super description], _alert];
+}
+
 @end
 
 @implementation SLAlertMultiHandler
@@ -345,7 +359,7 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
 #pragma mark - SLAlert
 
 @implementation SLAlert {
-    NSString *_title;
+    NSString *_title, *_message;
 }
 
 + (instancetype)alertWithTitle:(NSString *)title {
@@ -356,12 +370,25 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
     return alert;
 }
 
++ (instancetype)alertWithMessage:(NSString *)message {
+    NSParameterAssert([message length]);
+    
+    SLAlert *alert = [[SLAlert alloc] init];
+    alert->_message = message;
+    return alert;
+}
+
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@ title:\"%@\">", NSStringFromClass([self class]), _title];
+    return [NSString stringWithFormat:@"<%@ title:\"%@\" message:\"%@\">",
+            NSStringFromClass([self class]), _title, _message];
 }
 
 - (SLAlertDismissHandler *)dismiss {
     return [[SLAlertDismissHandler alloc] initWithSLAlert:self andUIAAlertHandler:[SLAlertHandler defaultUIAAlertHandler]];
+}
+
+- (SLAlertDismissHandler *)dismissByTest {
+    return [[SLAlertDismissHandler alloc] initWithSLAlert:self andUIAAlertHandler:@"return true;"];
 }
 
 - (SLAlertDismissHandler *)dismissWithButtonTitled:(NSString *)buttonTitle {
@@ -434,11 +461,39 @@ static BOOL SLAlertHandlerLoggingEnabled = NO;
 }
 
 - (NSString *)isEqualToUIAAlertPredicate {
-    static NSString *const kIsEqualToUIAAlertPredicateFormatString = @"\
-        return alert.name() === \"%@\";\
-    ";
-    NSString *isEqualToUIAAlertPredicate = [NSString stringWithFormat:kIsEqualToUIAAlertPredicateFormatString,
-                                            [_title slStringByEscapingForJavaScriptLiteral]];
+    NSString *isEqualToUIAAlertPredicate = @""; // guard against a `nil` value being substituted into JS
+    if (_title) {
+        NSString *const kTitleIsEqualUIAAlertPredicateFormatString = @"\
+            return alert.name() === \"%@\";\
+        ";
+        isEqualToUIAAlertPredicate = [NSString stringWithFormat:kTitleIsEqualUIAAlertPredicateFormatString,
+                                      [_title slStringByEscapingForJavaScriptLiteral]];
+    } else if (_message) {
+        // Below iOS 7, the text elements are direct descendants of the alert view;
+        // At or above iOS 7, the text elements are within a scroll view.
+        NSString *kAlertTextElements;
+        if (kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_6_1) {
+            kAlertTextElements = @"alert.staticTexts()";
+        } else {
+            kAlertTextElements = @"alert.scrollViews()[0].staticTexts()";
+        }
+        
+        // if an alert view has a title and a message, it will have two text elements;
+        // if it only has a message, it will only have one text element;
+        // but the element conveying the message will always be last
+        NSString *const kMessageIsEqualUIAAlertPredicateFormatString = @"\
+            var textElements = %@.toArray();\
+            if (textElements.length > 0) {\
+                return textElements[textElements.length - 1].value() === \"%@\";\
+            } else {\
+                return NO;\
+            }\
+        ";
+        isEqualToUIAAlertPredicate = [NSString stringWithFormat:kMessageIsEqualUIAAlertPredicateFormatString,
+                                      kAlertTextElements, [_message slStringByEscapingForJavaScriptLiteral]];
+    } else {
+        NSAssert(NO, @"Alert %@ should have been initialized with a title or message.", self);
+    }
     return isEqualToUIAAlertPredicate;
 }
 

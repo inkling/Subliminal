@@ -47,6 +47,15 @@
  */
 - (instancetype)initWithTests:(NSArray *)tests;
 
+/**
+ A Boolean value that indicates whether the view controller
+ should animate the presentation and dismissal of tests.
+ 
+ The default value of this property is `YES`, which causes the view controller
+ to animate the presentation and dismissal of tests.
+ */
+@property (nonatomic) BOOL animateTestTransitions;
+
 #pragma mark - SLIntegrationTest App Hooks
 /// ------------------------------------
 /// @name SLIntegrationTest App Hooks

@@ -56,7 +56,15 @@
         // Filter the tests for the `SLTestController`
         // so that the `SLTestsViewController` only displays appropriate tests
         _tests = [SLTestController testsToRun:[SLTest allTests] usingSeed:NULL withFocus:NULL];
-        rootViewController = [[SLTestsViewController alloc] initWithTests:_tests];
+        SLTestsViewController *testsViewController = [[SLTestsViewController alloc] initWithTests:_tests];
+
+        // animate test transitions by default
+        BOOL animateTestTransitions = YES;
+        // but not if we're running in CI
+        if (getenv("CI") && [@(getenv("CI")) isEqualToString:@"true"]) animateTestTransitions = NO;
+        testsViewController.animateTestTransitions = animateTestTransitions;
+
+        rootViewController = testsViewController;
     }
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
     self.window.rootViewController = navController;
