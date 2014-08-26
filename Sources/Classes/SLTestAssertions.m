@@ -9,4 +9,4 @@
 #import "SLTestAssertions.h"
 
 NSString *const SLTestAssertionFailedException  = @"SLTestCaseAssertionFailedException";
-const NSTimeInterval SLWaitUntilTrueRetryDelay = 0.25;
+const NSTimeInterval SLIsTrueRetryDelay = 0.25;

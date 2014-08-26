@@ -52,6 +52,7 @@ extern void SLRunTestsUsingSeedAndWaitUntilFinished(NSSet *tests, unsigned int s
 - (void)slAssertFalse:(BOOL (^)(void))condition;
 - (void)slAssertTrueWithUnsignedInteger:(NSUInteger (^)(void))expression;
 - (void)SLAssertTrueWithTimeout:(BOOL (^)(void))condition withTimeout:(NSTimeInterval)timeout;
+- (BOOL)SLIsTrue:(BOOL (^)(void))condition withTimeout:(NSTimeInterval)timeout;
 - (BOOL)SLWaitUntilTrue:(BOOL (^)(void))condition withTimeout:(NSTimeInterval)timeout;
 
 - (void)slAssertThrows:(void (^)(void))expression;

@@ -13,10 +13,18 @@
 /// Thrown if a test assertion fails.
 extern NSString *const SLTestAssertionFailedException;
 
-/// The interval for which `SLAssertTrueWithTimeout` and `SLWaitUntilTrue`
+/// The interval for which `SLAssertTrueWithTimeout` and `SLIsTrueWithTimeout`
 /// wait before re-evaluating their conditions.
-extern const NSTimeInterval SLWaitUntilTrueRetryDelay;
+extern const NSTimeInterval SLIsTrueRetryDelay;
 
+// Log the deprecation warning asynchronously in case the constant was referenced
+// from the main thread (possible).
+#define SLWaitUntilTrueRetryDelay ({\
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{\
+        [[SLLogger sharedLogger] logWarning:@"As of v1.2, `SLWaitUntilTrueRetryDelay` is deprecated: use `SLIsTrueRetryDelay` instead. `SLWaitUntilTrueRetryDelay` will be removed for v2.0."];\
+    });\
+    SLIsTrueRetryDelay;\
+})
 
 #pragma mark - Test Assertions
 
@@ -113,7 +121,7 @@ NSString *__reason = [NSString stringWithFormat:@"\"%@\" should be true.%@", \
 #define SLAssertTrueWithTimeout(expression, timeout, failureDescription, ...) do {\
 [SLTest recordLastKnownFile:__FILE__ line:__LINE__]; \
 \
-if (!SLWaitUntilTrue(expression, timeout)) { \
+if (!SLIsTrueWithTimeout(expression, timeout)) { \
 NSString *reason = [NSString stringWithFormat:@"\"%@\" did not become true within %g seconds.%@", \
 @(#expression), (NSTimeInterval)timeout, SLComposeString(@" ", failureDescription, ##__VA_ARGS__)]; \
 @throw [NSException exceptionWithName:SLTestAssertionFailedException reason:reason userInfo:nil]; \
@@ -127,18 +135,18 @@ NSString *reason = [NSString stringWithFormat:@"\"%@\" did not become true withi
  
  The macro re-evaluates the condition at small intervals.
  
- The great advantage to using `SLWaitUntilTrue` instead of `-wait:` is that `SLWaitUntilTrue`
+ The great advantage to using `SLIsTrueWithTimeout` instead of `-wait:` is that `SLIsTrueWithTimeout`
  need not wait for the entirety of the specified timeout if the condition becomes true
  before the timeout elapses. This can lead to faster tests, and makes it feasible
- to allow even longer timeouts when using `SLWaitUntilTrue` than when using
+ to allow even longer timeouts when using `SLIsTrueWithTimeout` than when using
  `-wait:`.
  
- The difference between `SLWaitUntilTrue` and `SLAssertTrueWithTimeout` is that `SLWaitUntilTrue`
+ The difference between `SLIsTrueWithTimeout` and `SLAssertTrueWithTimeout` is that `SLIsTrueWithTimeout`
  may be used to wait upon a condition which might, with equal validity, evaluate to true _or_ false.
  For example:
  
  // wait for a confirmation message that may or may not appear, and dismiss it
- BOOL messageDisplayed = SLWaitUntilTrue([UIAElement(messageDismissButton) isValidAndVisible], 10.0);
+ BOOL messageDisplayed = SLIsTrueWithTimeout([UIAElement(messageDismissButton) isValidAndVisible], 10.0);
  if (messageDisplayed) {
  [UIAElement(messageDismissButton) tap];
  }
@@ -147,13 +155,30 @@ NSString *reason = [NSString stringWithFormat:@"\"%@\" did not become true withi
  @param timeout The interval for which to wait.
  @return Whether or not the expression evaluated to true before the timeout was reached.
  */
-#define SLWaitUntilTrue(expression, timeout) ({\
+#define SLIsTrueWithTimeout(expression, timeout) ({\
 NSDate *_startDate = [NSDate date];\
 BOOL _expressionTrue = NO;\
 while (!(_expressionTrue = (expression)) && ([[NSDate date] timeIntervalSinceDate:_startDate] < timeout)) {\
-[NSThread sleepForTimeInterval:SLWaitUntilTrueRetryDelay];\
+[NSThread sleepForTimeInterval:SLIsTrueRetryDelay];\
 }\
 _expressionTrue;\
+})
+
+/**
+ Suspends test execution until the specified expression becomes true or the
+ specified timeout is reached, and then returns the value of the specified
+ expression at the moment of returning.
+ 
+ @warning As of v1.2, `SLWaitUntilTrue` is deprecated: use `SLIsTrueWithTimeout`
+ instead. `SLWaitUntilTrue` will be removed for v2.0.
+ 
+ @param expression A boolean expression on whose truth the test should wait.
+ @param timeout The interval for which to wait.
+ @return Whether or not the expression evaluated to true before the timeout was reached.
+ */
+#define SLWaitUntilTrue(expression, timeout) ({\
+    [[SLLogger sharedLogger] logWarning:@"As of v1.2, `SLWaitUntilTrue` is deprecated: use `SLIsTrueWithTimeout` instead. `SLWaitUntilTrue` will be removed for v2.0."];\
+    SLIsTrueWithTimeout(expression, timeout);\
 })
 
 /**
