@@ -375,20 +375,16 @@ u_int32_t random_uniform(u_int32_t upperBound) {
                 BOOL testDidFinish = [test runAndReportNumExecuted:&numCasesExecuted
                                                             failed:&numCasesFailed
                                                 failedUnexpectedly:&numCasesFailedUnexpectedly];
-
-                [[SLLogger sharedLogger] logTestFinish:testName
-                                  withNumCasesExecuted:numCasesExecuted
-                                        numCasesFailed:numCasesFailed
-                            numCasesFailedUnexpectedly:numCasesFailedUnexpectedly];
-
-                if (!testDidFinish || numCasesFailed) {
-                    if (!testDidFinish) {
-                        [[SLLogger sharedLogger] logTestAbort:testName];
-                    }
-
+                if (testDidFinish) {
+                    [[SLLogger sharedLogger] logTestFinish:testName
+                                      withNumCasesExecuted:numCasesExecuted
+                                            numCasesFailed:numCasesFailed
+                                numCasesFailedUnexpectedly:numCasesFailedUnexpectedly];
+                    if (numCasesFailed > 0) _numTestsFailed++;
+                } else {
+                    [[SLLogger sharedLogger] logTestAbort:testName];
                     _numTestsFailed++;
                 }
-
                 _numTestsExecuted++;
             }
         }
