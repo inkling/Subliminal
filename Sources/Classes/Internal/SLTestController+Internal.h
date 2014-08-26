@@ -37,7 +37,8 @@
  Given a set of tests, returns an array ordered by the specified seed 
  and filtered to those that should be run.
  
- The set of tests is sorted and randomized using the specified seed. 
+ The set of tests is sorted in ascending order of [group](+[SLTest runGroup]),
+ and then within each group, in an order randomized using the specified seed.
  The resulting array is then filtered:
  
  1. to those tests that [are concrete](+[SLTest isAbstract]),
