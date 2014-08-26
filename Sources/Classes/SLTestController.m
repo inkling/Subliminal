@@ -349,6 +349,9 @@ u_int32_t random_uniform(u_int32_t upperBound) {
 }
 
 - (void)runTests:(NSSet *)tests usingSeed:(unsigned int)seed withCompletionBlock:(void (^)())completionBlock {
+    // have to check this outside of the block below, wherein it will be used
+    static const char *const kMethodDescription = __PRETTY_FUNCTION__;
+    
     dispatch_async(_runQueue, ^{
         _completionBlock = completionBlock;
 
@@ -356,7 +359,14 @@ u_int32_t random_uniform(u_int32_t upperBound) {
         _runSeed = seed;
         _testsToRun = [[self class] testsToRun:tests usingSeed:&_runSeed withFocus:&_runningWithFocus];
         if (![_testsToRun count]) {
-            SLLog(@"%@%@%@", @"There are no tests to run", (_runningWithFocus) ? @": no tests are focused" : @"", @".");
+            NSMutableString *noTestsToRunWarning = [@"There are no tests to run: " mutableCopy];
+            if ([tests count]) {
+                [noTestsToRunWarning appendFormat:@"none of the tests %@ meet the criteria to be run. See `%@`'s documentation.",
+                                                 (_runningWithFocus) ? @"focused" : @"passed", @(kMethodDescription)];
+            } else {
+                [noTestsToRunWarning appendString:@"no tests were passed."];
+            }
+            [[SLLogger sharedLogger] logWarning:noTestsToRunWarning];
             [self _finishTesting];
             return;
         }

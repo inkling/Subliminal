@@ -624,4 +624,28 @@ static const NSUInteger kNumSeedTrials = 100;
 #pragma clang diagnostic pop
 }
 
+- (void)testTheUserIsWarnedIfTheyDidntPassTests {
+    [[_loggerMock expect] logWarning:@"There are no tests to run: no tests were passed."];
+    
+    SLRunTestsAndWaitUntilFinished([NSSet set], nil);
+    
+    STAssertNoThrow([_loggerMock verify], @"Expected warning was not logged.");
+}
+
+- (void)testTheUserIsWarnedIfThereAreNoRegularTestsToRun {
+    [[_loggerMock expect] logWarning:@"There are no tests to run: none of the tests passed meet the criteria to be run. See `-[SLTestController runTests:usingSeed:withCompletionBlock:]`'s documentation."];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:[TestNotSupportingCurrentPlatform class]], nil);
+    
+    STAssertNoThrow([_loggerMock verify], @"Expected warning was not logged.");
+}
+
+- (void)testTheUserIsWarnedIfThereAreNoFocusedTestsToRun {
+    [[_loggerMock expect] logWarning:@"There are no tests to run: none of the tests focused meet the criteria to be run. See `-[SLTestController runTests:usingSeed:withCompletionBlock:]`'s documentation."];
+    
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObjects:[Focus_TestThatIsFocusedButDoesntSupportCurrentPlatform class], [TestWithSomeTestCases class], nil], nil);
+    
+    STAssertNoThrow([_loggerMock verify], @"Expected warning was not logged.");
+}
+
 @end
