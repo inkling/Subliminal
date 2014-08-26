@@ -190,17 +190,7 @@ u_int32_t random_uniform(u_int32_t upperBound) {
         [testsToRun addObjectsFromArray:group];
     }
 
-    // now filter the tests to run:
-    [testsToRun filterUsingPredicate:[NSCompoundPredicate andPredicateWithSubpredicates:@[
-        // only run tests that are concrete...
-        [NSPredicate predicateWithFormat:@"isAbstract == NO"],
-        // ...that support the current platform...
-        [NSPredicate predicateWithFormat:@"supportsCurrentPlatform == YES"],
-        // ...that support the current environment...
-        [NSPredicate predicateWithFormat:@"supportsCurrentEnvironment == YES"]
-    ]]];
-
-    // ...and that are focused (if any remaining are focused)
+    // now filter the tests to run to those focused, if any...
     NSMutableArray *focusedTests = [testsToRun mutableCopy];
     [focusedTests filterUsingPredicate:[NSPredicate predicateWithFormat:@"isFocused == YES"]];
     BOOL runningWithFocus = ([focusedTests count] > 0);
@@ -208,6 +198,15 @@ u_int32_t random_uniform(u_int32_t upperBound) {
         testsToRun = focusedTests;
     }
     if (withFocus) *withFocus = runningWithFocus;
+    
+    [testsToRun filterUsingPredicate:[NSCompoundPredicate andPredicateWithSubpredicates:@[
+        // ...then, only run tests that are concrete...
+        [NSPredicate predicateWithFormat:@"isAbstract == NO"],
+        // ...that support the current platform...
+        [NSPredicate predicateWithFormat:@"supportsCurrentPlatform == YES"],
+        // ...and that support the current environment.
+        [NSPredicate predicateWithFormat:@"supportsCurrentEnvironment == YES"]
+    ]]];
 
     return [testsToRun copy];
 }

@@ -666,10 +666,10 @@
     [[[deviceMock stub] andReturnValue:OCMOCK_VALUE(currentUserInterfaceIdiom)] userInterfaceIdiom];
 
     // While `testBar_iPad` is focused, it doesn't support the current platform, thus isn't going to run.
-    // If it's not going to run, its focus is irrelevant, and so the other test case should run after all.
+    // However, its being focused should exclude the other test case from running too.
     id testWithAFocusedPlatformSpecificTestCaseClassMock = [OCMockObject partialMockForClass:testWithAFocusedPlatformSpecificTestCaseClass];
     [[testWithAFocusedPlatformSpecificTestCaseClassMock reject] focus_testBar_iPad];
-    [[testWithAFocusedPlatformSpecificTestCaseClassMock expect] testFoo];
+    [[testWithAFocusedPlatformSpecificTestCaseClassMock reject] testFoo];
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithAFocusedPlatformSpecificTestCaseClass], nil);
     STAssertNoThrow([testWithAFocusedPlatformSpecificTestCaseClassMock verify], @"Test cases did not execute as expected.");
@@ -684,10 +684,10 @@
     [[[deviceMock stub] andReturnValue:OCMOCK_VALUE(currentUserInterfaceIdiom)] userInterfaceIdiom];
     
     // While `testBar` is focused, it doesn't support the current environment, thus isn't going to run.
-    // If it's not going to run, its focus is irrelevant, and so the other test case should run after all.
+    // However, its being focused should exclude the other test from running too.
     id testWithAFocusedEnvironmentSpecificTestCaseClassMock = [OCMockObject partialMockForClass:testWithAFocusedEnvironmentSpecificTestCaseClass];
     [[testWithAFocusedEnvironmentSpecificTestCaseClassMock reject] focus_testBar];
-    [[testWithAFocusedEnvironmentSpecificTestCaseClassMock expect] testFoo];
+    [[testWithAFocusedEnvironmentSpecificTestCaseClassMock reject] testFoo];
     
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithAFocusedEnvironmentSpecificTestCaseClass], nil);
     STAssertNoThrow([testWithAFocusedEnvironmentSpecificTestCaseClassMock verify], @"Test cases did not execute as expected.");

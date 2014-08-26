@@ -41,10 +41,10 @@
  and then within each group, in an order randomized using the specified seed.
  The resulting array is then filtered:
  
- 1. to those tests that [are concrete](+[SLTest isAbstract]),
- 2. that [support the current platform](+[SLTest supportsCurrentPlatform]),
- 3. that [support the current environment](+[SLTest supportsCurrentEnvironment]),
- 4. and that [are focused](+[SLTest isFocused]) (if any remaining are focused).
+ 1. to those that [are focused](+[SLTest isFocused]) (if any),
+ 2. that [are concrete](+[SLTest isAbstract]),
+ 3. that [support the current platform](+[SLTest supportsCurrentPlatform]),
+ 4. and that [support the current environment](+[SLTest supportsCurrentEnvironment]).
  
  By sorting prior to filtering, the relative order of tests is maintained 
  regardless of focus.

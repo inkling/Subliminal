@@ -304,9 +304,7 @@
 + (BOOL)testCaseWithSelectorSupportsCurrentEnvironment:(SEL)testCaseSelector;
 
 /**
- Returns YES if the test has at least one test case which is focused
- and which supports the current [platform](+testCaseWithSelectorSupportsCurrentPlatform:)
- and [environment](+testCaseWithSelectorSupportsCurrentEnvironment:).
+ Returns YES if the test has at least one test case which is focused.
 
  When a test is run, if any of its test cases are focused, only those test cases will run.
  This may be useful when writing or debugging tests.
