@@ -81,8 +81,9 @@
  If any tests fail, the test controller will log the seed that was used,
  so that the run order may be reproduced by invoking this method with that seed.
 
- Tests must support the current [platform](+[SLTest supportsCurrentPlatform])
- and [environment](+[SLTest supportsCurrentEnvironment]) in order to be run.
+ In order to be run, tests must [define test cases](+[SLTest isAbstract]),
+ support the current [platform](+[SLTest supportsCurrentPlatform]),
+ and support the current [environment](+[SLTest supportsCurrentEnvironment]).
  If any tests [are focused](+[SLTest isFocused]), only those tests will be run.
  
  When using a given seed, tests execute in the same relative order regardless of focus.

@@ -345,7 +345,12 @@ static const NSUInteger kNumSeedTrials = 100;
     [[_loggerMock expect] logMessage:[NSString stringWithFormat:@"Running test cases described by tags: %@.", tagDescriptionString]];
     [[_loggerMock expect] logTestingStart];
     
-    SLRunTestsAndWaitUntilFinished([SLTest allTests], nil);
+    // Ignore focused tests because they don't support the current environment
+    // (not being tagged with the above tags) and so will be filtered out,
+    // leaving no tests to be run--causing the run to immediately abort without
+    // logging the expected message.
+    NSSet *nonFocusedTests = [[SLTest allTests] filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"isFocused == NO"]];
+    SLRunTestsAndWaitUntilFinished(nonFocusedTests, nil);
     STAssertNoThrow([_loggerMock verify], @"Test was not run/messages were not logged as expected.");
 }
 
@@ -439,16 +444,16 @@ static const NSUInteger kNumSeedTrials = 100;
         nil
     ];
 
-     // While TestThatIsFocusedButDoesntSupportCurrentPlatform is focused,
+     // While `TestThatIsFocusedButDoesntSupportCurrentPlatform` is focused,
     // it doesn't support the current platform, thus isn't going to run.
-    // If it's not going to run, its focus is irrelevant, and so the other test should run after all.
+    // However, its being focused should exclude the other test from running too.
     id testThatIsFocusedButDoesntSupportCurrentPlatformClassMock = [OCMockObject partialMockForClass:testThatIsFocusedButDoesntSupportCurrentPlatformClass];
     [[testThatIsFocusedButDoesntSupportCurrentPlatformClassMock reject] runAndReportNumExecuted:[OCMArg anyPointer]
                                                                                          failed:[OCMArg anyPointer]
                                                                              failedUnexpectedly:[OCMArg anyPointer]];
 
     id testThatIsNotFocusedClassMock = [OCMockObject partialMockForClass:testThatIsNotFocusedClass];
-    [[testThatIsNotFocusedClassMock expect] runAndReportNumExecuted:[OCMArg anyPointer]
+    [[testThatIsNotFocusedClassMock reject] runAndReportNumExecuted:[OCMArg anyPointer]
                                                              failed:[OCMArg anyPointer]
                                                  failedUnexpectedly:[OCMArg anyPointer]];
 
@@ -475,14 +480,14 @@ static const NSUInteger kNumSeedTrials = 100;
     
     // While `TestThatIsFocusedButDoesntSupportCurrentEnvironment` is focused,
     // it doesn't support the current environment, thus isn't going to run.
-    // If it's not going to run, its focus is irrelevant, and so the other test should run after all.
+    // However, its being focused should exclude the other test from running too.
     id testThatIsFocusedButDoesntSupportCurrentEnvironmentClassMock = [OCMockObject partialMockForClass:testThatIsFocusedButDoesntSupportCurrentEnvironmentClass];
     [[testThatIsFocusedButDoesntSupportCurrentEnvironmentClassMock reject] runAndReportNumExecuted:[OCMArg anyPointer]
                                                                                             failed:[OCMArg anyPointer]
                                                                                 failedUnexpectedly:[OCMArg anyPointer]];
     
     id testThatIsNotFocusedClassMock = [OCMockObject partialMockForClass:testThatIsNotFocusedClass];
-    [[testThatIsNotFocusedClassMock expect] runAndReportNumExecuted:[OCMArg anyPointer]
+    [[testThatIsNotFocusedClassMock reject] runAndReportNumExecuted:[OCMArg anyPointer]
                                                              failed:[OCMArg anyPointer]
                                                  failedUnexpectedly:[OCMArg anyPointer]];
     
@@ -491,6 +496,7 @@ static const NSUInteger kNumSeedTrials = 100;
     STAssertNoThrow([testThatIsNotFocusedClassMock verify], @"Other test was not run as expected.");
 }
 
+// Focus always excludes other tests--but only if the user tries to run the focused test.
 - (void)testFocusedTestsAreNotAutomaticallyAddedToTheSetOfTestsToRun {
     Class testWithSomeTestCasesClass = [TestWithSomeTestCases class];
     STAssertFalse([testWithSomeTestCasesClass isFocused],
@@ -622,6 +628,30 @@ static const NSUInteger kNumSeedTrials = 100;
     STAssertThrows([[SLTestController alloc] init], @"Should not have been able to manually initialize an SLTestController.");
 
 #pragma clang diagnostic pop
+}
+
+- (void)testTheUserIsWarnedIfTheyDidntPassTests {
+    [[_loggerMock expect] logWarning:@"There are no tests to run: no tests were passed."];
+    
+    SLRunTestsAndWaitUntilFinished([NSSet set], nil);
+    
+    STAssertNoThrow([_loggerMock verify], @"Expected warning was not logged.");
+}
+
+- (void)testTheUserIsWarnedIfThereAreNoRegularTestsToRun {
+    [[_loggerMock expect] logWarning:@"There are no tests to run: none of the tests passed meet the criteria to be run. See `-[SLTestController runTests:usingSeed:withCompletionBlock:]`'s documentation."];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:[TestNotSupportingCurrentPlatform class]], nil);
+    
+    STAssertNoThrow([_loggerMock verify], @"Expected warning was not logged.");
+}
+
+- (void)testTheUserIsWarnedIfThereAreNoFocusedTestsToRun {
+    [[_loggerMock expect] logWarning:@"There are no tests to run: none of the tests focused meet the criteria to be run. See `-[SLTestController runTests:usingSeed:withCompletionBlock:]`'s documentation."];
+    
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObjects:[Focus_TestThatIsFocusedButDoesntSupportCurrentPlatform class], [TestWithSomeTestCases class], nil], nil);
+    
+    STAssertNoThrow([_loggerMock verify], @"Expected warning was not logged.");
 }
 
 @end

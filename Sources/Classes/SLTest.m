@@ -134,16 +134,8 @@ static int __lastKnownLineNumber;
     return ![[self testCases] count];
 }
 
-+ (BOOL)isFocused {    
-    for (NSString *testCaseName in [self focusedTestCases]) {
-        // pass the unfocused selector, as focus is temporary and shouldn't require modifying the test infrastructure
-        SEL unfocusedTestCaseSelector = NSSelectorFromString([self unfocusedTestCaseName:testCaseName]);
-        if ([self testCaseWithSelectorSupportsCurrentPlatform:unfocusedTestCaseSelector] &&
-            [self testCaseWithSelectorSupportsCurrentEnvironment:unfocusedTestCaseSelector]) {
-            return YES;
-        }
-    }
-    return NO;
++ (BOOL)isFocused {
+    return [[self focusedTestCases] count] > 0;
 }
 
 + (BOOL)supportsCurrentPlatform {

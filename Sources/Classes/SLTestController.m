@@ -190,17 +190,7 @@ u_int32_t random_uniform(u_int32_t upperBound) {
         [testsToRun addObjectsFromArray:group];
     }
 
-    // now filter the tests to run:
-    [testsToRun filterUsingPredicate:[NSCompoundPredicate andPredicateWithSubpredicates:@[
-        // only run tests that are concrete...
-        [NSPredicate predicateWithFormat:@"isAbstract == NO"],
-        // ...that support the current platform...
-        [NSPredicate predicateWithFormat:@"supportsCurrentPlatform == YES"],
-        // ...that support the current environment...
-        [NSPredicate predicateWithFormat:@"supportsCurrentEnvironment == YES"]
-    ]]];
-
-    // ...and that are focused (if any remaining are focused)
+    // now filter the tests to run to those focused, if any...
     NSMutableArray *focusedTests = [testsToRun mutableCopy];
     [focusedTests filterUsingPredicate:[NSPredicate predicateWithFormat:@"isFocused == YES"]];
     BOOL runningWithFocus = ([focusedTests count] > 0);
@@ -208,6 +198,15 @@ u_int32_t random_uniform(u_int32_t upperBound) {
         testsToRun = focusedTests;
     }
     if (withFocus) *withFocus = runningWithFocus;
+    
+    [testsToRun filterUsingPredicate:[NSCompoundPredicate andPredicateWithSubpredicates:@[
+        // ...then, only run tests that are concrete...
+        [NSPredicate predicateWithFormat:@"isAbstract == NO"],
+        // ...that support the current platform...
+        [NSPredicate predicateWithFormat:@"supportsCurrentPlatform == YES"],
+        // ...and that support the current environment.
+        [NSPredicate predicateWithFormat:@"supportsCurrentEnvironment == YES"]
+    ]]];
 
     return [testsToRun copy];
 }
@@ -349,6 +348,9 @@ u_int32_t random_uniform(u_int32_t upperBound) {
 }
 
 - (void)runTests:(NSSet *)tests usingSeed:(unsigned int)seed withCompletionBlock:(void (^)())completionBlock {
+    // have to check this outside of the block below, wherein it will be used
+    static const char *const kMethodDescription = __PRETTY_FUNCTION__;
+    
     dispatch_async(_runQueue, ^{
         _completionBlock = completionBlock;
 
@@ -356,7 +358,14 @@ u_int32_t random_uniform(u_int32_t upperBound) {
         _runSeed = seed;
         _testsToRun = [[self class] testsToRun:tests usingSeed:&_runSeed withFocus:&_runningWithFocus];
         if (![_testsToRun count]) {
-            SLLog(@"%@%@%@", @"There are no tests to run", (_runningWithFocus) ? @": no tests are focused" : @"", @".");
+            NSMutableString *noTestsToRunWarning = [@"There are no tests to run: " mutableCopy];
+            if ([tests count]) {
+                [noTestsToRunWarning appendFormat:@"none of the tests %@ meet the criteria to be run. See `%@`'s documentation.",
+                                                 (_runningWithFocus) ? @"focused" : @"passed", @(kMethodDescription)];
+            } else {
+                [noTestsToRunWarning appendString:@"no tests were passed."];
+            }
+            [[SLLogger sharedLogger] logWarning:noTestsToRunWarning];
             [self _finishTesting];
             return;
         }
