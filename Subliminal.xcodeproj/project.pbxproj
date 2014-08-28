@@ -1767,6 +1767,10 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Unit Tests/Subliminal Unit Tests-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"SENTEST_IGNORE_DEPRECATION_WARNING=1",
+				);
 				GCC_WARN_UNDECLARED_SELECTOR = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1790,6 +1794,10 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Unit Tests/Subliminal Unit Tests-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"SENTEST_IGNORE_DEPRECATION_WARNING=1",
+				);
 				GCC_WARN_UNDECLARED_SELECTOR = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
