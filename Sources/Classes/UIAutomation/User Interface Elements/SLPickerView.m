@@ -28,6 +28,25 @@
 
 @implementation SLPickerView
 
++ (NSString *)SLElementIsTappableFunctionName {
+    // UIAutomation reports that picker views are never tappable on iOS 6,
+    // but we can check the first wheel instead. If there is no wheel
+    // then we've just got to return `NO` but there'd be nothing to tap anyway.
+    if (kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_6_1) {
+        static NSString *const SLPickerViewIsTappableFunctionName = @"SLPickerViewIsTappable";
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            [[SLTerminal sharedTerminal] loadFunctionWithName:SLPickerViewIsTappableFunctionName
+                                                       params:@[ @"element" ]
+                                                         body:@"return (element.wheels().length &&\
+                                                                       (element.wheels()[0].hitpoint() != null));"];
+        });
+        return SLPickerViewIsTappableFunctionName;
+    } else {
+        return [super SLElementIsTappableFunctionName];
+    }
+}
+
 - (BOOL)matchesObject:(NSObject *)object {
     return ([object isKindOfClass:[UIPickerView class]] && [super matchesObject:object]);
 }
@@ -59,22 +78,9 @@
     return pickerComponentValues;
 }
 
-// We should be waiting until the element is tappable before setting the value, but it doesn't
-// fit with the existing infrastructure to get the waitUntilTappable:thenSendMessage: method
-// to use an overloaded isTappable method.
 - (void)selectValue:(NSString *)title forComponent:(NSUInteger)componentIndex {
-    [self waitUntilTappable:NO thenSendMessage:@"wheels()[%lu].selectValue(\"%@\")",
+    [self waitUntilTappable:YES thenSendMessage:@"wheels()[%lu].selectValue(\"%@\")",
                                     (unsigned long)componentIndex, title];
-}
-
-// Overload behavior of SLUIAElement, because testTextInputPickerViewCanBeFoundAfterTappingText
-// fails saying that the element isn't tappable on iOS 6.
-- (BOOL)isTappable {
-    if ([[[UIDevice currentDevice] systemVersion] floatValue] < 7.0) {
-        return [self isVisible];
-    } else {
-        return [super isTappable];
-    }
 }
 
 @end
