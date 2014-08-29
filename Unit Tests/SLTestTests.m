@@ -1395,7 +1395,7 @@
 
         NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
         // note that `SLAssertTrueWithTimeout` should not wait at all here, thus the variability
-        // is not `SLWaitUntilTrueRetryDelay` like the cases below
+        // is not `SLIsTrueRetryDelay` like the cases below
         NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
         STAssertTrue(waitTimeInterval < .01, @"Test should not have waited for an appreciable interval.");
     }] testOne];
@@ -1425,7 +1425,7 @@
         NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
         // check that the test waited for about the amount of time for the condition to evaluate to true
         NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
-        STAssertTrue(waitTimeInterval - truthTimeout < SLWaitUntilTrueRetryDelay,
+        STAssertTrue(waitTimeInterval - truthTimeout < SLIsTrueRetryDelay,
                      @"Test should have only waited for about the amount of time necessary for the condition to become true.");
     }] testThree];
 
@@ -1449,7 +1449,7 @@
 
         NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
         NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
-        STAssertTrue(waitTimeInterval - timeout < SLWaitUntilTrueRetryDelay,
+        STAssertTrue(waitTimeInterval - timeout < SLIsTrueRetryDelay,
                      @"Test should have waited for the specified timeout.");
     }] testTwo];
 
@@ -1457,9 +1457,9 @@
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
-#pragma mark -SLWaitUntilTrue
+#pragma mark -SLIsTrueWithTimeout
 
-- (void)testSLWaitUntilTrueDoesNotThrowAndReturnsYESImmediatelyWhenConditionIsTrueUponWait {
+- (void)testSLIsTrueWithTimeoutDoesNotThrowAndReturnsYESImmediatelyWhenConditionIsTrueUponWait {
     Class testClass = [TestWithSomeTestCases class];
     id testMock = [OCMockObject partialMockForClass:testClass];
 
@@ -1468,16 +1468,16 @@
         SLTest *test = [invocation target];
         NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
 
-        BOOL slWaitUntilTrueReturnValue;
-        STAssertNoThrow(slWaitUntilTrueReturnValue = [test SLWaitUntilTrue:^BOOL{
+        BOOL slIsTrueWithTimeoutReturnValue;
+        STAssertNoThrow(slIsTrueWithTimeoutReturnValue = [test SLIsTrue:^BOOL{
             return YES;
         } withTimeout:1.5], @"Assertion should not have failed.");
 
-        STAssertTrue(slWaitUntilTrueReturnValue, @"SLWaitUntilTrue should have returned YES");
+        STAssertTrue(slIsTrueWithTimeoutReturnValue, @"`SLIsTrueWithTimeout` should have returned YES");
 
         NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
-        // note that `SLWaitUntilTrue` should not wait at all here, thus the variability
-        // is not `SLWaitUntilTrueRetryDelay` like the cases below
+        // note that `SLIsTrueWithTimeout` should not wait at all here, thus the variability
+        // is not `SLIsTrueRetryDelay` like the cases below
         NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
         STAssertTrue(waitTimeInterval < .01, @"Test should not have waited for an appreciable interval.");
     }] testOne];
@@ -1486,7 +1486,7 @@
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
-- (void)testSLWaitUntilTrueDoesNotThrowAndReturnsYESImmediatelyAfterConditionBecomesTrue {
+- (void)testSLIsTrueWithTimeoutDoesNotThrowAndReturnsYESImmediatelyAfterConditionBecomesTrue {
     Class testClass = [TestWithSomeTestCases class];
     id testMock = [OCMockObject partialMockForClass:testClass];
 
@@ -1498,19 +1498,19 @@
 
         NSTimeInterval waitTimeout = 1.5;
         NSTimeInterval truthTimeout = 1.0;
-        BOOL slWaitUntilTrueReturnValue;
-        STAssertNoThrow(slWaitUntilTrueReturnValue = [test SLWaitUntilTrue:^BOOL{
+        BOOL slIsTrueWithTimeoutReturnValue;
+        STAssertNoThrow(slIsTrueWithTimeoutReturnValue = [test SLIsTrue:^BOOL{
             NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
             NSTimeInterval waitInterval = endTimeInterval - startTimeInterval;
             return (waitInterval >= truthTimeout);
         } withTimeout:waitTimeout], @"Assertion should not have failed.");
 
-        STAssertTrue(slWaitUntilTrueReturnValue, @"SLWaitUntilTrue should have returned YES");
+        STAssertTrue(slIsTrueWithTimeoutReturnValue, @"`SLIsTrueWithTimeout` should have returned YES");
 
         NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
         // check that the test waited for about the amount of time for the condition to evaluate to true
         NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
-        STAssertTrue(waitTimeInterval - truthTimeout < SLWaitUntilTrueRetryDelay,
+        STAssertTrue(waitTimeInterval - truthTimeout < SLIsTrueRetryDelay,
                      @"Test should have only waited for about the amount of time necessary for the condition to become true.");
     }] testThree];
 
@@ -1518,7 +1518,7 @@
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
 }
 
-- (void)testSLWaitUntilTrueDoesNotThrowIfConditionIsStillFalseAtEndOfTimeout {
+- (void)testSLIsTrueWithTimeoutDoesNotThrowIfConditionIsStillFalseAtEndOfTimeout {
     Class testClass = [TestWithSomeTestCases class];
     id testMock = [OCMockObject partialMockForClass:testClass];
 
@@ -1528,21 +1528,73 @@
         NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
 
         NSTimeInterval timeout = 1.5;
-        BOOL slWaitUntilTrueReturnValue;
-        STAssertNoThrow(slWaitUntilTrueReturnValue = [test SLWaitUntilTrue:^BOOL{
+        BOOL slIsTrueWithTimeoutReturnValue;
+        STAssertNoThrow(slIsTrueWithTimeoutReturnValue = [test SLIsTrue:^BOOL{
             return NO;
         } withTimeout:timeout], @"Assertion should have failed.");
 
-        STAssertFalse(slWaitUntilTrueReturnValue, @"SLWaitUntilTrue should have returned YES");
+        STAssertFalse(slIsTrueWithTimeoutReturnValue, @"`SLIsTrueWithTimeout` should have returned YES");
 
         NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
         NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
-        STAssertTrue(waitTimeInterval - timeout < SLWaitUntilTrueRetryDelay,
+        STAssertTrue(waitTimeInterval - timeout < SLIsTrueRetryDelay,
                      @"Test should have waited for the specified timeout.");
     }] testTwo];
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
     STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
+}
+
+- (void)testSLWaitUntilTrueIsDeprecated {
+    [[_loggerMock expect] logWarning:@"As of v1.2, `SLWaitUntilTrue` is deprecated: use `SLIsTrueWithTimeout` instead. `SLWaitUntilTrue` will be removed for v2.0."];
+    
+    // To test that `SLWaitUntilTrue` works until it's removed, replicate one of the
+    // `SLIsTrueWithTimeout` test cases from above (`testSLIsTrueWithTimeoutDoesNotThrowAndReturnsYESImmediatelyAfterConditionBecomesTrue`).
+    // This should be sufficient considering that `SLWaitUntilTrue` is now a wrapper
+    // around `SLIsTrueWithTimeout` anyway.
+    
+    Class testClass = [TestWithSomeTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testClass];
+    
+    // have "testThree" wait on a condition that evaluates to false initially,
+    // then to true partway through the timeout
+    [[[testMock expect] andDo:^(NSInvocation *invocation) {
+        SLTest *test = [invocation target];
+        NSTimeInterval startTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+        
+        NSTimeInterval waitTimeout = 1.5;
+        NSTimeInterval truthTimeout = 1.0;
+        BOOL slWaitUntilTrueReturnValue;
+        STAssertNoThrow(slWaitUntilTrueReturnValue = [test SLWaitUntilTrue:^BOOL{
+            NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+            NSTimeInterval waitInterval = endTimeInterval - startTimeInterval;
+            return (waitInterval >= truthTimeout);
+        } withTimeout:waitTimeout], @"Assertion should not have failed.");
+        
+        STAssertTrue(slWaitUntilTrueReturnValue, @"`SLWaitUntilTrue` should have returned YES");
+        
+        NSTimeInterval endTimeInterval = [NSDate timeIntervalSinceReferenceDate];
+        // check that the test waited for about the amount of time for the condition to evaluate to true
+        NSTimeInterval waitTimeInterval = endTimeInterval - startTimeInterval;
+        STAssertTrue(waitTimeInterval - truthTimeout < SLIsTrueRetryDelay,
+                     @"Test should have only waited for about the amount of time necessary for the condition to become true.");
+    }] testThree];
+    
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testClass], nil);
+    STAssertNoThrow([testMock verify], @"Test case did not execute as expected.");
+    
+    STAssertNoThrow([_loggerMock verify], @"Use of `SLWaitUntilTrue` should have caused a warning to be logged.");
+}
+
+- (void)testSLWaitUntilTrueRetryDelayIsDeprecated {
+    [[_loggerMock expect] logWarning:@"As of v1.2, `SLWaitUntilTrueRetryDelay` is deprecated: use `SLIsTrueRetryDelay` instead. `SLWaitUntilTrueRetryDelay` will be removed for v2.0."];
+    
+    NSTimeInterval retryDelay = SLWaitUntilTrueRetryDelay;
+    // spin the run loop to allow the warning to be logged asynchronously
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+    
+    STAssertNoThrow([_loggerMock verify], @"Use of `SLWaitUntilTrueRetryDelay` should have caused a warning to be logged.");
+    STAssertTrue(retryDelay == SLIsTrueRetryDelay, @"`SLWaitUntilTrueRetryDelay` should work until it is removed.");
 }
 
 #pragma mark -SLAssertThrows
