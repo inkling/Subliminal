@@ -42,6 +42,7 @@
 
     if (testCase == @selector(testSetText) ||
         testCase == @selector(testSetTextWithinTableViewCell) ||
+        testCase == @selector(testSetTextWithinTableViewCellUnderControl) ||
         testCase == @selector(testSetTextCanHandleTapHoldCharacters) ||
         testCase == @selector(testSetTextClearsCurrentText) ||
         testCase == @selector(testSetTextClearsCurrentTextWithinTableViewCell) ||
@@ -59,6 +60,14 @@
             _tableView = [[UITableView alloc] initWithFrame:(CGRect){CGPointZero, CGSizeMake(320.0f, 44.0f)}];
             _tableView.dataSource = self;
             [view addSubview:_tableView];
+        } else if (testCase == @selector(testSetTextWithinTableViewCellUnderControl)) {
+            UIControl *control = [[UIControl alloc] initWithFrame:view.bounds];
+            control.userInteractionEnabled = YES;
+            control.accessibilityIdentifier = @"text field";
+//            _textField.userInteractionEnabled = YES;
+            [control addSubview:_textField];
+            [view addSubview:control];
+//            [view addSubview:_textField];
         } else {
             [view addSubview:_textField];
         }
@@ -161,6 +170,7 @@
     NSString *text;
     if (self.testCase == @selector(testSetText) ||
         self.testCase == @selector(testSetTextWithinTableViewCell) ||
+        self.testCase == @selector(testSetTextWithinTableViewCellUnderControl) || 
         self.testCase == @selector(testSetTextCanHandleTapHoldCharacters) ||
         self.testCase == @selector(testSetTextClearsCurrentText) ||
         self.testCase == @selector(testSetTextClearsCurrentTextWithinTableViewCell) ||
@@ -201,7 +211,28 @@
     _textField.textColor = [UIColor blackColor];
     [_textField becomeFirstResponder];
 
-    [tableViewCell.contentView addSubview:_textField];
+    if (self.testCase == @selector(testSetTextWithinTableViewCellUnderControl)) {
+        UIControl *control = [[UIControl alloc] initWithFrame:self.view.bounds];
+        control.userInteractionEnabled = NO;
+
+        UITextField *field = [[UITextField alloc] initWithFrame:CGRectMake(10, 5, 25, 20)];
+
+        field.placeholder = @"FOO!";
+        field.accessibilityIdentifier = @"text field";
+        field.userInteractionEnabled = YES;
+
+//        UIButton *btn = [UIButton buttonWithType:UIButtonTypeInfoDark];
+//        [btn setFrame:CGRectMake(80, 0, 20, 20)];
+//        [btn setBackgroundColor:[UIColor blueColor]];
+//        [btn setAccessibilityIdentifier:@"thebutton"];
+
+        [control addSubview:field];
+//        [control addSubview:btn];
+
+        [tableViewCell.contentView addSubview:control];
+    } else {
+        [tableViewCell.contentView addSubview:_textField];
+    }
 
     return tableViewCell;
 }

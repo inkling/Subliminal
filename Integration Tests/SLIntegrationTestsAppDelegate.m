@@ -110,6 +110,7 @@
     }
 
     // Otherwise, run the tests
+    [[SLTestController sharedTestController] setShouldWaitToStartTesting:YES];
     [[SLTestController sharedTestController] runTests:[NSSet setWithArray:_tests] withCompletionBlock:nil];
 }
 
