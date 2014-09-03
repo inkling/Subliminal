@@ -133,6 +133,14 @@
  */
 + (instancetype)anyElement;
 
+/**
+ By default, Subliminal only finds elements that are visible onscreen.
+ If you want to find an element that is *not* visible, set this flag to YES
+ */
+
+@property (nonatomic, assign) BOOL shouldMatchIfHidden;
+
+
 #pragma mark - Gestures and Actions
 /// ------------------------------------------
 /// @name Gestures and Actions

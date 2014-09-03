@@ -220,6 +220,13 @@
 }
 
 - (NSArray *)rawAccessibilityPathToElement:(SLElement *)element favoringSubviews:(BOOL)favoringSubviews {
+    BOOL shouldMatchIfHidden = element.shouldMatchIfHidden;
+    BOOL elementIsHidden = [self elementIsHidden];
+
+    if (!shouldMatchIfHidden && [self isKindOfClass:[UIView class]] && elementIsHidden) {
+        return nil;
+    }
+
     for (NSObject *child in [self slChildAccessibilityElementsFavoringSubviews:favoringSubviews]) {
         NSArray *path = [child rawAccessibilityPathToElement:element favoringSubviews:favoringSubviews];
         if (path) {
@@ -232,6 +239,7 @@
     if ([element matchesObject:self]) {
         return [NSArray arrayWithObject:self];
     }
+
     return nil;
 }
 

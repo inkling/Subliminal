@@ -64,6 +64,11 @@
  */
 - (BOOL)willAppearInAccessibilityHierarchy;
 
+/**
+ Returns a Boolean value that indicates whether the current element is hidden.
+ */
+- (BOOL)elementIsHidden;
+
 #pragma mark - Navigating the Accessibility Hierarchy
 /// -----------------------------------------------
 /// @name Navigating the Accessibility Hierarchy
