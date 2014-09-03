@@ -56,18 +56,11 @@
         _textField = [[UITextField alloc] initWithFrame:kTextFieldFrame];
 
         if (testCase == @selector(testSetTextWithinTableViewCell) ||
-            testCase == @selector(testSetTextClearsCurrentTextWithinTableViewCell)) {
+            testCase == @selector(testSetTextClearsCurrentTextWithinTableViewCell) ||
+            testCase == @selector(testSetTextWithinTableViewCellUnderControl)) {
             _tableView = [[UITableView alloc] initWithFrame:(CGRect){CGPointZero, CGSizeMake(320.0f, 44.0f)}];
             _tableView.dataSource = self;
             [view addSubview:_tableView];
-        } else if (testCase == @selector(testSetTextWithinTableViewCellUnderControl)) {
-            UIControl *control = [[UIControl alloc] initWithFrame:view.bounds];
-            control.userInteractionEnabled = YES;
-            control.accessibilityIdentifier = @"text field";
-//            _textField.userInteractionEnabled = YES;
-            [control addSubview:_textField];
-            [view addSubview:control];
-//            [view addSubview:_textField];
         } else {
             [view addSubview:_textField];
         }
@@ -110,6 +103,7 @@
     [super viewDidLoad];
 
     _textField.accessibilityLabel = @"test element";
+    _textField.autocorrectionType = UITextAutocorrectionTypeNo;
     _textField.borderStyle = UITextBorderStyleRoundedRect;
     if (self.testCase == @selector(testClearTextButton)) {
         _textField.clearButtonMode = UITextFieldViewModeAlways;
@@ -213,21 +207,7 @@
 
     if (self.testCase == @selector(testSetTextWithinTableViewCellUnderControl)) {
         UIControl *control = [[UIControl alloc] initWithFrame:self.view.bounds];
-        control.userInteractionEnabled = NO;
-
-        UITextField *field = [[UITextField alloc] initWithFrame:CGRectMake(10, 5, 25, 20)];
-
-        field.placeholder = @"FOO!";
-        field.accessibilityIdentifier = @"text field";
-        field.userInteractionEnabled = YES;
-
-//        UIButton *btn = [UIButton buttonWithType:UIButtonTypeInfoDark];
-//        [btn setFrame:CGRectMake(80, 0, 20, 20)];
-//        [btn setBackgroundColor:[UIColor blueColor]];
-//        [btn setAccessibilityIdentifier:@"thebutton"];
-
-        [control addSubview:field];
-//        [control addSubview:btn];
+        [control addSubview:_textField];
 
         [tableViewCell.contentView addSubview:control];
     } else {

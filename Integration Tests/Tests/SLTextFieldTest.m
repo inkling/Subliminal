@@ -21,7 +21,6 @@
 //
 
 #import "SLIntegrationTest.h"
-#import <Subliminal/SLTerminal.h>
 
 @interface SLTextFieldTest : SLIntegrationTest
 
@@ -37,50 +36,8 @@
     return @"SLTextFieldTestViewController";
 }
 
-- (void)testDidEncounterFailure:(SLTestFailure *)failure;
-{
-    SLLog(@"[EXCEPTION STACK] %@", [failure.exception callStackSymbols]);
-    [self _logViewHierarchy];
-    [self _logUIAccessibilityHierarchy];
-    [self _dumpFullElementTree];
-    SLLog(@"TEST FAILURE ENCOUNTERED!");
-
-}
-
-- (void)_logViewHierarchy;
-{
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        NSArray *windows = [[UIApplication sharedApplication] windows];
-        UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
-        NSUInteger keyWindowIndex = [windows indexOfObject:keyWindow];
-
-        if (keyWindowIndex == NSNotFound) {
-            SLLogAsync(@"[NON-APP KEY WINDOW] %@", [keyWindow slRecursiveAccessibilityDescription]);
-        } else {
-            for (NSUInteger windowIndex = keyWindowIndex; windowIndex < [windows count]; windowIndex++) {
-                SLLogAsync(@"[APP KEY WINDOW #%lu] %@", (unsigned long)windowIndex, [windows[windowIndex] slRecursiveAccessibilityDescription]);
-            }
-        }
-    });
-}
-
-- (void)_logUIAccessibilityHierarchy;
-{
-    [[SLTerminal sharedTerminal] eval:@"UIATarget.localTarget().logElementTree()"];
-}
-
-- (void)_dumpFullElementTree;
-{
-    [SLTestController logFullySwizzledUIAElementTree];
-}
-
 - (void)setUpTestCaseWithSelector:(SEL)testSelector {
     [super setUpTestCaseWithSelector:testSelector];
-
-    if (testSelector == @selector(testSetTextWithinTableViewCellUnderControl)) {
-        _textField = [SLTextField elementWithAccessibilityIdentifier:@"text field"];
-        return;
-    }
 
     if (testSelector == @selector(testSetText) ||
         testSelector == @selector(testSetTextWithinTableViewCell) ||
@@ -90,7 +47,8 @@
         testSelector == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
         testSelector == @selector(testGetText) ||
         testSelector == @selector(testDoNotMatchEditorAccessibilityObjects) ||
-        testSelector == @selector(testClearTextButton)) {
+        testSelector == @selector(testClearTextButton) ||
+        testSelector == @selector(testSetTextWithinTableViewCellUnderControl)) {
         _textField = [SLTextField elementWithAccessibilityLabel:@"test element"];
     } else if (testSelector == @selector(testMatchesSearchBarTextField) ||
                testSelector == @selector(testSetSearchBarText) ||
@@ -119,12 +77,10 @@
     SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
 }
 
-- (void)focus_testSetTextWithinTableViewCellUnderControl {
+- (void)testSetTextWithinTableViewCellUnderControl {
     NSString *const expectedText = @"Fooness";
-    _textField = [SLElement elementWithAccessibilityIdentifier:@"text field"];
-//    SLButton *button = [SLButton elementWithAccessibilityIdentifier:@"thebutton"];
-//    SLAssertNoThrow([UIAelement([button tap], @"Should not have thrown.");
-    SLAssertNoThrow(/*[UIAElement(_textField) setText:expectedText]*/[UIAElement(_textField) tap], @"Should not have thrown.");
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
+    SLAssertNoThrow([UIAElement(_textField) tap], @"Should not have thrown.");
     SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
 }
 

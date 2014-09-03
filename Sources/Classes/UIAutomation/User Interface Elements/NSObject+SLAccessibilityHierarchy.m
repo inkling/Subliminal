@@ -393,6 +393,7 @@
 }
 @end
 
+
 // On iOS 6, collection view cells themselves appear in the accessibility hierarchy.
 // On iOS 7, mock cells (instances of `UICollectionViewCellAccessibilityElement`) appear in the hierarchy instead.
 @implementation UICollectionViewCell (SLAccessibilityHierarchy)
