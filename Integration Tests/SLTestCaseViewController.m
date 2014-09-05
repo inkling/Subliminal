@@ -62,3 +62,29 @@
 }
 
 @end
+
+
+@implementation SLTestCaseViewController (ConvenienceViews)
+
+- (void)loadGenericView {
+    UIView *view = [[UIView alloc] initWithFrame:self.navigationController.view.bounds];
+    view.backgroundColor = [UIColor whiteColor];
+
+    UIFont *nothingToShowHereFont = [UIFont systemFontOfSize:18.0f];
+    NSString *nothingToShowHereText = @"Nothing to show here.";
+    CGRect nothingToShowHereBounds = CGRectIntegral((CGRect){ .size = [nothingToShowHereText sizeWithFont:nothingToShowHereFont
+                                                                         constrainedToSize:CGSizeMake(3 * CGRectGetWidth(view.bounds) / 4.0f, CGFLOAT_MAX)] });
+    UILabel *nothingToShowHereLabel = [[UILabel alloc] initWithFrame:nothingToShowHereBounds];
+    nothingToShowHereLabel.backgroundColor = view.backgroundColor;
+    nothingToShowHereLabel.font = nothingToShowHereFont;
+    nothingToShowHereLabel.numberOfLines = 0;
+    nothingToShowHereLabel.text = nothingToShowHereText;
+    nothingToShowHereLabel.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin;
+
+    [view addSubview:nothingToShowHereLabel];
+    nothingToShowHereLabel.center = CGPointMake(CGRectGetMidX(view.bounds), CGRectGetMidY(view.bounds));
+
+    self.view = view;
+}
+
+@end

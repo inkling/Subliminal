@@ -23,9 +23,7 @@
 #import "SLStaticElement.h"
 #import "SLUIAElement+Subclassing.h"
 
-@implementation SLStaticElement {
-    NSString *_UIARepresentation;
-}
+@implementation SLStaticElement
 
 - (instancetype)initWithUIARepresentation:(NSString *)UIARepresentation {
     NSParameterAssert([UIARepresentation length]);
@@ -38,7 +36,8 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@>", NSStringFromClass([self class])];
+    return [NSString stringWithFormat:@"<%@ UIARepresentation = '%@'>",
+                                        NSStringFromClass([self class]), [_UIARepresentation slStringByEscapingForJavaScriptLiteral]];
 }
 
 - (BOOL)canDetermineTappability {

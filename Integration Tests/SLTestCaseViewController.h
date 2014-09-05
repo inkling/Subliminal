@@ -73,6 +73,9 @@
  
  This method should create a view hierarchy and then assign the root view 
  of the hierarchy to the [view](-[UIView view]) property.
+ 
+ Subclasses can use the methods in the `ConvenienceViews` category
+ to load views for standard test scenarios.
 
  The default implementation of this method is a no-op.
  
@@ -91,5 +94,27 @@
  @return A newly initialized SLTestCaseViewController object.
  */
 - (instancetype)initWithTestCaseWithSelector:(SEL)testCase;
+
+@end
+
+
+/**
+ The methods in the `SLTestCaseViewController (ConvenienceViews)` category
+ may be used to load views for certain standard test scenarios.
+ 
+ A subclass of `SLTestCaseViewController` would call one of these methods
+ from within its implementation of `-loadViewForTestCase:`.
+ */
+@interface SLTestCaseViewController (ConvenienceViews)
+
+/**
+ Creates a generic view.
+ 
+ This method is to be used by test controllers that don't need to
+ display any particular interface, perhaps because they're testing
+ a system modal view/view controller presented in front of their view
+ or because they're testing some aspect of Subliminal unrelated to their view.
+ */
+- (void)loadGenericView;
 
 @end

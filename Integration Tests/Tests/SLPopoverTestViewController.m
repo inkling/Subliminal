@@ -41,9 +41,9 @@
 
     UIFont *nothingToShowHereFont = [UIFont systemFontOfSize:18.0f];
     NSString *nothingToShowHereText = @"Nothing to show here.";
-    CGSize nothingToShowHereSize = [nothingToShowHereText sizeWithFont:nothingToShowHereFont
-                                                     constrainedToSize:CGSizeMake(3 * CGRectGetWidth(view.bounds) / 4.0f, CGFLOAT_MAX)];
-    _label = [[UILabel alloc] initWithFrame:(CGRect){CGPointZero, nothingToShowHereSize}];
+    CGRect nothingToShowHereBounds = CGRectIntegral((CGRect){ .size = [nothingToShowHereText sizeWithFont:nothingToShowHereFont
+                                                                                        constrainedToSize:CGSizeMake(3 * CGRectGetWidth(view.bounds) / 4.0f, CGFLOAT_MAX)] });
+    _label = [[UILabel alloc] initWithFrame:nothingToShowHereBounds];
     _label.backgroundColor = view.backgroundColor;
     _label.font = nothingToShowHereFont;
     _label.numberOfLines = 0;

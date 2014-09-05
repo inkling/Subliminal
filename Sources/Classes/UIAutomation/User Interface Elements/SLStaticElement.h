@@ -55,7 +55,10 @@
  does not have any properties that can be described by Subliminal without 
  referencing private APIs).
  */
-@interface SLStaticElement : SLUIAElement
+@interface SLStaticElement : SLUIAElement {
+    @protected
+    NSString *_UIARepresentation;
+}
 
 /**
  Initializes and returns a newly allocated element with the specified 
