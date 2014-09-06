@@ -174,6 +174,10 @@
     return NO;
 }
 
+- (BOOL)elementIsHidden {
+    return [self isKindOfClass:[UIView class]] ? [(UIView *)self isHidden] : NO;
+}
+
 #pragma mark -Private methods
 
 - (BOOL)accessibilityAncestorPreventsPresenceInAccessibilityHierarchy {
