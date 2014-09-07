@@ -27,16 +27,19 @@ print_usage_and_fail () {
     echo """
 usage: simulator-set [--device <device>] [--version <sdk_version>] [--reset]
 
-    -device <device>        A device type like \"iPhone\".
+    --device <device>       A device type like \"iPhone\".
                             Acceptable types are listed in the iOS Simulator's 
-                            \"Hardware\" -> \"Device\" menu.
+                            \"Hardware\" -> \"Device\" menu (under SDK version
+                            submenus, if you are running Xcode 6).
 
-    -version <sdk_version>  A string like \"5.1\" specifying the simulator SDK 
+                            If both device type and version are specified,
+                            the device type must support the specified version.
+
+    --version <sdk_version> A string like \"5.1\" specifying the simulator SDK 
                             version to use.
 
-                            Note that the iOS Simulator does not accept certain 
-                            combinations of device type and SDK, 
-                            e.g. \"iPhone Retina (4-inch)\" and \"5.1\".
+                            If both device type and version are specified,
+                            the device type must support the specified version.
 
     --reset                 Deletes all applications from, and resets the settings 
                             of, the SDK specified by \`-version\` (if \`--version\`
@@ -100,53 +103,96 @@ if [[ -n "$CURRENT_ARG" ]]; then
 fi
 
 
+### Determine platform defaults
+if [[ "$(xcrun xcodebuild -version | head -n 1)" == "Xcode 6"* ]]; then
+    SIMULATOR_NAME="iOS Simulator"
+    CURRENT_DEVICE_UDID=`defaults read com.apple.iphonesimulator CurrentDeviceUDID 2> /dev/null`
+else
+    SIMULATOR_NAME="iPhone Simulator"
+fi
+
+
 ### Kill the Simulator
-killall "iPhone Simulator" 2> /dev/null
+killall "$SIMULATOR_NAME" 2> /dev/null
 sleep 1.0
 
 
 ### Set properties
 
-## Device
-# If the device type contains punctuation, it needs to be single-quoted to be written into the plist
-# but we only quote it if necessary, because the simulator rejects e.g. "'iPhone'"
-SAFE_DEVICE=`[[ "$DEVICE" =~ [[:punct:]] ]] && echo "'$DEVICE'" || echo "$DEVICE"`
-defaults write com.apple.iphonesimulator SimulateDevice "$SAFE_DEVICE"
+if [[ -n "$CURRENT_DEVICE_UDID" ]]; then
+    # We need to translate the desired device and version into a UDID
+    # filling in the current values if device and/or version are not specified
+    CURRENT_DEVICE_SPECIFICATION=`xcrun instruments -s devices | grep "$CURRENT_DEVICE_UDID"`
 
-## Version
-if [[ -n "$VERSION" ]]; then
-    # Set new SDK root
-    # The quoting of "xcode-select" is just so that "select" doesn't mess up this file's syntax highlighting
-    SDK_ROOT=`find "$('xcode-select' -print-path)" -type d -iname "iphonesimulator$VERSION.sdk"`
-    if [[ -z "$SDK_ROOT" ]]; then
-        echo "Error: Simulator SDK $VERSION not found."
-        exit 1
+    # Guide to interpreting the below regexes: we expect "device specifications"
+    # to be of the form "iPhone 4s (7.1 Simulator) [EE99513B-680F-4955-AE47-989230D6B697]"
+    # i.e. "CURRENT_DEVICE (CURRENT_VERSION Simulator) [DEVICE_UDID]"
+
+    # use perl for minimal matching, not supported by bash/sed
+    CURRENT_DEVICE=`echo "$CURRENT_DEVICE_SPECIFICATION" | perl -pe "s/^(.+?) \(.+/\1/"`
+    CURRENT_VERSION=`echo "$CURRENT_DEVICE_SPECIFICATION" | perl -pe "s/^.+? \(([0-9\.]+) Simulator.+/\1/"`
+
+    if [[ -z "$DEVICE" ]]; then DEVICE="$CURRENT_DEVICE"; fi
+    if [[ -z "$VERSION" ]]; then VERSION="$CURRENT_VERSION"; fi
+
+    DEVICE_SPECIFICATION_PREFIX="$DEVICE ($VERSION Simulator)"
+    # cut the prefix off the front of the specification before extracting the UDID
+    # because it contains parentheses, so can't be substituted into the `sed` regex
+    DEVICE_UDID=`xcrun instruments -s devices | grep "$DEVICE_SPECIFICATION_PREFIX" |
+                cut -c"$(expr ${#DEVICE_SPECIFICATION_PREFIX} + 1)"- | sed -E "s/ \[(.+)\]/\1/"`
+
+    defaults write com.apple.iphonesimulator CurrentDeviceUDID "$DEVICE_UDID"
+
+    # Update the current device ID for benefit of the reset procedure below
+    CURRENT_DEVICE_UDID="$DEVICE_UDID"
+else
+    ## Device
+    if [[ -n "$DEVICE" ]]; then
+        # If the device type contains punctuation, it needs to be single-quoted to be written into the plist
+        # but we only quote it if necessary, because the simulator rejects e.g. "'iPhone'"
+        SAFE_DEVICE=`[[ "$DEVICE" =~ [[:punct:]] ]] && echo "'$DEVICE'" || echo "$DEVICE"`
+        defaults write com.apple.iphonesimulator SimulateDevice "$SAFE_DEVICE"
     fi
-    defaults write com.apple.iphonesimulator currentSDKRoot "$SDK_ROOT"
+
+    ## Version
+    if [[ -n "$VERSION" ]]; then
+        # Set new SDK root
+        # The quoting of "xcode-select" is just so that "select" doesn't mess up this file's syntax highlighting
+        SDK_ROOT=`find "$('xcode-select' -print-path)" -type d -iname "iphonesimulator$VERSION.sdk" -print -quit`
+        if [[ -z "$SDK_ROOT" ]]; then
+            echo "Error: Simulator SDK $VERSION not found."
+            exit 1
+        fi
+        defaults write com.apple.iphonesimulator currentSDKRoot "$SDK_ROOT"
+    fi
 fi
 
 
 ### Reset the Simulator's content and settings
 
 if [[ -n "$RESET" ]] && $RESET; then
-    # Determine the SDK version e.g. "5.1" used by the simulator
-    SDK_ROOT=`defaults read com.apple.iphonesimulator currentSDKRoot`
-    SDK=`echo "$SDK_ROOT" | perl -pe 's|.*iphonesimulator(.+)\.sdk|$1|i'`
+    if [[ -n "$CURRENT_DEVICE_UDID" ]]; then
+        xcrun simctl erase "$CURRENT_DEVICE_UDID"
+    else
+        # Determine the SDK version e.g. "5.1" used by the simulator
+        SDK_ROOT=`defaults read com.apple.iphonesimulator currentSDKRoot`
+        SDK=`echo "$SDK_ROOT" | perl -pe 's|.*iphonesimulator(.+)\.sdk|$1|i'`
 
-    # Delete the `Application Support` directory for this SDK version,
-    # which will erase both the content and settings for this version.
-    # The Simulator will recreate this support directory when relaunched below.
-    
-    # There may be multiple support directories for this SDK version,
-    # e.g. 7.0, 7.0.3, 7.0.3-64 --we just delete them all.
-    # We can't quote the directory prefix or we'll disable globbing,
-    # so prevent splitting by unsetting IFS.
-    OLD_IFS="$IFS"; unset IFS
-    SUPPORT_DIRS=`echo $HOME/Library/Application\ Support/iPhone\ Simulator/$SDK* | perl -pe "s| /|\\n/|g"`
-    while read -r dir; do
-        rm -rf "$dir"
-    done <<< "$SUPPORT_DIRS"
-    IFS="$OLD_IFS"
+        # Delete the `Application Support` directory for this SDK version,
+        # which will erase both the content and settings for this version.
+        # The Simulator will recreate this support directory when relaunched below.
+        
+        # There may be multiple support directories for this SDK version,
+        # e.g. 7.0, 7.0.3, 7.0.3-64 --we just delete them all.
+        # We can't quote the directory prefix or we'll disable globbing,
+        # so prevent splitting by unsetting IFS.
+        OLD_IFS="$IFS"; unset IFS
+        SUPPORT_DIRS=`echo $HOME/Library/Application\ Support/iPhone\ Simulator/$SDK* | perl -pe "s| /|\\n/|g"`
+        while read -r dir; do
+            rm -rf "$dir"
+        done <<< "$SUPPORT_DIRS"
+        IFS="$OLD_IFS"
+    fi
 fi
 
 
@@ -154,6 +200,6 @@ fi
 
 # Make sure to open the simulator corresponding to the current dev toolchain
 # The quoting of "xcode-select" is just so that "select" doesn't mess up this file's syntax highlighting
-SIMULATOR_PATH=`find "$('xcode-select' -print-path)" -name "iPhone Simulator.app"`
+SIMULATOR_PATH=`find "$('xcode-select' -print-path)" -name "$SIMULATOR_NAME.app" -print -quit`
 open "$SIMULATOR_PATH"
 sleep 2.0

@@ -35,6 +35,10 @@
 
 #import <objc/runtime.h>
 
+// So that Subliminal may continue to be built using Xcode 5/the iOS 7.1 SDK.
+#ifndef kCFCoreFoundationVersionNumber_iOS_7_1
+#define kCFCoreFoundationVersionNumber_iOS_7_1 847.24
+#endif
 
 const unsigned int SLTestControllerRandomSeed = UINT_MAX;
 
@@ -278,7 +282,12 @@ u_int32_t random_uniform(u_int32_t upperBound) {
     NSString *userDirectoryPath = [(NSURL *)[[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject] path];
 
     // 2. get out of our application directory, back to the root support directory for this system version
-    NSString *plistRootPath = [userDirectoryPath substringToIndex:([userDirectoryPath rangeOfString:@"Applications"].location)];
+    NSString *plistRootPath = nil;
+    if (kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_7_1) {
+        plistRootPath = [userDirectoryPath substringToIndex:([userDirectoryPath rangeOfString:@"Applications"].location)];
+    } else {
+        plistRootPath = [userDirectoryPath substringToIndex:([userDirectoryPath rangeOfString:@"data"].location)];
+    }
     
     // 3. locate, relative to here, the Accessibility preferences
     NSString *relativePlistPath = @"Library/Preferences/com.apple.Accessibility.plist";

@@ -23,13 +23,19 @@
 #import "SLIntegrationTest.h"
 #import "SLUIAElement+Subclassing.h"
 
+// So that Subliminal may continue to be built using Xcode 5/the iOS 7.1 SDK.
+#ifndef kCFCoreFoundationVersionNumber_iOS_7_1
+#define kCFCoreFoundationVersionNumber_iOS_7_1 847.24
+#endif
+
 /**
  Subliminal's implementation of -isVisible does not rely upon UIAutomation, 
  because UIAElement.isVisible() has a number of bugs as exercised in 
  -testViewIsNotVisibleIfItIsHiddenEvenInTableViewCell
  -testAccessibilityElementIsNotVisibleIfContainerIsHiddenEvenInTableViewCell
  -testViewIsVisibleIfItsCenterIsCoveredByClearRegion
- -testViewIsNotVisibleIfCenterAndUpperLeftHandCornerAreCovered
+ -testViewIsNotVisibleIfCenterAndAnyCornerAreCovered
+ -testAccessibilityElementIsNotVisibleIfItsCenterIsCoveredByView
 
  Subliminal's implementation otherwise attempts to conform to UIAutomation's 
  definition of visibility, as demonstrated by the below test cases.
@@ -345,7 +351,11 @@
 }
 
 - (void)testAccessibilityElementIsNotVisibleIfItsCenterIsCoveredByView {
-    SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible.");
+    if (kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_7_1) {
+        SLAssertFalse([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible.");
+    } else {
+        SLAssertTrue([_testElement uiaIsVisible], @"UIAutomation should say that the element is not visible, but it doesn't.");
+    }
     SLAssertFalse([_testElement isVisible], @"Subliminal should say that the element is not visible.");
 
     // the test view is the container of the test element

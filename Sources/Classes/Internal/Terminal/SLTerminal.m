@@ -22,6 +22,12 @@
 
 #import "SLTerminal.h"
 
+// So that Subliminal may continue to be built using Xcode 5/the iOS 7.1 SDK,
+// and also so that this file may be imported by `subliminal-instrument`, an OS X
+// CLI tool, as part of the SLLogger framework.
+#ifndef kCFCoreFoundationVersionNumber_iOS_7_1
+#define kCFCoreFoundationVersionNumber_iOS_7_1 847.24
+#endif
 
 NSString *const SLTerminalJavaScriptException = @"SLTerminalJavaScriptException";
 
@@ -114,11 +120,23 @@ static SLTerminal *__sharedTerminal = nil;
     return dispatch_get_specific(kEvalQueueIdentifier) != NULL;
 }
 
-#if TARGET_IPHONE_SIMULATOR
-// in the simulator, UIAutomation uses a target-specific plist in ~/Library/Application Support/iPhone Simulator/[system version]/Library/Preferences/[bundle ID].plist
-// _not_ the NSUserDefaults plist, in the sandboxed Library
-// see http://stackoverflow.com/questions/4977673/reading-preferences-set-by-uiautomations-uiaapplication-setpreferencesvaluefork
-- (NSString *)simulatorPreferencesPath {
+#if TARGET_IPHONE_SIMULATOR || TARGET_OS_MAC
+/**
+ In Simulators below iOS 8, UIAutomation does not use the `NSUserDefaults` plist
+ found in the sandboxed Library, but rather a target-specific plist found at the
+ host domain level i.e. at `~/Library/Application Support/iPhone Simulator/[system version]/Library/Preferences/`.
+ See http://stackoverflow.com/questions/4977673/reading-preferences-set-by-uiautomations-uiaapplication-setpreferencesvaluefork .
+ 
+ On devices, and in Simulators as of iOS 8, UIAutomation uses the same plist as
+ `NSUserDefaults`.
+ 
+ The Mac conditional allows `subliminal-instrument`, an OS X CLI tool, to import
+ this file as part of the SLLogger framework.
+ */
+- (NSString *)preIOS8SimulatorPreferencesPath {
+    NSAssert(kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_7_1,
+             @"This method must only be called below iOS 8.");
+    
     static NSString *path = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -127,6 +145,7 @@ static SLTerminal *__sharedTerminal = nil;
 
         // 1. get into the simulator's app support directory by fetching the sandboxed Library's path
         NSString *userDirectoryPath = [(NSURL *)[[[NSFileManager defaultManager] URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask] lastObject] path];
+        
         // 2. get out of our application directory, back to the root support directory for this system version
         plistRootPath = [userDirectoryPath substringToIndex:([userDirectoryPath rangeOfString:@"Applications"].location)];
 
@@ -139,7 +158,7 @@ static SLTerminal *__sharedTerminal = nil;
     });
     return path;
 }
-#endif // TARGET_IPHONE_SIMULATOR
+#endif // TARGET_IPHONE_SIMULATOR || TARGET_OS_MAC
 
 
 #pragma mark - Communication
@@ -188,36 +207,42 @@ static SLTerminal *__sharedTerminal = nil;
     }
 
     // Step 1: Write the script to UIAutomation
+    BOOL targetIsSimulator = NO;
 #if TARGET_IPHONE_SIMULATOR
-    NSMutableDictionary *prefs = [NSMutableDictionary dictionaryWithContentsOfFile:[self simulatorPreferencesPath]];
-    if (!prefs) {
-        prefs = [NSMutableDictionary dictionary];
-    }
-    [prefs setObject:@( _scriptIndex ) forKey:SLTerminalPreferencesKeyScriptIndex];
-    [prefs setObject:script forKey:SLTerminalPreferencesKeyScript];
-    [prefs removeObjectForKey:SLTerminalPreferencesKeyResultIndex];
-    [prefs removeObjectForKey:SLTerminalPreferencesKeyResult];
-    [prefs removeObjectForKey:SLTerminalPreferencesKeyException];
-    [prefs writeToFile:[self simulatorPreferencesPath] atomically:YES];
-#else
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:@( _scriptIndex ) forKey:SLTerminalPreferencesKeyScriptIndex];
-    [defaults setObject:script forKey:SLTerminalPreferencesKeyScript];
-    [defaults removeObjectForKey:SLTerminalPreferencesKeyResultIndex];
-    [defaults removeObjectForKey:SLTerminalPreferencesKeyResult];
-    [defaults removeObjectForKey:SLTerminalPreferencesKeyException];
-    [defaults synchronize];
+    targetIsSimulator = YES;
 #endif
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    if (targetIsSimulator && (kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_7_1)) {
+        NSMutableDictionary *prefs = [NSMutableDictionary dictionaryWithContentsOfFile:[self preIOS8SimulatorPreferencesPath]];
+        if (!prefs) {
+            prefs = [NSMutableDictionary dictionary];
+        }
+        [prefs setObject:@( _scriptIndex ) forKey:SLTerminalPreferencesKeyScriptIndex];
+        [prefs setObject:script forKey:SLTerminalPreferencesKeyScript];
+        [prefs removeObjectForKey:SLTerminalPreferencesKeyResultIndex];
+        [prefs removeObjectForKey:SLTerminalPreferencesKeyResult];
+        [prefs removeObjectForKey:SLTerminalPreferencesKeyException];
+        [prefs writeToFile:[self preIOS8SimulatorPreferencesPath] atomically:YES];
+    } else {
+        [defaults setObject:@( _scriptIndex ) forKey:SLTerminalPreferencesKeyScriptIndex];
+        [defaults setObject:script forKey:SLTerminalPreferencesKeyScript];
+        [defaults removeObjectForKey:SLTerminalPreferencesKeyResultIndex];
+        [defaults removeObjectForKey:SLTerminalPreferencesKeyResult];
+        [defaults removeObjectForKey:SLTerminalPreferencesKeyException];
+        [defaults synchronize];
+    }
 
     // Step 2: Wait for the result
     NSDictionary *resultPrefs = nil;
     while (1) {
-#if TARGET_IPHONE_SIMULATOR
-        resultPrefs = [NSDictionary dictionaryWithContentsOfFile:[self simulatorPreferencesPath]];
-#else
-        [defaults synchronize];
-        resultPrefs = [defaults dictionaryRepresentation];
-#endif
+        if (targetIsSimulator && (kCFCoreFoundationVersionNumber <= kCFCoreFoundationVersionNumber_iOS_7_1)) {
+            resultPrefs = [NSDictionary dictionaryWithContentsOfFile:[self preIOS8SimulatorPreferencesPath]];
+        } else {
+            [defaults synchronize];
+            resultPrefs = [defaults dictionaryRepresentation];
+        }
 
         if (resultPrefs[SLTerminalPreferencesKeyResultIndex]) {
             NSAssert([resultPrefs[SLTerminalPreferencesKeyResultIndex] intValue] == _scriptIndex, @"Result index is out of sync with script index");
