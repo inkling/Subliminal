@@ -29,12 +29,13 @@
 #import <objc/runtime.h>
 #import <objc/message.h>
 
+#import "SLTestFailure.h"
+#import "SLTestState.h"
 
 // All exceptions thrown by SLTest must have names beginning with this prefix
 // so that `-[SLTest exceptionByAddingFileInfo:]` can determine whether to attach
 // call site information to exceptions.
 static NSString *const SLTestExceptionNamePrefix       = @"SLTest";
-
 
 
 @implementation SLTest
@@ -322,26 +323,38 @@ static int __lastKnownLineNumber;
     return testCase;
 }
 
+- (void)reportFailureInPhase:(SLTestFailurePhase)phase toState:(SLTestState *)state exception:(NSException *)exception testCaseSelector:(SEL)testCaseSelector {
+    SLTestFailure *failure = [SLTestFailure failureWithException:exception phase:phase testCaseSelector:testCaseSelector];
+    NSException *exceptionToLog = [self exceptionByAddingFileInfo:exception];
+    [[SLLogger sharedLogger] logException:exceptionToLog
+                                 expected:[failure isExpected]];
+    [state recordFailure:failure];
+    [self testDidEncounterFailure:failure];
+}
+
 - (BOOL)runAndReportNumExecuted:(NSUInteger *)numCasesExecuted
                          failed:(NSUInteger *)numCasesFailed
              failedUnexpectedly:(NSUInteger *)numCasesFailedUnexpectedly {
     NSUInteger numberOfCasesExecuted = 0, numberOfCasesFailed = 0, numberOfCasesFailedUnexpectedly = 0;
+    SLTestState *testState = [SLTestState new];
 
-    BOOL testDidFailInSetUpOrTearDown = NO;
     @try {
         [self setUpTest];
     }
     @catch (NSException *exception) {
-        [[SLLogger sharedLogger] logException:[self exceptionByAddingFileInfo:exception]
-                                     expected:[[self class] exceptionWasExpected:exception]];
-        testDidFailInSetUpOrTearDown = YES;
+        [self reportFailureInPhase:SLTestFailurePhaseTestSetup
+                           toState:testState
+                         exception:exception
+                  testCaseSelector:NULL];
     }
 
     // if setUpTest failed, skip the test cases
-    if (!testDidFailInSetUpOrTearDown) {
+    if (!testState.failed) {
         NSString *test = NSStringFromClass([self class]);
         for (NSString *testCaseName in [[self class] testCasesToRun]) {
             @autoreleasepool {
+                SLTestState *testCaseState = [SLTestState new];
+
                 // all logs below use the focused name, so that the logs are consistent
                 // with what's actually running
                 [[SLLogger sharedLogger] logTest:test caseStart:testCaseName];
@@ -354,29 +367,29 @@ static int __lastKnownLineNumber;
                 // (though we can't guarantee it won't be reused within a test case)
                 [SLTest clearLastKnownCallSite];
 
-                BOOL caseFailed = NO, failureWasExpected = NO;
                 @try {
                     [self setUpTestCaseWithSelector:unfocusedTestCaseSelector];
                 }
                 @catch (NSException *exception) {
-                    caseFailed = YES;
-                    failureWasExpected = [[self class] exceptionWasExpected:exception];
-                    [[SLLogger sharedLogger] logException:[self exceptionByAddingFileInfo:exception]
-                                                 expected:failureWasExpected];
+                    [self reportFailureInPhase:SLTestFailurePhaseTestCaseSetup
+                                       toState:testCaseState
+                                     exception:exception
+                              testCaseSelector:unfocusedTestCaseSelector];
                 }
 
                 // Only execute the test case if set-up succeeded.
-                if (!caseFailed) {
+                if (!testCaseState.failed) {
                     @try {
                         // We use objc_msgSend so that Clang won't complain about performSelector leaks
                         // Make sure to send the actual test case selector
                         ((void(*)(id, SEL))objc_msgSend)(self, NSSelectorFromString(testCaseName));
                     }
                     @catch (NSException *exception) {
-                        caseFailed = YES;
-                        failureWasExpected = [[self class] exceptionWasExpected:exception];
-                        [[SLLogger sharedLogger] logException:[self exceptionByAddingFileInfo:exception]
-                                                     expected:failureWasExpected];
+                        [self reportFailureInPhase:SLTestFailurePhaseTestCaseExecution
+                                           toState:testCaseState
+                                         exception:exception
+                                  testCaseSelector:unfocusedTestCaseSelector];
+
                     }
                 }
 
@@ -386,22 +399,22 @@ static int __lastKnownLineNumber;
                     [self tearDownTestCaseWithSelector:unfocusedTestCaseSelector];
                 }
                 @catch (NSException *exception) {
-                    BOOL caseHadFailed = caseFailed;
-                    caseFailed = YES;
-                    // don't override `failureWasExpected` if we had already failed
-                    BOOL exceptionWasExpected = [[self class] exceptionWasExpected:exception];
-                    if (!caseHadFailed) failureWasExpected = exceptionWasExpected;
-                    [[SLLogger sharedLogger] logException:[self exceptionByAddingFileInfo:exception]
-                                                 expected:exceptionWasExpected];
+                    [self reportFailureInPhase:SLTestFailurePhaseTestCaseTeardown
+                                       toState:testCaseState
+                                     exception:exception
+                              testCaseSelector:unfocusedTestCaseSelector];
                 }
 
-                if (caseFailed) {
-                    [[SLLogger sharedLogger] logTest:test caseFail:testCaseName expected:failureWasExpected];
+                if (testCaseState.failed) {
+                    [[SLLogger sharedLogger] logTest:test caseFail:testCaseName expected:testCaseState.failureWasExpected];
                     numberOfCasesFailed++;
-                    if (!failureWasExpected) numberOfCasesFailedUnexpectedly++;
+                    if (!testCaseState.failureWasExpected) {
+                        numberOfCasesFailedUnexpectedly++;
+                    }
                 } else {
                     [[SLLogger sharedLogger] logTest:test casePass:testCaseName];
                 }
+
                 numberOfCasesExecuted++;
             }
         }
@@ -412,16 +425,17 @@ static int __lastKnownLineNumber;
         [self tearDownTest];
     }
     @catch (NSException *exception) {
-        [[SLLogger sharedLogger] logException:[self exceptionByAddingFileInfo:exception]
-                                     expected:[[self class] exceptionWasExpected:exception]];
-        testDidFailInSetUpOrTearDown = YES;
+        [self reportFailureInPhase:SLTestFailurePhaseTestTeardown
+                           toState:testState
+                         exception:exception
+                  testCaseSelector:NULL];
     }
 
     if (numCasesExecuted) *numCasesExecuted = numberOfCasesExecuted;
     if (numCasesFailed) *numCasesFailed = numberOfCasesFailed;
     if (numCasesFailedUnexpectedly) *numCasesFailedUnexpectedly = numberOfCasesFailedUnexpectedly;
 
-    return !testDidFailInSetUpOrTearDown;
+    return !testState.failed;
 }
 
 - (void)wait:(NSTimeInterval)interval {
@@ -460,9 +474,9 @@ static int __lastKnownLineNumber;
     return exception;
 }
 
-+ (BOOL)exceptionWasExpected:(NSException *)exception {
-    return [[exception name] isEqualToString:SLTestAssertionFailedException];
-}
+// Abstract
+- (void)testDidEncounterFailure:(SLTestFailure *)failure {}
+
 
 @end
 

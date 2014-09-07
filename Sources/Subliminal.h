@@ -24,6 +24,7 @@
 #import "SLTestController+AppHooks.h"
 #import "SLTest.h"
 #import "SLTestAssertions.h"
+#import "SLTestFailure.h"
 
 #import "SLDevice.h"
 #import "SLElement.h"

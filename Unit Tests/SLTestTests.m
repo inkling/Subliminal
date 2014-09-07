@@ -704,7 +704,8 @@
     [[testMock expect] testOne];
     [[testMock expect] testTwo];
     [[testMock expect] testThree];
-    
+    [[testMock reject] testDidEncounterFailure:OCMOCK_ANY];
+
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeTestCasesTest], nil);
     STAssertNoThrow([testMock verify], @"Test cases did not run as expected.");
 }
@@ -722,6 +723,15 @@
 
     SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeTestCasesTest], nil);
     STAssertNoThrow([testMock verify], @"Invalid test cases were unexpectedly run.");
+}
+
+- (void)testSuccesfulTestDoesntInvokeTestFailureHook {
+    Class testWithSomeTestCasesTest = [TestWithSomeTestCases class];
+    id testMock = [OCMockObject partialMockForClass:testWithSomeTestCasesTest];
+    [[testMock reject] testDidEncounterFailure:OCMOCK_ANY];
+
+    SLRunTestsAndWaitUntilFinished([NSSet setWithObject:testWithSomeTestCasesTest], nil);
+    SLAssertNoThrow([testMock verify], @"Test failure hook was unexpectedly invoked.");
 }
 
 // this test verifies the complete order in which testing normally executes,
@@ -840,22 +850,31 @@
 
     // If either setup or teardown fails...
     NSException *exception;
+    SLTestFailure *failureToExpect = nil;
+
     if (failInSetUp) {
         exception = [NSException exceptionWithName:SLTestAssertionFailedException
                                             reason:@"Test setup failed."
                                           userInfo:nil];
+        failureToExpect = [SLTestFailure failureWithException:exception phase:SLTestFailurePhaseTestSetup testCaseSelector:NULL];
+
         [[[failingTestMock expect] andThrow:exception] setUpTest];
     } else {
         exception = [NSException exceptionWithName:SLTestAssertionFailedException
                                             reason:@"Test teardown failed."
                                           userInfo:nil];
+        failureToExpect = [SLTestFailure failureWithException:exception phase:SLTestFailurePhaseTestTeardown testCaseSelector:NULL];
+
         [[[failingTestMock expect] andThrow:exception] tearDownTest];
     }
 
     // ...the test controller logs an error...
     [[_loggerMock expect] logError:[OCMArg any]];
 
-    // ...and the test controller logs the test as aborted (rather than finishing)...
+    // ...the test encounters the expected failure...
+    [[failingTestMock expect] testDidEncounterFailure:failureToExpect];
+
+    // ...and the test controller logs the test as aborte/d (rather than finishing)...
     [[_loggerMock expect] logTestAbort:NSStringFromClass(failingTestClass)];
 
     // ...and the test controller logs testing as finishing with one test executed, one test failing.
@@ -957,26 +976,36 @@
     Class failingTestClass = [TestWithSomeTestCases class];
     SEL failingTestCase = @selector(testOne);
     id failingTestMock = [OCMockObject partialMockForClass:failingTestClass];
+    [failingTestMock setExpectationOrderMatters:YES];
     OCMExpectationSequencer *failingTestSequencer = [OCMExpectationSequencer sequencerWithMocks:@[ failingTestMock, _loggerMock ]];
 
     // *** Begin expected test run
 
     // If either test case setup or teardown fails...
     NSException *exception;
+    SLTestFailure *failureToExpect;
+
     if (failInSetUp) {
         exception = [NSException exceptionWithName:SLTestAssertionFailedException
                                             reason:@"Test case setup failed."
                                           userInfo:nil];
+        failureToExpect = [SLTestFailure failureWithException:exception phase:SLTestFailurePhaseTestCaseSetup testCaseSelector:failingTestCase];
+
         [[[failingTestMock expect] andThrow:exception] setUpTestCaseWithSelector:failingTestCase];
     } else {
         exception = [NSException exceptionWithName:SLTestAssertionFailedException
                                             reason:@"Test case teardown failed."
                                           userInfo:nil];
+        failureToExpect = [SLTestFailure failureWithException:exception phase:SLTestFailurePhaseTestCaseTeardown testCaseSelector:failingTestCase];
+
         [[[failingTestMock expect] andThrow:exception] tearDownTestCaseWithSelector:failingTestCase];
     }
 
     // ...the test catches the exception and logs an error...
     [[_loggerMock expect] logError:[OCMArg any]];
+
+    // ...the test encounters the expected failure...
+    [[failingTestMock expect] testDidEncounterFailure:failureToExpect];
 
     // ...and the test controller reports the test finishing with one test case having failed...
     // (and that failure was "expected" because it was due to an assertion failing)
@@ -1044,12 +1073,18 @@
     // ...the test catches and logs the exception...
     [[_loggerMock expect] logError:[OCMArg any]];
 
+    // ...the test calls -testDidEncounterFailure: with the expected failure.
+    [[failingTestMock expect] testDidEncounterFailure:[SLTestFailure failureWithException:setUpException phase:SLTestFailurePhaseTestCaseSetup testCaseSelector:failingTestCase]];
+
     // ...and then if test case teardown fails...
     NSException *tearDownException = exceptionWithReason(expectedFailureInTeardown, @"Test case teardown failed.");
     [[[failingTestMock expect] andThrow:tearDownException] tearDownTestCaseWithSelector:failingTestCase];
 
     // ...the test again catches and logs the exception...
     [[_loggerMock expect] logError:[OCMArg any]];
+
+    // ...the test again calls -testDidEncounterFailure: with the expected failure.
+    [[failingTestMock expect] testDidEncounterFailure:[SLTestFailure failureWithException:tearDownException phase:SLTestFailurePhaseTestCaseTeardown testCaseSelector:failingTestCase]];
 
     // ...but when the test logs the test case as failing,
     // that failure is reported as "expected" or not depending on the first exception (setup) thrown...
@@ -1191,10 +1226,14 @@
                                             reason:@"Test case failed because element was not tappable."
                                           userInfo:nil];
     }
+
     [[[failingTestMock expect] andThrow:exception] testOne];
 
     // ...the test catches the exception and logs an error...
     [[_loggerMock expect] logError:[OCMArg any]];
+
+    // ...the test encounters a failure with the correct state...
+    [[failingTestMock expect] testDidEncounterFailure:[SLTestFailure failureWithException:exception phase:SLTestFailurePhaseTestCaseExecution testCaseSelector:failingTestCase]];
 
     // ...and logs the test case failing...
     [[_loggerMock expect] logTest:NSStringFromClass(failingTestClass)

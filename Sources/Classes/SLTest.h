@@ -25,6 +25,8 @@
 #import "SLTestController+AppHooks.h"
 #import "SLStringUtilities.h"
 
+@class SLTestFailure;
+
 /**
  `SLTest` is the abstract superclass of Subliminal integration tests.
  
@@ -363,6 +365,15 @@
  @see -[SLTestController runTests:usingSeed:withCompletionBlock:]
  */
 + (NSUInteger)runGroup;
+
+/**
+ If overridden, provides a hook into test and test case failures.
+
+ @param failure An object which describes the failure.
+ @warning This method will be invoked for each exception that is handled by the test framework.
+ @see -[SLTestFailure failureWithException:phase:testCaseSelector:]
+ */
+- (void)testDidEncounterFailure:(SLTestFailure *)failure;
 
 @end
 
