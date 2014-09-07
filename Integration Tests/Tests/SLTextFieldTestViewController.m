@@ -42,6 +42,7 @@
 
     if (testCase == @selector(testSetText) ||
         testCase == @selector(testSetTextWithinTableViewCell) ||
+        testCase == @selector(testSetTextWithinTableViewCellUnderControl) ||
         testCase == @selector(testSetTextCanHandleTapHoldCharacters) ||
         testCase == @selector(testSetTextClearsCurrentText) ||
         testCase == @selector(testSetTextClearsCurrentTextWithinTableViewCell) ||
@@ -55,7 +56,8 @@
         _textField = [[UITextField alloc] initWithFrame:kTextFieldFrame];
 
         if (testCase == @selector(testSetTextWithinTableViewCell) ||
-            testCase == @selector(testSetTextClearsCurrentTextWithinTableViewCell)) {
+            testCase == @selector(testSetTextClearsCurrentTextWithinTableViewCell) ||
+            testCase == @selector(testSetTextWithinTableViewCellUnderControl)) {
             _tableView = [[UITableView alloc] initWithFrame:(CGRect){CGPointZero, CGSizeMake(320.0f, 44.0f)}];
             _tableView.dataSource = self;
             [view addSubview:_tableView];
@@ -101,6 +103,7 @@
     [super viewDidLoad];
 
     _textField.accessibilityLabel = @"test element";
+    _textField.autocorrectionType = UITextAutocorrectionTypeNo;
     _textField.borderStyle = UITextBorderStyleRoundedRect;
     if (self.testCase == @selector(testClearTextButton)) {
         _textField.clearButtonMode = UITextFieldViewModeAlways;
@@ -161,6 +164,7 @@
     NSString *text;
     if (self.testCase == @selector(testSetText) ||
         self.testCase == @selector(testSetTextWithinTableViewCell) ||
+        self.testCase == @selector(testSetTextWithinTableViewCellUnderControl) || 
         self.testCase == @selector(testSetTextCanHandleTapHoldCharacters) ||
         self.testCase == @selector(testSetTextClearsCurrentText) ||
         self.testCase == @selector(testSetTextClearsCurrentTextWithinTableViewCell) ||
@@ -201,7 +205,14 @@
     _textField.textColor = [UIColor blackColor];
     [_textField becomeFirstResponder];
 
-    [tableViewCell.contentView addSubview:_textField];
+    if (self.testCase == @selector(testSetTextWithinTableViewCellUnderControl)) {
+        UIControl *control = [[UIControl alloc] initWithFrame:self.view.bounds];
+        [control addSubview:_textField];
+
+        [tableViewCell.contentView addSubview:control];
+    } else {
+        [tableViewCell.contentView addSubview:_textField];
+    }
 
     return tableViewCell;
 }

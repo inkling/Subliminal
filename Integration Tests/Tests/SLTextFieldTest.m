@@ -47,7 +47,8 @@
         testSelector == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
         testSelector == @selector(testGetText) ||
         testSelector == @selector(testDoNotMatchEditorAccessibilityObjects) ||
-        testSelector == @selector(testClearTextButton)) {
+        testSelector == @selector(testClearTextButton) ||
+        testSelector == @selector(testSetTextWithinTableViewCellUnderControl)) {
         _textField = [SLTextField elementWithAccessibilityLabel:@"test element"];
     } else if (testSelector == @selector(testMatchesSearchBarTextField) ||
                testSelector == @selector(testSetSearchBarText) ||
@@ -73,6 +74,13 @@
 - (void)testSetTextWithinTableViewCell {
     NSString *const expectedText = @"foo";
     SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
+    SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
+}
+
+- (void)testSetTextWithinTableViewCellUnderControl {
+    NSString *const expectedText = @"Fooness";
+    SLAssertNoThrow([UIAElement(_textField) setText:expectedText], @"Should not have thrown.");
+    SLAssertNoThrow([UIAElement(_textField) tap], @"Should not have thrown.");
     SLAssertTrue([SLAskApp(text) isEqualToString:expectedText], @"Text was not set to expected value.");
 }
 

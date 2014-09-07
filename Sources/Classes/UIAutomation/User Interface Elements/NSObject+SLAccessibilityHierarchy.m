@@ -450,9 +450,40 @@
 
 
 @implementation UIControl (SLAccessibilityHierarchy)
+
 - (BOOL)classForcesPresenceInAccessibilityHierarchy {
-    return YES;
+    BOOL forcesPresence = YES;
+    BOOL containedWithinTableView = NO;
+
+    id parent = self;
+    do {
+        parent = [parent slAccessibilityParent];
+
+        if ([parent isKindOfClass:[UITableView class]]) {
+            containedWithinTableView = YES;
+        }
+    } while (parent && !containedWithinTableView);
+
+    if (containedWithinTableView) {
+        NSMutableArray *children = [[self slChildAccessibilityElementsFavoringSubviews:YES] mutableCopy];
+        NSUInteger i = 0;
+        while (i < children.count) {
+            id child = children[i];
+
+            if ([child isKindOfClass:[UIControl class]]) {
+                forcesPresence = NO;
+                break;
+            }
+
+            [children addObjectsFromArray:[child slChildAccessibilityElementsFavoringSubviews:YES]];
+
+            ++i;
+        }
+    }
+
+    return forcesPresence;
 }
+
 @end
 
 
