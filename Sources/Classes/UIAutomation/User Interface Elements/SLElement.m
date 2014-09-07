@@ -41,6 +41,8 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
     BOOL _shouldDoubleCheckValidity;
 }
 
+static BOOL defaultForShouldDoubleCheckValidity;
+
 + (void)load {
     // We create a unique `UIAccessibilityTraits` mask
     // from a combination of traits that should never occur in reality.
@@ -121,11 +123,16 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
     } description:@"any element"];
 }
 
++ (void)setDefaultForDoubleCheckValidity:(BOOL)shouldDoubleCheckValidity {
+    defaultForShouldDoubleCheckValidity = shouldDoubleCheckValidity;
+}
+
 - (instancetype)initWithPredicate:(BOOL (^)(NSObject *))predicate description:(NSString *)description {
     self = [super init];
     if (self) {
         _matchesObject = predicate;
         _description = [description copy];
+        _shouldDoubleCheckValidity = defaultForShouldDoubleCheckValidity;
     }
     return self;
 }

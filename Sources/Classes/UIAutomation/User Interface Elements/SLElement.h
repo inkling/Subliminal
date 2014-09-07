@@ -207,4 +207,11 @@ extern UIAccessibilityTraits SLUIAccessibilityTraitAny;
  */
 @property (nonatomic) BOOL shouldDoubleCheckValidity;
 
+/**
+ The shouldDoubleCheckValidity BOOL defaults to NO, but this allows making double checking for the existence
+ of elements the default behavior for newly created SLElement objects, essentially making it opt-out instead
+ of opt-in.
+ */
++ (void)setDefaultForDoubleCheckValidity:(BOOL)shouldDoubleCheckValidity;
+
 @end
