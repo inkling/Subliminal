@@ -25,7 +25,7 @@
 #import <Subliminal/SLTestController+AppHooks.h>
 #import <QuartzCore/QuartzCore.h>
 
-@interface SLTextFieldTestViewController : SLTestCaseViewController <UIWebViewDelegate,UITableViewDataSource>
+@interface SLTextFieldTestViewController : SLTestCaseViewController <UIWebViewDelegate,UITableViewDataSource,UICollectionViewDataSource>
 @end
 
 @implementation SLTextFieldTestViewController {
@@ -33,6 +33,7 @@
     UISearchBar *_searchBar;
     UIWebView *_webView;
     UITableView *_tableView;
+    UICollectionView *_collectionView;
     BOOL _webViewDidFinishLoad;
 }
 
@@ -42,9 +43,11 @@
 
     if (testCase == @selector(testSetText) ||
         testCase == @selector(testSetTextWithinTableViewCell) ||
+        testCase == @selector(testSetTextWithinCollectionViewCell) ||
         testCase == @selector(testSetTextCanHandleTapHoldCharacters) ||
         testCase == @selector(testSetTextClearsCurrentText) ||
         testCase == @selector(testSetTextClearsCurrentTextWithinTableViewCell) ||
+        testCase == @selector(testSetTextClearsCurrentTextWithinCollectionViewCell) ||
         testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
         testCase == @selector(testGetText) ||
         testCase == @selector(testDoNotMatchEditorAccessibilityObjects) ||
@@ -59,6 +62,12 @@
             _tableView = [[UITableView alloc] initWithFrame:(CGRect){CGPointZero, CGSizeMake(320.0f, 44.0f)}];
             _tableView.dataSource = self;
             [view addSubview:_tableView];
+        } else if (testCase == @selector(testSetTextWithinCollectionViewCell) ||
+                   testCase == @selector(testSetTextClearsCurrentTextWithinCollectionViewCell)) {
+            _collectionView = [[UICollectionView alloc] initWithFrame:(CGRect){CGPointZero, CGSizeMake(320.0f, 44.0f)} collectionViewLayout:[[UICollectionViewFlowLayout alloc] init]];
+            [_collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"TestCell"];
+            _collectionView.dataSource = self;
+            [view addSubview:_collectionView];
         } else {
             [view addSubview:_textField];
         }
@@ -110,8 +119,10 @@
 
     if (self.testCase != @selector(testSetText) &&
         self.testCase != @selector(testSetTextWithinTableViewCell) &&
+        self.testCase != @selector(testSetTextWithinCollectionViewCell) &&
         self.testCase != @selector(testSetTextClearsCurrentText) &&
         self.testCase != @selector(testSetTextClearsCurrentTextWithinTableViewCell) &&
+        self.testCase != @selector(testSetTextClearsCurrentTextWithinCollectionViewCell) &&
         self.testCase != @selector(testSetTextWhenFieldClearsOnBeginEditing) &&
         self.testCase != @selector(testDoNotMatchEditorAccessibilityObjects)) {
         _textField.text = @"foo";
@@ -140,7 +151,7 @@
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
 
-    if (_tableView != nil)
+    if ((_tableView != nil) || (_collectionView != nil))
         return;
 
     // move the textfield above the keyboard
@@ -161,9 +172,11 @@
     NSString *text;
     if (self.testCase == @selector(testSetText) ||
         self.testCase == @selector(testSetTextWithinTableViewCell) ||
+        self.testCase == @selector(testSetTextWithinCollectionViewCell) ||
         self.testCase == @selector(testSetTextCanHandleTapHoldCharacters) ||
         self.testCase == @selector(testSetTextClearsCurrentText) ||
         self.testCase == @selector(testSetTextClearsCurrentTextWithinTableViewCell) ||
+        self.testCase == @selector(testSetTextClearsCurrentTextWithinCollectionViewCell) ||
         self.testCase == @selector(testSetTextWhenFieldClearsOnBeginEditing) ||
         self.testCase == @selector(testGetText) ||
         self.testCase == @selector(testDoNotMatchEditorAccessibilityObjects) ||
@@ -204,6 +217,28 @@
     [tableViewCell.contentView addSubview:_textField];
 
     return tableViewCell;
+}
+
+#pragma mark - UICollectionViewDataSource
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return 1;
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    UICollectionViewCell *collectionViewCell = [collectionView dequeueReusableCellWithReuseIdentifier:@"TestCell" forIndexPath:indexPath];
+    collectionViewCell.frame = CGRectMake(0, 0, 320.0f, 44.0f);
+    collectionViewCell.contentView.backgroundColor = [UIColor lightGrayColor];
+
+    _textField.frame = (CGRect){CGPointZero, CGSizeMake(100.0f, 30.0f)};
+    _textField.textColor = [UIColor blackColor];
+    [_textField becomeFirstResponder];
+
+    [collectionViewCell.contentView addSubview:_textField];
+
+    return collectionViewCell;
 }
 
 @end
