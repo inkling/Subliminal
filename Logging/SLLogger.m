@@ -56,6 +56,28 @@ void SLLogAsync(NSString *format, ...) {
     });
 }
 
+void SLLogWarningAsync(NSString *format, ...) {
+    va_list args;
+    va_start(args, format);
+    NSString *message = [[NSString alloc] initWithFormat:format arguments:args];
+    va_end(args);
+
+    dispatch_async([[SLLogger sharedLogger] loggingQueue], ^{
+        [[SLLogger sharedLogger] logWarning:message];
+    });
+}
+
+void SLLogErrorAsync(NSString *format, ...) {
+    va_list args;
+    va_start(args, format);
+    NSString *message = [[NSString alloc] initWithFormat:format arguments:args];
+    va_end(args);
+
+    dispatch_async([[SLLogger sharedLogger] loggingQueue], ^{
+        [[SLLogger sharedLogger] logError:message];
+    });
+}
+
 @implementation SLLogger {
     dispatch_queue_t _loggingQueue;
 }

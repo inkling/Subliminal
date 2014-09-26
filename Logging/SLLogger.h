@@ -47,6 +47,21 @@ void SLLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
  */
 void SLLogAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 
+/**
+ Asynchronously logs a warning message to the testing environment.
+
+ @param format A format string (in the manner of `-[NSString stringWithFormat:]`).
+ @param ... (Optional) A comma-separated list of arguments to substitute into `format`.
+ */
+void SLLogWarningAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
+
+/**
+ Asynchronously logs an error message to the testing environment.
+
+ @param format A format string (in the manner of `-[NSString stringWithFormat:]`).
+ @param ... (Optional) A comma-separated list of arguments to substitute into `format`.
+ */
+void SLLogErrorAsync(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
 
 /**
  The shared `SLLogger` used by Subliminal to log test progress. It may also be
