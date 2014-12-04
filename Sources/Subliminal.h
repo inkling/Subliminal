@@ -30,6 +30,7 @@
 #import "NSObject+SLAccessibilityDescription.h"
 #import "NSObject+SLAccessibilityHierarchy.h"
 #import "SLStaticElement.h"
+#import "SLActionSheet.h"
 #import "SLAlert.h"
 #import "SLButton.h"
 #import "SLDatePicker.h"
