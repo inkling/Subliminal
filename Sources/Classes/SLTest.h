@@ -424,8 +424,8 @@
  @warning If tear-down fails, the test will be logged as having terminated 
  abnormally rather than finished, but its test cases' logs will be preserved.
 
- @warning Unlike the `-setUp` method found in OCUnit and other JUnit-inspired 
- frameworks, `-setUpTest` is called only once per test.
+ @warning Unlike the `-tearDown` method found in OCUnit and other
+ JUnit-inspired frameworks, `-tearDownTest` is called only once per test.
 
  @see setUpTest
  */
