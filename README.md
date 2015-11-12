@@ -80,7 +80,7 @@ and deployment targets running iOS 6.1 through 7.1.
 
 For iOS 5.1 support, use Subliminal 1.1.0 (found in the
 [Releases](https://github.com/inkling/Subliminal/releases/) section or on
-[CocoaPods](http://cocoapods.org/)). To test in the iOS 5.1 Simulator, you will
+[CocoaPods](https://cocoapods.org/)). To test in the iOS 5.1 Simulator, you will
 need to run OS X 10.8 and manually add the iOS 5.1 Simulator to Xcode 5.1,
 as described [here](http://stackoverflow.com/a/22494536/495611).
 
@@ -142,7 +142,7 @@ Comparison to Other Integration Test Frameworks
 	Most other integration test frameworks fall into two categories: entirely 
 	Objective-C based, or entirely UIAutomation-based.
 
-	Frameworks that are entirely Objective-C based, like [KIF](https://github.com/square/KIF/), 
+	Frameworks that are entirely Objective-C based, like [KIF](https://github.com/kif-framework/KIF), 
 	[Frank](https://github.com/moredip/Frank), etc., must hack the application's 
 	touch-handling system, using private APIs, to simulate user interaction. 
 	There is thus no guarantee that they accurately simulate a user's input. 
@@ -207,13 +207,13 @@ Credits
 Created by [Jeff Wear](https://github.com/wearhere), made possible by [Inkling](https://www.inkling.com/), 
 with help from:
 
-* [William Green](http://ca.linkedin.com/pub/william-green/21/724/105)
+* [William Green](https://www.linkedin.com/in/william-green-10572421)
 * [John Detloff](https://github.com/jmdetloff)
 * [Aaron Golden](http://stackoverflow.com/users/2172667/aaron-golden)
 * [Lukhnos Liu](https://github.com/lukhnos)
 * [Aaron Haney](https://github.com/ahaneyinkling)
 
-and Subliminal's [growing list of contributors](https://github.com/inkling/Subliminal/contributors).
+and Subliminal's [growing list of contributors](https://github.com/inkling/Subliminal/graphs/contributors).
 
 Contact
 -------
