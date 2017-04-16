@@ -135,6 +135,13 @@ UIAccessibilityTraits SLUIAccessibilityTraitAny = 0;
     NSAssert(_matchesObject, @"matchesObject called on %@, which has no _matchesObject predicate", self);
     BOOL matchesObject = _matchesObject(object);
 
+    // Non-UIView objects are assumed to be "not hidden"
+    if (self.matchOnlyIfVisible) {
+        if ([object respondsToSelector:@selector(isHidden)]) {
+            matchesObject = matchesObject && ![(UIView *)object isHidden];
+        }
+    }
+
     return (matchesObject && [object willAppearInAccessibilityHierarchy]);
 }
 

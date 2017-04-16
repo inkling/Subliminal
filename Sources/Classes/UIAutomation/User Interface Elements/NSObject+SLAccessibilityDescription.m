@@ -86,9 +86,18 @@
     if ([traitNames count]) {
         [properties addObject:[NSString stringWithFormat:@"traits = (%@)", [traitNames componentsJoinedByString:@", "]]];
     }
+
     if (self.isAccessibilityElement) {
         [properties addObject:@"accessibilityElement = YES"];
     }
+
+    if ([self respondsToSelector:@selector(isHidden)]) {
+        BOOL hidden = [(UIView *)self isHidden];
+        if (hidden) {
+            [properties addObject:@"hidden = YES"];
+        }
+    }
+
     return [NSString stringWithFormat:@"<%@>", [properties componentsJoinedByString:@"; "]];
 }
 
