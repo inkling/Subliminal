@@ -1,0 +1,31 @@
+name: Publish package to JFrog on release
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: [self-hosted, linux]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: ^18.18.0
+      - name: Install yarn
+        run: npm install -g yarn
+      - name: Setup .npmrc
+        run: |
+          npm config set "@echo360:registry" "https://inkling.jfrog.io/artifactory/api/npm/echo360/"
+          npm config set "//inkling.jfrog.io/artifactory/api/npm/echo360/:_authToken" $NPM_JFROG_AUTH_TOKEN
+        env:
+          NPM_JFROG_AUTH_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
+      - name: Install dependencies
+        run: yarn --no-cache --no-progress --non-interactive --frozen-lockfile
+      - name: Build
+        run: yarn --non-interactive build
+      - name: Publish
+        run: yarn --non-interactive publish
+      - name: Uninstall yarn
+        if: always()
+        run: npm uninstall -g yarn
