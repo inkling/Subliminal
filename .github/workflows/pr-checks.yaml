@@ -13,6 +13,8 @@ jobs:
           node-version: ^18.18.0
       - name: Install yarn
         run: npm install -g yarn
+      - name: Pre-install
+        run: rm -rf node_modules && yarn config set "strict-ssl" false -g
       - name: Install dependencies
         run: yarn --no-cache --no-progress --non-interactive --frozen-lockfile
       - name: Lint

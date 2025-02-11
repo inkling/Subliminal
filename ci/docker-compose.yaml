@@ -1,0 +1,16 @@
+version: '2'
+services:
+  unittest: &TEMPLATE
+    image: node:18-alpine
+    command: ci/unittest.sh
+    network_mode: bridge
+    volumes:
+      - ..:/usr/src/app
+    working_dir: /usr/src/app
+  lint:
+    <<: *TEMPLATE
+    command: ci/lint.sh
+  # Keeping this called flow for CI infra purposes
+  flow:
+    <<: *TEMPLATE
+    command: ci/build.sh

@@ -14,6 +14,8 @@ jobs:
           node-version: ^18.18.0
       - name: Install yarn
         run: npm install -g yarn
+      - name: Pre-install
+        run: rm -rf node_modules && yarn config set "strict-ssl" false -g
       - name: Setup .npmrc
         run: |
           npm config set "@echo360:registry" "https://inkling.jfrog.io/artifactory/api/npm/echo360/"

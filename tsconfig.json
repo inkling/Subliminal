@@ -6,7 +6,6 @@
     "declaration": true,
     "declarationDir": "./dist/types",
     "outDir": "./dist/esm",
-    "rootDir": "./src",
     "strict": true,
     "sourceMap": true,
     "resolveJsonModule": true,
@@ -16,7 +15,5 @@
     "forceConsistentCasingInFileNames": true,
     "allowJs": false,
     "experimentalDecorators": true
-  },
-  "include": ["./src/**/*.ts"],
-  "exclude": ["./src/**/*.spec.ts"]
+  }
 }

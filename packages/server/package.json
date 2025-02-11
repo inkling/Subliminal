@@ -1,0 +1,26 @@
+{
+  "name": "@inkling/magicbell-server",
+  "version": "1.0.0",
+  "main": "./dist/cjs/index.js",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "package.json"
+  ],
+  "exports": {
+    "import": "./dist/esm/index.js",
+    "require": "./dist/cjs/index.js",
+    "default": "./dist/cjs/index.js",
+    "types": "./dist/types/index.d.ts"
+  },
+  "scripts": {
+    "build": "npm-run-all clean build:cjs build:esm",
+    "clean": "rm -rf dist/",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc",
+    "prepublishOnly": "yarn build"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

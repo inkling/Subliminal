@@ -1,8 +1,7 @@
 {
-  "name": "@echo360/typescript-node-library-template",
-  "version": "3.0.0",
-  "description": "Template library for a modern Inkling TypeScript library.",
+  "name": "@inkling/magicbell",
   "type": "module",
+  "private": true,
   "main": "./dist/cjs/index.js",
   "types": "./dist/types/index.d.ts",
   "exports": {
@@ -11,28 +10,21 @@
     "default": "./dist/cjs/index.js",
     "types": "./dist/types/index.d.ts"
   },
-  "files": [
-    "./dist",
-    "package.json"
+  "workspaces": [
+    "packages/*"
   ],
-  "engines": {
-    "node": ">=18"
+  "repository": {
+    "type": "git",
+    "url": "https://git.inkling.com/inkling/magicbell-shared.git"
   },
   "scripts": {
-    "lint": "eslint ./src && prettier --check .",
-    "format": "eslint ./src --fix && prettier --write .",
-    "clean": "rm -rf ./dist",
-    "test": "jest",
-    "build": "npm-run-all clean build:static build:cjs build:esm",
-    "build:cjs": "tsc -p tsconfig.cjs.json",
-    "build:esm": "tsc",
-    "build:static": "mkdir -p dist && (cd static && cp -r . ../dist)",
-    "prepack": "npm run build",
-    "prepare": "husky"
+    "lint": "yarn run lint:no-cache --cache",
+    "lint:no-cache": "eslint . --ext ts,tsx,cjs,js,json,*.config.js",
+    "lint:fix": "yarn run lint --fix",
+    "build": "yarn workspaces run build",
+    "test": "echo 'No tests found'"
   },
-  "keywords": [],
   "author": "Inkling",
-  "license": "UNLICENSED",
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "eslint": "^8.0.0",
@@ -50,5 +42,8 @@
     "ts-jest": "^29.1.2",
     "typescript": "^5.4.5",
     "typescript-eslint": "^7.6.0"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
