@@ -26,8 +26,10 @@ jobs:
         run: yarn --no-cache --no-progress --non-interactive --frozen-lockfile
       - name: Build
         run: yarn --non-interactive build
-      - name: Publish
-        run: yarn --non-interactive publish
+      - name: Publish Client
+        run: yarn workspace @inkling/magicbell-client publish --non-interactive
+      - name: Publish Server
+        run: yarn workspace @inkling/magicbell-server publish --non-interactive
       - name: Uninstall yarn
         if: always()
         run: npm uninstall -g yarn
