@@ -1,0 +1,7 @@
+.magic-bell-container {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}

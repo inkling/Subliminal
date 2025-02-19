@@ -2,19 +2,14 @@
   "name": "@inkling/magicbell-client",
   "version": "0.0.1",
   "description": "Shared UI components for Magic Bell",
-  "main": "./dist/cjs/index.js",
+  "main": "./dist/main.js",
   "files": [
     "dist",
     "package.json"
   ],
-  "exports": {
-    "import": "./dist/esm/index.js",
-    "require": "./dist/cjs/index.js",
-    "default": "./dist/cjs/index.js",
-    "types": "./dist/types/index.d.ts"
-  },
   "scripts": {
-    "build": "npm-run-all clean build:cjs build:esm",
+    "start": "yarn clean && webpack serve --open --mode development",
+    "build": "yarn clean && webpack --mode production",
     "clean": "rm -rf dist/",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:esm": "tsc",
@@ -26,8 +21,24 @@
     "react-dom": "18"
   },
   "devDependencies": {
+    "@babel/core": "^7.26.9",
+    "@babel/preset-env": "^7.26.9",
+    "@babel/preset-react": "^7.26.3",
+    "@babel/preset-typescript": "^7.26.0",
     "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.4",
+    "babel-loader": "^9.2.1",
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.6.3",
     "react": "18",
-    "react-dom": "18"
+    "react-dom": "18",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.2",
+    "webpack": "^5.98.0",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.0"
+  },
+  "dependencies": {
+    "@magicbell/magicbell-react": "^11.2.1"
   }
 }

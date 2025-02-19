@@ -1,1 +1,3 @@
-export * from './components/MagicBell';
+import SharedMagicBell from './components/MagicBell';
+
+export { SharedMagicBell };
