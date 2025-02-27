@@ -15,6 +15,12 @@ jobs:
         run: npm install -g yarn
       - name: Pre-install
         run: rm -rf node_modules && yarn config set "strict-ssl" false -g
+      - name: Setup .npmrc
+        run: |
+          npm config set "@inkling:registry" "https://inkling.jfrog.io/artifactory/api/npm/inkling/"
+          npm config set "//inkling.jfrog.io/artifactory/api/npm/inkling/:_authToken" $NPM_JFROG_AUTH_TOKEN
+        env:
+          NPM_JFROG_AUTH_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
       - name: Install dependencies
         run: yarn --no-cache --no-progress --non-interactive --frozen-lockfile
       - name: Lint

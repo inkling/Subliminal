@@ -1,0 +1,5 @@
+.react-playground-container {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+}

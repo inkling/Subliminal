@@ -1,6 +1,6 @@
 {
   "name": "@inkling/magicbell-server",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "main": "./dist/cjs/index.js",
   "license": "MIT",
   "files": [
@@ -22,5 +22,12 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "@inkling/utils-logger": "^5.1.0",
+    "magicbell": "^4.2.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.3"
   }
 }

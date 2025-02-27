@@ -1,0 +1,120 @@
+.notification-item-container {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 20px;
+
+  padding: 0 8px;
+}
+
+.notification-item-container:hover {
+  background-color: #d5e8dc;
+  border-left: 3px solid #06512e;
+}
+
+.notification-item-status {
+  margin-right: 12px;
+}
+
+.notification-read-status {
+  background-color: #6518de;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 6px;
+}
+
+.notification-item-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  .notification-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+
+    .notification-item-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #000;
+    }
+
+    .notification-item-date {
+      font-size: 12px;
+      color: #000;
+    }
+  }
+}
+
+.notification-item-body {
+  display: flex;
+}
+
+.notification-item-container {
+  p {
+    margin: 0;
+  }
+}
+
+.notification-category {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 24px;
+  letter-spacing: 0px;
+  color: #363636;
+}
+
+.notification-item-content {
+  margin-left: 8px;
+
+  p {
+    font-family: inherit;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19.07px;
+    letter-spacing: 0%;
+
+    color: #231f20;
+  }
+
+  .notification-item-subheading {
+    overflow: hidden;
+    display: block;
+    width: 300px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin-top: 4px;
+  }
+}
+
+.notification-category-icon {
+  width: 36px;
+  height: 36px;
+  /* margin-right: px; */
+  background-position: left;
+  background-repeat: no-repeat;
+}
+
+.notification-category-comments {
+  background-image: url('../../images/comments-icon.svg');
+}
+
+.notification-category-feedback {
+  background-image: url('../../images/feedback-icon.svg');
+}
+
+.notification-category-access {
+  background-image: url('../../images/access-icon.svg');
+}
+
+.notification-item-description {
+  width: 450px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: 8px !important;
+}

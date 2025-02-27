@@ -4,4 +4,6 @@
   align-items: center;
   justify-content: center;
   position: relative;
+
+  font-family: 'Source Sans Pro', 'Lucida Grande', verdana, helvetica, sans;
 }

@@ -21,6 +21,7 @@
     "lint": "yarn run lint:no-cache --cache",
     "lint:no-cache": "eslint . --ext ts,tsx,cjs,js,json,*.config.js",
     "lint:fix": "yarn run lint --fix",
+    "format": "prettier --write .",
     "build": "yarn workspaces run build",
     "test": "echo 'No tests found'"
   },
