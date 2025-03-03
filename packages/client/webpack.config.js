@@ -26,6 +26,10 @@ module.exports = (env, argv) => {
             test: /\.css$/i,
             use: ['style-loader', 'css-loader'],
           },
+          {
+            test: /\.(png|svg|jpg|jpeg|gif)$/i,
+            type: 'asset/resource',
+          },
         ],
       },
       plugins: [
@@ -42,6 +46,7 @@ module.exports = (env, argv) => {
     output: {
       filename: '[name].js',
       path: path.resolve(__dirname, 'dist'),
+      publicPath: '',
       chunkFilename: '[id].[chunkhash].js',
       library: {
         name: 'MagicBellClient',
@@ -61,6 +66,10 @@ module.exports = (env, argv) => {
         {
           test: /\.css$/i,
           use: ['style-loader', 'css-loader'],
+        },
+        {
+          test: /\.(png|svg|jpg|jpeg|gif)$/i,
+          type: 'asset/inline'
         },
       ],
     },

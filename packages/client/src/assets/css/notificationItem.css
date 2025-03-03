@@ -92,21 +92,8 @@
 .notification-category-icon {
   width: 36px;
   height: 36px;
-  /* margin-right: px; */
   background-position: left;
   background-repeat: no-repeat;
-}
-
-.notification-category-comments {
-  background-image: url('../../images/comments-icon.svg');
-}
-
-.notification-category-feedback {
-  background-image: url('../../images/feedback-icon.svg');
-}
-
-.notification-category-access {
-  background-image: url('../../images/access-icon.svg');
 }
 
 .notification-item-description {

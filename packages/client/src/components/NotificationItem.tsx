@@ -4,15 +4,19 @@ import { NotificationCategory, NotificationCategoryLabel } from '../constants';
 import '../assets/css/notificationItem.css';
 import { formatLocalDate } from '../utils/dateUtils';
 
+import commentsIcon from '../images/comments-icon.svg';
+import feedbackIcon from '../images/feedback-icon.svg';
+import accessIcon from '../images/access-icon.svg';
+
 export type ListItemProps = {
   notification: IRemoteNotification;
   onClick?: (notification: INotification) => void | boolean;
 };
 
-const CATEGORY_ICON_CLASSES = {
-  [NotificationCategory.COMMENTS]: 'notification-category-comments',
-  [NotificationCategory.FEEDBACK]: 'notification-category-feedback',
-  [NotificationCategory.ACCESS]: 'notification-category-access',
+const CATEGORY_ICON_SRC = {
+  [NotificationCategory.COMMENTS]: commentsIcon,
+  [NotificationCategory.FEEDBACK]: feedbackIcon,
+  [NotificationCategory.ACCESS]: accessIcon,
 };
 
 const extractSubHeading = (notification: IRemoteNotification): string | null => {
@@ -27,8 +31,6 @@ const extractSubHeading = (notification: IRemoteNotification): string | null => 
 };
 
 export default function NotificationItem({ notification }: ListItemProps) {
-  const categoryIconClass = notification.category ? CATEGORY_ICON_CLASSES[notification.category as NotificationCategory] : '';
-
   const subHeading = extractSubHeading(notification);
 
   return (
@@ -46,7 +48,7 @@ export default function NotificationItem({ notification }: ListItemProps) {
           <p>{notification.sentAt ? formatLocalDate(notification.sentAt * 1000) : ''}</p>
         </div>
         <div className="notification-item-body">
-          <div className={`notification-category-icon ${categoryIconClass}`}></div>
+          <img src={CATEGORY_ICON_SRC[notification.category as NotificationCategory]} className={`notification-category-icon`} alt="" />
           <div className="notification-item-content">
             <p>{notification.title}</p>
             {subHeading && <p className="notification-item-subheading">{subHeading}</p>}
