@@ -1,10 +1,9 @@
 import { ProjectClient } from 'magicbell/project-client';
-import logger from './logger';
+import { settings } from './settings';
 
 const magicbell = new ProjectClient({
-  apiKey: '93e3b766f152c9a44a4d3575d765cee62326eee8',
-  //   TODO: Replace with fetch from Secrets manager
-  apiSecret: 'nya9pFS8lnxD5P62h+I1OAnX2nqzSY2/leaJIKFK',
+  apiKey: settings.magicbell.apiKey,
+  apiSecret: settings.magicbell.apiSecret,
 });
 
 export type Recipient = {
@@ -39,7 +38,7 @@ export const broadcastToUsers = async (
 
     return notifications;
   } catch (error) {
-    logger.error('Error broadcasting to users', error);
+    console.error('Error broadcasting to users', error);
     throw error;
   }
 };

@@ -1,0 +1,12 @@
+{
+  "development": false,
+  "environment": "stable",
+  "logLevel": "info",
+  "magicbell": {
+    "apiKey": "93e3b766f152c9a44a4d3575d765cee62326eee8",
+    "apiSecret": "nya9pFS8lnxD5P62h+I1OAnX2nqzSY2/leaJIKFK"
+  },
+  "sentry": {
+    "enabled": false
+  }
+}
