@@ -7,3 +7,11 @@
 
   font-family: 'Source Sans Pro', 'Lucida Grande', verdana, helvetica, sans;
 }
+
+.magic-bell-badge {
+  width: 8px;
+  height: 8px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}

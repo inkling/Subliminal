@@ -28,6 +28,13 @@
   background: var(--UI-Whites-White, #ffffff);
 
   border-bottom: 2px solid var(--UI-Darks-Dark-Light, #e0e0e0);
+
+  justify-content: space-between;
+  align-items: center;
+
+  .notification-tab-items {
+    display: flex;
+  }
 }
 
 .notification-tab-item {
@@ -101,4 +108,45 @@
 
 .notification-view-filter {
   color: #0a854c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  p {
+    margin-right: 4px;
+    font-size: 16px;
+  }
+
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    cursor: pointer;
+    color: #0a854c;
+    margin-top: 2px;
+    font-weight: 400;
+    font-size: 15px;
+  }
+}
+
+.notification-badge {
+  font-size: 4rem;
+  font-weight: bold;
+}
+
+.notification__mark-all-as-read {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+
+  img {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.notification__mark-all-as-read:hover {
+  background: #f5f5f5;
 }

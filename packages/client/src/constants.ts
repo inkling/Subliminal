@@ -5,7 +5,7 @@ export enum NotificationCategory {
 }
 
 export enum NotificationCategoryLabel {
-  comments = 'Comments',
+  comments = 'Comment',
   feedback = 'Feedback',
-  access = 'Project Invite',
+  access = 'Access Request',
 }

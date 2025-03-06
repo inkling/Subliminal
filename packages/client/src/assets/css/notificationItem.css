@@ -9,6 +9,7 @@
 .notification-item-container:hover {
   background-color: #d5e8dc;
   border-left: 3px solid #06512e;
+  cursor: pointer;
 }
 
 .notification-item-status {
@@ -69,16 +70,6 @@
 .notification-item-content {
   margin-left: 8px;
 
-  p {
-    font-family: inherit;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 19.07px;
-    letter-spacing: 0%;
-
-    color: #231f20;
-  }
-
   .notification-item-subheading {
     overflow: hidden;
     display: block;
@@ -104,4 +95,9 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   margin-top: 8px !important;
+
+  color: #545454;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19.07px;
 }

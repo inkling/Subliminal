@@ -1,5 +1,5 @@
 import React from 'react';
-import { INotification, IRemoteNotification } from '@magicbell/magicbell-react';
+import { INotification, IRemoteNotification, useNotification } from '@magicbell/magicbell-react';
 import { NotificationCategory, NotificationCategoryLabel } from '../constants';
 import '../assets/css/notificationItem.css';
 import { formatLocalDate } from '../utils/dateUtils';
@@ -32,9 +32,22 @@ const extractSubHeading = (notification: IRemoteNotification): string | null => 
 
 export default function NotificationItem({ notification }: ListItemProps) {
   const subHeading = extractSubHeading(notification);
+  const notificationData = useNotification(notification);
+
+  const onClick = async () => {
+    try {
+      if (notification.actionUrl) {
+        window.open(notification.actionUrl, '_blank');
+      }
+
+      await notificationData.markAsRead();
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
+  };
 
   return (
-    <div className="notification-item-container">
+    <div className="notification-item-container" onClick={onClick} role="link">
       <div className="notification-item-status">
         {notification.readAt === null ? <div className="notification-read-status"></div> : null}
       </div>
