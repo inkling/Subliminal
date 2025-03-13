@@ -3,8 +3,8 @@
   "environment": "stable",
   "logLevel": "info",
   "magicbell": {
-    "apiKey": "93e3b766f152c9a44a4d3575d765cee62326eee8",
-    "apiSecret": "nya9pFS8lnxD5P62h+I1OAnX2nqzSY2/leaJIKFK"
+    "apiKey": "c45ca00f74e427828bef74cc3937c0ede475d6a4",
+    "apiSecret": "Gf6zrM5466rFTAf0iZbQcbZ98FZBkgjKIjSthA4o"
   },
   "sentry": {
     "enabled": false
