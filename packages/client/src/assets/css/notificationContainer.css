@@ -78,7 +78,7 @@
 .notification-content--top {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 
 .notification-searchbox {
@@ -149,4 +149,22 @@
 
 .notification__mark-all-as-read:hover {
   background: #f5f5f5;
+}
+
+.notification-empty {
+  display: flex;
+  align-items: flex-start;
+
+  img {
+    margin-right: 20px;
+  }
+
+  p {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: #231f20;
+    margin: 32px 0 !important;
+  }
 }

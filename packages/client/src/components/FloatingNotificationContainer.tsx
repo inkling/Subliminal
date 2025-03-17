@@ -9,6 +9,7 @@ import '../assets/css/notificationContainer.css';
 import NotificationItem from './NotificationItem';
 
 import MarkAllAsRead from '../images/markAllAsRead.svg';
+import EmptyBell from '../images/emtpy-bell.svg';
 
 type FloatingNotificationInboxProps = {
   launcherRef: React.RefObject<Element>;
@@ -46,6 +47,38 @@ const FILTER_OPTIONS = {
   },
 };
 
+const markTabAsRead = async (selectedTabIndex: number, accessStore: any, feedbackStore: any, commentsStore: any, store: any) => {
+  switch (selectedTabIndex) {
+    case 3:
+      await accessStore?.markAllAsRead();
+      break;
+    case 1:
+      await feedbackStore?.markAllAsRead();
+      break;
+    case 2:
+      await commentsStore?.markAllAsRead();
+      break;
+    default:
+      await store?.markAllAsRead();
+      break;
+  }
+};
+
+// For some reason NotificationStore type is not exported from Magicbell.
+// Unfortunately have to use any here
+function NotificationContent({ store }: { store: any | null }) {
+  if (!store || !store?.notifications || store?.notifications === 0 || store.isEmpty) {
+    return (
+      <div className="notification-empty">
+        <img src={EmptyBell} alt=""></img>
+        <p>No New Notifications</p>
+      </div>
+    );
+  }
+
+  return <NotificationList height={400} notifications={store} ListItem={NotificationItem} />;
+}
+
 export default function NotificationContainer({ launcherRef, isOpen, toggle }: FloatingNotificationInboxProps) {
   // StoreId only works when using string.
   const store = useNotifications();
@@ -58,10 +91,6 @@ export default function NotificationContainer({ launcherRef, isOpen, toggle }: F
     label: string;
   }>(FILTER_OPTIONS.all);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
-
-  async function markAllAsRead() {
-    await store?.markAllAsRead();
-  }
 
   useEffect(() => {
     async function fetchNotifications() {
@@ -89,13 +118,16 @@ export default function NotificationContainer({ launcherRef, isOpen, toggle }: F
                 </Tab>
               ))}
             </div>
-            <button onClick={markAllAsRead} className="notification__mark-all-as-read">
+            <button
+              onClick={async () => await markTabAsRead(selectedTabIndex, accessStore, feedbackStore, commentsStore, store)}
+              className="notification__mark-all-as-read"
+            >
               <img src={MarkAllAsRead} alt="Mark all notifications as read"></img>
             </button>
           </TabList>
           <div className="notification-content-container">
             <div className="notification-content--top">
-              <input type="text" className="notification-searchbox" name="search" placeholder="Search"></input>
+              {/* <input type="text" className="notification-searchbox" name="search" placeholder="Search"></input> */}
               <div className="notification-view-filter">
                 <p>View: </p>
                 <select value={defaultFilter.value} onChange={e => setDefaultFilter((FILTER_OPTIONS as any)[e.target.value])}>
@@ -107,14 +139,18 @@ export default function NotificationContainer({ launcherRef, isOpen, toggle }: F
                 </select>
               </div>
             </div>
-            <TabPanel>{store && <NotificationList height={400} notifications={store} ListItem={NotificationItem} />}</TabPanel>
             <TabPanel>
-              {feedbackStore && <NotificationList height={400} notifications={feedbackStore} ListItem={NotificationItem} />}
+              <NotificationContent store={store} />
             </TabPanel>
             <TabPanel>
-              {commentsStore && <NotificationList height={400} notifications={commentsStore} ListItem={NotificationItem} />}
+              <NotificationContent store={feedbackStore} />
             </TabPanel>
-            <TabPanel>{accessStore && <NotificationList height={400} notifications={accessStore} ListItem={NotificationItem} />}</TabPanel>
+            <TabPanel>
+              <NotificationContent store={commentsStore} />
+            </TabPanel>
+            <TabPanel>
+              <NotificationContent store={accessStore} />
+            </TabPanel>
           </div>
         </Tabs>
       </div>

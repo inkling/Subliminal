@@ -30,8 +30,20 @@ const extractSubHeading = (notification: IRemoteNotification): string | null => 
   return null;
 };
 
+const extractLabelOverride = (notification: IRemoteNotification): string | null => {
+  const customAttr = notification.customAttributes;
+  if (typeof customAttr === 'object' && customAttr !== null) {
+    if ('label' in customAttr) {
+      return customAttr.label as string;
+    }
+  }
+
+  return null;
+};
+
 export default function NotificationItem({ notification }: ListItemProps) {
   const subHeading = extractSubHeading(notification);
+  const labelOverride = extractLabelOverride(notification);
   const notificationData = useNotification(notification);
 
   const onClick = async () => {
@@ -54,9 +66,7 @@ export default function NotificationItem({ notification }: ListItemProps) {
       <div className="notification-item-content-wrapper">
         <div className="notification-item-header">
           <p className="notification-category">
-            {notification.category && notification.category in NotificationCategoryLabel
-              ? NotificationCategoryLabel[notification.category as NotificationCategory]
-              : ''}
+            {labelOverride ? labelOverride : NotificationCategoryLabel[notification.category as NotificationCategory]}
           </p>
           <p>{notification.sentAt ? formatLocalDate(notification.sentAt * 1000) : ''}</p>
         </div>
