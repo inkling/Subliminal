@@ -1,6 +1,6 @@
 {
   "name": "@inkling/magicbell-client",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Shared UI components for Magic Bell",
   "main": "./dist/main.js",
   "files": [
