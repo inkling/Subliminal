@@ -1,6 +1,6 @@
 {
   "name": "@inkling/magicbell-client",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "description": "Shared UI components for Magic Bell",
   "main": "./dist/main.js",
   "files": [
@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "@magicbell/magicbell-react": "^11.2.1",
+    "magicbell": "^4.2.0",
     "moment": "^2.30.1",
     "react-tabs": "^6.1.0"
   }

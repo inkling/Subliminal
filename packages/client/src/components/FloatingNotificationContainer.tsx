@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNotifications, NotificationList } from '@magicbell/magicbell-react';
+import { UserClient } from 'magicbell/user-client';
 
 import React, { useEffect, useState } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
@@ -10,11 +11,13 @@ import NotificationItem from './NotificationItem';
 
 import MarkAllAsRead from '../images/markAllAsRead.svg';
 import EmptyBell from '../images/emtpy-bell.svg';
+import { NotificationCategory } from '../constants';
 
 type FloatingNotificationInboxProps = {
   launcherRef: React.RefObject<Element>;
   isOpen: boolean;
   toggle: () => void;
+  userClient: UserClient;
 };
 
 const TabItems = [
@@ -47,23 +50,6 @@ const FILTER_OPTIONS = {
   },
 };
 
-const markTabAsRead = async (selectedTabIndex: number, accessStore: any, feedbackStore: any, commentsStore: any, store: any) => {
-  switch (selectedTabIndex) {
-    case 3:
-      await accessStore?.markAllAsRead();
-      break;
-    case 1:
-      await feedbackStore?.markAllAsRead();
-      break;
-    case 2:
-      await commentsStore?.markAllAsRead();
-      break;
-    default:
-      await store?.markAllAsRead();
-      break;
-  }
-};
-
 // For some reason NotificationStore type is not exported from Magicbell.
 // Unfortunately have to use any here
 function NotificationContent({ store }: { store: any | null }) {
@@ -79,7 +65,7 @@ function NotificationContent({ store }: { store: any | null }) {
   return <NotificationList height={400} notifications={store} ListItem={NotificationItem} />;
 }
 
-export default function NotificationContainer({ launcherRef, isOpen, toggle }: FloatingNotificationInboxProps) {
+export default function NotificationContainer({ launcherRef, isOpen, toggle, userClient }: FloatingNotificationInboxProps) {
   // StoreId only works when using string.
   const store = useNotifications();
   const feedbackStore = useNotifications('feedback');
@@ -104,6 +90,35 @@ export default function NotificationContainer({ launcherRef, isOpen, toggle }: F
     fetchNotifications();
   }, [defaultFilter]);
 
+  const markTabAsRead = async () => {
+    const queryParam = defaultFilter.value === 'unread' ? { read: false } : {};
+    switch (selectedTabIndex) {
+      case 3:
+        await userClient.notifications.markAllRead({
+          category: NotificationCategory.ACCESS,
+        });
+        await accessStore?.fetch(queryParam, { reset: true });
+        break;
+      case 1:
+        await userClient.notifications.markAllRead({
+          category: NotificationCategory.FEEDBACK,
+        });
+        await feedbackStore?.fetch(queryParam, { reset: true });
+        break;
+      case 2:
+        await userClient.notifications.markAllRead({
+          category: NotificationCategory.COMMENTS,
+        });
+        await commentsStore?.fetch(queryParam, { reset: true });
+        break;
+      default:
+        await userClient.notifications.markAllRead();
+        break;
+    }
+
+    await store?.fetch(queryParam, { reset: true });
+  };
+
   return (
     <>
       {isOpen && <div role="button" onClick={toggle} className="notification-popup-mask"></div>}
@@ -118,10 +133,7 @@ export default function NotificationContainer({ launcherRef, isOpen, toggle }: F
                 </Tab>
               ))}
             </div>
-            <button
-              onClick={async () => await markTabAsRead(selectedTabIndex, accessStore, feedbackStore, commentsStore, store)}
-              className="notification__mark-all-as-read"
-            >
+            <button onClick={markTabAsRead} className="notification__mark-all-as-read">
               <img src={MarkAllAsRead} alt="Mark all notifications as read"></img>
             </button>
           </TabList>

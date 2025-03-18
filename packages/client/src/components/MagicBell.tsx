@@ -8,14 +8,14 @@ import BellIcon from './icons/BellIcon';
 import '../assets/css/magicbell.css';
 import NotificationContainer from './FloatingNotificationContainer';
 import { NotificationCategory } from '../constants';
+import { UserClient } from 'magicbell/user-client';
 
 type MagicBellProps = {
   userId: string;
   userEmail?: string;
   customTheme?: Record<string, unknown>;
+  userAPIKey: string;
 };
-
-const MAGICBELL_API_KEY = '93e3b766f152c9a44a4d3575d765cee62326eee8';
 
 function Badge({ count }: { count: number }) {
   if (count === 0) return null;
@@ -48,20 +48,26 @@ const stores = [
   },
 ];
 
-export default function SharedMagicBell({ userId, userEmail, customTheme }: MagicBellProps) {
+export default function SharedMagicBell({ userId, userEmail, customTheme, userAPIKey }: MagicBellProps) {
+  const magicbell = new UserClient({
+    apiKey: userAPIKey,
+    userEmail: userEmail,
+    userExternalId: userId,
+  });
+
   return (
     <div className="magic-bell-container">
       <MagicBell
         stores={stores}
         theme={customTheme}
         BellIcon={<BellIcon />}
-        apiKey={MAGICBELL_API_KEY}
+        apiKey={userAPIKey}
         userExternalId={userId}
         userEmail={userEmail}
         Badge={Badge}
         bellCounter="unread"
       >
-        {props => <NotificationContainer {...props} />}
+        {props => <NotificationContainer {...props} userClient={magicbell} />}
       </MagicBell>
     </div>
   );
