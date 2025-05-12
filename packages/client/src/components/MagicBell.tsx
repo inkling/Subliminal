@@ -1,7 +1,7 @@
 import MagicBell from '@magicbell/magicbell-react';
 import React from 'react';
 
-import UnreadBadge from '../images/new-unread-icon.svg';
+import UnreadBadge from '../images/unread.svg';
 
 import BellIcon from './icons/BellIcon';
 
