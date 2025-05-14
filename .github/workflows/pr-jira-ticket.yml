@@ -1,0 +1,35 @@
+name: JIRA Ticket
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  validate-pr-description:
+    name: Validate PR Description
+    runs-on: [self-hosted, linux]
+    steps:
+    - name: Validate PR Description
+      run: |
+
+        # Fetch PR description using jq
+        PR_DESCRIPTION=$(jq -r ".pull_request.body" "$GITHUB_EVENT_PATH")
+        # Prefix List - Modify to add/remove prefixes
+        declare -a PREFIXES=("sre" "ink")
+        # Check for prefix in the PR description in the format "PREFIX-123"
+        if [[ $PR_DESCRIPTION =~ \[([a-zA-Z]+-[0-9]+)\] ]]; then            
+            TICKET="${BASH_REMATCH[1]}"
+            TICKET=$(echo $TICKET | tr '[:upper:]' '[:lower:]')
+            echo "PR description contains ticket: $TICKET"
+            for PREFIX in "${PREFIXES[@]}"; do
+                echo "Checking ticket prefix: $PREFIX"
+                if [[ $TICKET == $PREFIX-* ]]; then
+                    PR_PREFIX_FOUND=true
+                    break
+                fi
+            done
+        fi
+        if [[ $PR_PREFIX_FOUND != true ]]; then
+            echo "Error: Description must contain ticket with prefixes: ${PREFIXES[@]}"
+            exit 1
+        fi

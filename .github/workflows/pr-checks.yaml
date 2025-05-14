@@ -21,14 +21,15 @@ jobs:
           npm config set "//inkling.jfrog.io/artifactory/api/npm/inkling/:_authToken" $NPM_JFROG_AUTH_TOKEN
         env:
           NPM_JFROG_AUTH_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
+
       - name: Install dependencies
         run: yarn --no-cache --no-progress --non-interactive --frozen-lockfile
+
       - name: Lint
         run: yarn --non-interactive lint
+
       - name: Build
         run: yarn --non-interactive build
+
       - name: Test
         run: yarn --non-interactive test
-      - name: Uninstall yarn
-        if: always()
-        run: npm uninstall -g yarn
