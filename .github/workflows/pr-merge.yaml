@@ -1,13 +1,16 @@
 name: Publish to JFrog
 on:
-  pull_request:
-    types: [closed]
+  push:
     branches:
       - master
 
+  pull_request:
+    branches:
+      - master
+    types: [synchronize]
+
 jobs:
   publish:
-    if: github.event.pull_request.merged == true
     runs-on: [self-hosted, linux]
     steps:
       - uses: actions/checkout@v3
@@ -22,6 +25,13 @@ jobs:
 
       # - name: Pre-install
       #   run: rm -rf node_modules && yarn config set "strict-ssl" false -g
+
+      - name: Bump package.json version and commit magic
+        run: |
+          cd packages/client
+          npm version patch --no-git-tag-version
+          echo "CLIENT_VERSION=$(jq '.version' packages/client/package.json | tr -d '"')" >> $GITHUB_ENV
+          echo "Publishing version $CLIENT_VERSION"
 
       - name: Setup .npmrc
         run: |

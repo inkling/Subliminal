@@ -1,13 +1,11 @@
 name: Publish to JFrog - Publisher
 on:
-  pull_request:
-    types: [closed]
+  push:
     branches:
       - publisher-branch
 
 jobs:
   publish-publisher:
-    if: github.event.pull_request.merged == true
     runs-on: [self-hosted, linux]
     steps:
       - uses: actions/checkout@v3
@@ -25,7 +23,10 @@ jobs:
 
       - name: Bump package.json version and commit magic
         run: |
+          cd packages/client
           npm version patch --no-git-tag-version
+          echo "CLIENT_VERSION=$(jq '.version' packages/client/package.json | tr -d '"')" >> $GITHUB_ENV
+          echo "Publishing version $CLIENT_VERSION-publisher"
 
       - name: Setup .npmrc
         run: |
@@ -42,6 +43,3 @@ jobs:
 
       - name: Publish Client
         run: yarn workspace @inkling/magicbell-client publish --non-interactive
-
-      - name: Publish Server
-        run: yarn workspace @inkling/magicbell-server publish --non-interactive
